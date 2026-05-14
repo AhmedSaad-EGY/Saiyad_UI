@@ -43,20 +43,16 @@ async function renderCheckout(container) {
                 <input type="tel" class="form-input" id="addrPhone" required>
               </div>
               <div class="form-group" style="grid-column:1/-1">
-                <label class="form-label">Street Address *</label>
-                <input type="text" class="form-input" id="addrStreet" required>
+                <label class="form-label">Address *</label>
+                <input type="text" class="form-input" id="addrAddress" required>
               </div>
               <div class="form-group">
                 <label class="form-label">City *</label>
                 <input type="text" class="form-input" id="addrCity" required>
               </div>
               <div class="form-group">
-                <label class="form-label">Governorate *</label>
-                <input type="text" class="form-input" id="addrGov" required>
-              </div>
-              <div class="form-group">
-                <label class="form-label">Postal Code *</label>
-                <input type="text" class="form-input" id="addrPost" required>
+                <label class="form-label">Postal Code</label>
+                <input type="text" class="form-input" id="addrPost">
               </div>
             </div>
           </form>
@@ -84,20 +80,19 @@ async function renderCheckout(container) {
       try {
         const fullName = document.getElementById('addrFullName').value.trim();
         const phone = document.getElementById('addrPhone').value.trim();
-        const street = document.getElementById('addrStreet').value.trim();
+        const addressLine = document.getElementById('addrAddress').value.trim();
         const city = document.getElementById('addrCity').value.trim();
-        const governorate = document.getElementById('addrGov').value.trim();
         const postalCode = document.getElementById('addrPost').value.trim();
 
-        if (!fullName || !phone || !street || !city || !governorate || !postalCode) {
-          alertDiv.innerHTML = `<div class="alert alert-error">All address fields are required.</div>`;
+        if (!fullName || !phone || !addressLine || !city) {
+          alertDiv.innerHTML = `<div class="alert alert-error">Full Name, Phone, Address, and City are required.</div>`;
           btn.disabled = false;
           btn.innerHTML = `<i class="fas fa-lock"></i> ${t('cart.placeOrder')}`;
           return;
         }
 
-        const addr = await api.post('/shipping-addresses', {
-          fullName, phone, street, city, governorate, postalCode
+        const addr = await api.post('/shippingAddresses', {
+          fullName, phone, addressLine, city, postalCode
         });
 
         const addr_id = addr.id;

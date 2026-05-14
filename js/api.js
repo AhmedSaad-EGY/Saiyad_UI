@@ -21,7 +21,11 @@ async function request(endpoint, options = {}) {
   const data = res.status === 204 ? null : await res.json();
 
   if (!res.ok) {
-    const msg = data?.message || data?.title || data?.detail || `Request failed (${res.status})`;
+    let msg = data?.message || data?.title || data?.detail || `Request failed (${res.status})`;
+    if (data?.errors) {
+      const details = Object.values(data.errors).flat().join('; ');
+      if (details) msg += ': ' + details;
+    }
     const err = new Error(msg);
     err.status = res.status;
     err.data = data;
