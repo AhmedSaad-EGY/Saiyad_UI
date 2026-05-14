@@ -38,8 +38,10 @@ async function renderHome(container) {
     renderRecentlyViewed(document.getElementById('recentlyViewed'));
     observeAnimations();
   } catch (e) {
-    renderEmptyState(document.getElementById('homeProducts'), { icon: 'fa-box-open', title: t('home.noProducts') });
-    document.getElementById('homeAuctions').innerHTML = '';
+    const hp = document.getElementById('homeProducts');
+    if (hp && !hp.children.length) renderEmptyState(hp, { icon: 'fa-box-open', title: t('home.loadError'), desc: escapeHtml(e.message) });
+    const ha = document.getElementById('homeAuctions');
+    if (ha && !ha.children.length) renderEmptyState(ha, { icon: 'fa-gavel', title: t('home.loadError'), desc: escapeHtml(e.message) });
   }
 }
 

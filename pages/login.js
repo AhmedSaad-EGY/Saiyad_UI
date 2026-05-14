@@ -76,13 +76,24 @@ function renderLogin(container) {
 
     try {
       const data = await api.post('/auth/login', { email: loginEmail.value.trim(), password: loginPassword.value });
-      localStorage.setItem('accessToken', data.accessToken);
+      localStorage.setItem('accessToken', data.token);
       localStorage.setItem('refreshToken', data.refreshToken);
-      localStorage.setItem('user', JSON.stringify(data.user || data));
+      localStorage.setItem('user', JSON.stringify(data.user));
       updateNavbar();
       navigate('');
     } catch (err) {
-      alertDiv.innerHTML = `<div class="alert alert-error">${escapeHtml(err.message)}</div>`;
+      if (err.message?.toLowerCase().includes('verify your email')) {
+        alertDiv.innerHTML = `
+          <div class="alert alert-warning">
+            <i class="fas fa-envelope"></i>
+            <strong>Email not verified.</strong>
+            Please check your inbox and click the verification link.
+            <br><small style="opacity:0.8">Didn't get it? Check your spam folder.</small>
+          </div>
+        `;
+      } else {
+        alertDiv.innerHTML = `<div class="alert alert-error">${escapeHtml(err.message)}</div>`;
+      }
     } finally {
       submit.disabled = false;
       submit.textContent = t('auth.signIn');
