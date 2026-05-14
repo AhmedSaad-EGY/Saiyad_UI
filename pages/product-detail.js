@@ -145,7 +145,7 @@ async function renderProductDetail(container, route, params) {
       .addEventListener("click", async () => {
         if (!(await requireAuth())) return;
         try {
-          await api.post("/wishlist/toggle", { productId: p.id });
+          await api.post("/wishlist", { productId: p.id });
           showToast(t("product.wishlistUpdated"), "success");
         } catch (e) {
           showToast(e.message, "error");

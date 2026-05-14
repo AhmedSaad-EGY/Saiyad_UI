@@ -204,13 +204,22 @@ function renderRegister(container) {
     submit.innerHTML = `<i class="fas fa-spinner spinner"></i> ${t("auth.creatingAccount")}`;
 
     try {
+      // Capture before reset
+      const savedEmail = regEmail.value.trim();
+      const savedPassword = regPassword.value;
+
+      // Store credentials for auto-login after email verification
+      sessionStorage.setItem("pendingLoginEmail", savedEmail);
+      sessionStorage.setItem("pendingLoginPassword", savedPassword);
+
       await api.post("/auth/register", {
         fullName: regName.value.trim(),
-        email: regEmail.value.trim(),
+        email: savedEmail,
         phone: regPhone.value.trim(),
-        password: regPassword.value,
+        password: savedPassword,
         role: regRole.value,
       });
+
       alertDiv.innerHTML = `
         <div class="alert alert-success">
           <i class="fas fa-envelope"></i>
@@ -221,6 +230,24 @@ function renderRegister(container) {
       regForm.reset();
       strengthBar.className = "password-strength-bar strength-empty";
       strengthText.textContent = "";
+
+      // Try silent auto-login (works if email verification is disabled)
+      setTimeout(async () => {
+        try {
+          const data = await api.post("/auth/login", {
+            email: savedEmail,
+            password: savedPassword,
+          });
+          localStorage.setItem("accessToken", data.token);
+          localStorage.setItem("refreshToken", data.refreshToken);
+          localStorage.setItem("user", JSON.stringify(data.user));
+          updateNavbar();
+          showToast(t("auth.loginSuccess"), "success");
+          navigate("");
+        } catch {
+          // Login failed — email verification required, user stays on page
+        }
+      }, 800);
     } catch (err) {
       alertDiv.innerHTML = `<div class="alert alert-error">${escapeHtml(err.message)}</div>`;
     } finally {

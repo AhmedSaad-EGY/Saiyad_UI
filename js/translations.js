@@ -183,6 +183,8 @@ const translations = {
     "verify.success": "Email verified successfully! You can now login.",
     "verify.error": "Verification failed. The link may be expired or invalid.",
     "verify.redirecting": "Redirecting to login...",
+    "verify.loggingIn": "Logging you in automatically...",
+    "verify.loggingIn": "Logging you in automatically...",
     "verify.invalidLink": "Invalid verification link.",
 
     // Shipping
@@ -191,6 +193,7 @@ const translations = {
     "shipping.fullName": "Full Name",
     "shipping.phone": "Phone",
     "shipping.city": "City",
+    "shipping.governorate": "Governorate",
     "shipping.addressLine": "Address Line",
     "shipping.postalCode": "Postal Code",
     "shipping.save": "Save Address",
@@ -506,7 +509,9 @@ const translations = {
     "verify.success":
       "تم تأكيد البريد الإلكتروني بنجاح! يمكنك تسجيل الدخول الآن.",
     "verify.error": "فشل التحقق. الرابط قد يكون منتهياً أو غير صالح.",
+    "verify.loggingIn": "جارٍ تسجيل الدخول تلقائياً...",
     "verify.redirecting": "جاري التحويل إلى تسجيل الدخول...",
+    "verify.loggingIn": "جارٍ تسجيل الدخول تلقائياً...",
     "verify.invalidLink": "رابط تحقق غير صالح.",
 
     // Shipping Addresses
@@ -515,6 +520,7 @@ const translations = {
     "shipping.fullName": "الاسم الكامل",
     "shipping.phone": "رقم الهاتف",
     "shipping.city": "المدينة",
+    "shipping.governorate": "المحافظة",
     "shipping.addressLine": "العنوان",
     "shipping.postalCode": "الرمز البريدي",
     "shipping.save": "حفظ العنوان",
