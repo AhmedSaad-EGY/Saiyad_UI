@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f0f4f8" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0b1120" media="(prefers-color-scheme: dark)">
+  <title>Sayiad - Fishing Marketplace & Auctions</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="container nav-container">
+      <a href="#/" class="nav-logo">
+        <i class="fas fa-fish"></i> Sayiad
+      </a>
+      <div class="nav-drawer" id="navDrawer">
+        <div class="nav-links" id="navLinks">
+          <a href="#/" class="nav-link" data-i18n="nav.home">Home</a>
+          <a href="#/products" class="nav-link" data-i18n="nav.products">Products</a>
+          <a href="#/auctions" class="nav-link" data-i18n="nav.auctions">Auctions</a>
+          <a href="#/cart" class="nav-link"><i class="fas fa-shopping-cart"></i> <span data-i18n="nav.cart">Cart</span> <span id="cartBadge" class="badge hidden">0</span></a>
+          <div class="nav-toggles">
+            <button class="toggle-btn" id="themeToggle" title="Toggle theme" aria-label="Toggle dark mode"><i class="fas fa-moon"></i></button>
+            <button class="toggle-btn" id="langToggle" title="Switch language" aria-label="Switch language">EN</button>
+          </div>
+          <div class="nav-actions" id="navActions">
+            <a href="#/login" class="btn btn-outline btn-sm" id="loginBtn" data-i18n="nav.login">Login</a>
+            <a href="#/register" class="btn btn-primary btn-sm" id="registerBtn" data-i18n="nav.register">Register</a>
+            <a href="#/dashboard?tab=notifications" class="notif-bell hidden" id="notifBell" aria-label="Notifications">
+              <i class="fas fa-bell"></i>
+              <span id="notifBadge" class="badge hidden">0</span>
+            </a>
+            <div class="dropdown hidden" id="userMenu">
+              <button class="btn btn-ghost btn-sm dropdown-toggle" id="userDropdown">
+                <i class="fas fa-user"></i> <span id="userName">User</span> <i class="fas fa-chevron-down"></i>
+              </button>
+              <div class="dropdown-menu" id="dropdownMenu">
+                <a href="#/dashboard" class="dropdown-item"><i class="fas fa-tachometer-alt"></i> <span data-i18n="nav.dashboard">Dashboard</span></a>
+                <a href="#/dashboard?tab=orders" class="dropdown-item"><i class="fas fa-box"></i> <span data-i18n="nav.myOrders">My Orders</span></a>
+                <a href="#/dashboard?tab=products" class="dropdown-item"><i class="fas fa-tag"></i> <span data-i18n="nav.myProducts">My Products</span></a>
+                <a href="#/dashboard?tab=wishlist" class="dropdown-item"><i class="fas fa-heart"></i> <span data-i18n="nav.wishlist">Wishlist</span></a>
+                <div class="dropdown-divider"></div>
+                <a href="#" id="logoutBtn" class="dropdown-item text-danger"><i class="fas fa-sign-out-alt"></i> <span data-i18n="nav.logout">Logout</span></a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <button class="hamburger" id="hamburger" aria-label="Toggle menu"><i class="fas fa-bars"></i></button>
+    </div>
+  </nav>
+
+  <main id="app" class="container main-content"></main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col footer-brand">
+          <div class="footer-logo"><i class="fas fa-fish"></i> Sayiad</div>
+          <p data-i18n="footer.tagline">The ultimate fishing marketplace. Buy, sell, and bid on premium gear.</p>
+          <div class="footer-social">
+            <a href="#" class="footer-social-link" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" class="footer-social-link" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+            <a href="#" class="footer-social-link" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+            <a href="#" class="footer-social-link" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+            <a href="#" class="footer-social-link" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h4 data-i18n="footer.quickLinks">Quick Links</h4>
+          <a href="#/" class="footer-link" data-i18n="nav.home">Home</a>
+          <a href="#/products" class="footer-link" data-i18n="nav.products">Products</a>
+          <a href="#/auctions" class="footer-link" data-i18n="nav.auctions">Auctions</a>
+          <a href="#/cart" class="footer-link" data-i18n="nav.cart">Cart</a>
+        </div>
+        <div class="footer-col">
+          <h4 data-i18n="footer.support">Support</h4>
+          <a href="#/dashboard" class="footer-link" data-i18n="nav.dashboard">Dashboard</a>
+          <a href="#/dashboard?tab=orders" class="footer-link" data-i18n="nav.myOrders">My Orders</a>
+          <a href="#/shipping" class="footer-link" data-i18n="shipping.title">Shipping Addresses</a>
+          <a href="#/seller-profile/me" class="footer-link" data-i18n="seller.myProfile">Seller Profile</a>
+        </div>
+        <div class="footer-col">
+          <h4 data-i18n="footer.contact">Contact</h4>
+          <div class="footer-contact-item"><i class="fas fa-envelope"></i> support@sayiad.com</div>
+          <div class="footer-contact-item"><i class="fas fa-phone"></i> +1 (555) 123-4567</div>
+          <div class="footer-contact-item"><i class="fas fa-map-marker-alt"></i> Alexandria, Egypt</div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p data-i18n="footer.copyright">&copy; 2026 Sayiad. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/translations.js"></script>
+  <!-- Page handlers must be loaded before router -->
+  <script src="pages/home.js"></script>
+  <script src="pages/login.js"></script>
+  <script src="pages/register.js"></script>
+  <script src="pages/products.js"></script>
+  <script src="pages/product-detail.js"></script>
+  <script src="pages/auctions.js"></script>
+  <script src="pages/auction-detail.js"></script>
+  <script src="pages/cart.js"></script>
+  <script src="pages/dashboard.js"></script>
+  <script src="pages/verify-email.js"></script>
+  <script src="pages/shipping.js"></script>
+  <script src="pages/seller-profile.js"></script>
+  <script src="pages/order-detail.js"></script>
+  <script src="pages/admin.js"></script>
+  <script src="js/background.js"></script>
+  <script src="js/router.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
