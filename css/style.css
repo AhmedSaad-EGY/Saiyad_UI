@@ -93,6 +93,13 @@
   --blob-1: oklch(0.55 0.22 265 / 0.12);
   --blob-2: oklch(0.55 0.12 230 / 0.08);
   --blob-3: oklch(0.6 0.18 285 / 0.10);
+
+  --card-bg-glass: oklch(1 0 0 / 0.85);
+  /* Slightly transparent white */
+  --border-glass: oklch(1 0 0 / 0.2);
+  /* Subtle white border */
+  --shadow-glass: 0 10px 30px -10px oklch(0 0 0 / 0.15), 0 0 0 1px oklch(1 0 0 / 0.1);
+  /* Floating shadow with subtle border */
 }
 
 /* ============================================================
@@ -148,6 +155,13 @@
   --blob-1: oklch(0.7 0.16 265 / 0.08);
   --blob-2: oklch(0.75 0.1 200 / 0.06);
   --blob-3: oklch(0.75 0.12 285 / 0.07);
+
+  --card-bg-glass: oklch(0.18 0.02 260 / 0.85);
+  /* Slightly transparent dark grey */
+  --border-glass: oklch(1 0 0 / 0.1);
+  /* Subtle white border for contrast */
+  --shadow-glass: 0 10px 30px -10px oklch(0 0 0 / 0.4), 0 0 0 1px oklch(1 0 0 / 0.05);
+  /* Darker floating shadow */
 }
 
 /* ============================================================
@@ -1935,7 +1949,6 @@ body.nav-open {
   font-size: var(--text-base);
   margin-bottom: 6px;
   display: -webkit-box;
-  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -2060,7 +2073,37 @@ body.nav-open {
 }
 
 .auth-page .card {
-  padding: 40px 36px;
+  /* Overrides for glassmorphic effect */
+  background: var(--card-bg-glass);
+  backdrop-filter: blur(16px) saturate(1.8);
+  -webkit-backdrop-filter: blur(16px) saturate(1.8);
+  border: 1px solid var(--border-glass);
+  box-shadow: var(--shadow-glass);
+  will-change: background, border, box-shadow, transform;
+  /* Optimize performance */
+}
+
+.terms-content {
+  scrollbar-width: thin;
+  scrollbar-color: var(--primary) transparent;
+}
+
+.terms-content::-webkit-scrollbar {
+  width: 5px;
+}
+
+.terms-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.terms-content::-webkit-scrollbar-thumb {
+  background: oklch(from var(--primary) l c h / 0.3);
+  border-radius: var(--radius-full);
+  transition: background var(--transition);
+}
+
+.terms-content:hover::-webkit-scrollbar-thumb {
+  background: var(--primary);
 }
 
 .auth-page h2 {
@@ -3101,19 +3144,19 @@ tr:last-child td {
   }
 
   .auth-page .card {
-    padding: 28px 20px;
+    padding: 24px 16px;
   }
 
   .auth-page {
-    margin: 16px auto;
+    margin: 12px auto 32px;
   }
 
   .feature-card {
-    padding: 28px 18px;
+    padding: 24px 16px;
   }
 
   .card {
-    padding: 20px;
+    padding: 16px;
   }
 
   .modal {
@@ -3128,9 +3171,6 @@ tr:last-child td {
 /* ============================================================
    RTL OVERRIDES
    ============================================================ */
-[dir="rtl"] .nav-drawer {
-  /* border right handled in mobile media query */
-}
 
 [dir="rtl"] .nav-links {
   flex-direction: row-reverse;

@@ -26,6 +26,8 @@ const PRECACHE = [
   "/pages/seller-profile.js",
   "/pages/order-detail.js",
   "/pages/admin.js",
+  "/pages/terms.js",
+  "/pages/privacy.js",
 ];
 
 self.addEventListener("install", (e) => {
