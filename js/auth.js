@@ -53,8 +53,9 @@ function stopNotifPolling() {
   if (badge) badge.classList.add('hidden');
 }
 
-function logout() {
+async function logout() {
   stopNotifPolling();
+  try { await api.post('/auth/logout', {}); } catch { /* proceed with local logout */ }
   localStorage.removeItem('accessToken');
   localStorage.removeItem('refreshToken');
   localStorage.removeItem('user');

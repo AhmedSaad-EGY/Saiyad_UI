@@ -33,13 +33,31 @@ async function renderCheckout(container) {
           <hr style="border-color:var(--border);margin:16px 0">
           <h3 style="margin-bottom:16px">${t('cart.shippingAddress')}</h3>
           <form id="addressForm">
-            <div class="form-group">
-              <label class="form-label" for="addrCity">${t('cart.city')}</label>
-              <input type="text" class="form-input" id="addrCity" required autocomplete="address-level2">
-            </div>
-            <div class="form-group">
-              <label class="form-label" for="addrLine">${t('cart.addressLine')}</label>
-              <input type="text" class="form-input" id="addrLine" required autocomplete="street-address">
+            <div class="grid grid-2" style="gap:12px">
+              <div class="form-group">
+                <label class="form-label">Full Name *</label>
+                <input type="text" class="form-input" id="addrFullName" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Phone *</label>
+                <input type="tel" class="form-input" id="addrPhone" required>
+              </div>
+              <div class="form-group" style="grid-column:1/-1">
+                <label class="form-label">Street Address *</label>
+                <input type="text" class="form-input" id="addrStreet" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">City *</label>
+                <input type="text" class="form-input" id="addrCity" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Governorate *</label>
+                <input type="text" class="form-input" id="addrGov" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Postal Code *</label>
+                <input type="text" class="form-input" id="addrPost" required>
+              </div>
             </div>
           </form>
         </div>
@@ -64,27 +82,30 @@ async function renderCheckout(container) {
       btn.innerHTML = `<i class="fas fa-spinner spinner"></i> ${t('cart.placingOrder')}`;
 
       try {
+        const fullName = document.getElementById('addrFullName').value.trim();
+        const phone = document.getElementById('addrPhone').value.trim();
+        const street = document.getElementById('addrStreet').value.trim();
         const city = document.getElementById('addrCity').value.trim();
-        const addressLine = document.getElementById('addrLine').value.trim();
-        if (!city || !addressLine) {
-          alertDiv.innerHTML = `<div class="alert alert-error">${t('cart.city')} and ${t('cart.addressLine')} are required.</div>`;
+        const governorate = document.getElementById('addrGov').value.trim();
+        const postalCode = document.getElementById('addrPost').value.trim();
+
+        if (!fullName || !phone || !street || !city || !governorate || !postalCode) {
+          alertDiv.innerHTML = `<div class="alert alert-error">All address fields are required.</div>`;
           btn.disabled = false;
           btn.innerHTML = `<i class="fas fa-lock"></i> ${t('cart.placeOrder')}`;
           return;
         }
 
-        const user = getUser();
-        const addr = await api.post('/shippingaddresses', {
-          fullName: user?.fullName || '',
-          phone: user?.phone || '',
-          city,
-          addressLine,
+        const addr = await api.post('/shipping-addresses', {
+          fullName, phone, street, city, governorate, postalCode
         });
 
-        const order = await api.post('/orders', { shippingAddressId: addr.id || addr.data?.id });
+        const addr_id = addr.id;
+        const order = await api.post('/orders', { shippingAddressId: addr_id });
+        const order_id = order.id;
 
         await api.post('/payments/initiate', {
-          orderId: order.id || order.data?.id,
+          orderId: order_id,
           paymentMethod: document.getElementById('paymentMethod').value,
         });
 

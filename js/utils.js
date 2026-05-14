@@ -97,7 +97,7 @@ function getLocale() {
 }
 
 function getCurrency() {
-  return 'USD';
+  return 'EGP';
 }
 
 function formatDate(dateStr) {

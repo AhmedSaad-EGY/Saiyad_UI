@@ -162,11 +162,16 @@ function renderRegister(container) {
         password: regPassword.value,
         role: document.getElementById('regRole').value,
       });
-      alertDiv.innerHTML = `<div class="alert alert-success">${t('auth.registerSuccess')}</div>`;
+      alertDiv.innerHTML = `
+        <div class="alert alert-success">
+          <i class="fas fa-envelope"></i>
+          <strong>Account created!</strong>
+          Please check your email and click the verification link before logging in.
+        </div>
+      `;
       regForm.reset();
       strengthBar.className = 'password-strength-bar strength-empty';
       strengthText.textContent = '';
-      setTimeout(() => navigate('login'), 1500);
     } catch (err) {
       alertDiv.innerHTML = `<div class="alert alert-error">${escapeHtml(err.message)}</div>`;
     } finally {

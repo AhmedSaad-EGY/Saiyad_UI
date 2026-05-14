@@ -62,7 +62,7 @@ async function renderOverview(content, user) {
   }
 
   try {
-    const products = await api.get('/products/my', { pageSize: 1 });
+    const products = await api.get('/products/seller', { pageSize: 1 });
     document.getElementById('dashProducts').innerHTML = `<h3><i class="fas fa-tag"></i> ${t('dash.products')}</h3><p style="font-size:2rem;font-weight:700;color:var(--primary)">${products.totalCount || products.total || 0}</p><p style="color:var(--text-muted)">${t('dash.yourProducts')}</p>`;
   } catch {
     document.getElementById('dashProducts').innerHTML = `<div class="alert alert-info">${t('common.error')}</div>`;
@@ -188,7 +188,7 @@ async function renderMyProducts(content) {
   });
 
   try {
-    const data = await api.get('/products/my', { pageSize: 50 });
+    const data = await api.get('/products/seller', { pageSize: 50 });
     const products = data.items || data.data || [];
     const list = document.getElementById('myProductsList');
     if (!products.length) {
@@ -270,7 +270,7 @@ async function renderNotifications(content) {
     $$('.mark-read').forEach(btn => {
       btn.addEventListener('click', async () => {
         try {
-          await api.put(`/notifications/${btn.dataset.id}/read`);
+          await api.patch(`/notifications/${btn.dataset.id}/read`);
           btn.closest('.notif-item').classList.remove('unread');
           btn.remove();
           updateNotifBadge();

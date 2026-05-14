@@ -20,9 +20,10 @@ async function renderProducts(_container, _fullPath, params) {
 
   async function loadCategories() {
     try {
-      const cats = await api.get('/categories');
+      const res = await api.get('/categories', { pageSize: 100 });
       const sel = document.getElementById('productCategory');
-      (cats || []).forEach(c => {
+      const cats = res.items || res.data || res || [];
+      cats.forEach(c => {
         const opt = document.createElement('option');
         opt.value = c.id;
         opt.textContent = c.name;

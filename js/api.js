@@ -4,6 +4,20 @@ async function request(endpoint, options = {}) {
   if (token) headers['Authorization'] = `Bearer ${token}`;
 
   const res = await fetch(`${APP_CONFIG.apiBaseUrl}${endpoint}`, { ...options, headers });
+
+  if (res.status === 401 && !options._retry) {
+    const refreshed = await refreshAccessToken();
+    if (refreshed) {
+      return request(endpoint, { ...options, _retry: true });
+    }
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('user');
+    if (typeof updateNavbar === 'function') updateNavbar();
+    if (typeof navigate === 'function') navigate('login');
+    throw new Error('Session expired. Please log in again.');
+  }
+
   const data = res.status === 204 ? null : await res.json();
 
   if (!res.ok) {
@@ -49,8 +63,14 @@ async function refreshAccessToken() {
   const refreshToken = localStorage.getItem('refreshToken');
   if (!refreshToken) return false;
   try {
-    const data = await api.post('/auth/refresh', { refreshToken });
-    localStorage.setItem('accessToken', data.accessToken);
+    const res = await fetch(`${APP_CONFIG.apiBaseUrl}/auth/refresh`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ refreshToken }),
+    });
+    if (!res.ok) throw new Error('Refresh failed');
+    const data = await res.json();
+    localStorage.setItem('accessToken', data.token);
     localStorage.setItem('refreshToken', data.refreshToken);
     return true;
   } catch {
