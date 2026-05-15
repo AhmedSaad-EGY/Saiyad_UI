@@ -69,6 +69,17 @@ const translations = {
     "auth.and": "and",
     "auth.privacyPolicy": "Privacy Policy",
     "auth.termsRequired": "Please accept the terms and conditions.",
+    "auth.forgotPassword": "Forgot Password?",
+    "auth.sendResetLink": "Send Reset Link",
+    "auth.sendingResetLink": "Sending reset link...",
+    "auth.resetLinkSent": "Password reset link has been sent to your email.",
+    "auth.resendLink": "Resend Link",
+    "auth.resetPassword": "Reset Password",
+    "auth.newPassword": "New Password",
+    "auth.confirmNewPassword": "Confirm New Password",
+    "auth.updatingPassword": "Updating password...",
+    "auth.passwordResetSuccess":
+      "Password updated successfully! Redirecting to login...",
 
     // Products
     "products.title": "Products",
@@ -396,6 +407,18 @@ const translations = {
     "auth.and": "و",
     "auth.privacyPolicy": "سياسة الخصوصية",
     "auth.termsRequired": "يرجى الموافقة على الشروط والأحكام.",
+    "auth.forgotPassword": "نسيت كلمة المرور؟",
+    "auth.sendResetLink": "إرسال رابط إعادة التعيين",
+    "auth.sendingResetLink": "جارٍ إرسال الرابط...",
+    "auth.resetLinkSent":
+      "تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني.",
+    "auth.resendLink": "إعادة إرسال الرابط",
+    "auth.resetPassword": "إعادة تعيين كلمة المرور",
+    "auth.newPassword": "كلمة المرور الجديدة",
+    "auth.confirmNewPassword": "تأكيد كلمة المرور الجديدة",
+    "auth.updatingPassword": "جارٍ تحديث كلمة المرور...",
+    "auth.passwordResetSuccess":
+      "تم تحديث كلمة المرور بنجاح! جاري التحويل لتسجيل الدخول...",
 
     // Products
     "products.title": "المنتجات",

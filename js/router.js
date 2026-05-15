@@ -2,6 +2,8 @@ const routeMap = {
   "": "renderHome",
   login: "renderLogin",
   register: "renderRegister",
+  "forgot-password": "renderForgotPassword",
+  "reset-password": "renderResetPassword",
   products: "renderProducts",
   "product-detail": "renderProductDetail",
   auctions: "renderAuctions",
