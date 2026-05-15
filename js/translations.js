@@ -149,6 +149,7 @@ const translations = {
     "auction.invalidBid": "Please enter a valid bid amount.",
     "auction.ended": "Ended",
     "auction.endingSoon": "Ending soon!",
+    "auction.newBid": "New bid placed!",
 
     // Cart
     "cart.title": "Your Cart",
@@ -323,6 +324,7 @@ const translations = {
     "notif.title": "Notifications",
     "notif.markRead": "Mark Read",
     "notif.markAllRead": "Mark All Read",
+    "notif.markedAllRead": "All marked as read",
     "notif.noNotifications": "No notifications",
     "notif.unreadCount": "unread",
 
@@ -501,6 +503,7 @@ const translations = {
     "auction.invalidBid": "الرجاء إدخال مبلغ مزايدة صحيح.",
     "auction.ended": "انتهى",
     "auction.endingSoon": "سينتهي قريباً!",
+    "auction.newBid": "تم تقديم مزايدة جديدة!",
 
     // Cart
     "cart.title": "عربة التسوق",
@@ -563,7 +566,6 @@ const translations = {
     "verify.error": "فشل التحقق. الرابط قد يكون منتهياً أو غير صالح.",
     "verify.loggingIn": "جارٍ تسجيل الدخول تلقائياً...",
     "verify.redirecting": "جاري التحويل إلى تسجيل الدخول...",
-    "verify.loggingIn": "جارٍ تسجيل الدخول تلقائياً...",
     "verify.invalidLink": "رابط تحقق غير صالح.",
 
     // Shipping Addresses
@@ -676,6 +678,7 @@ const translations = {
     "notif.title": "الإشعارات",
     "notif.markRead": "تحديد كمقروء",
     "notif.markAllRead": "تحديد الكل كمقروء",
+    "notif.markedAllRead": "تم تحديد الكل كمقروء",
     "notif.noNotifications": "لا توجد إشعارات",
     "notif.unreadCount": "غير مقروء",
 

@@ -298,6 +298,7 @@ function openQuickView(product) {
   const existing = document.querySelector(".modal-overlay.show");
   if (existing) existing.remove();
 
+  const prevFocus = document.activeElement;
   const overlay = document.createElement("div");
   overlay.className = "modal-overlay show";
   overlay.setAttribute("role", "dialog");
@@ -333,7 +334,7 @@ function openQuickView(product) {
     </div>
   `;
 
-  overlay.addEventListener("click", () => overlay.remove());
+  overlay.addEventListener("click", () => { overlay.remove(); if (prevFocus && typeof prevFocus.focus === "function") prevFocus.focus(); });
   document.body.appendChild(overlay);
 }
 
@@ -342,6 +343,7 @@ function openLightbox(images, startIndex = 0) {
   const existing = document.querySelector(".lightbox");
   if (existing) existing.remove();
 
+  const prevFocus = document.activeElement;
   let current = startIndex;
   const lb = document.createElement("div");
   lb.className = "lightbox show";
@@ -372,6 +374,7 @@ function openLightbox(images, startIndex = 0) {
   function close() {
     lb.remove();
     document.removeEventListener("keydown", onKey);
+    if (prevFocus && typeof prevFocus.focus === "function") prevFocus.focus();
   }
   function onKey(e) {
     if (e.key === "Escape") close();
@@ -425,4 +428,93 @@ function clearAllFieldErrors(formEl) {
       ".form-input.error, .form-select.error, .form-textarea.error",
     )
     .forEach(clearFieldError);
+}
+
+/* ===== Password strength meter ===== */
+function getPasswordStrength(pw) {
+  let score = 0;
+  if (pw.length >= 6) score++;
+  if (pw.length >= 10) score++;
+  if (/[a-z]/.test(pw) && /[A-Z]/.test(pw)) score++;
+  if (/\d/.test(pw)) score++;
+  if (/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(pw)) score++;
+  const map = {
+    0: { cls: "strength-empty", label: "" },
+    1: { cls: "strength-weak", label: t("auth.passwordStrength.weak") },
+    2: { cls: "strength-fair", label: t("auth.passwordStrength.fair") },
+    3: { cls: "strength-good", label: t("auth.passwordStrength.good") },
+    4: { cls: "strength-strong", label: t("auth.passwordStrength.strong") },
+    5: { cls: "strength-strong", label: t("auth.passwordStrength.strong") },
+  };
+  return map[score] || map[0];
+}
+
+/* ===== Form validation ===== */
+function validateForm(formEl, rules) {
+  let firstInvalid = null;
+  for (const rule of rules) {
+    const el = rule.element;
+    if (!el) continue;
+    if (rule.required && !el.value.trim()) {
+      showFieldError(el, rule.messages?.required || t("auth.fieldRequired"));
+      if (!firstInvalid) firstInvalid = el;
+      continue;
+    }
+    if (rule.email && el.value.trim()) {
+      if (!el.validity.valid) {
+        showFieldError(el, rule.messages?.email || t("auth.invalidEmail"));
+        if (!firstInvalid) firstInvalid = el;
+        continue;
+      }
+    }
+    if (rule.minLength && el.value.trim().length < rule.minLength) {
+      showFieldError(el, rule.messages?.minLength || `${t("auth.password")} must be at least ${rule.minLength} characters.`);
+      if (!firstInvalid) firstInvalid = el;
+      continue;
+    }
+    if (rule.hasSpecialChar && el.value.trim()) {
+      if (!/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(el.value)) {
+        showFieldError(el, rule.messages?.specialChar || t("auth.invalidSpecialChar"));
+        if (!firstInvalid) firstInvalid = el;
+        continue;
+      }
+    }
+    if (rule.phone && el.value.trim()) {
+      if (!/^[\d\s+\-()]{7,20}$/.test(el.value.trim())) {
+        showFieldError(el, rule.messages?.phone || "Invalid phone number.");
+        if (!firstInvalid) firstInvalid = el;
+        continue;
+      }
+    }
+    if (rule.matches && el.value !== rule.matches.element.value) {
+      showFieldError(el, rule.messages?.matches || t("auth.passwordsDoNotMatch"));
+      if (!firstInvalid) firstInvalid = el;
+      continue;
+    }
+    if (rule.minAge && el.value) {
+      const age = calculateAge(el.value);
+      if (isNaN(age) || age < rule.minAge) {
+        showFieldError(el, rule.messages?.minAge || t("auth.minAgeRequired").replace("{minAge}", rule.minAge));
+        if (!firstInvalid) firstInvalid = el;
+      }
+    }
+  }
+  if (firstInvalid) {
+    firstInvalid.classList.add("shake");
+    setTimeout(() => firstInvalid.classList.remove("shake"), 500);
+    firstInvalid.focus();
+    return false;
+  }
+  return true;
+}
+
+/* ===== Age calculator ===== */
+function calculateAge(birthdate) {
+  if (!birthdate) return NaN;
+  const birth = new Date(birthdate);
+  const today = new Date();
+  let age = today.getFullYear() - birth.getFullYear();
+  const m = today.getMonth() - birth.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
+  return age;
 }

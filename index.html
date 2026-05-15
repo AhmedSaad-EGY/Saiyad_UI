@@ -19,6 +19,8 @@
 </head>
 
 <body>
+  <a href="#app" class="skip-link">${typeof t === 'function' ? t("common.goHome") : "Skip to content"}</a>
+  <div id="ariaLive" class="sr-only" aria-live="polite" aria-atomic="true"></div>
   <nav class="navbar">
     <div class="container nav-container">
       <a href="#/" class="nav-logo">
@@ -69,6 +71,7 @@
   </nav>
 
   <main id="app" class="container main-content"></main>
+  <button id="backToTop" class="btn btn-primary back-to-top" aria-label="Back to top"><i class="fas fa-arrow-up"></i></button>
 
   <footer class="footer">
     <div class="container">

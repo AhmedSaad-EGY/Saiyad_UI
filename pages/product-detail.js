@@ -27,6 +27,7 @@ async function renderProductDetail(container, route, params) {
     ].filter(Boolean);
 
     container.innerHTML = `
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="#/">${t("nav.home")}</a> <i class="fas fa-chevron-${getCurrentLang() === "ar" ? "left" : "right"}" aria-hidden="true"></i> <a href="#/products">${t("nav.products")}</a> <i class="fas fa-chevron-${getCurrentLang() === "ar" ? "left" : "right"}" aria-hidden="true"></i> <span>${escapeHtml(p.title)}</span></nav>
       <div class="detail-page">
         <div>
           <div class="detail-image" id="mainImageWrap" style="cursor:pointer;padding:0">
@@ -104,6 +105,35 @@ async function renderProductDetail(container, route, params) {
         </div>
       </div>
     `;
+
+    // Contact seller
+    if (p.seller?.id) {
+      const mainActions = container.querySelector(".detail-info > div:nth-child(5)");
+      if (mainActions) {
+        const contactBtn = document.createElement("a");
+        contactBtn.href = `#/seller-profile?userId=${p.seller.id}`;
+        contactBtn.className = "btn btn-outline btn-lg";
+        contactBtn.innerHTML = `<i class="fas fa-envelope"></i> Contact Seller`;
+        mainActions.appendChild(contactBtn);
+      }
+    }
+
+    // Similar products
+    (async () => {
+      try {
+        const similar = await api.get("/products", { categoryId: p.categoryId || p.category, pageSize: 4 });
+        const items = similar.items || similar.data || [];
+        if (items.length) {
+          const section = document.createElement("div");
+          section.style.marginTop = "40px";
+          section.innerHTML = `<div class="section-header"><h2><i class="fas fa-tag"></i> ${t("products.title")}</h2></div><div class="product-grid" id="similarGrid"></div>`;
+          container.appendChild(section);
+          const grid = document.getElementById("similarGrid");
+          renderProductCards(grid, items.filter((s) => s.id !== p.id).slice(0, 4));
+          observeAnimations();
+        }
+      } catch {}
+    })();
 
     // Track recently viewed
     trackRecentlyViewed(p.id, p.title, p.primaryImageUrl, p.price, "product");

@@ -72,6 +72,7 @@ async function renderCart(container) {
 
     $$(".remove-item").forEach((btn) => {
       btn.addEventListener("click", async () => {
+        if (!confirm(t("cart.clear") + "?")) return;
         try {
           await api.delete(`/cart/items/${btn.dataset.id}`);
           renderCart(container);
@@ -113,9 +114,7 @@ async function renderCart(container) {
       navigate("login");
       return;
     }
-    container.innerHTML = `
-      <div class="section-header"><h2><i class="fas fa-shopping-cart"></i> ${t("cart.title")}</h2></div>
-      renderEmptyState(container, { icon: 'fa-exclamation-triangle', title: t('common.error'), desc: escapeHtml(e.message), actionText: t('common.retry'), actionFn: router });
-    `;
+    container.innerHTML = `<div class="section-header"><h2><i class="fas fa-shopping-cart"></i> ${t("cart.title")}</h2></div>`;
+    renderEmptyState(container, { icon: 'fa-exclamation-triangle', title: t('common.error'), desc: escapeHtml(e.message), actionText: t('common.retry'), actionFn: () => router() });
   }
 }

@@ -3,13 +3,14 @@
 // ============================================================
 function showToast(msg, type = "info") {
   const existing = document.querySelector(".toast-container");
-  const container =
+    const container =
     existing ||
     (() => {
       const c = document.createElement("div");
       c.className = "toast-container";
+      const isRtl = document.documentElement.dir === "rtl";
       c.style.cssText =
-        "position:fixed;bottom:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:10px;pointer-events:none";
+        `position:fixed;bottom:20px;${isRtl ? "left" : "right"}:20px;z-index:9999;display:flex;flex-direction:column;gap:10px;pointer-events:none`;
       document.body.appendChild(c);
       return c;
     })();
@@ -48,6 +49,8 @@ function showToast(msg, type = "info") {
   toast.innerHTML = `<i class="fas ${icons[type] || icons.info}" style="font-size:1.1rem"></i> <span>${msg}</span>`;
 
   container.appendChild(toast);
+  const live = document.getElementById("ariaLive");
+  if (live) live.textContent = msg;
   setTimeout(() => {
     toast.style.transition = "all 0.3s ease";
     toast.style.opacity = "0";
@@ -133,9 +136,17 @@ window.addEventListener(
     const navbar = document.querySelector(".navbar");
     if (!navbar) return;
     navbar.classList.toggle("scrolled", window.scrollY > 20);
+    const btt = document.getElementById("backToTop");
+    if (btt) btt.classList.toggle("visible", window.scrollY > 400);
   },
   { passive: true },
 );
+
+document.addEventListener("click", (e) => {
+  if (e.target.closest("#backToTop")) {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+});
 
 // ============================================================
 // NAVBAR INTERACTIVITY

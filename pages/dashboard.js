@@ -4,16 +4,25 @@ async function renderDashboard(container, route, params) {
   const tab = params.tab || "overview";
   const user = getUser();
 
+  const tabs = [
+    { id: "overview", icon: "fa-tachometer-alt", label: t("dash.overview") },
+    { id: "orders", icon: "fa-box", label: t("dash.orders") },
+    ...(hasAnyRole("Fisherman", "BaitSeller", "Auctioneer") ? [{ id: "products", icon: "fa-tag", label: t("dash.products") }] : []),
+    { id: "wishlist", icon: "fa-heart", label: t("dash.wishlist") },
+    { id: "notifications", icon: "fa-bell", label: t("dash.notifications") },
+    { id: "profile", icon: "fa-user", label: t("dash.profile") },
+    { id: "password", icon: "fa-key", label: t("dash.changePassword") },
+  ];
+
   container.innerHTML = `
     <div class="dashboard-layout">
       <div class="dashboard-sidebar">
-        <a href="#/dashboard" class="dash-link ${tab === "overview" ? "active" : ""}" data-tab="overview"><i class="fas fa-tachometer-alt"></i> ${t("dash.overview")}</a>
-        <a href="#/dashboard?tab=orders" class="dash-link ${tab === "orders" ? "active" : ""}" data-tab="orders"><i class="fas fa-box"></i> ${t("dash.orders")}</a>
-        ${hasAnyRole("Fisherman", "BaitSeller", "Auctioneer") ? `<a href="#/dashboard?tab=products" class="dash-link ${tab === "products" ? "active" : ""}" data-tab="products"><i class="fas fa-tag"></i> ${t("dash.products")}</a>` : ""}
-        <a href="#/dashboard?tab=wishlist" class="dash-link ${tab === "wishlist" ? "active" : ""}" data-tab="wishlist"><i class="fas fa-heart"></i> ${t("dash.wishlist")}</a>
-        <a href="#/dashboard?tab=notifications" class="dash-link ${tab === "notifications" ? "active" : ""}" data-tab="notifications"><i class="fas fa-bell"></i> ${t("dash.notifications")}</a>
-        <a href="#/dashboard?tab=profile" class="dash-link ${tab === "profile" ? "active" : ""}" data-tab="profile"><i class="fas fa-user"></i> ${t("dash.profile")}</a>
-        <a href="#/dashboard?tab=password" class="dash-link ${tab === "password" ? "active" : ""}" data-tab="password"><i class="fas fa-key"></i> ${t("dash.changePassword")}</a>
+        ${tabs.map(tabItem => `<a href="#/dashboard${tabItem.id === "overview" ? "" : `?tab=${tabItem.id}`}" class="dash-link ${tab === tabItem.id ? "active" : ""}" data-tab="${tabItem.id}"><i class="fas ${tabItem.icon}"></i> ${tabItem.label}</a>`).join("")}
+      </div>
+      <div class="dash-mobile-tabs">
+        <select id="dashMobileSelect" class="form-select" aria-label="Dashboard tabs">
+          ${tabs.map(tabItem => `<option value="${tabItem.id}" ${tab === tabItem.id ? "selected" : ""}>${tabItem.label}</option>`).join("")}
+        </select>
       </div>
       <div class="dashboard-content" id="dashContent"></div>
     </div>
@@ -25,6 +34,10 @@ async function renderDashboard(container, route, params) {
       const t = a.dataset.tab;
       navigate(`dashboard?tab=${t}`);
     });
+  });
+
+  document.getElementById("dashMobileSelect")?.addEventListener("change", (e) => {
+    navigate(`dashboard?tab=${e.target.value}`);
   });
 
   const content = document.getElementById("dashContent");
@@ -171,11 +184,12 @@ async function renderMyProducts(content) {
         <div class="form-group"><label class="form-label">${t("product.description")}</label><textarea class="form-textarea" id="prodDesc"></textarea></div>
         <div class="form-group"><label class="form-label">${t("product.price")} *</label><input type="number" class="form-input" id="prodPrice" min="0" step="0.01" required></div>
         <div class="form-group"><label class="form-label">${t("product.condition")}</label><select class="form-select" id="prodCondition"><option value="New">${t("product.new")}</option><option value="Used">${t("product.used")}</option></select></div>
-        <div class="form-group">
-          <label class="form-label">${t("product.images")}</label>
-          <input type="file" class="form-input" id="prodImageInput" accept="image/jpeg,image/png,image/webp" style="padding:8px">
-          <div id="uploadProgress" style="margin-top:4px;font-size:0.82rem;color:var(--text-muted)"></div>
-        </div>
+          <div class="form-group">
+            <label class="form-label">${t("product.images")}</label>
+            <input type="file" class="form-input" id="prodImageInput" accept="image/jpeg,image/png,image/webp" style="padding:8px">
+            <img id="prodImagePreview" class="hidden" style="width:120px;height:120px;object-fit:cover;border-radius:var(--radius-md);margin-top:8px;border:1px solid var(--border)">
+            <div id="uploadProgress" style="margin-top:4px;font-size:0.82rem;color:var(--text-muted)"></div>
+          </div>
         <div id="productAlert"></div>
         <button type="submit" class="btn btn-primary" id="prodSubmit">${t("product.save")}</button>
       </form>
@@ -184,6 +198,16 @@ async function renderMyProducts(content) {
 
   document.getElementById("showProductForm").addEventListener("click", () => {
     document.getElementById("productFormContainer").classList.toggle("hidden");
+  });
+
+  document.getElementById("prodImageInput")?.addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    const preview = document.getElementById("prodImagePreview");
+    if (file && preview) {
+      const reader = new FileReader();
+      reader.onload = (ev) => { preview.src = ev.target.result; preview.classList.remove("hidden"); };
+      reader.readAsDataURL(file);
+    }
   });
 
   document
@@ -291,7 +315,10 @@ async function renderWishlist(content) {
             <tr>
               <td><a href="#/product-detail?id=${w.productId}" style="text-decoration:none;color:var(--text);font-weight:500">${escapeHtml(w.product?.title || `Product #${w.productId}`)}</a></td>
               <td>${w.product?.price ? formatPrice(w.product.price) : "-"}</td>
-              <td><a href="#/product-detail?id=${w.productId}" class="btn btn-primary btn-sm">${t("dash.view")}</a></td>
+              <td style="display:flex;gap:8px">
+                <a href="#/product-detail?id=${w.productId}" class="btn btn-primary btn-sm">${t("dash.view")}</a>
+                <button class="btn btn-danger btn-sm remove-wishlist" data-id="${w.productId}"><i class="fas fa-trash"></i></button>
+              </td>
             </tr>
           `,
             )
@@ -299,6 +326,19 @@ async function renderWishlist(content) {
         </table>
       </div>
     `;
+
+    document.querySelectorAll(".remove-wishlist").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        if (!confirm("Remove from wishlist?")) return;
+        try {
+          await api.del(`/wishlist/${btn.dataset.id}`);
+          showToast(t("product.wishlistUpdated"), "success");
+          renderWishlist(content);
+        } catch (err) {
+          showToast(err.message, "error");
+        }
+      });
+    });
     observeAnimations();
   } catch (e) {
     document.getElementById("wishlistItems").innerHTML =
@@ -307,7 +347,7 @@ async function renderWishlist(content) {
 }
 
 async function renderNotifications(content) {
-  content.innerHTML = `<div class="card animate-on-scroll"><h3><i class="fas fa-bell"></i> ${t("dash.notifications")}</h3><div id="notifList"><i class="fas fa-spinner spinner"></i> ${t("common.loading")}</div></div>`;
+  content.innerHTML = `<div class="card animate-on-scroll"><h3><i class="fas fa-bell"></i> ${t("dash.notifications")}</h3><div style="display:flex;gap:8px;margin-bottom:12px"><button class="btn btn-sm btn-ghost" id="markAllRead"><i class="fas fa-check-double"></i> ${t("notif.markAllRead")}</button></div><div id="notifList"><i class="fas fa-spinner spinner"></i> ${t("common.loading")}</div></div>`;
   try {
     const data = await api.get("/notifications");
     const notifs = data.items || data.data || [];
@@ -343,6 +383,16 @@ async function renderNotifications(content) {
           updateNotifBadge();
         } catch {}
       });
+    });
+
+    document.getElementById("markAllRead")?.addEventListener("click", async () => {
+      try {
+        await api.patch("/notifications/read-all");
+        document.querySelectorAll("#notifList .notif-item").forEach((el) => el.classList.remove("unread"));
+        document.querySelectorAll("#notifList .mark-read").forEach((el) => el.remove());
+        updateNotifBadge();
+        showToast(t("notif.markedAllRead"), "success");
+      } catch {}
     });
     observeAnimations();
   } catch (e) {
@@ -436,7 +486,11 @@ function renderChangePassword(content) {
         </div>
         <div class="form-group">
           <label class="form-label">${t("dash.newPassword")}</label>
-          <input type="password" class="form-input" id="newPassword" required minlength="6">
+          <div class="password-wrapper">
+            <input type="password" class="form-input" id="newPassword" required minlength="6">
+          </div>
+          <div class="password-strength" id="dashStrength"><div class="password-strength-bar" id="dashStrengthBar"></div></div>
+          <div class="password-strength-text" id="dashStrengthText"></div>
         </div>
         <div id="passwordAlert"></div>
         <button type="submit" class="btn btn-primary" id="passwordSubmit">${t("dash.changePwBtn")}</button>
@@ -450,6 +504,21 @@ function renderChangePassword(content) {
 
   [oldInput, newInput].forEach((el) => {
     el?.addEventListener("input", () => clearFieldError(el));
+  });
+
+  newInput.addEventListener("input", () => {
+    const pw = newInput.value;
+    const bar = document.getElementById("dashStrengthBar");
+    const txt = document.getElementById("dashStrengthText");
+    if (!pw) {
+      bar.className = "password-strength-bar strength-empty";
+      txt.textContent = "";
+      return;
+    }
+    const result = getPasswordStrength(pw);
+    bar.className = "password-strength-bar " + result.cls;
+    txt.textContent = result.label;
+    txt.style.color = getComputedStyle(bar).backgroundColor;
   });
 
   document
