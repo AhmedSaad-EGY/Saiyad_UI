@@ -24,6 +24,7 @@ async function renderAuctionDetail(container, route, params) {
       const bids = a.bids || [];
 
       container.innerHTML = `
+        <nav class="breadcrumb" aria-label="Breadcrumb"><a href="#/">${t("nav.home")}</a> <i class="fas fa-chevron-${getCurrentLang() === "ar" ? "left" : "right"}" aria-hidden="true"></i> <a href="#/auctions">${t("nav.auctions")}</a> <i class="fas fa-chevron-${getCurrentLang() === "ar" ? "left" : "right"}" aria-hidden="true"></i> <span>${escapeHtml(product.title || 'Auction Item')}</span></nav>
         <div class="detail-page">
           <div>
             <div class="detail-image">
@@ -159,6 +160,7 @@ async function renderAuctionDetail(container, route, params) {
                 bidDisplay.style.animation = 'none';
                 bidDisplay.offsetHeight;
                 bidDisplay.style.animation = 'priceFlash 0.5s var(--ease-bounce)';
+                showToast(t('auction.newBid'), 'info');
               }
               bidDisplay.innerHTML = newText;
             }
