@@ -164,6 +164,33 @@
   /* Darker floating shadow */
 }
 
+/* Arabic Typography Override */
+[lang="ar"] {
+  --font-sans: 'Cairo', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-heading: 'Cairo', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --leading: 1.8;
+  --leading-tight: 1.4;
+  --leading-relaxed: 1.95;
+  /* Bump font scale slightly for better Cairo legibility */
+  --text-xs: 0.78rem;
+  --text-sm: 0.88rem;
+  --text-base: 1rem;
+  --text-lg: 1.15rem;
+  --text-xl: 1.35rem;
+  --text-2xl: 1.65rem;
+  --text-3xl: 2.1rem;
+}
+
+/* Subtle shadow for Arabic headings in dark mode to improve contrast and depth */
+[data-theme="dark"] [lang="ar"] h1,
+[data-theme="dark"] [lang="ar"] h2,
+[data-theme="dark"] [lang="ar"] h3,
+[data-theme="dark"] [lang="ar"] h4,
+[data-theme="dark"] [lang="ar"] h5,
+[data-theme="dark"] [lang="ar"] h6 {
+  text-shadow: 0 2px 4px oklch(0 0 0 / 0.5);
+}
+
 /* ============================================================
    DIRECTION
    ============================================================ */

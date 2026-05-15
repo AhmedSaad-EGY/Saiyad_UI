@@ -78,7 +78,9 @@ async function renderOverview(content, user) {
   }
 
   try {
-    const products = await api.get("/products/seller", { pageSize: 1 });
+    const products = await api
+      .get("/products/my", { pageSize: 1 })
+      .catch(() => api.get("/products/seller", { pageSize: 1 }));
     document.getElementById("dashProducts").innerHTML =
       `<h3><i class="fas fa-tag"></i> ${t("dash.products")}</h3><p style="font-size:2rem;font-weight:700;color:var(--primary)">${products.totalCount || products.total || 0}</p><p style="color:var(--text-muted)">${t("dash.yourProducts")}</p>`;
   } catch {
