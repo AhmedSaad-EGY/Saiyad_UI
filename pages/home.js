@@ -30,7 +30,7 @@ async function renderHome(container) {
 
   try {
     const [products, auctions] = await Promise.all([
-      api.get("/products", { pageSize: 4, status: "Available" }),
+      api.get("/products", { pageSize: 4 }),
       api.get("/auctions", { pageSize: 4, status: "Active" }),
     ]);
     renderProductCards(

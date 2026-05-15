@@ -53,14 +53,14 @@ async function renderProducts(_container, _fullPath, params) {
     const sort = document.getElementById('productSort')?.value || '';
 
     try {
-      const apiParams = { page, pageSize, status: 'Available' };
-      if (search) apiParams.search = search;
+      const apiParams = { page, pageSize };
+      if (search) apiParams.searchTerm = search;
       if (categoryId) apiParams.categoryId = categoryId;
-      const orderBy = sort === 'newest' ? 'createdAt desc' : sort === 'price_asc' ? 'price asc' : sort === 'price_desc' ? 'price desc' : undefined;
-      if (orderBy) apiParams.orderBy = orderBy;
-
       const data = await api.get('/products', apiParams);
       const items = data.items || data.data || [];
+      if (sort === 'price_asc') items.sort((a, b) => (a.price || 0) - (b.price || 0));
+      if (sort === 'price_desc') items.sort((a, b) => (b.price || 0) - (a.price || 0));
+      if (sort === 'newest') items.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
       if (!items.length) {
         renderEmptyState(list, { icon: 'fa-box-open', title: t('products.noProducts'), desc: t('common.clearFilters'), actionText: t('common.clearFilters'), actionHref: '#/products' });
       } else {
