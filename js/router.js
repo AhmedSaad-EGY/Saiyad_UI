@@ -22,6 +22,7 @@ const routeMap = {
 
 let currentRouteKey = null;
 let currentParams = {};
+window.onRouteCleanup = null;
 
 function navigate(path) {
   window.location.hash = `#/${path}`;
@@ -56,6 +57,12 @@ async function router() {
     return;
   }
 
+  // Cleanup previous route resources (intervals, listeners)
+  if (typeof window.onRouteCleanup === "function") {
+    window.onRouteCleanup();
+    window.onRouteCleanup = null;
+  }
+
   // Allow re-render when route key is same but params changed (e.g. dashboard tabs)
   const paramsChanged =
     JSON.stringify(currentParams) !== JSON.stringify(params);
@@ -74,8 +81,6 @@ async function router() {
     const fullPath = route;
     await handler(app, fullPath, params);
     updateNavbar();
-    updateCartBadge();
-    updateNotifBadge();
 
     requestAnimationFrame(() => {
       app.style.opacity = "1";

@@ -1,4 +1,4 @@
-const CACHE = "sayiad-v5";
+const CACHE = "sayiad-v6";
 const PRECACHE = [
   "/",
   "/index.html",

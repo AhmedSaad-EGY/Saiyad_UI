@@ -375,15 +375,33 @@ function renderProfile(content, user) {
   `;
   observeAnimations();
 
+  const nameInput = document.getElementById("profileName");
+  const emailInput = document.getElementById("profileEmail");
+  const phoneInput = document.getElementById("profilePhone");
+
+  [nameInput, emailInput, phoneInput].forEach((el) => {
+    el?.addEventListener("input", () => clearFieldError(el));
+  });
+
   document
     .getElementById("profileForm")
     .addEventListener("submit", async (e) => {
       e.preventDefault();
-      const name = document.getElementById("profileName").value;
-      const email = document.getElementById("profileEmail").value;
-      const phone = document.getElementById("profilePhone").value;
+      const form = e.target;
       const submit = document.getElementById("profileSubmit");
       const alertDiv = document.getElementById("profileAlert");
+
+      const valid = validateForm(form, [
+        {
+          element: nameInput,
+          required: true,
+          messages: { required: t("auth.fullName") + " is required." },
+        },
+        { element: emailInput, required: true, email: true },
+        { element: phoneInput, phone: true },
+      ]);
+
+      if (!valid) return;
 
       submit.disabled = true;
       submit.innerHTML = `<i class="fas fa-spinner spinner"></i> ${t("dash.updating")}`;
@@ -391,9 +409,9 @@ function renderProfile(content, user) {
 
       try {
         const data = await api.put("/users/profile", {
-          fullName: name,
-          email,
-          phone,
+          fullName: nameInput.value.trim(),
+          email: emailInput.value.trim(),
+          phone: phoneInput.value.trim(),
         });
         localStorage.setItem("user", JSON.stringify(data.user || data));
         updateNavbar();
@@ -427,14 +445,34 @@ function renderChangePassword(content) {
   `;
   observeAnimations();
 
+  const oldInput = document.getElementById("oldPassword");
+  const newInput = document.getElementById("newPassword");
+
+  [oldInput, newInput].forEach((el) => {
+    el?.addEventListener("input", () => clearFieldError(el));
+  });
+
   document
     .getElementById("passwordForm")
     .addEventListener("submit", async (e) => {
       e.preventDefault();
-      const old = document.getElementById("oldPassword").value;
-      const pw = document.getElementById("newPassword").value;
+      const form = e.target;
       const submit = document.getElementById("passwordSubmit");
       const alertDiv = document.getElementById("passwordAlert");
+
+      const valid = validateForm(form, [
+        { element: oldInput, required: true },
+        {
+          element: newInput,
+          required: true,
+          minLength: 6,
+          messages: {
+            minLength: t("auth.password") + " must be at least 6 characters.",
+          },
+        },
+      ]);
+
+      if (!valid) return;
 
       submit.disabled = true;
       submit.innerHTML = `<i class="fas fa-spinner spinner"></i> ${t("dash.changing")}`;
@@ -442,8 +480,8 @@ function renderChangePassword(content) {
 
       try {
         await api.post("/auth/change-password", {
-          oldPassword: old,
-          newPassword: pw,
+          oldPassword: oldInput.value,
+          newPassword: newInput.value,
         });
         alertDiv.innerHTML = `<div class="alert alert-success">${t("dash.passwordChanged")}</div>`;
         document.getElementById("passwordForm").reset();

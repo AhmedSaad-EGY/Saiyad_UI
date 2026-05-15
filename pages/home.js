@@ -72,6 +72,8 @@ function renderProductCards(container, products) {
   container.innerHTML = products
     .map((p, i) => {
       const title = p.title || "Product";
+      const category = p.category || p.categoryName;
+      const stock = p.stock ?? p.stockQuantity;
       return `
       <a href="#/product-detail?id=${p.id}" class="product-card card-lift animate-on-scroll stagger-${Math.min(i + 1, 8)}" aria-label="${escapeHtml(title)} - ${formatPrice(p.price)}">
         <div class="product-card-img">
@@ -85,12 +87,12 @@ function renderProductCards(container, products) {
             <span class="status ${statusClass(p.status)}">${p.status || t("common.N/A")}</span>
           </div>
           <div class="product-card-meta">
-            ${p.category ? `<span><i class="fas fa-tag" aria-hidden="true"></i> ${escapeHtml(p.category)}</span>` : ""}
+            ${category ? `<span><i class="fas fa-tag" aria-hidden="true"></i> ${escapeHtml(category)}</span>` : ""}
           </div>
         </div>
         <div class="product-card-footer">
           <small>${p.condition || ""}</small>
-          ${p.stock != null ? `<small>${p.stock} ${t("product.stock")}</small>` : ""}
+          ${stock != null ? `<small>${stock} ${t("product.stock")}</small>` : ""}
         </div>
       </a>
     `;

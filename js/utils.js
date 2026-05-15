@@ -183,6 +183,9 @@ function formatPrice(n) {
 
 function statusClass(status) {
   const map = {
+    0: "available",
+    1: "sold",
+    2: "draft",
     Available: "available",
     Sold: "sold",
     Draft: "draft",

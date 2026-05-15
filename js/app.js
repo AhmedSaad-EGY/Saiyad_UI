@@ -320,32 +320,6 @@ document.addEventListener("mousedown", () => {
 });
 
 // ============================================================
-// CART BADGE
-// ============================================================
-async function updateCartBadge() {
-  if (!isAuthenticated()) {
-    const badge = document.getElementById("cartBadge");
-    if (badge) {
-      badge.textContent = "0";
-      badge.classList.add("hidden");
-    }
-    return;
-  }
-  try {
-    const cart = await api.get("/cart"); // Assuming Swagger confirms 'cartItems' as the field
-    const items = cart.cartItems || [];
-    const count = items.reduce((sum, i) => sum + (i.quantity || 1), 0);
-    const badge = document.getElementById("cartBadge");
-    if (badge) {
-      badge.textContent = count;
-      badge.classList.toggle("hidden", count === 0);
-    }
-  } catch {
-    // silent
-  }
-}
-
-// ============================================================
 // SERVICE WORKER
 // ============================================================
 if ("serviceWorker" in navigator) {

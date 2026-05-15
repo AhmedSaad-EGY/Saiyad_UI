@@ -1,19 +1,3 @@
-function getPasswordStrength(pw) {
-  let score = 0;
-  if (pw.length >= 8) score++;
-  if (pw.length >= 12) score++;
-  if (/[a-z]/.test(pw) && /[A-Z]/.test(pw)) score++;
-  if (/\d/.test(pw)) score++;
-  if (/[^a-zA-Z0-9]/.test(pw)) score++;
-  if (score < 2)
-    return { cls: "strength-weak", label: t("auth.passwordStrength.weak") };
-  if (score < 3)
-    return { cls: "strength-fair", label: t("auth.passwordStrength.fair") };
-  if (score < 4)
-    return { cls: "strength-good", label: t("auth.passwordStrength.good") };
-  return { cls: "strength-strong", label: t("auth.passwordStrength.strong") };
-}
-
 function renderRegister(container) {
   if (isAuthenticated()) {
     navigate("");
@@ -36,6 +20,11 @@ function renderRegister(container) {
           <div class="form-group">
             <label class="form-label" for="regPhone">${t("auth.phone")}</label>
             <input type="tel" class="form-input" id="regPhone" name="phone" placeholder="+1234567890" autocomplete="tel">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="regBirthdate">${t("auth.birthdate")}</label>
+            <input type="date" class="form-input" id="regBirthdate" name="birthdate" required>
+            <div id="ageDisplay" class="password-strength-text"></div>
           </div>
           <div class="form-group">
             <label class="form-label" for="regPassword">${t("auth.password")}</label>
@@ -61,6 +50,7 @@ function renderRegister(container) {
               <option value="Auctioneer">${t("auth.auctioneer")}</option>
             </select>
           </div>
+          <div id="roleRequirements"></div>
           <div class="form-group">
             <div style="display:flex; gap:10px; align-items:flex-start; margin-bottom:8px">
               <input type="checkbox" id="regTerms" name="terms" style="width:18px; height:18px; cursor:pointer; margin-top:2px">
@@ -81,6 +71,7 @@ function renderRegister(container) {
   const regName = document.getElementById("regName");
   const regEmail = document.getElementById("regEmail");
   const regPhone = document.getElementById("regPhone");
+  const regBirthdate = document.getElementById("regBirthdate");
   const regPassword = document.getElementById("regPassword");
   const regConfirmPw = document.getElementById("regConfirmPw");
   const regRole = document.getElementById("regRole");
@@ -94,6 +85,27 @@ function renderRegister(container) {
     document.getElementById("registerAlert").innerHTML = "";
   }
 
+  function updateRoleRequirements() {
+    const role = regRole.value;
+    const container = document.getElementById("roleRequirements");
+
+    if (role === "Fisherman") {
+      container.innerHTML = `
+        <div class="form-group animate-on-scroll slide-down" style="display: block; opacity: 1; transform: translateY(0);">
+          <label class="form-label" for="regLicense">${t("auth.licenseNumber")} *</label>
+          <input type="text" class="form-input" id="regLicense" name="licenseNumber" placeholder="FL-123456" required>
+        </div>
+      `;
+      const regLicense = document.getElementById("regLicense");
+      regLicense.addEventListener("input", () => clearFieldError(regLicense));
+    } else {
+      container.innerHTML = "";
+    }
+  }
+
+  regRole.addEventListener("change", updateRoleRequirements);
+  updateRoleRequirements(); // Initialize on load
+
   regName.addEventListener("input", () => clearFieldError(regName));
   regEmail.addEventListener("input", () => clearFieldError(regEmail));
   regEmail.addEventListener("blur", () => {
@@ -102,6 +114,17 @@ function renderRegister(container) {
     }
   });
   regPhone.addEventListener("input", () => clearFieldError(regPhone));
+  regBirthdate.addEventListener("input", () => {
+    clearFieldError(regBirthdate);
+    const age = calculateAge(regBirthdate.value);
+    const display = document.getElementById("ageDisplay");
+    if (!isNaN(age) && regBirthdate.value) {
+      display.textContent = t("auth.ageLabel", { age });
+      display.style.color = age >= 18 ? "var(--success)" : "var(--danger)";
+    } else {
+      display.textContent = "";
+    }
+  });
   regTerms.addEventListener("change", () => clearFieldError(regTerms));
 
   regTogglePw.addEventListener("click", () => {
@@ -162,28 +185,51 @@ function renderRegister(container) {
     const alertDiv = document.getElementById("registerAlert");
     let valid = true;
 
-    if (!regName.value.trim()) {
-      showFieldError(regName, t("auth.fullName") + " is required.");
-      valid = false;
+    const validationFields = [
+      {
+        element: regName,
+        required: true,
+        messages: { required: t("auth.fullName") + " is required." },
+      },
+      {
+        element: regEmail,
+        required: true,
+        email: true,
+        messages: { required: t("auth.invalidEmail") },
+      },
+      {
+        element: regBirthdate,
+        required: true,
+        minAge: 18,
+        messages: { required: t("auth.fieldRequired") },
+      },
+      {
+        element: regPassword,
+        required: true,
+        minLength: 6,
+        hasSpecialChar: true,
+        messages: {
+          minLength: t("auth.password") + " must be at least 6 characters.",
+        },
+      },
+      {
+        element: regConfirmPw,
+        required: true,
+        matches: { element: regPassword },
+        messages: { matches: t("auth.passwordsDoNotMatch") },
+      },
+    ];
+
+    if (regRole.value === "Fisherman") {
+      const regLicense = document.getElementById("regLicense");
+      validationFields.push({
+        element: regLicense,
+        required: true,
+        messages: { required: t("auth.licenseRequired") },
+      });
     }
-    if (!regEmail.value.trim() || !regEmail.validity.valid) {
-      showFieldError(
-        regEmail,
-        regEmail.validationMessage || t("auth.invalidEmail"),
-      );
-      valid = false;
-    }
-    if (!regPassword.value || regPassword.value.length < 6) {
-      showFieldError(
-        regPassword,
-        t("auth.password") + " must be at least 6 characters.",
-      );
-      valid = false;
-    }
-    if (regPassword.value !== regConfirmPw.value) {
-      showFieldError(regConfirmPw, t("auth.passwordsDoNotMatch"));
-      valid = false;
-    }
+
+    valid = validateForm(regForm, validationFields);
 
     if (!regTerms.checked) {
       showToast(t("auth.termsRequired"), "error");
@@ -191,12 +237,6 @@ function renderRegister(container) {
     }
 
     if (!valid) {
-      const firstErr = regForm.querySelector(".error");
-      if (firstErr) {
-        firstErr.classList.add("shake");
-        setTimeout(() => firstErr.classList.remove("shake"), 500);
-        firstErr.focus();
-      }
       return;
     }
 
@@ -204,6 +244,18 @@ function renderRegister(container) {
     submit.innerHTML = `<i class="fas fa-spinner spinner"></i> ${t("auth.creatingAccount")}`;
 
     try {
+      // Check if email is already registered
+      const emailExists = await api.post("/auth/check-email", {
+        email: regEmail.value.trim(),
+      });
+      if (emailExists.isRegistered) {
+        showFieldError(regEmail, t("auth.emailAlreadyRegistered"));
+        submit.disabled = false;
+        submit.textContent = t("auth.createAccount");
+        alertDiv.innerHTML = `<div class="alert alert-error">${t("auth.emailAlreadyRegistered")}</div>`;
+        return;
+      }
+
       // Capture before reset
       const savedEmail = regEmail.value.trim();
       const savedPassword = regPassword.value;
@@ -216,8 +268,13 @@ function renderRegister(container) {
         fullName: regName.value.trim(),
         email: savedEmail,
         phone: regPhone.value.trim(),
+        birthdate: regBirthdate.value,
         password: savedPassword,
         role: regRole.value,
+        licenseNumber:
+          regRole.value === "Fisherman"
+            ? document.getElementById("regLicense")?.value.trim()
+            : undefined,
       });
 
       alertDiv.innerHTML = `

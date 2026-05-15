@@ -119,22 +119,3 @@ async function renderCart(container) {
     `;
   }
 }
-
-async function updateCartBadge() {
-  const badge = document.getElementById("cartBadge");
-  if (!isAuthenticated()) {
-    badge?.classList.add("hidden");
-    return;
-  }
-  try {
-    const cart = await api.get("/cart"); // Assuming Swagger confirms 'cartItems' as the field
-    const items = cart.cartItems || [];
-    const count = items.reduce((s, i) => s + (i.quantity || 1), 0);
-    if (count > 0) {
-      badge.textContent = count;
-      badge.classList.remove("hidden");
-    } else badge?.classList.add("hidden");
-  } catch {
-    badge?.classList.add("hidden");
-  }
-}

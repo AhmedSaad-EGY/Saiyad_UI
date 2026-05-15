@@ -67,28 +67,24 @@ function renderLogin(container) {
     const alertDiv = document.getElementById("loginAlert");
     let valid = true;
 
-    if (!loginEmail.value.trim() || !loginEmail.validity.valid) {
-      showFieldError(
-        loginEmail,
-        loginEmail.validationMessage || t("auth.invalidEmail"),
-      );
-      valid = false;
-    }
-    if (!loginPassword.value || loginPassword.value.length < 6) {
-      showFieldError(
-        loginPassword,
-        t("auth.password") + " must be at least 6 characters.",
-      );
-      valid = false;
-    }
+    valid = validateForm(loginForm, [
+      {
+        element: loginEmail,
+        required: true,
+        email: true,
+        messages: { required: t("auth.invalidEmail") },
+      },
+      {
+        element: loginPassword,
+        required: true,
+        minLength: 6,
+        messages: {
+          minLength: t("auth.password") + " must be at least 6 characters.",
+        },
+      },
+    ]);
 
     if (!valid) {
-      const firstErr = loginForm.querySelector(".error");
-      if (firstErr) {
-        firstErr.classList.add("shake");
-        setTimeout(() => firstErr.classList.remove("shake"), 500);
-        firstErr.focus();
-      }
       return;
     }
 

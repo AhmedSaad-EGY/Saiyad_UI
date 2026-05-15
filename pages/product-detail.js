@@ -9,6 +9,7 @@ async function renderProductDetail(container, route, params) {
 
   try {
     const p = await api.get(`/products/${id}`);
+    const isAvailable = p.status === "Available" || p.status === 0;
 
     // Fetch reviews in parallel
     const [ratingData, reviewsData] = await Promise.all([
@@ -46,7 +47,7 @@ async function renderProductDetail(container, route, params) {
           ${p.brand ? `<p style="margin-bottom:8px"><strong>${t("product.brand")}:</strong> ${escapeHtml(p.brand)}</p>` : ""}
           <div class="detail-desc">${escapeHtml(p.description || t("product.noDescription"))}</div>
           <div style="display:flex;gap:12px;flex-wrap:wrap">
-            <button class="btn btn-primary btn-lg" id="addToCartBtn" ${p.status !== "Available" ? "disabled" : ""}><i class="fas fa-shopping-cart"></i> ${t("product.addToCart")}</button>
+            <button class="btn btn-primary btn-lg" id="addToCartBtn" ${!isAvailable ? "disabled" : ""}><i class="fas fa-shopping-cart"></i> ${t("product.addToCart")}</button>
             <button class="btn btn-outline btn-lg" id="addToWishlistBtn"><i class="fas fa-heart"></i> ${t("product.wishlist")}</button>
             ${p.isAuctioned ? `<a href="#/auction-detail?id=${p.auctionId}" class="btn btn-success btn-lg"><i class="fas fa-gavel"></i> ${t("product.viewAuction")}</a>` : ""}
           </div>
@@ -125,7 +126,7 @@ async function renderProductDetail(container, route, params) {
       });
     });
 
-    if (p.status === "Available") {
+    if (isAvailable) {
       document
         .getElementById("addToCartBtn")
         .addEventListener("click", async () => {

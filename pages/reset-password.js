@@ -1,19 +1,3 @@
-function getPasswordStrength(pw) {
-  let score = 0;
-  if (pw.length >= 8) score++;
-  if (pw.length >= 12) score++;
-  if (/[a-z]/.test(pw) && /[A-Z]/.test(pw)) score++;
-  if (/\d/.test(pw)) score++;
-  if (/[^a-zA-Z0-9]/.test(pw)) score++;
-  if (score < 2)
-    return { cls: "strength-weak", label: t("auth.passwordStrength.weak") };
-  if (score < 3)
-    return { cls: "strength-fair", label: t("auth.passwordStrength.fair") };
-  if (score < 4)
-    return { cls: "strength-good", label: t("auth.passwordStrength.good") };
-  return { cls: "strength-strong", label: t("auth.passwordStrength.strong") };
-}
-
 function renderResetPassword(container) {
   const params = new URLSearchParams(location.hash.split("?")[1] || "");
   const token = params.get("token");
@@ -127,19 +111,27 @@ function renderResetPassword(container) {
       alertDiv.innerHTML = "";
 
       let valid = true;
-      if (resetPassword.value.length < 6) {
-        showFieldError(
-          resetPassword,
-          t("auth.password") + " must be at least 6 characters.",
-        );
-        valid = false;
-      }
-      if (resetPassword.value !== resetConfirmPw.value) {
-        showFieldError(resetConfirmPw, t("auth.passwordsDoNotMatch"));
-        valid = false;
-      }
+      valid = validateForm(resetForm, [
+        {
+          element: resetPassword,
+          required: true,
+          minLength: 6,
+          hasSpecialChar: true,
+          messages: {
+            minLength: t("auth.password") + " must be at least 6 characters.",
+          },
+        },
+        {
+          element: resetConfirmPw,
+          required: true,
+          matches: { element: resetPassword },
+          messages: { matches: t("auth.passwordsDoNotMatch") },
+        },
+      ]);
 
-      if (!valid) return;
+      if (!valid) {
+        return;
+      }
 
       resetSubmit.disabled = true;
       resetSubmit.innerHTML = `<i class="fas fa-spinner spinner"></i> ${t("auth.updatingPassword")}`;

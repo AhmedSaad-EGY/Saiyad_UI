@@ -44,10 +44,14 @@ const translations = {
     "auth.register": "Register",
     "auth.fullName": "Full Name",
     "auth.phone": "Phone",
+    "auth.birthdate": "Birthdate",
     "auth.role": "Role",
     "auth.customer": "Customer",
     "auth.fisherman": "Fisherman",
     "auth.baitSeller": "Bait Seller",
+    "auth.licenseNumber": "Fishing License Number",
+    "auth.licenseRequired":
+      "Fishing License Number is required for Fisherman registration.",
     "auth.auctioneer": "Auctioneer",
     "auth.createAccount": "Create Account",
     "auth.creatingAccount": "Creating account...",
@@ -60,6 +64,14 @@ const translations = {
     "auth.confirmPassword": "Confirm Password",
     "auth.passwordsDoNotMatch": "Passwords do not match.",
     "auth.invalidEmail": "Please enter a valid email address.",
+    "auth.fieldRequired": "This field is required.",
+    "auth.minAgeRequired": "You must be at least {minAge} years old.",
+    "auth.invalidSpecialChar":
+      "Must contain at least one special character (!@#$%^&*).",
+    "auth.ageLabel": "Age: {age} years",
+    "auth.invalidAlphanumeric":
+      "This field must only contain letters and numbers.",
+    "auth.emailAlreadyRegistered": "This email is already registered.",
     "auth.passwordStrength.weak": "Weak",
     "auth.passwordStrength.fair": "Fair",
     "auth.passwordStrength.good": "Good",
@@ -73,6 +85,10 @@ const translations = {
     "auth.sendResetLink": "Send Reset Link",
     "auth.sendingResetLink": "Sending reset link...",
     "auth.resetLinkSent": "Password reset link has been sent to your email.",
+    "auth.verificationCode": "Verification Code",
+    "auth.verifyCode": "Verify Code",
+    "auth.didntGetCode": "Didn't get the code?",
+    "auth.resendCode": "Resend Code",
     "auth.resendLink": "Resend Link",
     "auth.resetPassword": "Reset Password",
     "auth.newPassword": "New Password",
@@ -194,7 +210,6 @@ const translations = {
     "verify.success": "Email verified successfully! You can now login.",
     "verify.error": "Verification failed. The link may be expired or invalid.",
     "verify.redirecting": "Redirecting to login...",
-    "verify.loggingIn": "Logging you in automatically...",
     "verify.loggingIn": "Logging you in automatically...",
     "verify.invalidLink": "Invalid verification link.",
 
@@ -382,10 +397,13 @@ const translations = {
     "auth.register": "إنشاء حساب",
     "auth.fullName": "الاسم الكامل",
     "auth.phone": "رقم الهاتف",
+    "auth.birthdate": "تاريخ الميلاد",
     "auth.role": "الدور",
     "auth.customer": "عميل",
     "auth.fisherman": "صياد",
     "auth.baitSeller": "بائع طعم",
+    "auth.licenseNumber": "رقم ترخيص الصيد",
+    "auth.licenseRequired": "رقم ترخيص الصيد مطلوب لتسجيل الصياد.",
     "auth.auctioneer": "مزاد علني",
     "auth.createAccount": "إنشاء حساب",
     "auth.creatingAccount": "جارٍ إنشاء الحساب...",
@@ -398,6 +416,13 @@ const translations = {
     "auth.confirmPassword": "تأكيد كلمة المرور",
     "auth.passwordsDoNotMatch": "كلمات المرور غير متطابقة.",
     "auth.invalidEmail": "الرجاء إدخال بريد إلكتروني صحيح.",
+    "auth.fieldRequired": "هذا الحقل مطلوب.",
+    "auth.minAgeRequired": "يجب أن يكون عمرك {minAge} عامًا على الأقل.",
+    "auth.invalidSpecialChar":
+      "يجب أن تحتوي على رمز خاص واحد على الأقل (!@#$%^&*).",
+    "auth.ageLabel": "العمر: {age} سنة",
+    "auth.invalidAlphanumeric": "يجب أن يحتوي هذا الحقل على أحرف وأرقام فقط.",
+    "auth.emailAlreadyRegistered": "هذا البريد الإلكتروني مسجل بالفعل.",
     "auth.passwordStrength.weak": "ضعيفة",
     "auth.passwordStrength.fair": "متوسطة",
     "auth.passwordStrength.good": "جيدة",
@@ -412,6 +437,10 @@ const translations = {
     "auth.sendingResetLink": "جارٍ إرسال الرابط...",
     "auth.resetLinkSent":
       "تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني.",
+    "auth.verificationCode": "كود التحقق",
+    "auth.verifyCode": "تحقق من الكود",
+    "auth.didntGetCode": "لم يصلك الكود؟",
+    "auth.resendCode": "إعادة إرسال الكود",
     "auth.resendLink": "إعادة إرسال الرابط",
     "auth.resetPassword": "إعادة تعيين كلمة المرور",
     "auth.newPassword": "كلمة المرور الجديدة",
@@ -673,8 +702,12 @@ const translations = {
 
 let currentLang = localStorage.getItem("sayiad_lang") || "en";
 
-function t(key) {
-  return translations[currentLang]?.[key] || translations.en[key] || key;
+function t(key, replacements = {}) {
+  let message = translations[currentLang]?.[key] || translations.en[key] || key;
+  for (const placeholder in replacements) {
+    message = message.replace(`{${placeholder}}`, replacements[placeholder]);
+  }
+  return message;
 }
 
 function setLanguage(lang) {
