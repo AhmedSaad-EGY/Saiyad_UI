@@ -50,24 +50,24 @@ async function renderCheckout(container) {
           <form id="addressForm">
             <div class="grid grid-2" style="gap:12px">
               <div class="form-group">
-                <label class="form-label">${t("auth.fullName")} *</label>
-                <input type="text" class="form-input" id="addrFullName" name="fullName" required>
+                <label class="form-label" for="addrFullName">${t("auth.fullName")} *</label>
+                <input type="text" class="form-input" id="addrFullName" name="fullName" autocomplete="name" required>
               </div>
               <div class="form-group">
-                <label class="form-label">${t("auth.phone")} *</label>
-                <input type="tel" class="form-input" id="addrPhone" name="phone" required>
+                <label class="form-label" for="addrPhone">${t("auth.phone")} *</label>
+                <input type="tel" class="form-input" id="addrPhone" name="phone" autocomplete="tel" required>
               </div>
               <div class="form-group" style="grid-column:1/-1">
-                <label class="form-label">${t("cart.addressLine")} *</label>
-                <input type="text" class="form-input" id="addrAddressLine" name="addressLine" required>
+                <label class="form-label" for="addrAddressLine">${t("cart.addressLine")} *</label>
+                <input type="text" class="form-input" id="addrAddressLine" name="addressLine" autocomplete="street-address" required>
               </div>
               <div class="form-group">
-                <label class="form-label">${t("cart.city")} *</label>
-                <input type="text" class="form-input" id="addrCity" name="city" required>
+                <label class="form-label" for="addrCity">${t("cart.city")} *</label>
+                <input type="text" class="form-input" id="addrCity" name="city" autocomplete="address-level2" required>
               </div>
               <div class="form-group">
-                <label class="form-label">${t("shipping.postalCode")}</label>
-                <input type="text" class="form-input" id="addrPost" name="postalCode">
+                <label class="form-label" for="addrPost">${t("shipping.postalCode")}</label>
+                <input type="text" class="form-input" id="addrPost" name="postalCode" autocomplete="postal-code">
               </div>
             </div>
           </form>

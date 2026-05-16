@@ -129,6 +129,9 @@ const translations = {
     "product.addedToCart": "Added to cart!",
     "product.wishlistUpdated": "Wishlist updated!",
     "wishlist.confirmRemove": "Remove from wishlist?",
+    "product.statusAvailable": "Available",
+    "product.statusSold": "Sold",
+    "product.statusDraft": "Draft",
 
     // Auctions
     "auctions.title": "Auctions",
@@ -158,6 +161,9 @@ const translations = {
     "auction.endingSoon": "Ending soon!",
     "auction.newBid": "New bid placed!",
     "auction.startAuction": "Start Auction",
+    "auction.statusActive": "Active",
+    "auction.statusFinished": "Finished",
+    "auction.statusCancelled": "Cancelled",
 
     // Cart
     "cart.title": "Your Cart",
@@ -318,12 +324,19 @@ const translations = {
     "admin.userToggled": "User status updated!",
     "admin.confirmDeleteCategory": "Delete category?",
     "admin.categoryDeleted": "Category deleted",
+    "admin.categoryAdded": "Category added",
+    "admin.reportResolved": "Report resolved",
 
     // Order Detail
     "order.title": "Order Details",
     "order.items": "Items",
     "order.total": "Total",
     "order.status": "Status",
+    "order.statusPending": "Pending",
+    "order.statusPaid": "Paid",
+    "order.statusShipped": "Shipped",
+    "order.statusDelivered": "Delivered",
+    "order.statusCancelled": "Cancelled",
     "order.date": "Date",
     "order.buyer": "Buyer",
     "order.seller": "Seller",
@@ -513,6 +526,9 @@ const translations = {
     "product.addedToCart": "تمت الإضافة إلى العربة!",
     "product.wishlistUpdated": "تم تحديث المفضلة!",
     "wishlist.confirmRemove": "إزالة من المفضلة؟",
+    "product.statusAvailable": "متوفر",
+    "product.statusSold": "تم البيع",
+    "product.statusDraft": "مسودة",
 
     // Auctions
     "auctions.title": "المزادات",
@@ -542,6 +558,9 @@ const translations = {
     "auction.endingSoon": "سينتهي قريباً!",
     "auction.newBid": "تم تقديم مزايدة جديدة!",
     "auction.startAuction": "بدء مزاد",
+    "auction.statusActive": "نشط",
+    "auction.statusFinished": "منتهي",
+    "auction.statusCancelled": "ملغي",
 
     // Cart
     "cart.title": "عربة التسوق",
@@ -702,12 +721,19 @@ const translations = {
     "admin.userToggled": "تم تحديث حالة المستخدم!",
     "admin.confirmDeleteCategory": "حذف التصنيف؟",
     "admin.categoryDeleted": "تم حذف التصنيف",
+    "admin.categoryAdded": "تم إضافة التصنيف",
+    "admin.reportResolved": "تم حل البلاغ",
 
     // Order Detail
     "order.title": "تفاصيل الطلب",
     "order.items": "المنتجات",
     "order.total": "الإجمالي",
     "order.status": "الحالة",
+    "order.statusPending": "قيد الانتظار",
+    "order.statusPaid": "تم الدفع",
+    "order.statusShipped": "تم الشحن",
+    "order.statusDelivered": "تم التوصيل",
+    "order.statusCancelled": "ملغي",
     "order.date": "التاريخ",
     "order.buyer": "المشتري",
     "order.seller": "البائع",

@@ -16,7 +16,7 @@ async function renderOrderDetail(container) {
       </div>
       <div class="card" style="margin-bottom:16px">
         <div style="display:flex;flex-wrap:wrap;gap:24px;margin-bottom:12px">
-          <div><strong>${t('order.status')}:</strong> <span class="status ${statusClass(order.status)}">${order.status}</span></div>
+          <div><strong>${t('order.status')}:</strong> <span class="status ${statusClass(order.status)}">${tStatus(order.status)}</span></div>
           <div><strong>${t('order.date')}:</strong> ${formatDate(order.createdAt)}</div>
           <div><strong>${t('order.buyer')}:</strong> ${escapeHtml(order.buyerName || 'N/A')}</div>
           <div><strong>${t('order.total')}:</strong> ${formatPrice(order.totalPrice)}</div>

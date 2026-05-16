@@ -14,8 +14,10 @@ async function renderAuctionDetail(container, route, params) {
         trackRecentlyViewed(a.id, a.productTitle || 'Auction Item', a.productImageUrl, a.currentHighestBid || a.startingPrice, "auction");
     joinAuctionGroup(parseInt(id));
 
+    const _timers = [];
     window.onRouteCleanup = () => {
       leaveAuctionGroup(parseInt(id));
+      _timers.forEach(t => clearInterval(t));
     };
 
     function render(a) {
@@ -41,7 +43,7 @@ async function renderAuctionDetail(container, route, params) {
             <h1>${escapeHtml(title)}</h1>
             <div class="current-bid" id="currentBidDisplay" data-auction-id="${a.id}">${t('auction.currentBid')}: ${formatPrice(a.currentHighestBid || a.startingPrice)}</div>
             <div style="margin:12px 0">
-              <span class="status ${statusClass(a.status)}">${a.status}</span>
+              <span class="status ${statusClass(a.status)}">${tStatus(a.status, "auction")}</span>
               ${remaining > 0 ? `
               <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px" id="countdownContainer">
                 ${days > 0 ? `<div class="countdown-unit"><span class="countdown-num">${days}</span><span class="countdown-lbl">days</span></div>` : ''}
@@ -139,6 +141,7 @@ async function renderAuctionDetail(container, route, params) {
           if (mEl) mEl.textContent = String(m).padStart(2, '0');
           if (sEl) sEl.textContent = String(s).padStart(2, '0');
         }, 1000);
+        _timers.push(timer);
 
         document.getElementById('autoBidToggle')?.addEventListener('change', (e) => {
           document.getElementById('autoBidMaxWrap')?.classList.toggle('hidden', !e.target.checked);
@@ -193,6 +196,7 @@ async function renderAuctionDetail(container, route, params) {
             if (!isActive) { clearInterval(refreshTimer); clearInterval(timer); router(); }
           } catch {}
         }, 10000);
+        _timers.push(refreshTimer);
       }
     }
 

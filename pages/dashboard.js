@@ -135,7 +135,7 @@ async function renderOrders(content) {
               <tr>
                 <td>#${o.id}</td>
                 <td style="font-weight:600">${formatPrice(o.totalPrice)}</td>
-                <td><span class="status ${statusClass(o.status)}">${o.status}</span></td>
+                <td><span class="status ${statusClass(o.status)}">${tStatus(o.status)}</span></td>
                 <td>${formatDate(o.createdAt || o.orderDate)}</td>
                 <td><a href="#/order-detail?id=${o.id}" class="btn btn-outline btn-sm">${t("dash.view")}</a></td>
               </tr>
@@ -293,11 +293,11 @@ async function renderMyProducts(content) {
             <tr>
               <td><a href="#/product-detail?id=${p.id}" style="text-decoration:none;color:var(--text);font-weight:500">${escapeHtml(p.title)}</a></td>
               <td style="font-weight:600">${formatPrice(p.price)}</td>
-              <td><span class="status ${statusClass(p.status)}">${p.status}</span></td>
+              <td><span class="status ${statusClass(p.status)}">${tStatus(p.status, "product")}</span></td>
               <td>${p.stockQuantity ?? "-"}</td>
               <td style="display:flex;gap:4px;flex-wrap:nowrap">
                 <a href="#/product-detail?id=${p.id}" class="btn btn-outline btn-sm">${t("dash.view")}</a>
-                ${!p.isAuctioned && hasAnyRole("Auctioneer","Fisherman","BaitSeller") ? `<button class="btn btn-primary btn-sm start-auction-btn" data-product-id="${p.id}" data-product-title="${escapeHtml(p.title)}"><i class="fas fa-gavel"></i></button>` : ""}
+                ${!p.isAuctioned && hasAnyRole("Auctioneer","Fisherman","BaitSeller") ? `<button class="btn btn-primary btn-sm start-auction-btn" data-product-id="${p.id}" data-product-title="${escapeHtml(p.title)}" aria-label="${t("auction.startAuction")}"><i class="fas fa-gavel"></i></button>` : ""}
               </td>
             </tr>
           `,

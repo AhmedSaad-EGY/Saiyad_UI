@@ -106,7 +106,7 @@ async function renderAdmin(container) {
             await api.put(`/reports/${btn.dataset.id}/resolve`, {
               status: "Resolved",
             });
-            showToast("Report resolved", "success");
+            showToast(t("admin.reportResolved"), "success");
             loadReports();
           } catch (err) {
             showToast(err.message, "error");
@@ -133,7 +133,7 @@ async function renderAdmin(container) {
               <td>#${o.id}</td>
               <td>${escapeHtml(o.buyerName || "-")}</td>
               <td>${formatPrice(o.totalPrice)}</td>
-              <td><span class="status ${statusClass(o.status)}">${o.status}</span></td>
+              <td><span class="status ${statusClass(o.status)}">${tStatus(o.status)}</span></td>
               <td>${formatDate(o.createdAt)}</td>
               <td><a href="#/order-detail?id=${o.id}" class="btn btn-sm btn-ghost">${t("dash.view")}</a></td>
             </tr>`,
@@ -166,7 +166,7 @@ async function renderAdmin(container) {
             .map(
               (c) => `
             <tr><td>${c.id}</td><td>${escapeHtml(c.name)}</td><td>${escapeHtml(c.description || "-")}</td>
-            <td><button class="btn btn-sm btn-danger delete-cat" data-id="${c.id}"><i class="fas fa-trash"></i></button></td></tr>`,
+            <td><button class="btn btn-sm btn-danger delete-cat" data-id="${c.id}" aria-label="${t("admin.categoryDeleted")}"><i class="fas fa-trash"></i></button></td></tr>`,
             )
             .join("")}
           </tbody>
@@ -186,7 +186,7 @@ async function renderAdmin(container) {
               name: document.getElementById("catName").value.trim(),
               description: document.getElementById("catDesc").value.trim(),
             });
-            showToast("Category added", "success");
+            showToast(t("admin.categoryAdded"), "success");
             loadCategories();
           } catch (err) {
             showToast(err.message, "error");

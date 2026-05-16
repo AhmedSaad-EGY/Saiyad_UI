@@ -203,6 +203,15 @@ function statusClass(status) {
   return `status-${map[status] || "draft"}`;
 }
 
+function tStatus(status, prefix = "order") {
+  if (status == null) return "";
+  const numMap = ["Available", "Sold", "Draft"];
+  const label = typeof status === "number" ? (numMap[status] ?? status) : status;
+  const key = `${prefix}.status${label}`;
+  const translated = t(key);
+  return translated || label;
+}
+
 function renderStars(rating) {
   const full = Math.floor(rating || 0);
   const half = (rating || 0) - full >= 0.5;

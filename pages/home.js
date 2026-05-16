@@ -71,8 +71,7 @@ function renderProductCards(container, products) {
   container.innerHTML = products.map((p, i) => {
     const title = p.title || p.productTitle || 'Product';
     const img = p.primaryImageUrl || p.imageUrl || '';
-    const statusLabels = { 0: "Available", 1: "Sold", 2: "Draft" };
-    const statusText = statusLabels[p.status] ?? p.status;
+    const statusText = tStatus(p.status, "product");
     return `
       <a href="#/product-detail?id=${p.id}"
          class="product-card animate-on-scroll stagger-${Math.min(i + 1, 8)}"
@@ -135,7 +134,7 @@ function renderAuctionCards(container, auctions) {
           <div class="current-bid">${price}</div>
           <div class="product-card-meta">
             <span><i class="fas fa-hourglass-half" aria-hidden="true"></i> ${timeStr} ${t("common.endsIn")} ${urgent ? `<span class="ending-soon-badge">${t("auction.endingSoon")}</span>` : ""}</span>
-            <span class="status ${statusClass(a.status)}">${a.status}</span>
+            <span class="status ${statusClass(a.status)}">${tStatus(a.status, "auction")}</span>
           </div>
         </div>
         <div class="product-card-footer">

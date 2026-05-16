@@ -340,7 +340,12 @@ function showVerificationOverlay(email, password) {
     }, 1800);
   };
 
-  const cleanup = () => { polling = false; };
+  const cleanup = () => {
+    polling = false;
+    clearInterval(interval);
+    overlay.classList.remove("show");
+    setTimeout(() => overlay.remove(), 350);
+  };
   window.onRouteCleanup = cleanup;
 
   // Poll every 3s
