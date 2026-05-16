@@ -181,7 +181,7 @@ async function renderProductDetail(container, route, params) {
       .addEventListener("click", async () => {
         if (!(await requireAuth())) return;
         try {
-          await api.post("/wishlist/items", { productId: p.id });
+          await api.post("/wishlist/toggle", { productId: p.id });
           showToast(t("product.wishlistUpdated"), "success");
         } catch (e) {
           showToast(e.message, "error");
@@ -244,7 +244,7 @@ async function renderProductDetail(container, route, params) {
             reservePrice: parseFloat(document.getElementById("auctionReservePrice").value) || 0,
             minimumIncrement: parseFloat(document.getElementById("auctionMinIncrement").value) || 1,
           });
-          showToast("Auction started!", "success");
+          showToast(t("auctions.title") + " started!", "success");
           close();
           router(); // Re-render page to show "View Auction" button
         } catch (err) {

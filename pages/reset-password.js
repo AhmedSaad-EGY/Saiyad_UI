@@ -17,6 +17,10 @@ function renderResetPassword(container) {
           <div id="resetAlert"></div>
           <form id="resetForm" novalidate>
             <div class="form-group">
+              <label class="form-label" for="resetEmail">${t("auth.email")} *</label>
+              <input type="email" class="form-input" id="resetEmail" name="email" placeholder="your@email.com" required autocomplete="email" inputmode="email">
+            </div>
+            <div class="form-group">
               <label class="form-label" for="resetPassword">${t("auth.newPassword")}</label>
               <div class="password-wrapper">
                 <input type="password" class="form-input" id="resetPassword" name="password" required minlength="6">
@@ -39,6 +43,7 @@ function renderResetPassword(container) {
     `;
 
     const resetForm = document.getElementById("resetForm");
+    const resetEmail = document.getElementById("resetEmail");
     const resetPassword = document.getElementById("resetPassword");
     const resetConfirmPw = document.getElementById("resetConfirmPw");
     const resetSubmit = document.getElementById("resetSubmit");
@@ -113,6 +118,12 @@ function renderResetPassword(container) {
       let valid = true;
       valid = validateForm(resetForm, [
         {
+          element: resetEmail,
+          required: true,
+          email: true,
+          messages: { required: t("auth.fieldRequired"), email: t("auth.invalidEmail") },
+        },
+        {
           element: resetPassword,
           required: true,
           minLength: 6,
@@ -138,8 +149,10 @@ function renderResetPassword(container) {
 
       try {
         await api.post("/auth/reset-password", {
+          email: resetEmail.value.trim(),
           token: token,
           newPassword: resetPassword.value,
+          confirmPassword: resetConfirmPw.value,
         });
 
         alertDiv.innerHTML = `<div class="alert alert-success"><i class="fas fa-check-circle"></i> ${t("auth.passwordResetSuccess")}</div>`;

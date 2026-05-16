@@ -13,7 +13,7 @@ async function request(endpoint, options = {}) {
     throw new Error("Network error. Please check your connection.");
   }
 
-  if (res.status === 401 && !options._retry) {
+  if (res.status === 401 && !options._retry && !endpoint.includes("/auth/login")) {
     const refreshed = await refreshAccessToken();
     if (refreshed) {
       return request(endpoint, { ...options, _retry: true });

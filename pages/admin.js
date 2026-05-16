@@ -42,7 +42,7 @@ async function renderAdmin(container) {
   async function loadUsers() {
     showLoading(content);
     try {
-      const data = await api.get("/users");
+      const data = await api.get("/users", { page: 1, pageSize: 50 });
       const users = data.items || data.data || data || [];
       content.innerHTML = `
         <div class="table-wrapper"><table>
@@ -121,7 +121,7 @@ async function renderAdmin(container) {
   async function loadAdminOrders() {
     showLoading(content);
     try {
-      const data = await api.get("/orders");
+      const data = await api.get("/orders", { page: 1, pageSize: 50 });
       const orders = data.items || data.data || data || [];
       content.innerHTML = `
         <div class="table-wrapper"><table>

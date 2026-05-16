@@ -4,12 +4,6 @@ async function renderProducts(_container, _fullPath, params) {
     <div class="search-bar">
       <input type="text" class="form-input" id="productSearch" placeholder="${t('products.search')}" />
       <select class="form-select" id="productCategory"><option value="">${t('products.allCategories')}</option></select>
-      <select class="form-select" id="productSort">
-        <option value="">${t('products.sort')}</option>
-        <option value="price_asc">${t('products.priceLowHigh')}</option>
-        <option value="price_desc">${t('products.priceHighLow')}</option>
-        <option value="newest">${t('products.newest')}</option>
-      </select>
     </div>
     <div id="productList" class="product-grid"></div>
     <div id="productPagination" style="display:flex;justify-content:center;gap:8px;margin-top:24px"></div>
@@ -35,11 +29,9 @@ async function renderProducts(_container, _fullPath, params) {
   function syncUrl() {
     const s = document.getElementById('productSearch')?.value || '';
     const c = document.getElementById('productCategory')?.value || '';
-    const so = document.getElementById('productSort')?.value || '';
     const qp = new URLSearchParams();
     if (s) qp.set('search', s);
     if (c) qp.set('categoryId', c);
-    if (so) qp.set('sort', so);
     if (page > 1) qp.set('page', page);
     const qs = qp.toString();
     history.replaceState(null, '', qs ? `#/products?${qs}` : '#/products');
@@ -50,7 +42,6 @@ async function renderProducts(_container, _fullPath, params) {
     showLoading(list, 'card');
     const search = document.getElementById('productSearch')?.value || '';
     const categoryId = document.getElementById('productCategory')?.value || '';
-    const sort = document.getElementById('productSort')?.value || '';
 
     try {
       const apiParams = { page, pageSize };
@@ -58,9 +49,6 @@ async function renderProducts(_container, _fullPath, params) {
       if (categoryId) apiParams.categoryId = categoryId;
       const data = await api.get('/products', apiParams);
       const items = data.items || data.data || [];
-      if (sort === 'price_asc') items.sort((a, b) => (a.price || 0) - (b.price || 0));
-      if (sort === 'price_desc') items.sort((a, b) => (b.price || 0) - (a.price || 0));
-      if (sort === 'newest') items.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
       if (!items.length) {
         renderEmptyState(list, { icon: 'fa-box-open', title: t('products.noProducts'), desc: t('common.clearFilters'), actionText: t('common.clearFilters'), actionHref: '#/products' });
       } else {

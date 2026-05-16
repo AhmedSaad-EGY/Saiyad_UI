@@ -92,7 +92,7 @@ async function renderOverview(content, user) {
 
   try {
     const products = await api
-      .get("/products/seller", { pageSize: 1 })
+      .get("/products/my", { pageSize: 1 })
       .catch(() => null);
     document.getElementById("dashProducts").innerHTML =
       `<h3><i class="fas fa-tag"></i> ${t("dash.products")}</h3><p style="font-size:2rem;font-weight:700;color:var(--primary)">${products.totalCount || products.total || 0}</p><p style="color:var(--text-muted)">${t("dash.yourProducts")}</p>`;
@@ -187,7 +187,7 @@ async function renderMyProducts(content) {
         <div class="form-group"><label class="form-label">Stock Quantity *</label><input type="number" class="form-input" id="prodStock" min="0" value="1" required></div>
         <div class="form-group"><label class="form-label">Location *</label><input type="text" class="form-input" id="prodLocation" required></div>
         <div class="form-group"><label class="form-label">Category *</label><select class="form-select" id="prodCategory"><option value="">Loading...</option></select></div>
-        <div class="form-group"><label class="form-label">${t("product.condition")}</label><select class="form-select" id="prodCondition"><option value="New">${t("product.new")}</option><option value="Used">${t("product.used")}</option></select></div>
+        <div class="form-group"><label class="form-label">${t("product.condition")}</label><select class="form-select" id="prodCondition"><option value="0">${t("product.new")}</option><option value="1">${t("product.used")}</option></select></div>
           <div class="form-group">
             <label class="form-label">${t("product.images")}</label>
             <input type="file" class="form-input" id="prodImageInput" accept="image/jpeg,image/png,image/webp" style="padding:8px">
@@ -276,7 +276,7 @@ async function renderMyProducts(content) {
   })();
 
   try {
-    const data = await api.get("/products/seller", { pageSize: 50 });
+    const data = await api.get("/products/my", { pageSize: 50 });
     const products = data.items || data.data || [];
     const list = document.getElementById("myProductsList");
     if (!products.length) {
@@ -395,7 +395,7 @@ function showAuctionModal(productId, productTitle) {
         reservePrice: parseFloat(document.getElementById("auctionReservePrice").value) || 0,
         minimumIncrement: parseFloat(document.getElementById("auctionMinIncrement").value) || 1,
       });
-      showToast("Auction started!", "success");
+      showToast(t("auctions.title") + " started!", "success");
       close();
       // Refresh the products list
       const content = document.getElementById("dashContent");
@@ -412,7 +412,7 @@ function showAuctionModal(productId, productTitle) {
 async function renderWishlist(content) {
   content.innerHTML = `<div class="card"><h3><i class="fas fa-heart"></i> ${t("dash.wishlist")}</h3><div id="wishlistItems"><i class="fas fa-spinner spinner"></i> ${t("common.loading")}</div></div>`;
   try {
-    const data = await api.get("/wishlist");
+      const data = await api.get("/wishlist", { pageSize: 50 });
     const items = data.items || data.data || data;
     if (!items.length) {
       renderEmptyState(document.getElementById("wishlistItems"), {

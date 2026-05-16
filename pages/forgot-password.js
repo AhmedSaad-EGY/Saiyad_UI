@@ -247,7 +247,7 @@ function renderForgotPassword(container) {
 
       try {
         // Verify the token by attempting a dry-run reset
-        await api.post("/auth/reset-password", { token: forgotToken, newPassword: "DryRun_Verify1" });
+        await api.post("/auth/reset-password", { email: forgotEmail, token: forgotToken, newPassword: "DryRun_Verify1", confirmPassword: "DryRun_Verify1" });
         // If it succeeded, the password was actually changed. Handle gracefully:
         if (alertDiv) alertDiv.innerHTML = `<div class="alert alert-error">${escapeHtml(t("auth.invalidToken") || "Invalid or expired token. Please request a new one.")}</div>`;
         verifyBtn.disabled = false;
@@ -297,7 +297,7 @@ function renderForgotPassword(container) {
       resetBtn.innerHTML = `<i class="fas fa-spinner spinner"></i> ${t("auth.updatingPassword")}`;
 
       try {
-        await api.post("/auth/reset-password", { token: forgotToken, newPassword: newPw.value });
+        await api.post("/auth/reset-password", { email: forgotEmail, token: forgotToken, newPassword: newPw.value, confirmPassword: confirmPw.value });
         if (alertDiv) alertDiv.innerHTML = `<div class="alert alert-success"><i class="fas fa-check-circle"></i> ${t("auth.passwordResetSuccess")}</div>`;
         document.getElementById("forgotForm").style.display = "none";
         setTimeout(() => navigate("login"), 2500);

@@ -122,10 +122,14 @@ async function renderCheckout(container) {
           });
           const order_id = order.id;
 
-          await api.post("/payments/initiate", {
+          const payment = await api.post("/payments/initiate", {
             orderId: order_id,
             paymentMethod: document.getElementById("paymentMethod").value,
           });
+
+          if (payment?.id) {
+            await api.post(`/payments/${payment.id}/confirm`);
+          }
 
           alertDiv.innerHTML = `<div class="alert alert-success"><i class="fas fa-check-circle"></i> ${t("cart.orderSuccess")}</div>`;
           btn.innerHTML = `<i class="fas fa-check"></i> ${t("cart.orderSuccess")}`;
