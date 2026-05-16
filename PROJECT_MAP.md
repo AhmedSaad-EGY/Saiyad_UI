@@ -140,13 +140,31 @@ Front-end/
 | `pages/dashboard.js` | Added "Start Auction" button + modal in products table for non-auctioned products |
 | `pages/product-detail.js` | Added "Start Auction" button when logged-in user owns the product and has Auctioneer/Fisherman/BaitSeller role |
 
-## Latest Session Plus: Auctioneer Can Now Start Auctions (May 16, 2026)
+## Latest Session: Role-Based Custom UI (May 16, 2026)
 
 ### Changes Made
-- **Backend**: Added `Auctioneer` to ProductsController `[Authorize]` attributes (6 endpoints) so Auctioneer can create, edit, delete products just like Fisherman and BaitSeller.
-- **Frontend dashboard.js**: Added gavel button (`.start-auction-btn`) next to "View" in the products table for non-auctioned products. Clicking opens a modal with End Time, Starting Price, Reserve Price, and Minimum Increment fields. On success, shows toast and refreshes the list.
-- **Frontend product-detail.js**: Added "Start Auction" button that appears when the logged-in user owns the product and has Auctioneer/Fisherman/BaitSeller role. Clicking opens the same auction creation modal. After creation, re-renders the page to show "View Auction".
-- **Translations**: Added `auction.startAuction` key EN/AR.
+- **Navbar**: Added `data-roles` attributes to dropdown items (all, Fisherman/BaitSeller/Auctioneer, Admin). `updateNavbar()` in auth.js now filters dropdown items by user role — Customers only see Profile/Dashboard/Orders/Wishlist, seller roles additionally see My Products, Admins see Admin panel.
+- **Backend**: Added `Auctioneer` to UploadController `[Authorize]` so Auctioneers can upload product images.
+- **Seller profile**: Fixed role check — only Fisherman/BaitSeller can manage their seller profile (Auctioneer removed, matching backend).
+- **Profile page**: Added Auctioneer to "My Products" quick link. "Seller Dashboard" remains Fisherman/BaitSeller only.
+- **Dashboard products table**: Added `hasAnyRole("Auctioneer","Fisherman","BaitSeller")` check to Start Auction button.
+
+### Role-Based UI Matrix
+| Feature | Guest | Customer | Fisherman | BaitSeller | Auctioneer | Admin |
+|---------|-------|----------|-----------|------------|------------|-------|
+| Browse products/auctions | Yes | Yes | Yes | Yes | Yes | Yes |
+| Cart/Wishlist/Orders | - | Yes | Yes | Yes | Yes | Yes |
+| Dashboard tabs | - | Overview, Orders, Wishlist, Notifications, Profile, Password | + Products | + Products | + Products | - |
+| My Products (dropdown) | - | Hidden | Shown | Shown | Shown | Hidden |
+| Admin panel (dropdown) | - | Hidden | Hidden | Hidden | Hidden | Shown |
+| Create products | - | - | Yes | Yes | Yes | - |
+| Start auctions | - | - | Yes | Yes | Yes | - |
+| Place bids | - | Yes | Yes | Yes | - | - |
+| Seller profile (own) | - | - | Yes | Yes | - | - |
+| Upload product images | - | - | Yes | Yes | Yes | - |
+| Admin functions | - | - | - | - | - | Yes |
+
+## Latest Session Plus: Auctioneer Can Now Start Auctions (May 16, 2026)
 
 ## Previous Session: Complete Polish & Missing Pages (May 16, 2026)
 

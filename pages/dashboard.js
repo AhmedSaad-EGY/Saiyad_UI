@@ -297,7 +297,7 @@ async function renderMyProducts(content) {
               <td>${p.stockQuantity ?? "-"}</td>
               <td style="display:flex;gap:4px;flex-wrap:nowrap">
                 <a href="#/product-detail?id=${p.id}" class="btn btn-outline btn-sm">${t("dash.view")}</a>
-                ${!p.isAuctioned ? `<button class="btn btn-primary btn-sm start-auction-btn" data-product-id="${p.id}" data-product-title="${escapeHtml(p.title)}"><i class="fas fa-gavel"></i></button>` : ""}
+                ${!p.isAuctioned && hasAnyRole("Auctioneer","Fisherman","BaitSeller") ? `<button class="btn btn-primary btn-sm start-auction-btn" data-product-id="${p.id}" data-product-title="${escapeHtml(p.title)}"><i class="fas fa-gavel"></i></button>` : ""}
               </td>
             </tr>
           `,

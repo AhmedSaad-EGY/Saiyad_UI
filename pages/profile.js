@@ -67,11 +67,13 @@ async function renderUserProfile(container) {
             <i class="fas fa-bell"></i>
             <span>${t('dash.notifications')}</span>
           </a>
-          ${user?.role === 'Fisherman' || user?.role === 'BaitSeller' ? `
+          ${user?.role === 'Fisherman' || user?.role === 'BaitSeller' || user?.role === 'Auctioneer' ? `
             <a href="#/dashboard?tab=products" class="profile-link-card">
               <i class="fas fa-store"></i>
               <span>${t('dash.myProducts')}</span>
             </a>
+          ` : ''}
+          ${user?.role === 'Fisherman' || user?.role === 'BaitSeller' ? `
             <a href="#/dashboard?tab=seller" class="profile-link-card">
               <i class="fas fa-chart-line"></i>
               <span>${t('dash.sellerDashboard')}</span>

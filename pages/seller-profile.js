@@ -31,7 +31,7 @@ async function renderSellerProfile(container) {
   }
 
   if (!await requireAuth()) return;
-  if (!hasAnyRole('Fisherman', 'BaitSeller', 'Auctioneer')) {
+  if (!hasAnyRole('Fisherman', 'BaitSeller')) {
     container.innerHTML = `<div class="empty-state"><i class="fas fa-store"></i><h3>${t('seller.noProfile')}</h3></div>`;
     return;
   }

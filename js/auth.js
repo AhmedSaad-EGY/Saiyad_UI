@@ -32,6 +32,18 @@ function updateNavbar() {
     document.getElementById("userName").textContent =
       user.fullName || user.email || "User";
   document.getElementById("notifBell")?.classList.toggle("hidden", !authed);
+
+  // Role-based dropdown filtering
+  document.querySelectorAll("#dropdownMenu .dropdown-item[data-roles]").forEach((item) => {
+    const allowed = item.dataset.roles;
+    if (allowed === "all") {
+      item.classList.toggle("hidden", !authed);
+    } else {
+      const roles = allowed.split(",");
+      item.classList.toggle("hidden", !authed || !roles.includes(user?.role));
+    }
+  });
+
   updateCartBadge();
   if (authed) startNotifPolling();
   else stopNotifPolling();
