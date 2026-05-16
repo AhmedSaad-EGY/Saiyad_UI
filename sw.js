@@ -1,4 +1,4 @@
-const CACHE = "sayiad-v8";
+const CACHE = "sayiad-v9";
 const PRECACHE = [
   "/",
   "/index.html",
@@ -64,21 +64,22 @@ self.addEventListener("fetch", (e) => {
   if (url.origin !== location.origin) return;
   if (url.pathname.startsWith("/api/")) return;
 
-  // Strip query string for cache matching so versioned URLs match precached files
+  // Strip query string for cache matching
   const cleanUrl = url.pathname;
   const cacheKey = cleanUrl === "/" ? "/index.html" : cleanUrl;
 
   e.respondWith(
-    caches
-      .open(CACHE)
-      .then((c) =>
-        c
-          .match(cacheKey)
-          .then(
-            (r) =>
-              r ||
-              fetch(request).catch(() => new Response("", { status: 503 })),
-          ),
-      ),
+    caches.open(CACHE).then((cache) =>
+      cache.match(cacheKey).then((cached) => {
+        // Stale-while-revalidate: serve cached instantly, update in background
+        const fetchPromise = fetch(request)
+          .then((networkResponse) => {
+            if (networkResponse.ok) cache.put(cacheKey, networkResponse.clone());
+            return networkResponse;
+          })
+          .catch(() => new Response("", { status: 503 }));
+        return cached || fetchPromise;
+      }),
+    ),
   );
 });

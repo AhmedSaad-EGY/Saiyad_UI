@@ -368,7 +368,21 @@ window.addEventListener("error", (e) => {
 // SERVICE WORKER
 // ============================================================
 if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("/sw.js").catch(() => {});
+  navigator.serviceWorker.register("/sw.js").then((reg) => {
+    reg.addEventListener("updatefound", () => {
+      const newSW = reg.installing;
+      newSW.addEventListener("statechange", () => {
+        if (newSW.state === "installed" && navigator.serviceWorker.controller) {
+          // New SW installed but waiting — activate immediately and reload
+          newSW.postMessage({ action: "skipWaiting" });
+        }
+      });
+    });
+    // Reload page when a new SW takes over
+    navigator.serviceWorker.addEventListener("controllerchange", () => {
+      window.location.reload();
+    });
+  }).catch(() => {});
 }
 
 // ============================================================
