@@ -96,6 +96,7 @@ async function renderAuctionDetail(container, route, params) {
           </div>
         </div>
       `;
+      observeAnimations();
 
       if (isActive) {
         // Bid slider ↔ input sync

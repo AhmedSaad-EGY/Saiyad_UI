@@ -46,7 +46,14 @@ function showToast(msg, type = "info") {
     border: 1px solid rgba(255,255,255,0.1);
   `;
   toast.style.background = colors[type] || colors.info;
-  toast.innerHTML = `<i class="fas ${icons[type] || icons.info}" style="font-size:1.1rem"></i> <span>${escapeHtml(msg)}</span>`;
+  const iconEl = document.createElement('i');
+  iconEl.className = `fas ${icons[type] || icons.info}`;
+  iconEl.setAttribute('aria-hidden', 'true');
+  iconEl.style.cssText = 'font-size:1.1rem;flex-shrink:0';
+  const textEl = document.createElement('span');
+  textEl.textContent = msg;
+  toast.appendChild(iconEl);
+  toast.appendChild(textEl);
 
   container.appendChild(toast);
   const live = document.getElementById("ariaLive");
@@ -109,22 +116,26 @@ document.head.appendChild(injectedStyles);
 // ============================================================
 // INTERSECTION OBSERVER — Scroll Animations
 // ============================================================
-const observer = new IntersectionObserver(
-  (entries) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add("visible");
-        observer.unobserve(entry.target);
-      }
-    });
-  },
-  { threshold: 0.08, rootMargin: "0px 0px -40px 0px" },
-);
+function observeAnimations(root = document) {
+  const els = (root === document ? document : root)
+    .querySelectorAll('.animate-on-scroll:not(.visible)');
 
-function observeAnimations(root) {
-  (root || document).querySelectorAll(".animate-on-scroll").forEach((el) => {
-    if (!el.classList.contains("visible")) observer.observe(el);
-  });
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            e.target.classList.add('visible');
+            observer.unobserve(e.target);
+          }
+        });
+      },
+      { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
+    );
+    els.forEach((el) => observer.observe(el));
+  } else {
+    els.forEach((el) => el.classList.add('visible'));
+  }
 }
 
 // ============================================================

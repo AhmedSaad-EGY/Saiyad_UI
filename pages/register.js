@@ -23,7 +23,8 @@ function renderRegister(container) {
           </div>
           <div class="form-group">
             <label class="form-label" for="regBirthdate">${t("auth.birthdate")}</label>
-            <input type="date" class="form-input" id="regBirthdate" name="birthdate" required>
+            <input type="date" class="form-input" id="regBirthdate" name="birthdate"
+              max="${new Date(new Date().setFullYear(new Date().getFullYear() - 18)).toISOString().split('T')[0]}" required>
             <div id="ageDisplay" class="password-strength-text"></div>
           </div>
           <div class="form-group">

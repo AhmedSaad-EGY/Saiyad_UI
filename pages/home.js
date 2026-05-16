@@ -60,42 +60,46 @@ async function renderHome(container) {
 }
 
 function renderProductCards(container, products) {
-  if (!products?.length) {
+  if (!products || !products.length) {
     renderEmptyState(container, {
-      icon: "fa-box-open",
-      title: t("home.noProducts"),
+      icon: 'fa-fish',
+      title: t('products.noProducts'),
+      desc: t('products.noProductsDesc'),
     });
     return;
   }
-  container.innerHTML = products
-    .map((p, i) => {
-      const title = p.title || "Product";
-      const category = p.category || p.categoryName;
-      const stock = p.stock ?? p.stockQuantity;
-      return `
-      <a href="#/product-detail?id=${p.id}" class="product-card card-lift animate-on-scroll stagger-${Math.min(i + 1, 8)}" aria-label="${escapeHtml(title)} - ${formatPrice(p.price)}">
+  container.innerHTML = products.map((p, i) => {
+    const title = p.title || p.productTitle || 'Product';
+    const img = p.primaryImageUrl || p.imageUrl || '';
+    const statusClass = (p.status || '').toLowerCase().replace(' ', '-');
+    return `
+      <a href="#/product-detail?id=${p.id}"
+         class="product-card animate-on-scroll stagger-${Math.min(i + 1, 8)}"
+         aria-label="${escapeHtml(title)} — ${formatPrice(p.price)}">
         <div class="product-card-img">
-          ${p.primaryImageUrl ? progressiveImg(p.primaryImageUrl, title, "") : '<i class="fas fa-image" aria-hidden="true"></i>'}
-          <button class="btn btn-sm glass-btn quick-view-btn" data-quickview-id="${p.id}" data-quickview-title="${escapeHtml(title)}" data-quickview-price="${p.price}" data-quickview-image="${p.primaryImageUrl || ""}" data-quickview-desc="${escapeHtml(p.description || "")}"><i class="fas fa-expand"></i></button>
+          ${img
+            ? `<img src="${escapeHtml(img)}" alt="${escapeHtml(title)}" loading="lazy">`
+            : `<div class="img-placeholder"><i class="fas fa-image"></i></div>`}
+          ${p.status
+            ? `<span class="product-card-badge status-${statusClass}">${escapeHtml(p.status)}</span>`
+            : ''}
         </div>
         <div class="product-card-body">
           <div class="product-card-title">${escapeHtml(title)}</div>
-          <div class="product-card-price-row">
-            <span class="product-card-price">${formatPrice(p.price)}</span>
-            <span class="status ${statusClass(p.status)}">${p.status || t("common.N/A")}</span>
-          </div>
+          <div class="product-card-price">${formatPrice(p.price)}</div>
           <div class="product-card-meta">
-            ${category ? `<span><i class="fas fa-tag" aria-hidden="true"></i> ${escapeHtml(category)}</span>` : ""}
+            ${p.categoryName
+              ? `<span class="product-card-category"><i class="fas fa-tag"></i>${escapeHtml(p.categoryName)}</span>`
+              : ''}
+            ${p.stockQuantity != null
+              ? `<span class="product-card-stock">${p.stockQuantity} ${t('products.inStock')}</span>`
+              : ''}
           </div>
-        </div>
-        <div class="product-card-footer">
-          <small>${p.condition || ""}</small>
-          ${stock != null ? `<small>${stock} ${t("product.stock")}</small>` : ""}
         </div>
       </a>
     `;
-    })
-    .join("");
+  }).join('');
+  observeAnimations();
 }
 
 function renderAuctionCards(container, auctions) {

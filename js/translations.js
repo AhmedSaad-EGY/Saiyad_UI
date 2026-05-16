@@ -108,6 +108,8 @@ const translations = {
     "products.newest": "Newest First",
     "products.loadError": "Error loading products",
     "products.noProducts": "No products found.",
+    "products.noProductsDesc": "Try adjusting your search or filters.",
+    "products.inStock": "in stock",
 
     // Product Detail
     "product.addToCart": "Add to Cart",
@@ -187,6 +189,8 @@ const translations = {
     "dash.orders": "Orders",
     "dash.products": "Products",
     "dash.wishlist": "Wishlist",
+    "dash.sellerDashboard": "Seller Dashboard",
+    "dash.addresses": "Addresses",
     "dash.notifications": "Notifications",
     "dash.profile": "Profile",
     "dash.changePassword": "Change Password",
@@ -350,6 +354,7 @@ const translations = {
     "common.page": "Page",
     "common.clearFilters": "Clear Filters",
     "common.recentlyViewed": "Recently Viewed",
+    "common.quickLinks": "Quick Links",
 
     // Footer
     "footer.tagline":
@@ -473,6 +478,8 @@ const translations = {
     "products.newest": "الأحدث أولاً",
     "products.loadError": "خطأ في تحميل المنتجات",
     "products.noProducts": "لم يتم العثور على منتجات.",
+    "products.noProductsDesc": "حاول تعديل البحث أو التصفية.",
+    "products.inStock": "متوفر",
 
     // Product Detail
     "product.addToCart": "أضف إلى العربة",
@@ -551,6 +558,8 @@ const translations = {
     "dash.orders": "الطلبات",
     "dash.products": "المنتجات",
     "dash.wishlist": "المفضلة",
+    "dash.sellerDashboard": "لوحة البائع",
+    "dash.addresses": "العناوين",
     "dash.notifications": "الإشعارات",
     "dash.profile": "الملف الشخصي",
     "dash.changePassword": "تغيير كلمة المرور",
@@ -715,6 +724,7 @@ const translations = {
     "common.page": "صفحة",
     "common.clearFilters": "مسح التصفية",
     "common.recentlyViewed": "تم العرض مؤخراً",
+    "common.quickLinks": "روابط سريعة",
 
     // Footer
     "footer.tagline": "سوق الصيد الأول في مصر — اشترِ، بع، وشارك في المزادات.",

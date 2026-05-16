@@ -1,217 +1,223 @@
-# Sayiad (صياد) — Fishing Marketplace & Auction Platform
+<div align="center">
+  <img src="Front-end/logo.png" alt="Sayiad Logo" width="80" height="80">
+  <h1>Sayiad — Fishing Marketplace & Auctions</h1>
+  <p>Egypt's premier platform for buying, selling, and auctioning fishing gear</p>
 
-A fully-featured single-page application for buying, selling, and bidding on fishing gear and equipment. Built with vanilla JavaScript and powered by a .NET Web API backend.
+  [![Live Demo](https://img.shields.io/badge/Live%20Demo-sayiad.vercel.app-0077b6?style=for-the-badge&logo=vercel)](https://sayiad.vercel.app)
+  [![API](https://img.shields.io/badge/API-runasp.net-023e8a?style=for-the-badge&logo=swagger)](https://sayiad.runasp.net/swagger/index.html)
+  [![License](https://img.shields.io/badge/License-MIT-success?style=for-the-badge)](LICENSE)
+</div>
 
 ---
 
-## Features
+## Overview
 
-### Marketplace
-- **Product Listings** — Browse, search, filter by category, and sort by price or newest
-- **Product Detail** — Image gallery with lightbox, reviews & ratings, add to cart/wishlist, similar products, contact seller
-- **Shopping Cart** — Add/remove items, update quantities, persistent floating summary bar on mobile
-- **Checkout** — Shipping address form, payment method selection (Credit Card / Cash on Delivery), order placement
-- **Order Management** — View order history, detailed order view with item breakdowns
+Sayiad is a full-stack Egyptian fishing marketplace featuring:
 
-### Auctions
-- **Live Auction Listings** — Filter by status (Active/Finished/Cancelled), search, pagination
-- **Auction Detail** — Real-time countdown timer, bid history, bid placement with draggible slider
-- **Auto-refresh** — Bid data refreshes every 10 seconds with price flash animation
-- **Urgency Indicators** — Pulsing red border and "Ending soon" badge for auctions under 1 hour
-- **Outbid Notifications** — Toast alert when a new bid is placed during the session
-
-### Authentication & User Management
-- **Registration** — Role-based signup (Customer, Fisherman, Bait Seller, Auctioneer), password strength meter, email verification flow
-- **Login** — With password visibility toggle, "forgot password" flow, unverified email warnings
-- **Password Reset** — Token-based reset with strength meter and confirm validation
-- **Profile Management** — Update name, email, phone; change password with strength meter
-- **Seller Profiles** — Create and manage store profiles with contact details and location
-
-### Dashboard
-- **Overview** — Quick stats on orders and products
-- **Orders** — Paginated order table with status and date
-- **My Products** — List and create products with image upload and live preview
-- **Wishlist** — View and remove saved products
-- **Notifications** — Per-item and "Mark All as Read" with unread badge polling
-- **Profile & Password** — Update personal info, change password with strength meter
-
-### Admin Panel
-- **User Management** — View all users, toggle active/inactive status
-- **Reports** — View and resolve reported content
-- **Orders** — View all platform orders
-- **Categories** — Add and delete product categories
-
-### UI / UX
-- 🌗 Dark/Light theme toggle with smooth OKLCH-based CSS transitions
-- 🌐 Full Arabic/English i18n (~350 keys each) with RTL layout support
-- 📱 Fully responsive: desktop → tablet → mobile with slide-in nav drawer
-- ⚡ Skeleton loading system (5 layout variants) with morph transitions
-- 🎨 Animated canvas water background (3 sine-wave layers + particles)
-- 🖼️ Progressive image loading (blur-up → crossfade)
-- 🔍 Quick-view modal on product/auction cards
-- 🧭 Breadcrumb navigation on detail pages
-- 🔝 Back-to-top button
-- ♿ Skip-to-content link, aria-live announcements, keyboard-navigable
-
-### Performance
-- Service worker for offline app-shell caching
-- Cache-first strategy for static assets
-- Debounced search inputs and canvas resize handler
-- CSS animations limited to `transform` and `opacity` only
+- **Product listings** — browse and purchase fishing gear from verified sellers
+- **Live auctions** — real-time auction bidding with concurrent bid protection
+- **Multi-role system** — Customer, Fisherman, BaitSeller, Auctioneer, Admin
+- **Bilingual** — full Arabic (RTL) and English (LTR) support
+- **Dark / Light mode** — system preference aware with manual toggle
 
 ---
 
 ## Tech Stack
 
-| Layer | Technology |
-|-------|-----------|
-| **Frontend** | Vanilla JavaScript (ES6+), no frameworks |
-| **Styling** | CSS Custom Properties (OKLCH), responsive design |
-| **Routing** | Hash-based SPA router (`#/route?param=value`) |
-| **Icons** | Font Awesome 6 (CDN) |
-| **Fonts** | Inter (Latin), Cairo (Arabic) — Google Fonts |
-| **Offline** | Service Worker (precache + cache-first) |
-| **Deployment** | Vercel (SPA rewrites + API proxy) |
-| **API** | `https://sayiad.runasp.net/api` (.NET Web API) |
+### Frontend
+| Technology | Purpose |
+|-----------|---------|
+| Vanilla JS (ES2022) | No framework — fast, lightweight SPA |
+| CSS Custom Properties (OKLCH) | Design token system |
+| Hash-based Router | Client-side navigation |
+| Canvas 2D API | Animated ocean background |
+| Font Awesome 6.5 | Icons |
+| Google Fonts (Inter + Cairo) | Latin + Arabic typography |
+
+### Backend
+| Technology | Version |
+|-----------|---------|
+| ASP.NET Core | 10.0 |
+| Entity Framework Core | 10.0 |
+| SQL Server | Cloud (MonsterASP.NET) |
+| JWT Bearer Auth | Refresh token rotation |
+| FluentValidation | 12.1 |
+| Mapster | 10.0 |
+| Serilog | Structured logging |
 
 ---
 
-## Project Structure
+## Features
 
-```
-Front-end/
-├── index.html              # Entry point, navbar, footer, skip-to-content, aria-live
-├── sw.js                   # Service worker (precache + cache-first)
-├── PROJECT_MAP.md          # Detailed project map
-├── vercel.json             # Vercel deployment config (SPA + API proxy)
-├── .vscode/
-│   └── launch.json         # Chrome debug configuration
-├── css/
-│   └── style.css           # Full design system (~2865 lines): OKLCH tokens, layouts,
-│                           # components, keyframes, RTL, dark mode, responsive breakpoints
-├── js/
-│   ├── config.js           # API base URL configuration
-│   ├── api.js              # Fetch wrapper with JWT injection, token refresh, error handling
-│   ├── auth.js             # Authentication state, navbar updates, badge polling
-│   ├── router.js           # Hash router — 20 routes, param diff, page transitions
-│   ├── utils.js            # DOM helpers, skeleton loading, formatters, validation, lightbox
-│   ├── translations.js     # en/ar i18n (~350 keys each), language switching
-│   ├── background.js       # Canvas animated water background (IIFE)
-│   └── app.js              # Toast system, scroll animations, theme/lang toggles,
-│                           # mobile drawer, ripple effect, keyboard nav
-└── pages/
-    ├── home.js             # Hero section, feature cards, product/auction previews
-    ├── login.js            # Login form with validation
-    ├── register.js         # Registration with role selector, strength meter
-    ├── forgot-password.js  # Password reset request with countdown resend
-    ├── reset-password.js   # Token-based password reset
-    ├── products.js         # Product listing with search, filter, sort, pagination
-    ├── product-detail.js   # Product detail, gallery, reviews, similar products
-    ├── auctions.js         # Auction listing with search, filter, pagination
-    ├── auction-detail.js   # Auction detail, countdown, bid placement, bid history
-    ├── cart.js             # Shopping cart with quantity, remove, clear
-    ├── checkout.js         # Order checkout with shipping address and payment
-    ├── dashboard.js        # User dashboard (orders, products, wishlist, notifications)
-    ├── verify-email.js     # Email verification with auto-login
-    ├── shipping.js         # Shipping address management (CRUD)
-    ├── seller-profile.js   # Seller profile view and management
-    ├── order-detail.js     # Single order detail view
-    ├── admin.js            # Admin panel (users, reports, orders, categories)
-    ├── privacy.js          # Privacy policy page
-    └── terms.js            # Terms & conditions page
-```
+### For Customers
+- Browse and search products with filters (category, price, condition)
+- Add to cart and wishlist
+- Checkout with saved shipping addresses
+- Track orders and view order history
+- Bid on live auctions with real-time countdown
+- Leave product reviews and ratings
+
+### For Sellers (Fisherman / BaitSeller)
+- Create and manage product listings
+- Upload product images (Cloudinary)
+- View seller dashboard with revenue and ratings
+- Create and manage auctions
+- Seller public profile page
+
+### For Admins
+- User management (ban/unban)
+- Report resolution
+- Product moderation
 
 ---
 
 ## Getting Started
 
 ### Prerequisites
+- A modern browser (Chrome 90+, Firefox 88+, Safari 14+)
+- No build step required — pure HTML/CSS/JS
 
-- Node.js (any recent LTS version)
-- Modern web browser (Chrome, Firefox, Edge, Safari)
-
-### Running Locally
+### Run Locally
 
 ```bash
-# Clone the repository
-git clone <repo-url>
-cd sayiad-frontend
+git clone https://github.com/AhmedSaad-EGY/Saiyad_UI.git
+cd Saiyad_UI/Front-end
 
-# Serve the static files (no build step required)
+# Option 1: VS Code Live Server (recommended)
+# Install the "Live Server" extension, right-click index.html → Open with Live Server
+
+# Option 2: Python
+python -m http.server 5500
+
+# Option 3: Node
 npx serve .
-# or use the project's local server script
-node "C:\Users\pcc\AppData\Local\Temp\opencode\serve-frontend.js"
 ```
 
-The app will be available at `http://localhost:8000`.
+Open `http://localhost:5500` in your browser.
 
-By default, the frontend connects to the production API at `https://sayiad.runasp.net/api`. To use a local API:
+### Configuration
 
-1. Open `js/config.js`
-2. Change `apiBaseUrl` to `https://localhost:7030/api`
-3. Run your local .NET API server
+**File: `Front-end/js/config.js`**
 
----
-
-## Configuration
-
-### API Endpoint
-
-Edit `js/config.js`:
-
-```js
+```javascript
 const APP_CONFIG = {
   apiBaseUrl: "https://sayiad.runasp.net/api",
-  swaggerUrl: "https://sayiad.runasp.net/swagger/index.html",
 };
 ```
 
-### Theme & Language
+To point to a local backend, change `apiBaseUrl` to `https://localhost:7001/api`.
 
-Persisted to `localStorage`:
+---
 
-| Key | Values | Default |
-|-----|--------|---------|
-| `sayiad_theme` | `light` / `dark` | `light` |
-| `sayiad_lang` | `en` / `ar` | `en` |
+## Project Structure
+```
+Front-end/
+├── index.html              # App shell — navbar, footer, canvas
+├── logo.png                # Site logo
+├── css/
+│   └── style.css           # Full design system (OKLCH tokens, components)
+├── js/
+│   ├── config.js           # API base URL
+│   ├── api.js              # Fetch wrapper, auth headers, token refresh
+│   ├── auth.js             # Session management, role checks
+│   ├── router.js           # Hash-based SPA router
+│   ├── app.js              # App init, theme, lang, navbar, notifications
+│   ├── background.js       # Canvas ocean animation
+│   ├── translations.js     # EN + AR strings
+│   └── utils.js            # Shared utilities (toast, skeletons, escape)
+├── pages/
+│   ├── home.js             # Landing page
+│   ├── login.js            # Authentication
+│   ├── register.js         # Registration with email verification
+│   ├── forgot-password.js  # Password reset request
+│   ├── reset-password.js   # Password reset with token
+│   ├── verify-email.js     # Email verification handler
+│   ├── products.js         # Product listing with filters
+│   ├── product-detail.js   # Product detail + reviews + add to cart
+│   ├── auctions.js         # Auction listing with filters
+│   ├── auction-detail.js   # Auction detail + bidding
+│   ├── cart.js             # Shopping cart
+│   ├── checkout.js         # Order placement with address
+│   ├── dashboard.js        # User dashboard (tabs)
+│   ├── shipping.js         # Shipping address management
+│   ├── profile.js          # User profile page
+│   ├── seller-profile.js   # Seller public profile
+│   ├── order-detail.js     # Single order detail
+│   ├── admin.js            # Admin panel
+│   ├── terms.js            # Terms and Conditions
+│   └── privacy.js          # Privacy Policy
+└── sw.js                   # Service worker (offline support)
+```
+
+---
+
+## API Integration
+
+All API calls go through `js/api.js` which handles:
+
+- JWT Bearer token injection
+- Automatic token refresh on 401
+- Request deduplication for concurrent refresh calls
+- Error extraction from ProblemDetails / custom error responses
+
+**Base URL:** `https://sayiad.runasp.net/api`
+**Swagger:** `https://sayiad.runasp.net/swagger/index.html`
+
+---
+
+## Authentication Flow
+Register → Email sent → User clicks verify link → Auto-login → Home
+Login → JWT (60min) + RefreshToken (7 days) stored in localStorage
+401 response → Auto-refresh → Retry original request
+Logout → POST /auth/logout (revoke refresh token) → Clear localStorage
+
+---
+
+## Design System
+
+The UI uses OKLCH color tokens with a maritime-inspired palette:
+
+| Token | Light | Dark |
+|-------|-------|------|
+| `--primary` | Ocean blue | Bright blue |
+| `--body-bg` | Off-white | Deep navy |
+| `--card-bg` | White | Dark slate |
+| `--text` | Near-black | Near-white |
+
+Typography: **Inter** (English) + **Cairo** (Arabic)
+Spacing: 4px base scale (`--space-1` through `--space-16`)
+Animations: `animate-on-scroll` + IntersectionObserver, stagger delays
 
 ---
 
 ## Deployment
 
-### Vercel
-
-The project includes a `vercel.json` for one-click deployment:
-
-```json
-{
-  "rewrites": [
-    { "source": "/api/:path*", "destination": "https://sayiad.runasp.net/api/:path*" },
-    { "source": "/(.*)", "destination": "/index.html" }
-  ]
-}
-```
-
-This configures:
-- SPA routing (all paths serve `index.html`)
-- API proxy (`/api/*` → production API)
-
-### API
-
-The backend is published via Web Deploy to `sayiad.runasp.net`.
+**Frontend** → Vercel (automatic from GitHub main branch)
+**Backend** → MonsterASP.NET (WebDeploy from Visual Studio)
+**Database** → SQL Server (MonsterASP.NET cloud)
+**Images** → Cloudinary (free tier)
+**Email** → Gmail SMTP via App Password
 
 ---
 
-## Browser Support
+## Contributing
 
-- Chrome 80+
-- Firefox 80+
-- Safari 14+
-- Edge 80+
-- Opera 67+
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/your-feature`
+3. Make your changes following the existing code patterns
+4. Test in both EN/AR and dark/light modes
+5. Open a pull request with a clear description
 
 ---
 
 ## License
 
-© 2026 Sayiad. All rights reserved.
+MIT License — see [LICENSE](LICENSE) for details.
+
+---
+
+<div align="center">
+  Made for fishermen, by fishermen 🎣
+  <br>
+  <a href="https://sayiad.vercel.app">sayiad.vercel.app</a>
+</div>

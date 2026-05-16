@@ -18,6 +18,7 @@ const routeMap = {
   admin: "renderAdmin",
   terms: "renderTerms",
   privacy: "renderPrivacy",
+  profile: "renderUserProfile",
 };
 
 let currentRouteKey = null;
