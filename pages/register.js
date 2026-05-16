@@ -22,6 +22,12 @@ function renderRegister(container) {
             <input type="tel" class="form-input" id="regPhone" name="phone" placeholder="+1234567890" autocomplete="tel" required>
           </div>
           <div class="form-group">
+            <label class="form-label" for="regBirthdate">${t("auth.birthdate")}</label>
+            <input type="date" class="form-input" id="regBirthdate" name="birthdate"
+              max="${new Date(new Date().setFullYear(new Date().getFullYear() - 18)).toISOString().split('T')[0]}" required>
+            <div id="ageDisplay" class="password-strength-text"></div>
+          </div>
+          <div class="form-group">
             <label class="form-label" for="regPassword">${t("auth.password")}</label>
             <div class="password-wrapper">
               <input type="password" class="form-input" id="regPassword" name="password" placeholder="${t("auth.password")}" required autocomplete="new-password" minlength="8">
@@ -66,6 +72,7 @@ function renderRegister(container) {
   const regName = document.getElementById("regName");
   const regEmail = document.getElementById("regEmail");
   const regPhone = document.getElementById("regPhone");
+  const regBirthdate = document.getElementById("regBirthdate");
   const regPassword = document.getElementById("regPassword");
   const regConfirmPw = document.getElementById("regConfirmPw");
   const regRole = document.getElementById("regRole");
@@ -108,6 +115,17 @@ function renderRegister(container) {
     }
   });
   regPhone.addEventListener("input", () => clearFieldError(regPhone));
+  regBirthdate.addEventListener("input", () => {
+    clearFieldError(regBirthdate);
+    const age = calculateAge(regBirthdate.value);
+    const display = document.getElementById("ageDisplay");
+    if (!isNaN(age) && regBirthdate.value) {
+      display.textContent = t("auth.ageLabel", { age });
+      display.style.color = age >= 18 ? "var(--success)" : "var(--danger)";
+    } else {
+      display.textContent = "";
+    }
+  });
   regTerms.addEventListener("change", () => clearFieldError(regTerms));
 
   regTogglePw.addEventListener("click", () => {
@@ -187,6 +205,12 @@ function renderRegister(container) {
         messages: { required: t("auth.fieldRequired") },
       },
       {
+        element: regBirthdate,
+        required: true,
+        minAge: 18,
+        messages: { required: t("auth.fieldRequired") },
+      },
+      {
         element: regPassword,
         required: true,
         minLength: 8,
@@ -231,6 +255,9 @@ function renderRegister(container) {
     try {
       const savedEmail = regEmail.value.trim();
       const savedPassword = regPassword.value;
+      // Removed storing password in sessionStorage due to security risk.
+      // Only email is needed for potential auto-login after verification.
+      sessionStorage.setItem("pendingLoginEmail", savedEmail);
 
       await api.post("/auth/register", {
         fullName: regName.value.trim(),
@@ -244,6 +271,7 @@ function renderRegister(container) {
       strengthBar.className = "password-strength-bar strength-empty";
       strengthText.textContent = "";
 
+      // Show verification waiting overlay instead of navigating away
       showVerificationOverlay(savedEmail, savedPassword);
     } catch (err) {
       alertDiv.innerHTML = `<div class="alert alert-error">${escapeHtml(err.message)}</div>`;
@@ -252,99 +280,109 @@ function renderRegister(container) {
       submit.textContent = t("auth.createAccount");
     }
   });
+}
 
-  function showVerificationOverlay(email, password) {
-    const existing = document.getElementById("verifyOverlay");
-    if (existing) existing.remove();
-
-    const overlay = document.createElement("div");
-    overlay.id = "verifyOverlay";
-    overlay.className = "verify-overlay";
-    overlay.innerHTML = `
-      <div class="verify-overlay-card">
-        <div class="verify-overlay-icon" id="verifyIcon">
-          <i class="fas fa-envelope"></i>
-        </div>
-        <h3>${t("auth.verifyOverlayTitle")}</h3>
-        <p>${t("auth.verifyOverlayDesc")}<br><strong>${escapeHtml(email)}</strong></p>
-        <div class="verify-overlay-dots" id="verifyDots">
-          <span></span><span></span><span></span>
-        </div>
-        <p class="verify-overlay-hint" id="verifyHint">${t("auth.verifyOverlayWaiting")}</p>
-        <div class="verify-overlay-actions" id="verifyActions">
-          <button id="verifyAlreadyBtn" class="btn btn-outline btn-block">${t("auth.verifyOverlayAlready")}</button>
-          <button id="verifyChangeEmailBtn" class="btn btn-ghost btn-block">${t("auth.verifyOverlayChangeEmail")}</button>
-        </div>
+function showVerificationOverlay(email, password) {
+  const overlay = document.createElement("div");
+  overlay.className = "verify-overlay";
+  overlay.innerHTML = `
+    <div class="verify-overlay-card" id="verifyCard">
+      <div class="verify-overlay-icon" id="verifyIcon">
+        <i class="fas fa-envelope" id="verifyIconInner"></i>
       </div>
-    `;
-    document.body.appendChild(overlay);
+      <h3 id="verifyTitle">${t("verify.waitingTitle")}</h3>
+      <p id="verifyDesc">${t("verify.waitingDesc")} <strong>${escapeHtml(email)}</strong></p>
+      <div class="verify-overlay-dots" id="verifyDots">
+        <span></span><span></span><span></span>
+      </div>
+      <div id="verifyError" style="display:none" class="alert alert-error"></div>
+      <div class="verify-actions" style="margin-top: 20px; display: flex; flex-direction: column; gap: 10px;">
+        <button class="btn btn-primary" id="verifyCheckBtn"><i class="fas fa-check-circle"></i> ${t("verify.alreadyVerified")}</button>
+        <button class="btn btn-ghost" id="verifyChangeEmailBtn"><i class="fas fa-arrow-left"></i> ${t("verify.useOtherEmail")}</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
 
-    let attempts = 0;
-    const maxAttempts = 120;
-    let polling = true;
-    const verifyIcon = document.getElementById("verifyIcon");
-    const verifyDots = document.getElementById("verifyDots");
-    const verifyHint = document.getElementById("verifyHint");
-    const verifyActions = document.getElementById("verifyActions");
+  // Animate in
+  requestAnimationFrame(() => {
+    overlay.classList.add("show");
+  });
 
-    const poll = setInterval(async () => {
-      if (!polling) return;
-      attempts++;
-      try {
-        const data = await api.post("/auth/login", { email, password });
-        clearInterval(poll);
-        polling = false;
-        verifyIcon.innerHTML = '<i class="fas fa-check-circle" style="color:var(--success);font-size:3rem;animation:scaleIn 0.3s ease"></i>';
-        verifyIcon.style.animation = "none";
-        verifyDots.style.display = "none";
-        verifyHint.textContent = t("auth.verifyOverlayVerified");
-        verifyActions.style.display = "none";
-        localStorage.setItem("accessToken", data.token);
-        localStorage.setItem("refreshToken", data.refreshToken);
-        localStorage.setItem("user", JSON.stringify(data.user));
-        updateNavbar();
-        showToast(t("auth.loginSuccess"), "success");
-        setTimeout(() => {
-          overlay.remove();
-          navigate("");
-        }, 1500);
-      } catch {
-        if (attempts >= maxAttempts) {
-          clearInterval(poll);
-          verifyDots.style.display = "none";
-          verifyHint.textContent = "Still not verified?";
-        }
-      }
-    }, 3000);
+  let polling = true;
+  let pollCount = 0;
+  const maxPolls = 120; // 6 minutes
 
-    document.getElementById("verifyAlreadyBtn").addEventListener("click", async () => {
-      clearInterval(poll);
-      polling = false;
-      try {
-        const data = await api.post("/auth/login", { email, password });
-        localStorage.setItem("accessToken", data.token);
-        localStorage.setItem("refreshToken", data.refreshToken);
-        localStorage.setItem("user", JSON.stringify(data.user));
-        updateNavbar();
-        showToast(t("auth.loginSuccess"), "success");
-        overlay.remove();
-        navigate("");
-      } catch {
-        showToast("Please verify your email first.", "error");
-        polling = true;
-      }
-    });
+  const doLogin = async () => {
+    const data = await api.post("/auth/login", { email, password });
+    localStorage.setItem("accessToken", data.token);
+    localStorage.setItem("refreshToken", data.refreshToken);
+    localStorage.setItem("user", JSON.stringify(data.user));
+    updateNavbar();
+    return data;
+  };
 
-    document.getElementById("verifyChangeEmailBtn").addEventListener("click", () => {
-      clearInterval(poll);
-      polling = false;
-      overlay.remove();
-    });
+  const showSuccess = () => {
+    polling = false;
+    const icon = document.getElementById("verifyIconInner");
+    icon.className = "fas fa-check-circle";
+    icon.style.color = "var(--success)";
+    document.getElementById("verifyTitle").textContent = t("verify.successTitle");
+    document.getElementById("verifyDesc").textContent = t("verify.successDesc");
+    document.getElementById("verifyDots").style.display = "none";
+    document.getElementById("verifyCheckBtn").remove();
+    document.getElementById("verifyChangeEmailBtn").remove();
+    overlay.querySelector(".verify-overlay-card").classList.add("verified");
+    setTimeout(() => {
+      overlay.classList.remove("show");
+      setTimeout(() => overlay.remove(), 350);
+      navigate("");
+    }, 1800);
+  };
 
-    window.onRouteCleanup = () => {
-      clearInterval(poll);
-      polling = false;
-      if (overlay.parentNode) overlay.remove();
-    };
-  }
+  const cleanup = () => { polling = false; };
+  window.onRouteCleanup = cleanup;
+
+  // Poll every 3s
+  const interval = setInterval(async () => {
+    if (!polling) { clearInterval(interval); return; }
+    pollCount++;
+    if (pollCount > maxPolls) {
+      clearInterval(interval);
+      document.getElementById("verifyError").style.display = "block";
+      document.getElementById("verifyError").textContent = "Verification timed out. Please check your email and try logging in.";
+      return;
+    }
+    try {
+      await doLogin();
+      clearInterval(interval);
+      showSuccess();
+    } catch {
+      // Not verified yet, keep polling
+    }
+  }, 3000);
+
+  document.getElementById("verifyCheckBtn").addEventListener("click", async () => {
+    if (!polling) return;
+    document.getElementById("verifyCheckBtn").disabled = true;
+    document.getElementById("verifyCheckBtn").innerHTML = `<i class="fas fa-spinner spinner"></i>`;
+    try {
+      await doLogin();
+      clearInterval(interval);
+      showSuccess();
+    } catch (err) {
+      document.getElementById("verifyCheckBtn").disabled = false;
+      document.getElementById("verifyCheckBtn").innerHTML = `<i class="fas fa-check-circle"></i> ${t("verify.alreadyVerified")}`;
+      document.getElementById("verifyError").style.display = "block";
+      document.getElementById("verifyError").textContent = err.message;
+    }
+  });
+
+  document.getElementById("verifyChangeEmailBtn").addEventListener("click", () => {
+    polling = false;
+    clearInterval(interval);
+    overlay.classList.remove("show");
+    setTimeout(() => overlay.remove(), 350);
+    window.onRouteCleanup = null;
+  });
 }

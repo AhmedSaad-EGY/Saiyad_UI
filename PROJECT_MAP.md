@@ -88,8 +88,10 @@ Front-end/
     ├── register.js         # Register form with role selector (Customer/Fisherman/BaitSeller/
     │                       # Auctioneer), conditional license field, birthdate + age calc,
     │                       # password strength meter + confirm match, terms checkbox,
-    │                       # email uniqueness check, auto-login after verify
-    ├── forgot-password.js  # Email form → success with 60s countdown resend + change email
+    │                       # verification waiting overlay with polling (3s)
+    ├── forgot-password.js  # 3-step flow (email → token entry → new password) with step
+    │                       # indicator, auto-extract token from pasted URL, resend countdown,
+    │                       # password strength meter
     ├── reset-password.js   # Token from URL, new password + confirm, strength meter, auto-redirect
     ├── products.js         # Product listing with search, category filter, sort (price/n/newest),
     │                       # pagination (<=10), client-side sort, URL param persistence
@@ -120,19 +122,21 @@ Front-end/
 ## Latest Session: Auth Flow Fixes (May 16, 2026)
 
 ### Changes Made
-- **Item 1 — Register birthdate removed**: Birthdate form group removed from `register.js` HTML template (backend `RegisterRequest` has no `birthdate` field). Also removed validation rule, event listener, and dead variable reference.
-- **Item 2 — Verification waiting overlay**: Post-register success now shows a full-screen overlay (`verify-overlay`) with envelope icon (float animation), pulsing dots (`dotPulse` keyframe), and polling of `/auth/login` every 3 seconds (max 120 attempts / 6 min). On auto-login success, icon transitions to green checkmark with `scaleIn`, dots stop, user is logged in and redirected to home. "Already verified? Login" button triggers manual login attempt. "Use a different email" button dismisses overlay and resets form. Route cleanup cancels polling and removes overlay.
-- **Item 3 — Forgot Password 3-Step Flow**: `forgot-password.js` rewritten with step indicator (`forgot-steps`, `.forgot-step`, `.forgot-step-line`) — step 1 (email entry → POST `/auth/forgot-password`), step 2 (token/URL paste, extracts `?token=` via regex, resend with 60s cooldown), step 3 (new password with strength meter, confirm, POST `/auth/reset-password`). On reset failure, shows "Try a different code" button returning to step 2.
-- **Item 4 — CSS additions**: Added `.verify-overlay`, `.verify-overlay-card`, `.verify-overlay-icon`, `.verify-overlay-dots`, `@keyframes dotPulse`, `.forgot-steps`, `.forgot-step`, `.forgot-step-line`, `.form-hint`.
-- **Item 5 — Translations**: Added 12 new keys in EN and AR for overlay (verifyOverlayTitle/Desc/Waiting/Already/ChangeEmail/Verified) and token entry (enterToken/tokenPlaceholder/invalidToken/forgotStep1/Step2/Step3).
+- **Item 1 — Register 400 fix**: Removed `birthdate` from POST `/auth/register` body (backend `RegisterRequest` has no birthdate field); removed `hasSpecialChar` from password validation (backend does not enforce special chars).
+- **Item 2 — Password validation alignment**: Changed `minlength` 6 → 8 (matches backend `MinimumLength(8)`); added `hasUppercase`/`hasLowercase`/`hasDigit` validation rules (backend requires all three); made phone field `required` (backend `NotEmpty()`); added `auth.passwordRequires*` translation keys.
+- **Item 3 — Verification waiting overlay**: Added `showVerificationOverlay()` function — full-screen overlay with animated envelope icon, pulsing dots, email display; polls `POST /auth/login` every 3s; on success shows green checkmark + navigates to home after 1.8s; manual "I already verified" button; "Use a different email" dismisses overlay; cleanup via `window.onRouteCleanup`.
+- **Item 4 — Forgot password 3-step flow**: Rewrote `pages/forgot-password.js` — step indicator (3 dots + lines), Step 1 (email → send link), Step 2 (token/code entry, auto-extracts token from pasted URL, resend with 60s countdown), Step 3 (new password with strength meter + confirm), on success redirects to login after 2.5s.
+- **Item 5 — CSS additions**: `.verify-overlay` (fixed + blur backdrop), `.verify-overlay-card` (modal card), `.verify-overlay-icon` (animated envelope + success state), `.verify-overlay-dots` (3 pulsing dots), `.forgot-steps` (step indicator styles), `.form-hint` utility.
+- **Item 6 — Translation keys added (8 EN + 8 AR)**: `verify.waitingTitle`, `verify.waitingDesc`, `verify.alreadyVerified`, `verify.useOtherEmail`, `verify.successTitle`, `verify.successDesc`, `auth.tokenPlaceholder`, `auth.tokenHint`.
 
 ### Files Changed (4)
 | File | Change |
 |------|--------|
-| `js/translations.js` | Added 12 new auth keys in EN and AR |
-| `css/style.css` | Added verify-overlay, forgot-steps, dotPulse @keyframes, form-hint |
-| `pages/register.js` | Removed birthdate UI/validation; added verification overlay with polling |
-| `pages/forgot-password.js` | Full 3-step rewrite with step indicator, token entry, password reset |
+| `pages/register.js` | Removed `birthdate` from POST body; removed `hasSpecialChar`; added `hasUppercase`/`hasLowercase`/`hasDigit`; minlength 6→8; phone required; added `showVerificationOverlay()` |
+| `pages/forgot-password.js` | Full rewrite — 3-step flow with step indicator, token entry, password strength meter |
+| `css/style.css` | Added `.verify-overlay` + `.verify-overlay-card` + `.verify-overlay-icon` + `.verify-overlay-dots` + keyframes; added `.forgot-steps` + `.forgot-step` + `.forgot-step-line` + `.form-hint` |
+| `js/translations.js` | Added 8 new keys EN + AR for overlay and token entry |
+| `js/utils.js` | Added `hasUppercase`/`hasLowercase`/`hasDigit` rules to `validateForm()`; updated `getPasswordStrength()` thresholds (6→8, 10→12) |
 
 ## Previous Session: Complete Polish & Missing Pages (May 16, 2026)
 
