@@ -100,6 +100,18 @@ const translations = {
     "auth.updatingPassword": "Updating password...",
     "auth.passwordResetSuccess":
       "Password updated successfully! Redirecting to login...",
+    "auth.verifyOverlayTitle": "Verify your email",
+    "auth.verifyOverlayDesc": "We sent a verification link to",
+    "auth.verifyOverlayWaiting": "Waiting for verification...",
+    "auth.verifyOverlayAlready": "Already verified? Login",
+    "auth.verifyOverlayChangeEmail": "Use a different email",
+    "auth.verifyOverlayVerified": "Verified! Logging you in...",
+    "auth.enterToken": "Enter the code from your email",
+    "auth.tokenPlaceholder": "Paste code or full link here",
+    "auth.invalidToken": "Invalid or expired token. Please try again.",
+    "auth.forgotStep1": "Email",
+    "auth.forgotStep2": "Verify",
+    "auth.forgotStep3": "Reset",
 
     // Products
     "products.title": "Products",
@@ -473,6 +485,18 @@ const translations = {
     "auth.updatingPassword": "جارٍ تحديث كلمة المرور...",
     "auth.passwordResetSuccess":
       "تم تحديث كلمة المرور بنجاح! جاري التحويل لتسجيل الدخول...",
+    "auth.verifyOverlayTitle": "تحقق من بريدك الإلكتروني",
+    "auth.verifyOverlayDesc": "لقد أرسلنا رابط التحقق إلى",
+    "auth.verifyOverlayWaiting": "في انتظار التحقق...",
+    "auth.verifyOverlayAlready": "تم التحقق بالفعل؟ تسجيل الدخول",
+    "auth.verifyOverlayChangeEmail": "استخدام بريد إلكتروني آخر",
+    "auth.verifyOverlayVerified": "تم التحقق! جاري تسجيل الدخول...",
+    "auth.enterToken": "أدخل الرمز من بريدك الإلكتروني",
+    "auth.tokenPlaceholder": "الصق الرمز أو الرابط الكامل هنا",
+    "auth.invalidToken": "رمز غير صالح أو منتهي الصلاحية. حاول مرة أخرى.",
+    "auth.forgotStep1": "البريد الإلكتروني",
+    "auth.forgotStep2": "التحقق",
+    "auth.forgotStep3": "إعادة تعيين",
 
     // Products
     "products.title": "المنتجات",

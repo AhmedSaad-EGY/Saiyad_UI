@@ -117,7 +117,24 @@ Front-end/
     └── terms.js            # Terms & conditions static page (6 sections)
 ```
 
-## Latest Session: Complete Polish & Missing Pages (May 16, 2026)
+## Latest Session: Auth Flow Fixes (May 16, 2026)
+
+### Changes Made
+- **Item 1 — Register birthdate removed**: Birthdate form group removed from `register.js` HTML template (backend `RegisterRequest` has no `birthdate` field). Also removed validation rule, event listener, and dead variable reference.
+- **Item 2 — Verification waiting overlay**: Post-register success now shows a full-screen overlay (`verify-overlay`) with envelope icon (float animation), pulsing dots (`dotPulse` keyframe), and polling of `/auth/login` every 3 seconds (max 120 attempts / 6 min). On auto-login success, icon transitions to green checkmark with `scaleIn`, dots stop, user is logged in and redirected to home. "Already verified? Login" button triggers manual login attempt. "Use a different email" button dismisses overlay and resets form. Route cleanup cancels polling and removes overlay.
+- **Item 3 — Forgot Password 3-Step Flow**: `forgot-password.js` rewritten with step indicator (`forgot-steps`, `.forgot-step`, `.forgot-step-line`) — step 1 (email entry → POST `/auth/forgot-password`), step 2 (token/URL paste, extracts `?token=` via regex, resend with 60s cooldown), step 3 (new password with strength meter, confirm, POST `/auth/reset-password`). On reset failure, shows "Try a different code" button returning to step 2.
+- **Item 4 — CSS additions**: Added `.verify-overlay`, `.verify-overlay-card`, `.verify-overlay-icon`, `.verify-overlay-dots`, `@keyframes dotPulse`, `.forgot-steps`, `.forgot-step`, `.forgot-step-line`, `.form-hint`.
+- **Item 5 — Translations**: Added 12 new keys in EN and AR for overlay (verifyOverlayTitle/Desc/Waiting/Already/ChangeEmail/Verified) and token entry (enterToken/tokenPlaceholder/invalidToken/forgotStep1/Step2/Step3).
+
+### Files Changed (4)
+| File | Change |
+|------|--------|
+| `js/translations.js` | Added 12 new auth keys in EN and AR |
+| `css/style.css` | Added verify-overlay, forgot-steps, dotPulse @keyframes, form-hint |
+| `pages/register.js` | Removed birthdate UI/validation; added verification overlay with polling |
+| `pages/forgot-password.js` | Full 3-step rewrite with step indicator, token entry, password reset |
+
+## Previous Session: Complete Polish & Missing Pages (May 16, 2026)
 
 ### Changes Made
 - **Item 1 — Logo**: Replaced emoji fish favicon with `logo.png`; navbar now uses `<img class="nav-logo-img">` + `<span class="nav-logo-text">` instead of `<i class="fas fa-fish">`.
