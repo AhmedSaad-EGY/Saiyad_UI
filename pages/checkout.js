@@ -8,14 +8,14 @@ async function renderCheckout(container) {
     const items = cart.items || [];
 
     if (!items.length) {
-      container.innerHTML = `<div class="section-header"><h2><i class="fas fa-credit-card"></i> ${t("cart.checkout")}</h2></div>`;
-      renderEmptyState(container, {
-        icon: "fa-shopping-cart",
-        title: t("cart.empty"),
-        desc: t("cart.emptyDesc"),
-        actionText: t("cart.browseProducts"),
-        actionHref: "#/products",
-      });
+      container.innerHTML = `
+        <div class="section-header"><h2><i class="fas fa-credit-card"></i> ${t("cart.checkout")}</h2></div>
+        <div class="empty-state">
+          <i class="fas fa-shopping-cart" style="font-size:3rem;color:var(--text-muted);margin-bottom:16px"></i>
+          <h3>${t("cart.empty")}</h3>
+          <p style="color:var(--text-muted);margin-bottom:20px">${t("cart.emptyDesc")}</p>
+          <a href="#/products" class="btn btn-primary"><i class="fas fa-store"></i> ${t("cart.browseProducts")}</a>
+        </div>`;
       return;
     }
 
@@ -50,24 +50,24 @@ async function renderCheckout(container) {
           <form id="addressForm">
             <div class="grid grid-2" style="gap:12px">
               <div class="form-group">
-                <label class="form-label">Full Name *</label>
-                <input type="text" class="form-input" id="addrFullName" required>
+                <label class="form-label">${t("auth.fullName")} *</label>
+                <input type="text" class="form-input" id="addrFullName" name="fullName" required>
               </div>
               <div class="form-group">
-                <label class="form-label">Phone *</label>
-                <input type="tel" class="form-input" id="addrPhone" required>
+                <label class="form-label">${t("auth.phone")} *</label>
+                <input type="tel" class="form-input" id="addrPhone" name="phone" required>
               </div>
               <div class="form-group" style="grid-column:1/-1">
-                <label class="form-label">Address *</label>
-                <input type="text" class="form-input" id="addrAddressLine" required>
+                <label class="form-label">${t("cart.addressLine")} *</label>
+                <input type="text" class="form-input" id="addrAddressLine" name="addressLine" required>
               </div>
               <div class="form-group">
-                <label class="form-label">City *</label>
-                <input type="text" class="form-input" id="addrCity" required>
+                <label class="form-label">${t("cart.city")} *</label>
+                <input type="text" class="form-input" id="addrCity" name="city" required>
               </div>
               <div class="form-group">
-                <label class="form-label">Postal Code</label>
-                <input type="text" class="form-input" id="addrPost">
+                <label class="form-label">${t("shipping.postalCode")}</label>
+                <input type="text" class="form-input" id="addrPost" name="postalCode">
               </div>
             </div>
           </form>
@@ -102,7 +102,7 @@ async function renderCheckout(container) {
           const postalCode = document.getElementById("addrPost").value.trim();
 
           if (!fullName || !phone || !addressLine || !city) {
-            alertDiv.innerHTML = `<div class="alert alert-error">Full Name, Phone, Address, and City are required.</div>`;
+            alertDiv.innerHTML = `<div class="alert alert-error">${t("cart.requiredFields")}</div>`;
             btn.disabled = false;
             btn.innerHTML = `<i class="fas fa-lock"></i> ${t("cart.placeOrder")}`;
             return;

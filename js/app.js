@@ -328,6 +328,18 @@ document.addEventListener("mousedown", () => {
 });
 
 // ============================================================
+// GLOBAL ERROR HANDLER
+// ============================================================
+window.addEventListener("unhandledrejection", (e) => {
+  if (e.reason?.message?.includes("Network error") || e.reason?.message?.includes("Session expired")) return;
+  console.warn("Unhandled Promise Rejection:", e.reason);
+});
+window.addEventListener("error", (e) => {
+  if (e.message?.includes("ResizeObserver")) { e.preventDefault(); return; }
+  console.warn("Global Error:", e.message);
+});
+
+// ============================================================
 // SERVICE WORKER
 // ============================================================
 if ("serviceWorker" in navigator) {

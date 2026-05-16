@@ -20,7 +20,7 @@ function renderResetPassword(container) {
               <label class="form-label" for="resetPassword">${t("auth.newPassword")}</label>
               <div class="password-wrapper">
                 <input type="password" class="form-input" id="resetPassword" name="password" required minlength="6">
-                <button type="button" class="toggle-password" id="resetTogglePw" aria-label="${t("auth.showPassword")}" tabindex="-1"><i class="fas fa-eye"></i></button>
+                <button type="button" class="toggle-password" id="resetTogglePw" aria-label="${t("auth.showPassword")}" <i class="fas fa-eye"></i></button>
               </div>
               <div class="password-strength" id="resetStrength"><div class="password-strength-bar" id="resetStrengthBar"></div></div>
               <div class="password-strength-text" id="resetStrengthText"></div>
@@ -29,7 +29,7 @@ function renderResetPassword(container) {
               <label class="form-label" for="resetConfirmPw">${t("auth.confirmNewPassword")}</label>
               <div class="password-wrapper">
                 <input type="password" class="form-input" id="resetConfirmPw" name="confirmPassword" required minlength="6">
-                <button type="button" class="toggle-password" id="resetToggleConfirmPw" aria-label="${t("auth.showPassword")}" tabindex="-1"><i class="fas fa-eye"></i></button>
+                <button type="button" class="toggle-password" id="resetToggleConfirmPw" aria-label="${t("auth.showPassword")}" <i class="fas fa-eye"></i></button>
               </div>
             </div>
             <button type="submit" class="btn btn-primary btn-block btn-lg" id="resetSubmit">${t("auth.resetPassword")}</button>

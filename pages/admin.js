@@ -194,10 +194,10 @@ async function renderAdmin(container) {
         });
       content.querySelectorAll(".delete-cat").forEach((btn) => {
         btn.addEventListener("click", async () => {
-          if (!confirm("Delete category?")) return;
+          if (!confirm(t("admin.confirmDeleteCategory"))) return;
           try {
             await api.delete(`/categories/${btn.dataset.id}`);
-            showToast("Category deleted", "success");
+            showToast(t("admin.categoryDeleted"), "success");
             loadCategories();
           } catch (err) {
             showToast(err.message, "error");

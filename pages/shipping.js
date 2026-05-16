@@ -82,7 +82,7 @@ async function renderShipping(container) {
 
       list.querySelectorAll(".delete-addr").forEach((btn) => {
         btn.addEventListener("click", async () => {
-          if (!confirm("Delete this address?")) return;
+          if (!confirm(t("shipping.confirmDelete"))) return;
           try {
             await api.delete(`/shipping-addresses/${btn.dataset.id}`);
             showToast(t("shipping.deleted"), "success");

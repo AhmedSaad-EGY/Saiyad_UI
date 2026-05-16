@@ -241,7 +241,7 @@ function progressiveImg(src, alt = "", className = "") {
   return `
     <div class="${className} progressive-wrap" style="position:relative;overflow:hidden;background:var(--body-bg)">
       <div id="${id}-placeholder" style="position:absolute;inset:0;background:var(--border);filter:blur(30px);transform:scale(1.2);opacity:1;transition:opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1)"></div>
-      <img id="${id}-img" src="${src}" alt="${escapeHtml(alt)}" style="width:100%;height:100%;object-fit:cover;opacity:0;transform:scale(1.05);transition:opacity 0.6s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)" loading="lazy" onload="document.getElementById('${id}-placeholder').style.opacity='0';this.style.opacity='1';this.style.transform='scale(1)'">
+      <img id="${id}-img" src="${escapeHtml(src)}" alt="${escapeHtml(alt)}" style="width:100%;height:100%;object-fit:cover;opacity:0;transform:scale(1.05);transition:opacity 0.6s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)" loading="lazy" onload="document.getElementById('${id}-placeholder').style.opacity='0';this.style.opacity='1';this.style.transform='scale(1)'">
     </div>`;
 }
 

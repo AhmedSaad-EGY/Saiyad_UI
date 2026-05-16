@@ -1,43 +1,72 @@
-const signalrConnection = new signalR.HubConnectionBuilder()
-  .withUrl(APP_CONFIG.signalrHubUrl, {
-    accessTokenFactory: () => localStorage.getItem("accessToken") || "",
-  })
-  .withAutomaticReconnect([0, 2000, 5000, 10000, 30000])
-  .build();
+let _connection = null;
+let _connectionPromise = null;
 
-signalrConnection.on("BidPlaced", (bid) => {
-  const bidDisplay = document.getElementById("currentBidDisplay");
-  if (bidDisplay) {
-    bidDisplay.innerHTML = `${t("auction.currentBid")}: ${formatPrice(bid.amount || bid.currentHighestBid)}`;
-    bidDisplay.style.animation = "none";
-    bidDisplay.offsetHeight;
-    bidDisplay.style.animation = "priceFlash 0.5s ease";
-  }
-  showToast(t("auction.newBid"), "info");
-});
+function getConnection() {
+  if (_connection) return _connection;
+  _connection = new signalR.HubConnectionBuilder()
+    .withUrl(APP_CONFIG.signalrHubUrl, {
+      accessTokenFactory: () => localStorage.getItem("accessToken") || "",
+    })
+    .withAutomaticReconnect([0, 2000, 5000, 10000, 30000])
+    .build();
 
-signalrConnection.on("AuctionEnded", (auction) => {
-  const container = document.getElementById("countdownContainer");
-  if (container) {
-    container.innerHTML = `<span style="color:var(--danger);font-weight:600"><i class="fas fa-times-circle"></i> ${t("auction.ended")}</span>`;
-  }
-  showToast("Auction ended!", "info");
-});
+  _connection.on("BidPlaced", (bid) => {
+    const bidDisplay = document.getElementById("currentBidDisplay");
+    if (bidDisplay) {
+      bidDisplay.innerHTML = `${t("auction.currentBid")}: ${formatPrice(bid.amount || bid.currentHighestBid)}`;
+      bidDisplay.style.animation = "none";
+      bidDisplay.offsetHeight;
+      bidDisplay.style.animation = "priceFlash 0.5s ease";
+    }
+    showToast(t("auction.newBid"), "info");
+  });
 
-signalrConnection.start().catch(() => {});
+  _connection.on("AuctionEnded", (auction) => {
+    const container = document.getElementById("countdownContainer");
+    if (container) {
+      container.innerHTML = `<span style="color:var(--danger);font-weight:600"><i class="fas fa-times-circle"></i> ${t("auction.ended")}</span>`;
+    }
+    showToast("Auction ended!", "info");
+  });
+
+  return _connection;
+}
+
+function startIfNeeded() {
+  if (!localStorage.getItem("accessToken")) return Promise.resolve();
+  if (_connectionPromise) return _connectionPromise;
+  const conn = getConnection();
+  _connectionPromise = conn.start().catch(() => {});
+  return _connectionPromise;
+}
 
 function joinAuctionGroup(auctionId) {
-  if (signalrConnection.state === signalR.HubConnectionState.Connected) {
-    signalrConnection.invoke("JoinAuctionGroup", auctionId).catch(() => {});
-  } else {
-    signalrConnection.onreconnected(() => {
-      signalrConnection.invoke("JoinAuctionGroup", auctionId).catch(() => {});
-    });
-  }
+  startIfNeeded().then(() => {
+    const conn = getConnection();
+    if (conn.state === signalR.HubConnectionState.Connected) {
+      conn.invoke("JoinAuctionGroup", auctionId).catch(() => {});
+    } else {
+      conn.onreconnected(() => {
+        conn.invoke("JoinAuctionGroup", auctionId).catch(() => {});
+      });
+    }
+  });
 }
 
 function leaveAuctionGroup(auctionId) {
-  if (signalrConnection.state === signalR.HubConnectionState.Connected) {
-    signalrConnection.invoke("LeaveAuctionGroup", auctionId).catch(() => {});
+  if (!_connection) return;
+  const conn = getConnection();
+  if (conn.state === signalR.HubConnectionState.Connected) {
+    conn.invoke("LeaveAuctionGroup", auctionId).catch(() => {});
   }
 }
+
+function stopSignalR() {
+  if (_connection) {
+    _connection.stop().catch(() => {});
+    _connection = null;
+    _connectionPromise = null;
+  }
+}
+
+document.addEventListener("logout", stopSignalR);

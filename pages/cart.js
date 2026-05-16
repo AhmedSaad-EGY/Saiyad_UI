@@ -8,14 +8,14 @@ async function renderCart(container) {
     const items = cart.items || [];
 
     if (!items.length) {
-      container.innerHTML = `<div class="section-header"><h2><i class="fas fa-shopping-cart"></i> ${t("cart.title")}</h2></div>`;
-      renderEmptyState(container, {
-        icon: "fa-shopping-cart",
-        title: t("cart.empty"),
-        desc: t("cart.emptyDesc"),
-        actionText: t("cart.browseProducts"),
-        actionHref: "#/products",
-      });
+      container.innerHTML = `
+        <div class="section-header"><h2><i class="fas fa-shopping-cart"></i> ${t("cart.title")}</h2></div>
+        <div class="empty-state">
+          <i class="fas fa-shopping-cart" style="font-size:3rem;color:var(--text-muted);margin-bottom:16px"></i>
+          <h3>${t("cart.empty")}</h3>
+          <p style="color:var(--text-muted);margin-bottom:20px">${t("cart.emptyDesc")}</p>
+          <a href="#/products" class="btn btn-primary"><i class="fas fa-store"></i> ${t("cart.browseProducts")}</a>
+        </div>`;
       return;
     }
 

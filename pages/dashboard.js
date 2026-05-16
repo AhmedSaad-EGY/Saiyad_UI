@@ -348,7 +348,7 @@ async function renderWishlist(content) {
 
     document.querySelectorAll(".remove-wishlist").forEach((btn) => {
       btn.addEventListener("click", async () => {
-        if (!confirm("Remove from wishlist?")) return;
+        if (!confirm(t("wishlist.confirmRemove"))) return;
         try {
           await api.delete(`/wishlist/${btn.dataset.id}`);
           showToast(t("product.wishlistUpdated"), "success");
@@ -554,7 +554,7 @@ function renderChangePassword(content) {
           required: true,
           minLength: 6,
           messages: {
-            minLength: t("auth.password") + " must be at least 6 characters.",
+            minLength: t("auth.passwordMinLength"),
           },
         },
       ]);

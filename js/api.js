@@ -3,10 +3,15 @@ async function request(endpoint, options = {}) {
   const headers = { "Content-Type": "application/json", ...options.headers };
   if (token) headers["Authorization"] = `Bearer ${token}`;
 
-  const res = await fetch(`${APP_CONFIG.apiBaseUrl}${endpoint}`, {
-    ...options,
-    headers,
-  });
+  let res;
+  try {
+    res = await fetch(`${APP_CONFIG.apiBaseUrl}${endpoint}`, {
+      ...options,
+      headers,
+    });
+  } catch {
+    throw new Error("Network error. Please check your connection.");
+  }
 
   if (res.status === 401 && !options._retry) {
     const refreshed = await refreshAccessToken();
@@ -63,11 +68,16 @@ const api = {
     const token = localStorage.getItem("accessToken");
     const headers = {};
     if (token) headers["Authorization"] = `Bearer ${token}`;
-    const res = await fetch(`${APP_CONFIG.apiBaseUrl}${url}`, {
-      method: "POST",
-      headers,
-      body: formData,
-    });
+    let res;
+    try {
+      res = await fetch(`${APP_CONFIG.apiBaseUrl}${url}`, {
+        method: "POST",
+        headers,
+        body: formData,
+      });
+    } catch {
+      throw new Error("Network error. Please check your connection.");
+    }
     const text = await res.text();
     const data = text ? JSON.parse(text) : null;
     if (!res.ok) {

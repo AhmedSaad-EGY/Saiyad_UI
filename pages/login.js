@@ -17,7 +17,7 @@ function renderLogin(container) {
             <label class="form-label" for="loginPassword">${t("auth.password")}</label>
             <div class="password-wrapper">
               <input type="password" class="form-input" id="loginPassword" name="password" placeholder="${t("auth.password")}" required autocomplete="current-password" minlength="6">
-              <button type="button" class="toggle-password" id="loginTogglePw" aria-label="${t("auth.showPassword")}" tabindex="-1"><i class="fas fa-eye"></i></button>
+              <button type="button" class="toggle-password" id="loginTogglePw" aria-label="${t("auth.showPassword")}" <i class="fas fa-eye"></i></button>
             </div>
             <div style="text-align: right; margin-top: 4px;">
               <a href="#/forgot-password" style="font-size: var(--text-xs); color: var(--primary); text-decoration: none;">${t("auth.forgotPassword")}</a>
@@ -79,7 +79,7 @@ function renderLogin(container) {
         required: true,
         minLength: 6,
         messages: {
-          minLength: t("auth.password") + " must be at least 6 characters.",
+          minLength: t("auth.passwordMinLength"),
         },
       },
     ]);

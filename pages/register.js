@@ -30,7 +30,7 @@ function renderRegister(container) {
             <label class="form-label" for="regPassword">${t("auth.password")}</label>
             <div class="password-wrapper">
               <input type="password" class="form-input" id="regPassword" name="password" placeholder="${t("auth.password")}" required autocomplete="new-password" minlength="6">
-              <button type="button" class="toggle-password" id="regTogglePw" aria-label="${t("auth.showPassword")}" tabindex="-1"><i class="fas fa-eye"></i></button>
+              <button type="button" class="toggle-password" id="regTogglePw" aria-label="${t("auth.showPassword")}" <i class="fas fa-eye"></i></button>
             </div>
             <div class="password-strength" id="regStrength"><div class="password-strength-bar" id="regStrengthBar"></div></div>
             <div class="password-strength-text" id="regStrengthText"></div>
@@ -209,7 +209,7 @@ function renderRegister(container) {
         minLength: 6,
         hasSpecialChar: true,
         messages: {
-          minLength: t("auth.password") + " must be at least 6 characters.",
+          minLength: t("auth.passwordMinLength"),
         },
       },
       {

@@ -63,6 +63,7 @@ const translations = {
     "auth.hidePassword": "Hide password",
     "auth.confirmPassword": "Confirm Password",
     "auth.passwordsDoNotMatch": "Passwords do not match.",
+    "auth.passwordMinLength": "Password must be at least 6 characters.",
     "auth.invalidEmail": "Please enter a valid email address.",
     "auth.fieldRequired": "This field is required.",
     "auth.minAgeRequired": "You must be at least {minAge} years old.",
@@ -122,6 +123,7 @@ const translations = {
     "product.brand": "Brand",
     "product.addedToCart": "Added to cart!",
     "product.wishlistUpdated": "Wishlist updated!",
+    "wishlist.confirmRemove": "Remove from wishlist?",
 
     // Auctions
     "auctions.title": "Auctions",
@@ -173,6 +175,7 @@ const translations = {
     "cart.paymentMethod": "Payment Method",
     "cart.creditCard": "Credit Card",
     "cart.cashOnDelivery": "Cash on Delivery",
+    "cart.requiredFields": "Full Name, Phone, Address, and City are required.",
     "cart.orderSuccess": "Order placed successfully!",
     "cart.orderSuccessDesc":
       "Your order has been placed. Redirecting to dashboard...",
@@ -230,6 +233,7 @@ const translations = {
     "shipping.noAddresses": "No shipping addresses yet.",
     "shipping.saved": "Address saved!",
     "shipping.deleted": "Address deleted!",
+    "shipping.confirmDelete": "Delete this address?",
     "shipping.error": "Failed to save address.",
 
     // Seller Profile
@@ -294,6 +298,8 @@ const translations = {
     "admin.categoryDesc": "Description",
     "admin.noAccess": "You do not have admin access.",
     "admin.userToggled": "User status updated!",
+    "admin.confirmDeleteCategory": "Delete category?",
+    "admin.categoryDeleted": "Category deleted",
 
     // Order Detail
     "order.title": "Order Details",
@@ -422,6 +428,7 @@ const translations = {
     "auth.hidePassword": "إخفاء كلمة المرور",
     "auth.confirmPassword": "تأكيد كلمة المرور",
     "auth.passwordsDoNotMatch": "كلمات المرور غير متطابقة.",
+    "auth.passwordMinLength": "يجب أن تكون كلمة المرور 6 أحرف على الأقل.",
     "auth.invalidEmail": "الرجاء إدخال بريد إلكتروني صحيح.",
     "auth.fieldRequired": "هذا الحقل مطلوب.",
     "auth.minAgeRequired": "يجب أن يكون عمرك {minAge} عامًا على الأقل.",
@@ -481,6 +488,7 @@ const translations = {
     "product.brand": "العلامة التجارية",
     "product.addedToCart": "تمت الإضافة إلى العربة!",
     "product.wishlistUpdated": "تم تحديث المفضلة!",
+    "wishlist.confirmRemove": "إزالة من المفضلة؟",
 
     // Auctions
     "auctions.title": "المزادات",
@@ -532,6 +540,7 @@ const translations = {
     "cart.paymentMethod": "طريقة الدفع",
     "cart.creditCard": "بطاقة ائتمان",
     "cart.cashOnDelivery": "الدفع عند الاستلام",
+    "cart.requiredFields": "الاسم الكامل ورقم الهاتف والعنوان والمدينة مطلوبة.",
     "cart.orderSuccess": "تم تقديم الطلب بنجاح!",
     "cart.orderSuccessDesc": "تم تقديم طلبك. جاري التحويل إلى لوحة التحكم...",
     "cart.backToCart": "العودة إلى العربة",
@@ -589,6 +598,7 @@ const translations = {
     "shipping.noAddresses": "لا توجد عناوين شحن بعد.",
     "shipping.saved": "تم حفظ العنوان!",
     "shipping.deleted": "تم حذف العنوان!",
+    "shipping.confirmDelete": "حذف هذا العنوان؟",
     "shipping.error": "فشل حفظ العنوان.",
 
     // Seller Profile
@@ -653,6 +663,8 @@ const translations = {
     "admin.categoryDesc": "الوصف",
     "admin.noAccess": "ليس لديك صلاحية الوصول للإدارة.",
     "admin.userToggled": "تم تحديث حالة المستخدم!",
+    "admin.confirmDeleteCategory": "حذف التصنيف؟",
+    "admin.categoryDeleted": "تم حذف التصنيف",
 
     // Order Detail
     "order.title": "تفاصيل الطلب",
