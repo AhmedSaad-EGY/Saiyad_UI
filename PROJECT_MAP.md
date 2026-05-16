@@ -117,33 +117,40 @@ Front-end/
     └── terms.js            # Terms & conditions static page (6 sections)
 ```
 
-## Latest Session: Complete UI/UX Overhaul (May 2026)
+## Latest Session: Complete Polish & Missing Pages (May 16, 2026)
 
 ### Changes Made
-- **background.js**: Full replacement — abstract waves replaced with ocean scene: swimming fish (8-12 procedural), god rays, caustics, bubbles, kelp, wave overlay. Dark/light mode aware. Respects `prefers-reduced-motion`.
-- **css/style.css**: Ocean-themed OKLCH color system (`--primary`: deep blue, `--accent`: coral), Syne heading font, glass-panel hero, card depth system, button interactions, feature card animations, notification bell pulse, 404 page styles, footer system, full mobile responsive (360-768px) nav drawer, dashboard, product grid, auth forms, tables.
-- **index.html**: Added Syne font, nav overlay div, new footer with Marketplace/Account/Legal columns.
-- **js/app.js**: Updated hamburger to toggle `#navDrawer` + overlay, close on outside click/nav-link tap.
-- **js/router.js**: Custom 404 page with animated fish icon and dual CTAs.
-- **js/api.js**: Added `api.patch()` method.
-- **js/translations.js**: Added all new footer keys in en + ar.
-- **pages/admin.js**: Fixed `hasAnyRole(["Admin"])` → `hasAnyRole("Admin")`.
-- **pages/auctions.js**: Fixed auction search param `search` → `SearchTerm`.
-- **js/app.js**: Fixed toast XSS — `msg` now goes through `escapeHtml()`.
+- **Item 1 — Logo**: Replaced emoji fish favicon with `logo.png`; navbar now uses `<img class="nav-logo-img">` + `<span class="nav-logo-text">` instead of `<i class="fas fa-fish">`.
+- **Item 2 — Navbar**: Fixed position (was sticky), height 60px; active nav-link uses pill background (`.nav-actions` with border-left separator); cart badge with `2px solid var(--nav-bg)` border; mobile drawer uses `inset-inline-end`, `100dvh`, RTL-aware slide.
+- **Item 3 — Dark Mode**: Adjusted tokens for depth hierarchy — `--card-bg: oklch(0.20 0.022 245)`, `--input-bg: oklch(0.24 0.020 245)`, `--body-bg: oklch(0.13 0.020 245)`, `--text: oklch(0.94 0.010 245)`, `--border: oklch(0.28 0.022 245)`, `--primary: oklch(0.72 0.17 250)`. Added auth card + form-input overrides for dark mode.
+- **Item 4 — Product Cards**: New structure — `.product-card` is `flex-column`, `aspect-ratio: 4/3` image, `.img-placeholder` with icon, `.product-card-badge` overlay, 2-line clamped title, meta with category + stock, no footer (moved to meta). Removed quick-view button from product cards.
+- **Item 5 — Date Picker**: Styled `input[type="date"]` calendar icon (dark mode invert), datetime-edit fields. Birthdate input now has `max` attribute (18 years ago).
+- **Item 6 — Scrollbar**: Custom thin scrollbar (6px), `scrollbar-width: thin` for Firefox, thumb color derived from `--primary` with OKLCH transparency.
+- **Item 7 — Animations**: `observeAnimations()` rewritten — accepts root param, uses local-scoped `IntersectionObserver`, fallback for no IO support. Stagger delays simplified (50-400ms). `prefers-reduced-motion` block at scroll-animations section. Added `observeAnimations()` call to `auction-detail.js`.
+- **Item 8 — Legal Pages**: `privacy.js` and `terms.js` fully redesigned — `legal-page` layout with hero icon, table of contents (numbered anchors), 6 sections each with legal-section pattern, bilingual, footer with nav links.
+- **Item 9 — Profile Page**: New `pages/profile.js` with `renderUserProfile()`. Route `profile: "renderUserProfile"` in router.js. Profile hero (avatar, name, email, role badge), stats cards (orders/wishlist/notifs async), quick-links grid. Nav dropdown includes profile link.
+- **Item 10 — Bug Fixes**: Toast uses `document.createElement` + `textContent` (no innerHTML). Dashboard `/products/my` → `/products/seller` (2 instances). Register birthdate max attribute.
+- **Item 11 — README**: Full GitHub README with badges, tech stack table, features, project structure tree, API/design system docs.
 
-### Files Changed (12)
+### Files Changed (14)
 | File | Change |
 |------|--------|
-| `js/background.js` | Full ocean scene with fish |
-| `css/style.css` | Color tokens, typography, cards, mobile, footer, 404, animations |
-| `index.html` | Syne font, nav overlay, new footer |
-| `js/app.js` | Nav drawer toggle, toast XSS fix |
-| `js/router.js` | 404 page |
-| `js/api.js` | api.patch method |
-| `js/translations.js` | Footer i18n keys |
-| `pages/admin.js` | Role check fix |
-| `pages/auctions.js` | SearchTerm param fix |
-| `pages/home.js` | Hero structure cleanup |
+| `logo.png` | Added (site logo) |
+| `README.md` | Created |
+| `index.html` | Favicon, logo navbar, profile dropdown link, cart-nav-link class, profile.js script tag |
+| `css/style.css` | Logo styles, navbar redesign, dark mode audit, product card redesign, date picker, global scrollbar, animation system, legal pages CSS, profile CSS |
+| `js/app.js` | Toast DOM-based rendering, observeAnimations rewrite |
+| `js/router.js` | Added profile route |
+| `js/translations.js` | Added products.noProductsDesc, products.inStock, common.quickLinks, dash.sellerDashboard, dash.addresses (en + ar) |
+| `pages/home.js` | renderProductCards new structure |
+| `pages/privacy.js` | Full redesign with legal-page layout |
+| `pages/terms.js` | Full redesign with legal-page layout |
+| `pages/profile.js` | New file — full profile page |
+| `pages/auction-detail.js` | Added observeAnimations call |
+| `pages/dashboard.js` | Fixed /products/my → /products/seller |
+| `pages/register.js` | Added max date on birthdate input |
+
+## Previous Session: Complete UI/UX Overhaul (May 2026)
 
 ## Previous Session: Complete API Integration Overhaul (May 15, 2026)
 
