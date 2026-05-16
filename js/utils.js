@@ -433,8 +433,8 @@ function clearAllFieldErrors(formEl) {
 /* ===== Password strength meter ===== */
 function getPasswordStrength(pw) {
   let score = 0;
-  if (pw.length >= 6) score++;
-  if (pw.length >= 10) score++;
+  if (pw.length >= 8) score++;
+  if (pw.length >= 12) score++;
   if (/[a-z]/.test(pw) && /[A-Z]/.test(pw)) score++;
   if (/\d/.test(pw)) score++;
   if (/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(pw)) score++;
@@ -471,6 +471,27 @@ function validateForm(formEl, rules) {
       showFieldError(el, rule.messages?.minLength || `${t("auth.password")} must be at least ${rule.minLength} characters.`);
       if (!firstInvalid) firstInvalid = el;
       continue;
+    }
+    if (rule.hasUppercase && el.value.trim()) {
+      if (!/[A-Z]/.test(el.value)) {
+        showFieldError(el, rule.messages?.hasUppercase || t("auth.passwordRequiresUppercase"));
+        if (!firstInvalid) firstInvalid = el;
+        continue;
+      }
+    }
+    if (rule.hasLowercase && el.value.trim()) {
+      if (!/[a-z]/.test(el.value)) {
+        showFieldError(el, rule.messages?.hasLowercase || t("auth.passwordRequiresLowercase"));
+        if (!firstInvalid) firstInvalid = el;
+        continue;
+      }
+    }
+    if (rule.hasDigit && el.value.trim()) {
+      if (!/\d/.test(el.value)) {
+        showFieldError(el, rule.messages?.hasDigit || t("auth.passwordRequiresDigit"));
+        if (!firstInvalid) firstInvalid = el;
+        continue;
+      }
     }
     if (rule.hasSpecialChar && el.value.trim()) {
       if (!/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(el.value)) {

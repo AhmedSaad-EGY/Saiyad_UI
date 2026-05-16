@@ -19,7 +19,7 @@ function renderRegister(container) {
           </div>
           <div class="form-group">
             <label class="form-label" for="regPhone">${t("auth.phone")}</label>
-            <input type="tel" class="form-input" id="regPhone" name="phone" placeholder="+1234567890" autocomplete="tel">
+            <input type="tel" class="form-input" id="regPhone" name="phone" placeholder="+1234567890" autocomplete="tel" required>
           </div>
           <div class="form-group">
             <label class="form-label" for="regBirthdate">${t("auth.birthdate")}</label>
@@ -30,7 +30,7 @@ function renderRegister(container) {
           <div class="form-group">
             <label class="form-label" for="regPassword">${t("auth.password")}</label>
             <div class="password-wrapper">
-              <input type="password" class="form-input" id="regPassword" name="password" placeholder="${t("auth.password")}" required autocomplete="new-password" minlength="6">
+              <input type="password" class="form-input" id="regPassword" name="password" placeholder="${t("auth.password")}" required autocomplete="new-password" minlength="8">
               <button type="button" class="toggle-password" id="regTogglePw" aria-label="${t("auth.showPassword")}" <i class="fas fa-eye"></i></button>
             </div>
             <div class="password-strength" id="regStrength"><div class="password-strength-bar" id="regStrengthBar"></div></div>
@@ -199,6 +199,12 @@ function renderRegister(container) {
         messages: { required: t("auth.invalidEmail") },
       },
       {
+        element: regPhone,
+        required: true,
+        phone: true,
+        messages: { required: t("auth.fieldRequired") },
+      },
+      {
         element: regBirthdate,
         required: true,
         minAge: 18,
@@ -207,8 +213,10 @@ function renderRegister(container) {
       {
         element: regPassword,
         required: true,
-        minLength: 6,
-        hasSpecialChar: true,
+        minLength: 8,
+        hasUppercase: true,
+        hasLowercase: true,
+        hasDigit: true,
         messages: {
           minLength: t("auth.passwordMinLength"),
         },
