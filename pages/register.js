@@ -244,37 +244,18 @@ function renderRegister(container) {
     submit.innerHTML = `<i class="fas fa-spinner spinner"></i> ${t("auth.creatingAccount")}`;
 
     try {
-      // Check if email is already registered
-      const emailExists = await api.post("/auth/check-email", {
-        email: regEmail.value.trim(),
-      });
-      if (emailExists.isRegistered) {
-        showFieldError(regEmail, t("auth.emailAlreadyRegistered"));
-        submit.disabled = false;
-        submit.textContent = t("auth.createAccount");
-        alertDiv.innerHTML = `<div class="alert alert-error">${t("auth.emailAlreadyRegistered")}</div>`;
-        return;
-      }
-
-      // Capture before reset
       const savedEmail = regEmail.value.trim();
       const savedPassword = regPassword.value;
-
-      // Store credentials for auto-login after email verification
+      // Removed storing password in sessionStorage due to security risk.
+      // Only email is needed for potential auto-login after verification.
       sessionStorage.setItem("pendingLoginEmail", savedEmail);
-      sessionStorage.setItem("pendingLoginPassword", savedPassword);
 
       await api.post("/auth/register", {
         fullName: regName.value.trim(),
         email: savedEmail,
         phone: regPhone.value.trim(),
-        birthdate: regBirthdate.value,
         password: savedPassword,
         role: regRole.value,
-        licenseNumber:
-          regRole.value === "Fisherman"
-            ? document.getElementById("regLicense")?.value.trim()
-            : undefined,
       });
 
       alertDiv.innerHTML = `

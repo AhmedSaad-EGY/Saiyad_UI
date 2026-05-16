@@ -46,7 +46,7 @@ function showToast(msg, type = "info") {
     border: 1px solid rgba(255,255,255,0.1);
   `;
   toast.style.background = colors[type] || colors.info;
-  toast.innerHTML = `<i class="fas ${icons[type] || icons.info}" style="font-size:1.1rem"></i> <span>${msg}</span>`;
+  toast.innerHTML = `<i class="fas ${icons[type] || icons.info}" style="font-size:1.1rem"></i> <span>${escapeHtml(msg)}</span>`;
 
   container.appendChild(toast);
   const live = document.getElementById("ariaLive");
@@ -168,38 +168,35 @@ document.getElementById("logoutBtn")?.addEventListener("click", (e) => {
 });
 
 // Mobile drawer overlay
-const navOverlay = document.createElement("div");
-navOverlay.className = "nav-overlay";
-navOverlay.id = "navOverlay";
-document.body.appendChild(navOverlay);
+const navOverlay = document.getElementById("navOverlay");
 
 function openDrawer() {
-  document.getElementById("navLinks")?.classList.add("open");
-  navOverlay.classList.add("open");
+  document.getElementById("navDrawer")?.classList.add("open");
+  navOverlay?.classList.add("open");
   document.body.classList.add("nav-open");
 }
 
 function closeDrawer() {
-  document.getElementById("navLinks")?.classList.remove("open");
-  navOverlay.classList.remove("open");
+  document.getElementById("navDrawer")?.classList.remove("open");
+  navOverlay?.classList.remove("open");
   document.body.classList.remove("nav-open");
 }
 
 document.getElementById("hamburger")?.addEventListener("click", () => {
-  const links = document.getElementById("navLinks");
-  if (links?.classList.contains("open")) {
+  const drawer = document.getElementById("navDrawer");
+  if (drawer?.classList.contains("open")) {
     closeDrawer();
   } else {
     openDrawer();
   }
 });
 
-navOverlay.addEventListener("click", closeDrawer);
+navOverlay?.addEventListener("click", closeDrawer);
 
 document.addEventListener("keydown", (e) => {
   if (
     e.key === "Escape" &&
-    document.getElementById("navLinks")?.classList.contains("open")
+    document.getElementById("navDrawer")?.classList.contains("open")
   ) {
     closeDrawer();
   }

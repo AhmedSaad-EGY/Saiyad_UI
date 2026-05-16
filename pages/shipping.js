@@ -11,11 +11,7 @@ async function renderShipping(container) {
         <div class="form-group"><label class="form-label">${t("shipping.fullName")}</label><input type="text" class="form-input" id="shipName" required></div>
         <div class="form-group"><label class="form-label">${t("shipping.phone")}</label><input type="tel" class="form-input" id="shipPhone" required></div>
         <div class="form-group"><label class="form-label">${t("shipping.city")}</label><input type="text" class="form-input" id="shipCity" required></div>
-        <div class="form-group">
-          <label class="form-label">${t("shipping.governorate")}</label>
-          <input type="text" class="form-input" id="shipGovernorate" required>
-        </div>
-        <div class="form-group"><label class="form-label">${t("shipping.addressLine")}</label><input type="text" class="form-input" id="shipAddress" required></div>
+        <div class="form-group"><label class="form-label">${t("shipping.addressLine")}</label><input type="text" class="form-input" id="shipAddressLine" required></div>
         <div class="form-group"><label class="form-label">${t("shipping.postalCode")}</label><input type="text" class="form-input" id="shipPostal"></div>
         <button type="submit" class="btn btn-primary" id="shipSubmit">${t("shipping.save")}</button>
       </form>
@@ -39,9 +35,8 @@ async function renderShipping(container) {
         fullName: document.getElementById("shipName").value.trim(),
         phone: document.getElementById("shipPhone").value.trim(),
         city: document.getElementById("shipCity").value.trim(),
-        governorate: document.getElementById("shipGovernorate").value.trim(),
-        street: document.getElementById("shipAddress").value.trim(),
-        postalCode: document.getElementById("shipPostal").value.trim(),
+        addressLine: document.getElementById("shipAddressLine").value.trim(),
+        postalCode: document.getElementById("shipPostal").value.trim() || undefined,
       });
       showToast(t("shipping.saved"), "success");
       document.getElementById("shipForm").reset();
@@ -60,7 +55,7 @@ async function renderShipping(container) {
     showLoading(list);
     try {
       const data = await api.get("/shipping-addresses");
-      const addresses = data.addresses || data.data || data || [];
+      const addresses = Array.isArray(data) ? data : [];
       if (!addresses.length) {
         renderEmptyState(list, {
           icon: "fa-truck",
@@ -89,7 +84,7 @@ async function renderShipping(container) {
         btn.addEventListener("click", async () => {
           if (!confirm("Delete this address?")) return;
           try {
-            await api.del(`/shipping-addresses/${btn.dataset.id}`);
+            await api.delete(`/shipping-addresses/${btn.dataset.id}`);
             showToast(t("shipping.deleted"), "success");
             loadAddresses();
           } catch (err) {

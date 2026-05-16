@@ -5,7 +5,7 @@ async function renderCheckout(container) {
 
   try {
     const cart = await api.get("/cart");
-    const items = cart.items || cart.cartItems || [];
+    const items = cart.items || [];
 
     if (!items.length) {
       container.innerHTML = `<div class="section-header"><h2><i class="fas fa-credit-card"></i> ${t("cart.checkout")}</h2></div>`;
@@ -35,8 +35,8 @@ async function renderCheckout(container) {
             .map(
               (item) => `
             <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)">
-              <span>${escapeHtml(item.product?.title || `Product #${item.productId}`)} <small class="text-muted">x${item.quantity || 1}</small></span>
-              <span style="font-weight:600">${formatPrice((item.product?.price || item.unitPrice || item.price || 0) * (item.quantity || 1))}</span>
+              <span>${escapeHtml(item.productTitle || `Product #${item.productId}`)} <small class="text-muted">x${item.quantity || 1}</small></span>
+              <span style="font-weight:600">${formatPrice((item.price || 0) * (item.quantity || 1))}</span>
             </div>
           `,
             )
@@ -59,15 +59,11 @@ async function renderCheckout(container) {
               </div>
               <div class="form-group" style="grid-column:1/-1">
                 <label class="form-label">Address *</label>
-                <input type="text" class="form-input" id="addrAddress" required>
+                <input type="text" class="form-input" id="addrAddressLine" required>
               </div>
               <div class="form-group">
                 <label class="form-label">City *</label>
                 <input type="text" class="form-input" id="addrCity" required>
-              </div>
-              <div class="form-group">
-                <label class="form-label">Governorate *</label>
-                <input type="text" class="form-input" id="addrGovernorate" required>
               </div>
               <div class="form-group">
                 <label class="form-label">Postal Code</label>
@@ -101,15 +97,12 @@ async function renderCheckout(container) {
         try {
           const fullName = document.getElementById("addrFullName").value.trim();
           const phone = document.getElementById("addrPhone").value.trim();
-          const street = document.getElementById("addrAddress").value.trim();
+          const addressLine = document.getElementById("addrAddressLine").value.trim();
           const city = document.getElementById("addrCity").value.trim();
-          const governorate = document
-            .getElementById("addrGovernorate")
-            .value.trim();
           const postalCode = document.getElementById("addrPost").value.trim();
 
-          if (!fullName || !phone || !street || !city || !governorate) {
-            alertDiv.innerHTML = `<div class="alert alert-error">Full Name, Phone, Address, City, and Governorate are required.</div>`;
+          if (!fullName || !phone || !addressLine || !city) {
+            alertDiv.innerHTML = `<div class="alert alert-error">Full Name, Phone, Address, and City are required.</div>`;
             btn.disabled = false;
             btn.innerHTML = `<i class="fas fa-lock"></i> ${t("cart.placeOrder")}`;
             return;
@@ -118,10 +111,9 @@ async function renderCheckout(container) {
           const addr = await api.post("/shipping-addresses", {
             fullName,
             phone,
-            street,
             city,
-            governorate,
-            postalCode,
+            addressLine,
+            postalCode: postalCode || undefined,
           });
 
           const addr_id = addr.id;

@@ -1,6 +1,6 @@
 async function renderAdmin(container) {
   const user = getUser();
-  if (!user || !hasAnyRole(["Admin"])) {
+  if (!user || !hasAnyRole("Admin")) {
     container.innerHTML = `<div class="empty-state"><i class="fas fa-shield-alt"></i><h3>${t("admin.noAccess")}</h3></div>`;
     return;
   }
@@ -196,7 +196,7 @@ async function renderAdmin(container) {
         btn.addEventListener("click", async () => {
           if (!confirm("Delete category?")) return;
           try {
-            await api.del(`/categories/${btn.dataset.id}`);
+            await api.delete(`/categories/${btn.dataset.id}`);
             showToast("Category deleted", "success");
             loadCategories();
           } catch (err) {

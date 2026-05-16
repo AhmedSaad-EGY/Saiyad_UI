@@ -59,7 +59,6 @@ const api = {
   patch: (url, body) =>
     request(url, { method: "PATCH", body: JSON.stringify(body) }),
   delete: (url) => request(url, { method: "DELETE" }),
-  del: (url) => request(url, { method: "DELETE" }),
   upload: async (url, formData) => {
     const token = localStorage.getItem("accessToken");
     const headers = {};

@@ -48,6 +48,11 @@ function renderForgotPassword(container) {
       forgotSubmit.disabled = true;
       forgotSubmit.innerHTML = `<i class="fas fa-spinner spinner"></i> ${t("auth.sendingResetLink")}`;
 
+      // Cleanup interval if user navigates away
+      window.onRouteCleanup = () => {
+        if (countdownInterval) clearInterval(countdownInterval);
+      };
+
       try {
         await api.post("/auth/forgot-password", {
           email: forgotEmail.value.trim(),
@@ -57,33 +62,42 @@ function renderForgotPassword(container) {
         forgotForm.style.display = "none";
         let seconds = 60;
 
-        const renderSuccess = () => {
-          // Only set the innerHTML ONCE to prevent wiping user input
-          if (document.getElementById("resetForm")) return;
-
-          alertDiv.innerHTML = `
-            <div class="alert alert-success">
-              <p><i class="fas fa-check-circle"></i> ${t("auth.resetLinkSent")}</p>
-              <div style="margin-top: 16px; display: flex; flex-direction: column; gap: 8px;">
-                <button id="resendBtn" class="btn btn-primary btn-block" ${seconds > 0 ? "disabled" : ""}>
-                  <i class="fas fa-redo"></i> ${t("auth.resendLink")} ${seconds > 0 ? `(${seconds}s)` : ""}
-                </button>
-                <button id="changeEmailBtn" class="btn btn-ghost btn-block">
-                  <i class="fas fa-envelope"></i> ${t("auth.email")}
-                </button>
-              </div>
+        // Render the success message and buttons once
+        alertDiv.innerHTML = `
+          <div class="alert alert-success">
+            <p><i class="fas fa-check-circle"></i> ${t("auth.resetLinkSent")}</p>
+            <div style="margin-top: 16px; display: flex; flex-direction: column; gap: 8px;">
+              <button id="resendBtn" class="btn btn-primary btn-block"></button>
+              <button id="changeEmailBtn" class="btn btn-ghost btn-block">
+                <i class="fas fa-envelope"></i> ${t("auth.email")}
+              </button>
             </div>
-          `;
+          </div>
+        `;
 
-          document.getElementById("resendBtn").onclick = () => {
+        const resendBtn = document.getElementById("resendBtn");
+        const changeEmailBtn = document.getElementById("changeEmailBtn");
+
+        const renderSuccess = () => {
+          if (resendBtn) {
+            resendBtn.disabled = seconds > 0;
+            resendBtn.innerHTML = `<i class="fas fa-redo"></i> ${t("auth.resendLink")} ${seconds > 0 ? `(${seconds}s)` : ""}`;
+          }
+        };
+
+        // Attach event listeners once
+        if (resendBtn) {
+          resendBtn.onclick = () => {
             forgotForm.style.display = "block";
             forgotSubmit.click();
           };
-          document.getElementById("changeEmailBtn").onclick = () => {
+        }
+        if (changeEmailBtn) {
+          changeEmailBtn.onclick = () => {
             forgotForm.style.display = "block";
             alertDiv.innerHTML = "";
           };
-        };
+        }
 
         renderSuccess();
         countdownInterval = setInterval(() => {

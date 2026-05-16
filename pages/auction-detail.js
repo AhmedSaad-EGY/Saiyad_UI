@@ -5,11 +5,18 @@ async function renderAuctionDetail(container, route, params) {
   showLoading(container, 'detail');
 
   try {
-    const a = await api.get(`/auctions/${id}`);
+    const detail = await api.get(`/auctions/${id}`);
+    const a = detail.auction || detail;
+    const bids = detail.bids || [];
     let end = new Date(a.endTime);
     let isActive = a.status === 'Active';
 
-        trackRecentlyViewed(a.id, a.product?.title || 'Auction Item', a.product?.primaryImageUrl, a.currentHighestBid || a.startingPrice);
+        trackRecentlyViewed(a.id, a.productTitle || 'Auction Item', a.productImageUrl, a.currentHighestBid || a.startingPrice, "auction");
+    joinAuctionGroup(parseInt(id));
+
+    window.onRouteCleanup = () => {
+      leaveAuctionGroup(parseInt(id));
+    };
 
     function render(a) {
           const now = new Date();
@@ -20,20 +27,19 @@ async function renderAuctionDetail(container, route, params) {
           const mins = Math.floor((remaining % 3600) / 60);
           const secs = remaining % 60;
 
-      const product = a.product || {};
-      const bids = a.bids || [];
+      const title = a.productTitle || 'Auction Item';
 
       container.innerHTML = `
-        <nav class="breadcrumb" aria-label="Breadcrumb"><a href="#/">${t("nav.home")}</a> <i class="fas fa-chevron-${getCurrentLang() === "ar" ? "left" : "right"}" aria-hidden="true"></i> <a href="#/auctions">${t("nav.auctions")}</a> <i class="fas fa-chevron-${getCurrentLang() === "ar" ? "left" : "right"}" aria-hidden="true"></i> <span>${escapeHtml(product.title || 'Auction Item')}</span></nav>
+        <nav class="breadcrumb" aria-label="Breadcrumb"><a href="#/">${t("nav.home")}</a> <i class="fas fa-chevron-${getCurrentLang() === "ar" ? "left" : "right"}" aria-hidden="true"></i> <a href="#/auctions">${t("nav.auctions")}</a> <i class="fas fa-chevron-${getCurrentLang() === "ar" ? "left" : "right"}" aria-hidden="true"></i> <span>${escapeHtml(title)}</span></nav>
         <div class="detail-page">
           <div>
             <div class="detail-image">
-              ${product.primaryImageUrl ? `<img src="${product.primaryImageUrl}" alt="${escapeHtml(product.title || 'Auction')}" style="width:100%;height:100%;object-fit:cover">` : '<i class="fas fa-gavel"></i>'}
+              ${a.productImageUrl ? `<img src="${a.productImageUrl}" alt="${escapeHtml(title)}" style="width:100%;height:100%;object-fit:cover">` : '<i class="fas fa-gavel"></i>'}
             </div>
           </div>
           <div class="detail-info" style="animation:slideUp 0.4s cubic-bezier(0.34,1.56,0.64,1)">
-            <h1>${escapeHtml(product.title || 'Auction Item')}</h1>
-            <div class="current-bid" id="currentBidDisplay">${t('auction.currentBid')}: ${formatPrice(a.currentHighestBid || a.startingPrice)}</div>
+            <h1>${escapeHtml(title)}</h1>
+            <div class="current-bid" id="currentBidDisplay" data-auction-id="${a.id}">${t('auction.currentBid')}: ${formatPrice(a.currentHighestBid || a.startingPrice)}</div>
             <div style="margin:12px 0">
               <span class="status ${statusClass(a.status)}">${a.status}</span>
               ${remaining > 0 ? `
@@ -53,8 +59,7 @@ async function renderAuctionDetail(container, route, params) {
               <div class="detail-meta-item"><strong>${t('auction.start')}:</strong> ${formatDate(a.startTime)}</div>
               <div class="detail-meta-item"><strong>${t('auction.end')}:</strong> ${formatDate(a.endTime)}</div>
             </div>
-            ${a.winnerUserId ? `<div class="alert alert-success"><i class="fas fa-trophy"></i> ${t('auction.winner')}: User #${a.winnerUserId}</div>` : ''}
-            ${product.description ? `<div class="detail-desc">${escapeHtml(product.description)}</div>` : ''}
+            ${a.winnerUserId ? `<div class="alert alert-success"><i class="fas fa-trophy"></i> ${t('auction.winner')}: ${escapeHtml(a.winnerName || `User #${a.winnerUserId}`)}</div>` : ''}
 
             ${isActive ? `
               <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:16px">
@@ -66,6 +71,14 @@ async function renderAuctionDetail(container, route, params) {
                   <div class="bid-slider-wrap">
                     <input type="range" class="bid-slider" id="bidSlider" min="0" max="1000" step="0.01" value="0" aria-label="Bid amount slider">
                     <div class="bid-slider-labels"><span id="sliderMin"></span><span id="sliderMax"></span></div>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:8px;margin-top:8px">
+                    <label style="display:flex;align-items:center;gap:6px;font-size:var(--text-sm);cursor:pointer">
+                      <input type="checkbox" id="autoBidToggle"> <i class="fas fa-robot"></i> Auto-bid
+                    </label>
+                    <div id="autoBidMaxWrap" class="hidden" style="flex:1">
+                      <input type="number" class="form-input" id="autoBidMax" step="0.01" min="0" placeholder="Max bid amount" style="padding:6px 10px;font-size:var(--text-sm)">
+                    </div>
                   </div>
                 </div>
               </div>
@@ -126,6 +139,10 @@ async function renderAuctionDetail(container, route, params) {
           if (sEl) sEl.textContent = String(s).padStart(2, '0');
         }, 1000);
 
+        document.getElementById('autoBidToggle')?.addEventListener('change', (e) => {
+          document.getElementById('autoBidMaxWrap')?.classList.toggle('hidden', !e.target.checked);
+        });
+
         document.getElementById('placeBidBtn').addEventListener('click', async () => {
           if (!await requireAuth()) return;
           const amount = parseFloat(document.getElementById('bidAmount').value);
@@ -135,7 +152,12 @@ async function renderAuctionDetail(container, route, params) {
           btn.innerHTML = `<i class="fas fa-spinner spinner"></i> ${t('auction.placingBid')}`;
           document.getElementById('bidAlert').innerHTML = '';
           try {
-            await api.post(`/auctions/${id}/bids`, { amount });
+            const body = { amount };
+            if (document.getElementById('autoBidToggle')?.checked) {
+              const maxBid = parseFloat(document.getElementById('autoBidMax')?.value);
+              if (maxBid && maxBid > amount) body.maxAutoBidAmount = maxBid;
+            }
+            await api.post(`/auctions/${id}/bids`, body);
             document.getElementById('bidAlert').innerHTML = `<div class="alert alert-success">${t('auction.bidPlaced')}</div>`;
             setTimeout(() => router(), 1000);
           } catch (e) {
@@ -149,7 +171,8 @@ async function renderAuctionDetail(container, route, params) {
         // Auto-refresh bid data every 10s
         const refreshTimer = setInterval(async () => {
           try {
-            const fresh = await api.get(`/auctions/${id}`);
+            const freshData = await api.get(`/auctions/${id}`);
+            const fresh = freshData.auction || freshData;
             end = new Date(fresh.endTime);
             isActive = fresh.status === 'Active';
             const bidDisplay = document.getElementById('currentBidDisplay');

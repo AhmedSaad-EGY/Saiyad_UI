@@ -1,14 +1,12 @@
 async function renderHome(container) {
   container.innerHTML = `
-    <section class="hero hero-has-image">
-      <div class="hero-overlay"></div>
-      <div class="hero-bg"></div>
+    <section class="hero">
       <div class="hero-content">
         <h1>${t("home.welcome")}</h1>
         <p>${t("home.subtitle")}</p>
         <div class="hero-actions">
           <a href="#/products" class="btn btn-primary btn-lg"><i class="fas fa-store"></i> ${t("home.browseProducts")}</a>
-          <a href="#/auctions" class="btn btn-outline btn-lg hero-btn-outline"><i class="fas fa-gavel"></i> ${t("home.viewAuctions")}</a>
+          <a href="#/auctions" class="btn btn-outline btn-lg"><i class="fas fa-gavel"></i> ${t("home.viewAuctions")}</a>
         </div>
       </div>
     </section>
@@ -31,7 +29,7 @@ async function renderHome(container) {
   try {
     const [products, auctions] = await Promise.all([
       api.get("/products", { pageSize: 4 }),
-      api.get("/auctions", { pageSize: 4, status: "Active" }),
+      api.get("/auctions", { pageSize: 4 }),
     ]);
     renderProductCards(
       document.getElementById("homeProducts"),
@@ -118,14 +116,14 @@ function renderAuctionCards(container, auctions) {
       const mins = Math.floor((remaining % 3600) / 60);
       const urgent = remaining > 0 && remaining <= 3600;
       const timeStr = days > 0 ? `${days}d ${hours}h` : `${hours}h ${mins}m`;
-      const title = a.product?.title || "Auction Item";
+      const title = a.productTitle || "Auction Item";
       const price = formatPrice(a.currentHighestBid || a.startingPrice);
       const label = `${title} - ${price}`;
       return `
       <a href="#/auction-detail?id=${a.id}" class="product-card animate-on-scroll stagger-${Math.min(i + 1, 8)}${urgent ? " auction-urgent" : ""}" aria-label="${escapeHtml(label)}">
         <div class="product-card-img">
-          ${a.product?.primaryImageUrl ? progressiveImg(a.product.primaryImageUrl, a.product?.title || "Auction", "") : '<i class="fas fa-gavel" aria-hidden="true"></i>'}
-          <button class="btn btn-sm btn-primary quick-view-btn" data-quickview-id="${a.id}" data-quickview-title="${escapeHtml(a.product?.title || "Auction Item")}" data-quickview-price="${a.currentHighestBid || a.startingPrice}" data-quickview-image="${a.product?.primaryImageUrl || ""}" data-quickview-desc="${escapeHtml(a.product?.description || "")}"><i class="fas fa-eye"></i> Quick View</button>
+          ${a.productImageUrl ? progressiveImg(a.productImageUrl, a.productTitle || "Auction", "") : '<i class="fas fa-gavel" aria-hidden="true"></i>'}
+          <button class="btn btn-sm btn-primary quick-view-btn" data-quickview-id="${a.id}" data-quickview-title="${escapeHtml(a.productTitle || "Auction Item")}" data-quickview-price="${a.currentHighestBid || a.startingPrice}" data-quickview-image="${a.productImageUrl || ""}" data-quickview-desc=""><i class="fas fa-eye"></i> Quick View</button>
         </div>
         <div class="product-card-body">
           <div class="product-card-title">${escapeHtml(title)}</div>

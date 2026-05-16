@@ -12,7 +12,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
-    href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Cairo:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap"
     rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="css/style.css">
@@ -27,7 +27,7 @@
         <i class="fas fa-fish"></i> Sayiad
       </a>
       <div class="nav-drawer" id="navDrawer">
-        <div class="nav-links" id="navLinks">
+        <div class="nav-links" id="navLinks" onclick="if(window.innerWidth<=768)closeDrawer()">
           <a href="#/" class="nav-link" data-i18n="nav.home">Home</a>
           <a href="#/products" class="nav-link" data-i18n="nav.products">Products</a>
           <a href="#/auctions" class="nav-link" data-i18n="nav.auctions">Auctions</a>
@@ -68,6 +68,7 @@
       </div>
       <button class="hamburger" id="hamburger" aria-label="Toggle menu"><i class="fas fa-bars"></i></button>
     </div>
+    <div class="nav-overlay" id="navOverlay"></div>
   </nav>
 
   <main id="app" class="container main-content"></main>
@@ -78,42 +79,46 @@
       <div class="footer-grid">
         <div class="footer-col footer-brand">
           <div class="footer-logo"><i class="fas fa-fish"></i> Sayiad</div>
-          <p data-i18n="footer.tagline">The ultimate fishing marketplace. Buy, sell, and bid on premium gear.</p>
+          <p class="footer-tagline" data-i18n="footer.tagline">Egypt's premier fishing gear marketplace and auction platform.</p>
           <div class="footer-social">
             <a href="#" class="footer-social-link" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-            <a href="#" class="footer-social-link" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
             <a href="#" class="footer-social-link" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-            <a href="#" class="footer-social-link" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
-            <a href="#" class="footer-social-link" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+            <a href="#" class="footer-social-link" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
           </div>
         </div>
         <div class="footer-col">
-          <h4 data-i18n="footer.quickLinks">Quick Links</h4>
-          <a href="#/" class="footer-link" data-i18n="nav.home">Home</a>
-          <a href="#/products" class="footer-link" data-i18n="nav.products">Products</a>
-          <a href="#/auctions" class="footer-link" data-i18n="nav.auctions">Auctions</a>
-          <a href="#/cart" class="footer-link" data-i18n="nav.cart">Cart</a>
+          <h4 class="footer-heading" data-i18n="footer.marketplace">Marketplace</h4>
+          <nav class="footer-links">
+            <a href="#/products" class="footer-link" data-i18n="nav.products">Products</a>
+            <a href="#/auctions" class="footer-link" data-i18n="nav.auctions">Auctions</a>
+            <a href="#/register" class="footer-link" data-i18n="footer.sellOnSayiad">Sell on Sayiad</a>
+          </nav>
         </div>
         <div class="footer-col">
-          <h4 data-i18n="footer.support">Support</h4>
-          <a href="#/dashboard" class="footer-link" data-i18n="nav.dashboard">Dashboard</a>
-          <a href="#/dashboard?tab=orders" class="footer-link" data-i18n="nav.myOrders">My Orders</a>
-          <a href="#/shipping" class="footer-link" data-i18n="shipping.title">Shipping Addresses</a>
-          <a href="#/seller-profile/me" class="footer-link" data-i18n="seller.myProfile">Seller Profile</a>
+          <h4 class="footer-heading" data-i18n="footer.account">Account</h4>
+          <nav class="footer-links">
+            <a href="#/login" class="footer-link" data-i18n="nav.login">Login</a>
+            <a href="#/register" class="footer-link" data-i18n="nav.register">Register</a>
+            <a href="#/dashboard" class="footer-link" data-i18n="nav.dashboard">Dashboard</a>
+            <a href="#/shipping" class="footer-link" data-i18n="shipping.title">My Addresses</a>
+          </nav>
         </div>
         <div class="footer-col">
-          <h4 data-i18n="footer.contact">Contact</h4>
-          <div class="footer-contact-item"><i class="fas fa-envelope"></i> support@sayiad.com</div>
-          <div class="footer-contact-item"><i class="fas fa-phone"></i> +1 (555) 123-4567</div>
-          <div class="footer-contact-item"><i class="fas fa-map-marker-alt"></i> Alexandria, Egypt</div>
+          <h4 class="footer-heading" data-i18n="footer.legal">Legal</h4>
+          <nav class="footer-links">
+            <a href="#/terms" class="footer-link" data-i18n="auth.termsAndConditions">Terms</a>
+            <a href="#/privacy" class="footer-link" data-i18n="auth.privacyPolicy">Privacy</a>
+          </nav>
         </div>
       </div>
       <div class="footer-bottom">
-        <p data-i18n="footer.copyright">&copy; 2026 Sayiad. All rights reserved.</p>
+        <p>&copy; 2026 Sayiad. <span data-i18n="footer.allRights">All rights reserved.</span></p>
+        <p class="footer-made" data-i18n="footer.madeWith">Made for fishermen 🎣</p>
       </div>
     </div>
   </footer>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
   <script src="js/config.js?v=20260515-api-runasp"></script>
   <script src="js/api.js?v=20260515-api-runasp"></script>
   <script src="js/auth.js"></script>
@@ -137,6 +142,7 @@
   <script src="pages/order-detail.js"></script>
   <script src="pages/admin.js"></script>
   <script src="js/background.js"></script>
+  <script src="js/signalr.js"></script>
   <script src="js/router.js"></script>
   <script src="js/app.js"></script>
 </body>

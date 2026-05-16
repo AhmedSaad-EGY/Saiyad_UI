@@ -21,10 +21,7 @@ async function renderProductDetail(container, route, params) {
     const reviews =
       reviewsData?.items || reviewsData?.data || reviewsData || [];
 
-    const allImages = [
-      p.primaryImageUrl,
-      ...(p.images || []).map((i) => i.imageUrl || i),
-    ].filter(Boolean);
+    const allImages = [p.primaryImageUrl].filter(Boolean);
 
     container.innerHTML = `
       <nav class="breadcrumb" aria-label="Breadcrumb"><a href="#/">${t("nav.home")}</a> <i class="fas fa-chevron-${getCurrentLang() === "ar" ? "left" : "right"}" aria-hidden="true"></i> <a href="#/products">${t("nav.products")}</a> <i class="fas fa-chevron-${getCurrentLang() === "ar" ? "left" : "right"}" aria-hidden="true"></i> <span>${escapeHtml(p.title)}</span></nav>
@@ -50,9 +47,9 @@ async function renderProductDetail(container, route, params) {
           <div style="display:flex;gap:12px;flex-wrap:wrap">
             <button class="btn btn-primary btn-lg" id="addToCartBtn" ${!isAvailable ? "disabled" : ""}><i class="fas fa-shopping-cart"></i> ${t("product.addToCart")}</button>
             <button class="btn btn-outline btn-lg" id="addToWishlistBtn"><i class="fas fa-heart"></i> ${t("product.wishlist")}</button>
-            ${p.isAuctioned ? `<a href="#/auction-detail?id=${p.auctionId}" class="btn btn-success btn-lg"><i class="fas fa-gavel"></i> ${t("product.viewAuction")}</a>` : ""}
+            ${p.isAuctioned && p.auctionId ? `<a href="#/auction-detail?id=${p.auctionId}" class="btn btn-success btn-lg"><i class="fas fa-gavel"></i> ${t("product.viewAuction")}</a>` : ""}
           </div>
-          ${p.seller ? `<div style="margin-top:24px;padding-top:16px;border-top:1px solid var(--border)"><strong>${t("product.seller")}:</strong> <a href="#/seller-profile?userId=${p.seller.id}" style="color:var(--primary)">${escapeHtml(p.seller.fullName || p.seller.storeName || t("common.N/A"))}</a></div>` : ""}
+          ${p.sellerId ? `<div style="margin-top:24px;padding-top:16px;border-top:1px solid var(--border)"><strong>${t("product.seller")}:</strong> <a href="#/seller-profile?userId=${p.sellerId}" style="color:var(--primary)">${escapeHtml(p.sellerName || t("common.N/A"))}</a></div>` : ""}
 
           <!-- Reviews section -->
           <div style="margin-top:32px;padding-top:20px;border-top:1px solid var(--border)" id="reviewsSection">
@@ -107,11 +104,13 @@ async function renderProductDetail(container, route, params) {
     `;
 
     // Contact seller
-    if (p.seller?.id) {
-      const mainActions = container.querySelector(".detail-info > div:nth-child(5)");
+    if (p.sellerId) {
+      const mainActions = container.querySelector(
+        ".detail-info > div:nth-child(5)",
+      );
       if (mainActions) {
         const contactBtn = document.createElement("a");
-        contactBtn.href = `#/seller-profile?userId=${p.seller.id}`;
+        contactBtn.href = `#/seller-profile?userId=${p.sellerId}`;
         contactBtn.className = "btn btn-outline btn-lg";
         contactBtn.innerHTML = `<i class="fas fa-envelope"></i> Contact Seller`;
         mainActions.appendChild(contactBtn);
@@ -121,7 +120,10 @@ async function renderProductDetail(container, route, params) {
     // Similar products
     (async () => {
       try {
-        const similar = await api.get("/products", { categoryId: p.categoryId || p.category, pageSize: 4 });
+        const similar = await api.get("/products", {
+          categoryId: p.categoryId,
+          pageSize: 4,
+        });
         const items = similar.items || similar.data || [];
         if (items.length) {
           const section = document.createElement("div");
@@ -129,7 +131,10 @@ async function renderProductDetail(container, route, params) {
           section.innerHTML = `<div class="section-header"><h2><i class="fas fa-tag"></i> ${t("products.title")}</h2></div><div class="product-grid" id="similarGrid"></div>`;
           container.appendChild(section);
           const grid = document.getElementById("similarGrid");
-          renderProductCards(grid, items.filter((s) => s.id !== p.id).slice(0, 4));
+          renderProductCards(
+            grid,
+            items.filter((s) => s.id !== p.id).slice(0, 4),
+          );
           observeAnimations();
         }
       } catch {}
@@ -176,7 +181,8 @@ async function renderProductDetail(container, route, params) {
       .addEventListener("click", async () => {
         if (!(await requireAuth())) return;
         try {
-          await api.post("/wishlist", { productId: p.id });
+          // Assuming wishlist items are added via a sub-resource, similar to cart items
+          await api.post("/wishlist/items", { productId: p.id });
           showToast(t("product.wishlistUpdated"), "success");
         } catch (e) {
           showToast(e.message, "error");

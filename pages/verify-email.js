@@ -21,28 +21,10 @@ function renderVerifyEmail(container) {
           </div>
         </div></div>`;
 
-      // Attempt auto-login with stored credentials
-      const email = sessionStorage.getItem("pendingLoginEmail");
-      const password = sessionStorage.getItem("pendingLoginPassword");
+      // Cleanup pending login info
       sessionStorage.removeItem("pendingLoginEmail");
-      sessionStorage.removeItem("pendingLoginPassword");
 
-      if (email && password) {
-        try {
-          const data = await api.post("/auth/login", { email, password });
-          localStorage.setItem("accessToken", data.token);
-          localStorage.setItem("refreshToken", data.refreshToken);
-          localStorage.setItem("user", JSON.stringify(data.user));
-          updateNavbar();
-          showToast(t("auth.loginSuccess"), "success");
-          setTimeout(() => navigate(""), 1000);
-          return;
-        } catch {
-          // Auto-login failed — fall through to manual login redirect
-        }
-      }
-
-      // No credentials available or auto-login failed — go to login page
+      // Redirect to login (auto-login with password removed for security)
       setTimeout(() => navigate("login"), 2000);
     })
     .catch(() => {

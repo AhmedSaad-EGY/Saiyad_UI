@@ -53,7 +53,18 @@ async function router() {
     app.style.opacity = "1";
     app.style.transform = "translateY(0)";
     app.style.transition = "";
-    app.innerHTML = `<div class="empty-state" style="animation:slideUp 0.4s cubic-bezier(0.34,1.56,0.64,1)"><i class="fas fa-exclamation-triangle"></i><h3>${t("common.pageNotFound")}</h3><p>${t("common.pageNotFoundDesc")}</p><a href="#/" class="btn btn-primary" style="margin-top:16px">${t("common.goHome")}</a></div>`;
+    app.innerHTML = `
+      <div class="not-found-page animate-on-scroll">
+        <div class="not-found-fish"><i class="fas fa-fish"></i></div>
+        <h1>404</h1>
+        <h2>${t("common.pageNotFound")}</h2>
+        <p>${t("common.pageNotFoundDesc")}</p>
+        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:24px">
+          <a href="#/" class="btn btn-primary btn-lg"><i class="fas fa-home"></i> ${t("common.goHome")}</a>
+          <a href="#/products" class="btn btn-outline btn-lg"><i class="fas fa-store"></i> ${t("nav.products")}</a>
+        </div>
+      </div>`;
+    observeAnimations();
     return;
   }
 

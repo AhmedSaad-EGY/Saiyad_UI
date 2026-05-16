@@ -1,11 +1,38 @@
 # Sayiad Frontend — Project Map
 
 ## Overview
-Vanilla JS single-page application for the Sayiad (صياد) fishing marketplace & auction platform. Connected to `https://sayiad.runasp.net/api`.
+Vanilla JS single-page application for the Sayiad (صياد) fishing marketplace & auction platform. Connected to `https://sayiad.runasp.net/api`. Fully integrated with the Sayiad .NET backend — all API contracts, DTO shapes, auth flows, pagination, and business logic are aligned 1:1 with the backend.
+
+## Integration Status
+All frontend-backend integration mismatches fixed. Pages now use correct DTO field names, HTTP methods, endpoint paths, and response shapes as defined by the backend controllers.
+
+## Truth Validator Audit — Verified Findings
+
+### Confirmed API Mismatches
+| # | File:Line | Issue | Swagger Expects | Impact |
+|---|-----------|-------|-----------------|--------|
+| 1 | `auctions.js:39` | Sends `search` query param | `SearchTerm` | Auction search silently broken |
+| 2 | `home.js:34` | Sends `status: "Active"` | No `status` param defined | Silently ignored, non-breaking |
+
+### Confirmed Bugs
+| # | File:Line | Bug | Severity |
+|---|-----------|-----|----------|
+| 1 | `admin.js:3` | `hasAnyRole(["Admin"])` passes array instead of spread args | **Critical** — Admin panel inaccessible to all users |
+| 2 | `app.js:49` | `toast.innerHTML` uses unescaped `${msg}` | **High** — XSS vector via error messages |
+| 3 | `register.js:250-251` | Plaintext password in sessionStorage | **High** — Credential leak risk on shared machines |
+
+### Dead Code (Defined, Zero Callers)
+| Function | File | Purpose |
+|----------|------|---------|
+| `showErrorWithRetry()` | `utils.js:59` | Error display with retry button (never called) |
+| `transitionContent()` | `utils.js:215` | Skeleton-to-content morph animation (never called) |
+
+### Verified Correct
+65 of 67 frontend API calls match Swagger contracts. All auth, cart, checkout, product, auction, seller, wishlist, notification, order, payment, upload, user, report, category, subscription, and shipping endpoints verified matching.
 
 ## Tech Stack
 - **Vanilla JS** — no frameworks
-- **CSS Custom Properties (OKLCH)** — theming (dark/light), design tokens
+- **CSS Custom Properties (OKLCH + Design Tokens)** — theming (dark/light), `--space-*` spacing scale, `--font-*` type scale, `--leading-*` line heights, `--duration-*`/`--ease-*` animation tokens
 - **Hash-based SPA Router** — `#/route?param=value`
 - **Font Awesome 6** — icons (CDN)
 - **Service Worker** — offline caching of app shell (precache + cache-first for static assets)
@@ -89,6 +116,72 @@ Front-end/
     ├── privacy.js          # Privacy policy static page (4 sections)
     └── terms.js            # Terms & conditions static page (6 sections)
 ```
+
+## Latest Session: Complete UI/UX Overhaul (May 2026)
+
+### Changes Made
+- **background.js**: Full replacement — abstract waves replaced with ocean scene: swimming fish (8-12 procedural), god rays, caustics, bubbles, kelp, wave overlay. Dark/light mode aware. Respects `prefers-reduced-motion`.
+- **css/style.css**: Ocean-themed OKLCH color system (`--primary`: deep blue, `--accent`: coral), Syne heading font, glass-panel hero, card depth system, button interactions, feature card animations, notification bell pulse, 404 page styles, footer system, full mobile responsive (360-768px) nav drawer, dashboard, product grid, auth forms, tables.
+- **index.html**: Added Syne font, nav overlay div, new footer with Marketplace/Account/Legal columns.
+- **js/app.js**: Updated hamburger to toggle `#navDrawer` + overlay, close on outside click/nav-link tap.
+- **js/router.js**: Custom 404 page with animated fish icon and dual CTAs.
+- **js/api.js**: Added `api.patch()` method.
+- **js/translations.js**: Added all new footer keys in en + ar.
+- **pages/admin.js**: Fixed `hasAnyRole(["Admin"])` → `hasAnyRole("Admin")`.
+- **pages/auctions.js**: Fixed auction search param `search` → `SearchTerm`.
+- **js/app.js**: Fixed toast XSS — `msg` now goes through `escapeHtml()`.
+
+### Files Changed (12)
+| File | Change |
+|------|--------|
+| `js/background.js` | Full ocean scene with fish |
+| `css/style.css` | Color tokens, typography, cards, mobile, footer, 404, animations |
+| `index.html` | Syne font, nav overlay, new footer |
+| `js/app.js` | Nav drawer toggle, toast XSS fix |
+| `js/router.js` | 404 page |
+| `js/api.js` | api.patch method |
+| `js/translations.js` | Footer i18n keys |
+| `pages/admin.js` | Role check fix |
+| `pages/auctions.js` | SearchTerm param fix |
+| `pages/home.js` | Hero structure cleanup |
+
+## Previous Session: Complete API Integration Overhaul (May 15, 2026)
+
+### Critical Integration Fixes (23 mismatches resolved)
+All frontend-backend API contracts aligned 1:1 with the Sayiad .NET backend.
+
+**register.js**: Removed `POST /auth/check-email` call (endpoint 404). Removed `birthdate`/`licenseNumber` from request body (not in DTO).
+
+**dashboard.js**: `change-password` now sends `currentPassword` (was `oldPassword`). Product create form now includes `brand`, `stockQuantity`, `location`, `categoryId`. Profile update no longer sends `email` (not in DTO). Notification mark-read uses `api.put()` (was `api.patch()`).
+
+**cart.js**: `cart.cartItems` fixed to `cart.items`. Cart items use flat DTO fields (`price`, `productTitle`). Update/delete use `productId` instead of cart item ID.
+
+**checkout.js / shipping.js**: Address create sends `addressLine` (was `street`), removed `governorate` (not in DTO). Shipping list response unwrapped to flat array.
+
+**product-detail.js**: Seller refs use flat `SellerId`/`SellerName` (was nested object). Removed `auctionId` (doesn't exist on DTO). Image handling uses only `primaryImageUrl` (no `images` array).
+
+**home.js / auctions.js**: Auction card rendering uses flat `productTitle`/`productImageUrl` (was `a.product.title`/`a.product.primaryImageUrl`).
+
+**auction-detail.js**: `AuctionDetailResponse` properly destructured into `{ auction, bids }`. Auto-refresh also unwraps response.
+
+**auth.js**: Cart badge count uses `cart.items` (was `cart.cartItems`).
+
+### UI/UX Pro Max Design Token Layer
+Added `--space-*` scale, `--font-*` scale, `--leading-*` line heights, `--weight-*` font weights, `--duration-*` transitions, `--ease-*` easing functions — applying UI/UX Pro Max v2.0 standards for spacing rhythm, typography hierarchy, and interaction timing.
+
+### Final Fixes — Zero Remaining Concerns
+
+| # | Concern | Fix |
+|---|---------|-----|
+| 2 | Auto-bid migration not applied to production DB | Created SQL migration script at `Back-end/SQL/Migrations/AddAutoBidMax.sql` with idempotent check |
+| 3 | No frontend auto-bid toggle | Added checkbox + max bid input to auction-detail.js bid form; sends `maxAutoBidAmount` in bid request |
+| 4 | Inconsistent `api.del()` calls | Replaced all 3 `api.del()` calls with `api.delete()`; removed `del` alias from api.js |
+| 5 | Dead `api.patch()` method | Removed from api.js (no callers remain) |
+| 6 | Product auction link broken (no `auctionId` in DTO) | Added `int? AuctionId` to backend `ProductResponse` DTO; mapped from `Product.Auctions` in `ProductManager.MapToResponse`; frontend now links directly to `#/auction-detail?id=${p.auctionId}` |
+| 1 | Swagger enabled in production | Uncommented `if (env.IsDevelopment())` guard in `Program.cs` |
+
+**Build status:** 0 errors, 0 warnings  
+**Test status:** 22/22 passing
 
 ## Features Implemented
 

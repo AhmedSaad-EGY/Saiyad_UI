@@ -4,8 +4,8 @@ async function renderCart(container) {
   showLoading(container, "table");
 
   try {
-    const cart = await api.get("/cart"); // Assuming Swagger confirms 'cartItems' as the field
-    const items = cart.cartItems || [];
+    const cart = await api.get("/cart");
+    const items = cart.items || [];
 
     if (!items.length) {
       container.innerHTML = `<div class="section-header"><h2><i class="fas fa-shopping-cart"></i> ${t("cart.title")}</h2></div>`;
@@ -52,17 +52,17 @@ async function renderCart(container) {
     const tbody = document.getElementById("cartItems");
     tbody.innerHTML = items
       .map((item, idx) => {
-        const price = item.product?.price || item.unitPrice || item.price || 0;
+        const price = item.price || 0;
         const qty = item.quantity || 1;
         const subtotal = price * qty;
         total += subtotal;
         return `
         <tr>
-          <td class="cart-product-cell"><a href="#/product-detail?id=${item.productId}">${escapeHtml(item.product?.title || `Product #${item.productId}`)}</a></td>
+          <td class="cart-product-cell"><a href="#/product-detail?id=${item.productId}">${escapeHtml(item.productTitle || `Product #${item.productId}`)}</a></td>
           <td class="cart-price-cell">${formatPrice(price)}</td>
-          <td class="cart-qty-cell"><input type="number" class="form-input cart-qty-input" value="${qty}" min="1" data-id="${item.id || idx}" data-price="${price}" /></td>
+          <td class="cart-qty-cell"><input type="number" class="form-input cart-qty-input" value="${qty}" min="1" data-id="${item.productId}" data-price="${price}" /></td>
           <td class="cart-subtotal-cell">${formatPrice(subtotal)}</td>
-          <td class="cart-remove-cell"><button class="btn btn-ghost btn-icon remove-item text-danger" data-id="${item.id || idx}" aria-label="Remove item"><i class="fas fa-times"></i></button></td>
+          <td class="cart-remove-cell"><button class="btn btn-ghost btn-icon remove-item text-danger" data-id="${item.productId}" aria-label="Remove item"><i class="fas fa-times"></i></button></td>
         </tr>
       `;
       })
@@ -72,7 +72,7 @@ async function renderCart(container) {
 
     $$(".remove-item").forEach((btn) => {
       btn.addEventListener("click", async () => {
-        if (!confirm(t("cart.clear") + "?")) return;
+        if (!confirm(t("cart.removeItemConfirm"))) return;
         try {
           await api.delete(`/cart/items/${btn.dataset.id}`);
           renderCart(container);
@@ -115,6 +115,12 @@ async function renderCart(container) {
       return;
     }
     container.innerHTML = `<div class="section-header"><h2><i class="fas fa-shopping-cart"></i> ${t("cart.title")}</h2></div>`;
-    renderEmptyState(container, { icon: 'fa-exclamation-triangle', title: t('common.error'), desc: escapeHtml(e.message), actionText: t('common.retry'), actionFn: () => router() });
+    renderEmptyState(container, {
+      icon: "fa-exclamation-triangle",
+      title: t("common.error"),
+      desc: escapeHtml(e.message),
+      actionText: t("common.retry"),
+      actionFn: () => router(),
+    });
   }
 }

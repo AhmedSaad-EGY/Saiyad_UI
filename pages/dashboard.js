@@ -93,7 +93,7 @@ async function renderOverview(content, user) {
   try {
     const products = await api
       .get("/products/my", { pageSize: 1 })
-      .catch(() => api.get("/products/seller", { pageSize: 1 }));
+      .catch(() => null);
     document.getElementById("dashProducts").innerHTML =
       `<h3><i class="fas fa-tag"></i> ${t("dash.products")}</h3><p style="font-size:2rem;font-weight:700;color:var(--primary)">${products.totalCount || products.total || 0}</p><p style="color:var(--text-muted)">${t("dash.yourProducts")}</p>`;
   } catch {
@@ -181,8 +181,12 @@ async function renderMyProducts(content) {
       <h4 style="margin-bottom:12px">${t("product.create")}</h4>
       <form id="myProductForm" novalidate>
         <div class="form-group"><label class="form-label">${t("product.title")} *</label><input type="text" class="form-input" id="prodTitle" required></div>
-        <div class="form-group"><label class="form-label">${t("product.description")}</label><textarea class="form-textarea" id="prodDesc"></textarea></div>
+        <div class="form-group"><label class="form-label">${t("product.description")} *</label><textarea class="form-textarea" id="prodDesc" required></textarea></div>
+        <div class="form-group"><label class="form-label">Brand *</label><input type="text" class="form-input" id="prodBrand" required></div>
         <div class="form-group"><label class="form-label">${t("product.price")} *</label><input type="number" class="form-input" id="prodPrice" min="0" step="0.01" required></div>
+        <div class="form-group"><label class="form-label">Stock Quantity *</label><input type="number" class="form-input" id="prodStock" min="0" value="1" required></div>
+        <div class="form-group"><label class="form-label">Location *</label><input type="text" class="form-input" id="prodLocation" required></div>
+        <div class="form-group"><label class="form-label">Category *</label><select class="form-select" id="prodCategory"><option value="">Loading...</option></select></div>
         <div class="form-group"><label class="form-label">${t("product.condition")}</label><select class="form-select" id="prodCondition"><option value="New">${t("product.new")}</option><option value="Used">${t("product.used")}</option></select></div>
           <div class="form-group">
             <label class="form-label">${t("product.images")}</label>
@@ -223,9 +227,12 @@ async function renderMyProducts(content) {
         const product = await api.post("/products", {
           title: document.getElementById("prodTitle").value.trim(),
           description: document.getElementById("prodDesc").value.trim(),
+          brand: document.getElementById("prodBrand").value.trim(),
           price: parseFloat(document.getElementById("prodPrice").value),
           condition: document.getElementById("prodCondition").value,
-          status: "Available",
+          stockQuantity: parseInt(document.getElementById("prodStock").value) || 1,
+          location: document.getElementById("prodLocation").value.trim(),
+          categoryId: parseInt(document.getElementById("prodCategory").value),
         });
 
         const fileInput = document.getElementById("prodImageInput");
@@ -256,8 +263,20 @@ async function renderMyProducts(content) {
       }
     });
 
+  // Load categories for the product form
+  (async () => {
+    const sel = document.getElementById("prodCategory");
+    if (sel) {
+      try {
+        const cats = await api.get("/categories");
+        const list = Array.isArray(cats) ? cats : cats.items || cats.data || [];
+        sel.innerHTML = list.map(c => `<option value="${c.id}">${escapeHtml(c.name)}</option>`).join("");
+      } catch { sel.innerHTML = '<option value="">Failed to load</option>'; }
+    }
+  })();
+
   try {
-    const data = await api.get("/products/seller", { pageSize: 50 });
+    const data = await api.get("/products/my", { pageSize: 50 });
     const products = data.items || data.data || [];
     const list = document.getElementById("myProductsList");
     if (!products.length) {
@@ -331,7 +350,7 @@ async function renderWishlist(content) {
       btn.addEventListener("click", async () => {
         if (!confirm("Remove from wishlist?")) return;
         try {
-          await api.del(`/wishlist/${btn.dataset.id}`);
+          await api.delete(`/wishlist/${btn.dataset.id}`);
           showToast(t("product.wishlistUpdated"), "success");
           renderWishlist(content);
         } catch (err) {
@@ -377,7 +396,7 @@ async function renderNotifications(content) {
     $$(".mark-read").forEach((btn) => {
       btn.addEventListener("click", async () => {
         try {
-          await api.patch(`/notifications/${btn.dataset.id}/read`);
+          await api.put(`/notifications/${btn.dataset.id}/read`);
           btn.closest(".notif-item").classList.remove("unread");
           btn.remove();
           updateNotifBadge();
@@ -387,7 +406,7 @@ async function renderNotifications(content) {
 
     document.getElementById("markAllRead")?.addEventListener("click", async () => {
       try {
-        await api.patch("/notifications/read-all");
+        await api.put("/notifications/read-all");
         document.querySelectorAll("#notifList .notif-item").forEach((el) => el.classList.remove("unread"));
         document.querySelectorAll("#notifList .mark-read").forEach((el) => el.remove());
         updateNotifBadge();
@@ -460,7 +479,6 @@ function renderProfile(content, user) {
       try {
         const data = await api.put("/users/profile", {
           fullName: nameInput.value.trim(),
-          email: emailInput.value.trim(),
           phone: phoneInput.value.trim(),
         });
         localStorage.setItem("user", JSON.stringify(data.user || data));
@@ -549,7 +567,7 @@ function renderChangePassword(content) {
 
       try {
         await api.post("/auth/change-password", {
-          oldPassword: oldInput.value,
+          currentPassword: oldInput.value,
           newPassword: newInput.value,
         });
         alertDiv.innerHTML = `<div class="alert alert-success">${t("dash.passwordChanged")}</div>`;

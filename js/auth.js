@@ -46,7 +46,7 @@ async function updateCartBadge() {
   }
   try {
     const cart = await api.get("/cart");
-    const items = cart.cartItems || cart.items || [];
+    const items = cart.items || [];
     const count = items.reduce((sum, i) => sum + (i.quantity || 1), 0);
     badge.textContent = count;
     badge.classList.toggle("hidden", count === 0);

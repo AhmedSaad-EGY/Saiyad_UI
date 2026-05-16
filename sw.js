@@ -1,4 +1,4 @@
-const CACHE = "sayiad-v6";
+const CACHE = "sayiad-v7";
 const PRECACHE = [
   "/",
   "/index.html",
@@ -11,9 +11,12 @@ const PRECACHE = [
   "/js/translations.js",
   "/js/app.js",
   "/js/background.js",
+  "/js/signalr.js",
   "/pages/home.js",
   "/pages/login.js",
   "/pages/register.js",
+  "/pages/forgot-password.js",
+  "/pages/reset-password.js",
   "/pages/products.js",
   "/pages/product-detail.js",
   "/pages/auctions.js",

@@ -161,6 +161,7 @@ const translations = {
     "cart.total": "Total",
     "cart.checkout": "Proceed to Checkout",
     "cart.empty": "Your cart is empty",
+    "cart.removeItemConfirm": "Are you sure you want to remove this item?",
     "cart.emptyDesc": "Browse products to add items to your cart.",
     "cart.browseProducts": "Browse Products",
     "cart.cleared": "Cart cleared!",
@@ -346,11 +347,15 @@ const translations = {
 
     // Footer
     "footer.tagline":
-      "السوق المتكامل لمعدات الصيد. اشترِ، بع، وشارك في المزادات على أفضل الأدوات.",
-    "footer.quickLinks": "روابط سريعة",
-    "footer.support": "الدعم",
-    "footer.contact": "اتصل بنا",
-    "footer.copyright": "\u00a9 2026 صياد. جميع الحقوق محفوظة.",
+      "Egypt's premier fishing gear marketplace and auction platform.",
+    "footer.marketplace": "Marketplace",
+    "footer.account": "Account",
+    "footer.legal": "Legal",
+    "footer.sellOnSayiad": "Sell on Sayiad",
+    "footer.myAddresses": "My Addresses",
+    "footer.allRights": "All rights reserved.",
+    "footer.madeWith": "Made for fishermen 🎣",
+    "footer.copyright": "\u00a9 2026 Sayiad. All rights reserved.",
   },
 
   ar: {
@@ -515,6 +520,7 @@ const translations = {
     "cart.total": "الإجمالي",
     "cart.checkout": "متابعة الشراء",
     "cart.empty": "عربة التسوق فارغة",
+    "cart.removeItemConfirm": "هل أنت متأكد أنك تريد إزالة هذا العنصر؟",
     "cart.emptyDesc": "تصفح المنتجات لإضافة عناصر إلى عربة التسوق.",
     "cart.browseProducts": "تصفح المنتجات",
     "cart.cleared": "تم تفريغ العربة!",
@@ -699,6 +705,14 @@ const translations = {
     "common.recentlyViewed": "تم العرض مؤخراً",
 
     // Footer
+    "footer.tagline": "سوق الصيد الأول في مصر — اشترِ، بع، وشارك في المزادات.",
+    "footer.marketplace": "السوق",
+    "footer.account": "الحساب",
+    "footer.legal": "قانوني",
+    "footer.sellOnSayiad": "بيع على صياد",
+    "footer.myAddresses": "عناويني",
+    "footer.allRights": "جميع الحقوق محفوظة.",
+    "footer.madeWith": "صنع للصيادين 🎣",
     "footer.copyright": "\u00a9 2026 صياد. جميع الحقوق محفوظة.",
   },
 };
