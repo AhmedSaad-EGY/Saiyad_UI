@@ -182,9 +182,15 @@ document.getElementById("logoutBtn")?.addEventListener("click", (e) => {
 const navOverlay = document.getElementById("navOverlay");
 
 function openDrawer() {
-  document.getElementById("navDrawer")?.classList.add("open");
-  navOverlay?.classList.add("open");
+  const drawer = document.getElementById("navDrawer");
+  const overlay = navOverlay;
+  if (!drawer) return;
+  drawer.offsetHeight;
+  drawer.classList.add("open");
+  overlay?.classList.add("open");
   document.body.classList.add("nav-open");
+  const firstFocusable = drawer.querySelector('a, button, input, select, textarea, [tabindex]:not([tabindex="-1"])');
+  firstFocusable?.focus();
 }
 
 function closeDrawer() {
@@ -196,6 +202,7 @@ function closeDrawer() {
     btn.innerHTML = '<i class="fas fa-bars"></i>';
     btn.setAttribute("aria-expanded", "false");
   }
+  btn?.focus();
 }
 
 document.getElementById("hamburger")?.addEventListener("click", () => {
@@ -217,6 +224,37 @@ document.getElementById("hamburger")?.addEventListener("click", () => {
 });
 
 navOverlay?.addEventListener("click", closeDrawer);
+navOverlay?.addEventListener("touchend", (e) => {
+  e.preventDefault();
+  closeDrawer();
+}, { passive: false });
+navOverlay?.addEventListener("touchstart", (e) => {
+  if (e.target === navOverlay) closeDrawer();
+}, { passive: true });
+
+// Inject nav icons into drawer links
+(function injectNavIcons() {
+  const iconMap = {
+    '#/': 'fa-home',
+    '#/products': 'fa-store',
+    '#/auctions': 'fa-gavel',
+    '#/cart': 'fa-shopping-cart',
+    '#/dashboard': 'fa-tachometer-alt',
+    '#/profile': 'fa-user',
+    '#/shipping': 'fa-map-marker-alt',
+    '#/admin': 'fa-shield-alt',
+  };
+  document.querySelectorAll('.nav-links .nav-link').forEach(link => {
+    const href = link.getAttribute('href');
+    const iconClass = iconMap[href];
+    if (iconClass && !link.querySelector('.nav-icon')) {
+      const icon = document.createElement('i');
+      icon.className = `fas ${iconClass} nav-icon`;
+      icon.setAttribute('aria-hidden', 'true');
+      link.insertBefore(icon, link.firstChild);
+    }
+  });
+})();
 
 document.addEventListener("keydown", (e) => {
   if (

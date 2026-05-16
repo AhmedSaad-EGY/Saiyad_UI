@@ -119,6 +119,30 @@ Front-end/
     └── terms.js            # Terms & conditions static page (6 sections)
 ```
 
+## Latest Session: Mobile Navigation Drawer Redesign (May 2026)
+
+### Changes Made
+- Redesigned mobile nav drawer into 4 clear zones: header strip (60px brand bar), nav links with icons, theme/lang toggle chips, auth actions/user menu
+- Added icons (fa-home, fa-store, fa-gavel, fa-shopping-cart, etc.) to all nav links via JS icon injection
+- Nav links have active border-start indicator, hover slide effect, and icon color transition
+- User dropdown menu shows flat inside drawer (always visible as list, no nested popup)
+- Login/Register buttons styled as full-width in a dark footer strip
+- Theme and language toggles styled as equal-width pill chips in a row
+- Added `::before` pseudo-element to drawer for brand header strip without HTML changes
+- Tap-outside closes drawer — added touchend (with preventDefault) and touchstart overlay handlers
+- Smooth spring cubic-bezier(0.32, 0.72, 0, 1) animation on drawer open/close with slight overshoot
+- Overlay uses opacity transition (fade in/out) instead of instant display toggle
+- Staggered item entrance animation (40ms delay each, 4 links) when drawer opens
+- Dark mode drawer background explicitly lighter (oklch 0.18) than overlay background
+- Focus management: first focusable element receives focus on open, hamburger refocused on close
+- Removed old duplicate mobile nav inner layout and hamburger display rules
+
+### Files Changed
+| File | Change |
+|------|--------|
+| `css/style.css` | Complete .nav-drawer mobile block replacement with 4-zone layout, ::before header strip, overlay opacity fade, staggered entrance keyframes, dark mode refinements, hamburger close button, removed old duplicate blocks |
+| `js/app.js` | Focus management in openDrawer/closeDrawer, injectNavIcons IIFE with iconMap, touchend+ touchstart overlay handlers |
+
 ## Latest Session: Mobile Responsiveness Fix (May 16, 2026)
 
 ### Problems Fixed
