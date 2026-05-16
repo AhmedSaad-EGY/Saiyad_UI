@@ -191,14 +191,28 @@ function closeDrawer() {
   document.getElementById("navDrawer")?.classList.remove("open");
   navOverlay?.classList.remove("open");
   document.body.classList.remove("nav-open");
+  const btn = document.getElementById("hamburger");
+  if (btn) {
+    btn.innerHTML = '<i class="fas fa-bars"></i>';
+    btn.setAttribute("aria-expanded", "false");
+  }
 }
 
 document.getElementById("hamburger")?.addEventListener("click", () => {
   const drawer = document.getElementById("navDrawer");
+  const btn = document.getElementById("hamburger");
   if (drawer?.classList.contains("open")) {
     closeDrawer();
+    if (btn) {
+      btn.innerHTML = '<i class="fas fa-bars"></i>';
+      btn.setAttribute("aria-expanded", "false");
+    }
   } else {
     openDrawer();
+    if (btn) {
+      btn.innerHTML = '<i class="fas fa-times"></i>';
+      btn.setAttribute("aria-expanded", "true");
+    }
   }
 });
 

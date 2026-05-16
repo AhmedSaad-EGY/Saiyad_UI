@@ -119,6 +119,28 @@ Front-end/
     └── terms.js            # Terms & conditions static page (6 sections)
 ```
 
+## Latest Session: Mobile Responsiveness Fix (May 16, 2026)
+
+### Problems Fixed
+1. **Container horizontal padding**: Content touching screen edges on 375px — fixed product-grid overflow clipping with `min(240px, 100%)`, `overflow: visible`, and negative margin technique.
+2. **Nav drawer invisible on dark mode**: `.nav-drawer` blended with overlay color — fixed with explicit lighter dark-mode background (`oklch(0.22 0.022 245)`) and inset border; overlay z-index lowered to 999 (below drawer at 1000).
+3. **Section header text clipped**: RTL Arabic text overflowing on 375px — added `overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1;` to `h2`; column layout at 480px.
+4. **Empty state icon oversized**: Reduced padding and icon size at 480px (`--space-8` top/bottom, 56px icon, smaller h3/p).
+5. **Product card price wrapping**: Added `white-space: nowrap; overflow: hidden; text-overflow: ellipsis;` to `.product-card-price`; improved 480px card body padding and title line-clamp.
+6. **Main content top padding**: Adjusted padding at 768px (`calc(60px + var(--space-5))`) and 480px (`calc(60px + var(--space-4))`) to prevent content hiding under navbar.
+7. **360px screen layout**: Expanded 360px block with compact container padding, hero font, card padding, and button sizing.
+8. **Hamburger touch target**: Minimum 44×44px touch area, z-index above drawer, icon toggles between bars/times, aria-expanded state.
+9. **body.nav-open black content**: App content now stays visible (non-interactive) when drawer is open instead of going black.
+10. **Old `.nav-links` drawer CSS**: Stripped conflicting fixed-position drawer styles from `.nav-links` (line 753) — drawer positioning now handled exclusively by `.nav-drawer`.
+11. **Duplicate product-grid definition**: Removed redundant `.product-grid { 1fr }` from first 480px block — second 480px block uses `repeat(2, minmax(0, 1fr))`.
+
+### Files Changed
+| File | Change |
+|------|--------|
+| `css/style.css` | Container padding tokenized; base `.product-grid` overflow visible; 768px grid uses `min(240px,100%)`; nav-drawer z-index/transform/RTL/dark-mode; nav-overlay z-index; section-header overflow protection; empty-state mobile overrides; product-card-price nowrap; main-content mobile padding; 360px block expanded; hamburger touch target+z-index; body.nav-open pointer-events; removed old `.nav-links` drawer CSS; 480px 2-column grid uses `minmax(0,1fr)` |
+| `js/app.js` | Hamburger icon toggles bars/times; aria-expanded toggle; closeDrawer resets icon |
+| `.gitignore` | Created for static frontend project |
+
 ## Latest Session: Auth Flow Fixes (May 16, 2026)
 
 ### Changes Made
