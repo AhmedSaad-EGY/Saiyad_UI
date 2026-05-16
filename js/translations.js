@@ -157,6 +157,7 @@ const translations = {
     "auction.ended": "Ended",
     "auction.endingSoon": "Ending soon!",
     "auction.newBid": "New bid placed!",
+    "auction.startAuction": "Start Auction",
 
     // Cart
     "cart.title": "Your Cart",
@@ -540,6 +541,7 @@ const translations = {
     "auction.ended": "انتهى",
     "auction.endingSoon": "سينتهي قريباً!",
     "auction.newBid": "تم تقديم مزايدة جديدة!",
+    "auction.startAuction": "بدء مزاد",
 
     // Cart
     "cart.title": "عربة التسوق",

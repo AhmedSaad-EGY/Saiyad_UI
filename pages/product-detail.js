@@ -47,7 +47,7 @@ async function renderProductDetail(container, route, params) {
           <div style="display:flex;gap:12px;flex-wrap:wrap">
             <button class="btn btn-primary btn-lg" id="addToCartBtn" ${!isAvailable ? "disabled" : ""}><i class="fas fa-shopping-cart"></i> ${t("product.addToCart")}</button>
             <button class="btn btn-outline btn-lg" id="addToWishlistBtn"><i class="fas fa-heart"></i> ${t("product.wishlist")}</button>
-            ${p.isAuctioned && p.auctionId ? `<a href="#/auction-detail?id=${p.auctionId}" class="btn btn-success btn-lg"><i class="fas fa-gavel"></i> ${t("product.viewAuction")}</a>` : ""}
+            ${p.isAuctioned && p.auctionId ? `<a href="#/auction-detail?id=${p.auctionId}" class="btn btn-success btn-lg"><i class="fas fa-gavel"></i> ${t("product.viewAuction")}</a>` : !p.isAuctioned && getUser()?.id === p.sellerId && hasAnyRole("Auctioneer", "Fisherman", "BaitSeller") ? `<button class="btn btn-primary btn-lg" id="startAuctionBtn"><i class="fas fa-gavel"></i> ${t("auction.startAuction")}</button>` : ""}
           </div>
           ${p.sellerId ? `<div style="margin-top:24px;padding-top:16px;border-top:1px solid var(--border)"><strong>${t("product.seller")}:</strong> <a href="#/seller-profile?userId=${p.sellerId}" style="color:var(--primary)">${escapeHtml(p.sellerName || t("common.N/A"))}</a></div>` : ""}
 
@@ -181,13 +181,80 @@ async function renderProductDetail(container, route, params) {
       .addEventListener("click", async () => {
         if (!(await requireAuth())) return;
         try {
-          // Assuming wishlist items are added via a sub-resource, similar to cart items
           await api.post("/wishlist/items", { productId: p.id });
           showToast(t("product.wishlistUpdated"), "success");
         } catch (e) {
           showToast(e.message, "error");
         }
       });
+
+    // Start Auction button on product detail
+    document.getElementById("startAuctionBtn")?.addEventListener("click", () => {
+      const minEnd = new Date(Date.now() + 3600000).toISOString().slice(0, 16);
+      const prevFocus = document.activeElement;
+      const overlay = document.createElement("div");
+      overlay.className = "modal-overlay show";
+      overlay.setAttribute("role", "dialog");
+      overlay.setAttribute("aria-label", "Start Auction");
+      overlay.innerHTML = `
+        <div class="modal" onclick="event.stopPropagation()" style="max-width:460px">
+          <h3><i class="fas fa-gavel"></i> ${t("auctions.title")} — ${escapeHtml(p.title)}</h3>
+          <div id="auctionModalAlert"></div>
+          <form id="auctionModalForm" novalidate>
+            <div class="form-group">
+              <label class="form-label">${t("auction.end")} *</label>
+              <input type="datetime-local" class="form-input" id="auctionEndTime" min="${minEnd}" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">${t("auction.startingPrice")} *</label>
+              <input type="number" class="form-input" id="auctionStartPrice" min="0.01" step="0.01" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">${t("auction.reservePrice")}</label>
+              <input type="number" class="form-input" id="auctionReservePrice" min="0" step="0.01" value="0">
+            </div>
+            <div class="form-group">
+              <label class="form-label">${t("auction.minIncrement")} *</label>
+              <input type="number" class="form-input" id="auctionMinIncrement" min="0.01" step="0.01" value="1" required>
+            </div>
+            <div class="modal-actions">
+              <button type="button" class="btn btn-ghost" id="auctionModalCancel">${t("common.retry") || "Cancel"}</button>
+              <button type="submit" class="btn btn-primary" id="auctionModalSubmit"><i class="fas fa-gavel"></i> ${t("auctions.title")}</button>
+            </div>
+          </form>
+        </div>`;
+      overlay.addEventListener("click", (e) => { if (e.target === overlay) close(); });
+      document.body.appendChild(overlay);
+      function close() { overlay.remove(); document.removeEventListener("keydown", onKey); if (prevFocus?.focus) prevFocus.focus(); }
+      function onKey(e) { if (e.key === "Escape") close(); }
+      document.addEventListener("keydown", onKey);
+      document.getElementById("auctionModalCancel").addEventListener("click", close);
+      document.getElementById("auctionModalForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const submit = document.getElementById("auctionModalSubmit");
+        const alertDiv = document.getElementById("auctionModalAlert");
+        alertDiv.innerHTML = "";
+        submit.disabled = true;
+        submit.innerHTML = `<i class="fas fa-spinner spinner"></i> ${t("auction.placingBid")}`;
+        try {
+          await api.post("/auctions", {
+            productId: p.id,
+            endTime: new Date(document.getElementById("auctionEndTime").value).toISOString(),
+            startingPrice: parseFloat(document.getElementById("auctionStartPrice").value),
+            reservePrice: parseFloat(document.getElementById("auctionReservePrice").value) || 0,
+            minimumIncrement: parseFloat(document.getElementById("auctionMinIncrement").value) || 1,
+          });
+          showToast("Auction started!", "success");
+          close();
+          router(); // Re-render page to show "View Auction" button
+        } catch (err) {
+          alertDiv.innerHTML = `<div class="alert alert-error">${escapeHtml(err.message)}</div>`;
+        } finally {
+          submit.disabled = false;
+          submit.textContent = t("auctions.title");
+        }
+      });
+    });
 
     // Star rating interaction
     const stars = document.querySelectorAll("#starRating .fa-star");

@@ -135,8 +135,18 @@ Front-end/
 | `pages/register.js` | Removed `birthdate` from POST body; removed `hasSpecialChar`; added `hasUppercase`/`hasLowercase`/`hasDigit`; minlength 6→8; phone required; added `showVerificationOverlay()` |
 | `pages/forgot-password.js` | Full rewrite — 3-step flow with step indicator, token entry, password strength meter |
 | `css/style.css` | Added `.verify-overlay` + `.verify-overlay-card` + `.verify-overlay-icon` + `.verify-overlay-dots` + keyframes; added `.forgot-steps` + `.forgot-step` + `.forgot-step-line` + `.form-hint` |
-| `js/translations.js` | Added 8 new keys EN + AR for overlay and token entry |
+| `js/translations.js` | Added 8 new keys EN + AR for overlay and token entry; added `auction.startAuction` |
 | `js/utils.js` | Added `hasUppercase`/`hasLowercase`/`hasDigit` rules to `validateForm()`; updated `getPasswordStrength()` thresholds (6→8, 10→12) |
+| `pages/dashboard.js` | Added "Start Auction" button + modal in products table for non-auctioned products |
+| `pages/product-detail.js` | Added "Start Auction" button when logged-in user owns the product and has Auctioneer/Fisherman/BaitSeller role |
+
+## Latest Session Plus: Auctioneer Can Now Start Auctions (May 16, 2026)
+
+### Changes Made
+- **Backend**: Added `Auctioneer` to ProductsController `[Authorize]` attributes (6 endpoints) so Auctioneer can create, edit, delete products just like Fisherman and BaitSeller.
+- **Frontend dashboard.js**: Added gavel button (`.start-auction-btn`) next to "View" in the products table for non-auctioned products. Clicking opens a modal with End Time, Starting Price, Reserve Price, and Minimum Increment fields. On success, shows toast and refreshes the list.
+- **Frontend product-detail.js**: Added "Start Auction" button that appears when the logged-in user owns the product and has Auctioneer/Fisherman/BaitSeller role. Clicking opens the same auction creation modal. After creation, re-renders the page to show "View Auction".
+- **Translations**: Added `auction.startAuction` key EN/AR.
 
 ## Previous Session: Complete Polish & Missing Pages (May 16, 2026)
 

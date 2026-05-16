@@ -295,7 +295,10 @@ async function renderMyProducts(content) {
               <td style="font-weight:600">${formatPrice(p.price)}</td>
               <td><span class="status ${statusClass(p.status)}">${p.status}</span></td>
               <td>${p.stockQuantity ?? "-"}</td>
-              <td><a href="#/product-detail?id=${p.id}" class="btn btn-outline btn-sm">${t("dash.view")}</a></td>
+              <td style="display:flex;gap:4px;flex-wrap:nowrap">
+                <a href="#/product-detail?id=${p.id}" class="btn btn-outline btn-sm">${t("dash.view")}</a>
+                ${!p.isAuctioned ? `<button class="btn btn-primary btn-sm start-auction-btn" data-product-id="${p.id}" data-product-title="${escapeHtml(p.title)}"><i class="fas fa-gavel"></i></button>` : ""}
+              </td>
             </tr>
           `,
             )
@@ -304,10 +307,106 @@ async function renderMyProducts(content) {
       </div>
     `;
     observeAnimations();
+
+    // Delegate Start Auction button clicks
+    const listEl = document.getElementById("myProductsList");
+    listEl.addEventListener("click", (e) => {
+      const btn = e.target.closest(".start-auction-btn");
+      if (!btn) return;
+      const productId = parseInt(btn.dataset.productId);
+      const productTitle = btn.dataset.productTitle;
+      showAuctionModal(productId, productTitle);
+    });
   } catch (e) {
     document.getElementById("myProductsList").innerHTML =
       `<div class="alert alert-error">${escapeHtml(e.message)}</div>`;
   }
+}
+
+function showAuctionModal(productId, productTitle) {
+  const existing = document.querySelector(".modal-overlay.show");
+  if (existing) existing.remove();
+
+  const overlay = document.createElement("div");
+  overlay.className = "modal-overlay show";
+  overlay.setAttribute("role", "dialog");
+  overlay.setAttribute("aria-label", "Start Auction");
+
+  const prevFocus = document.activeElement;
+  const minEnd = new Date(Date.now() + 3600000).toISOString().slice(0, 16); // min 1hr from now
+
+  overlay.innerHTML = `
+    <div class="modal" onclick="event.stopPropagation()" style="max-width:460px">
+      <h3><i class="fas fa-gavel"></i> ${t("auctions.title")} — ${escapeHtml(productTitle)}</h3>
+      <div id="auctionModalAlert"></div>
+      <form id="auctionModalForm" novalidate>
+        <div class="form-group">
+          <label class="form-label">${t("auction.end")} *</label>
+          <input type="datetime-local" class="form-input" id="auctionEndTime" min="${minEnd}" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">${t("auction.startingPrice")} *</label>
+          <input type="number" class="form-input" id="auctionStartPrice" min="0.01" step="0.01" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">${t("auction.reservePrice")}</label>
+          <input type="number" class="form-input" id="auctionReservePrice" min="0" step="0.01" value="0">
+        </div>
+        <div class="form-group">
+          <label class="form-label">${t("auction.minIncrement")} *</label>
+          <input type="number" class="form-input" id="auctionMinIncrement" min="0.01" step="0.01" value="1" required>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-ghost" id="auctionModalCancel">${t("common.retry") || "Cancel"}</button>
+          <button type="submit" class="btn btn-primary" id="auctionModalSubmit"><i class="fas fa-gavel"></i> ${t("auctions.title")}</button>
+        </div>
+      </form>
+    </div>
+  `;
+
+  overlay.addEventListener("click", (e) => {
+    if (e.target === overlay) close();
+  });
+  document.body.appendChild(overlay);
+
+  function close() {
+    overlay.remove();
+    document.removeEventListener("keydown", onKey);
+    if (prevFocus && typeof prevFocus.focus === "function") prevFocus.focus();
+  }
+  function onKey(e) { if (e.key === "Escape") close(); }
+  document.addEventListener("keydown", onKey);
+
+  document.getElementById("auctionModalCancel").addEventListener("click", close);
+
+  document.getElementById("auctionModalForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const submit = document.getElementById("auctionModalSubmit");
+    const alertDiv = document.getElementById("auctionModalAlert");
+    alertDiv.innerHTML = "";
+    submit.disabled = true;
+    submit.innerHTML = `<i class="fas fa-spinner spinner"></i> ${t("auction.placingBid")}`;
+
+    try {
+      await api.post("/auctions", {
+        productId,
+        endTime: new Date(document.getElementById("auctionEndTime").value).toISOString(),
+        startingPrice: parseFloat(document.getElementById("auctionStartPrice").value),
+        reservePrice: parseFloat(document.getElementById("auctionReservePrice").value) || 0,
+        minimumIncrement: parseFloat(document.getElementById("auctionMinIncrement").value) || 1,
+      });
+      showToast("Auction started!", "success");
+      close();
+      // Refresh the products list
+      const content = document.getElementById("dashContent");
+      if (content) renderMyProducts(content);
+    } catch (err) {
+      alertDiv.innerHTML = `<div class="alert alert-error">${escapeHtml(err.message)}</div>`;
+    } finally {
+      submit.disabled = false;
+      submit.textContent = t("auctions.title");
+    }
+  });
 }
 
 async function renderWishlist(content) {
