@@ -1,13 +1,13 @@
-function renderResetPassword(container, fullPath, params) {
-  const token = params.token;
-  const email = params.email || "";
+function renderResetPassword(container) {
+  const params = new URLSearchParams(location.hash.split("?")[1] || "");
+  const token = params.get("token");
 
   if (!token) {
     navigate("login");
     return;
   }
 
-  showLoading(container, "auth");
+  showLoading(container, "form");
 
   setTimeout(() => {
     container.innerHTML = `
@@ -16,15 +16,15 @@ function renderResetPassword(container, fullPath, params) {
           <h2><i class="fas fa-key"></i> ${t("auth.resetPassword")}</h2>
           <div id="resetAlert"></div>
           <form id="resetForm" novalidate>
-            <div class="form-group"${email ? ' style="display:none"' : ""}>
+            <div class="form-group">
               <label class="form-label" for="resetEmail">${t("auth.email")} *</label>
-              <input type="email" class="form-input" id="resetEmail" name="email" placeholder="your@email.com" value="${escapeHtml(email)}" required autocomplete="email" inputmode="email">
+              <input type="email" class="form-input" id="resetEmail" name="email" placeholder="your@email.com" required autocomplete="email" inputmode="email">
             </div>
             <div class="form-group">
               <label class="form-label" for="resetPassword">${t("auth.newPassword")}</label>
               <div class="password-wrapper">
                 <input type="password" class="form-input" id="resetPassword" name="password" required minlength="6">
-                <button type="button" class="toggle-password" id="resetTogglePw" aria-label="${t("auth.showPassword")}"><i class="fas fa-eye"></i></button>
+                <button type="button" class="toggle-password" id="resetTogglePw" aria-label="${t("auth.showPassword")}" <i class="fas fa-eye"></i></button>
               </div>
               <div class="password-strength" id="resetStrength"><div class="password-strength-bar" id="resetStrengthBar"></div></div>
               <div class="password-strength-text" id="resetStrengthText"></div>
@@ -33,7 +33,7 @@ function renderResetPassword(container, fullPath, params) {
               <label class="form-label" for="resetConfirmPw">${t("auth.confirmNewPassword")}</label>
               <div class="password-wrapper">
                 <input type="password" class="form-input" id="resetConfirmPw" name="confirmPassword" required minlength="6">
-                <button type="button" class="toggle-password" id="resetToggleConfirmPw" aria-label="${t("auth.showPassword")}"><i class="fas fa-eye"></i></button>
+                <button type="button" class="toggle-password" id="resetToggleConfirmPw" aria-label="${t("auth.showPassword")}" <i class="fas fa-eye"></i></button>
               </div>
             </div>
             <button type="submit" class="btn btn-primary btn-block btn-lg" id="resetSubmit">${t("auth.resetPassword")}</button>
@@ -51,7 +51,9 @@ function renderResetPassword(container, fullPath, params) {
     const strengthBar = document.getElementById("resetStrengthBar");
     const strengthText = document.getElementById("resetStrengthText");
     const resetTogglePw = document.getElementById("resetTogglePw");
-    const resetToggleConfirmPw = document.getElementById("resetToggleConfirmPw");
+    const resetToggleConfirmPw = document.getElementById(
+      "resetToggleConfirmPw",
+    );
 
     resetTogglePw.addEventListener("click", () => {
       const isPw = resetPassword.type === "password";
@@ -59,7 +61,10 @@ function renderResetPassword(container, fullPath, params) {
       resetTogglePw.innerHTML = isPw
         ? '<i class="fas fa-eye-slash"></i>'
         : '<i class="fas fa-eye"></i>';
-      resetTogglePw.setAttribute("aria-label", isPw ? t("auth.hidePassword") : t("auth.showPassword"));
+      resetTogglePw.setAttribute(
+        "aria-label",
+        isPw ? t("auth.hidePassword") : t("auth.showPassword"),
+      );
     });
 
     resetToggleConfirmPw.addEventListener("click", () => {
@@ -68,7 +73,10 @@ function renderResetPassword(container, fullPath, params) {
       resetToggleConfirmPw.innerHTML = isPw
         ? '<i class="fas fa-eye-slash"></i>'
         : '<i class="fas fa-eye"></i>';
-      resetToggleConfirmPw.setAttribute("aria-label", isPw ? t("auth.hidePassword") : t("auth.showPassword"));
+      resetToggleConfirmPw.setAttribute(
+        "aria-label",
+        isPw ? t("auth.hidePassword") : t("auth.showPassword"),
+      );
     });
 
     resetPassword.addEventListener("input", () => {
@@ -94,7 +102,10 @@ function renderResetPassword(container, fullPath, params) {
 
     resetConfirmPw.addEventListener("input", () => {
       clearFieldError(resetConfirmPw);
-      if (resetConfirmPw.value && resetConfirmPw.value !== resetPassword.value) {
+      if (
+        resetConfirmPw.value &&
+        resetConfirmPw.value !== resetPassword.value
+      ) {
         showFieldError(resetConfirmPw, t("auth.passwordsDoNotMatch"));
       }
     });
@@ -129,7 +140,9 @@ function renderResetPassword(container, fullPath, params) {
         },
       ]);
 
-      if (!valid) return;
+      if (!valid) {
+        return;
+      }
 
       resetSubmit.disabled = true;
       resetSubmit.innerHTML = `<i class="fas fa-spinner spinner"></i> ${t("auth.updatingPassword")}`;
