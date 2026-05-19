@@ -104,15 +104,15 @@ function renderLogin(container) {
     } catch (err) {
       if (err.message?.toLowerCase().includes("verify your email")) {
         alertDiv.innerHTML = `
-          <div class="alert alert-warning">
+          <div class="alert alert-warning" role="alert">
             <i class="fas fa-envelope"></i>
-            <strong>Email not verified.</strong>
-            Please check your inbox and click the verification link.
-            <br><small style="opacity:0.8">Didn't get it? Check your spam folder.</small>
+            <strong>${t("auth.emailNotVerified") || "Email not verified."}</strong>
+            ${t("auth.checkInbox") || "Please check your inbox and click the verification link."}
+            <br><small style="opacity:0.8">${t("auth.checkSpam") || "Didn't get it? Check your spam folder."}</small>
           </div>
         `;
       } else {
-        alertDiv.innerHTML = `<div class="alert alert-error">${escapeHtml(err.message)}</div>`;
+        alertDiv.innerHTML = `<div class="alert alert-error" role="alert">${escapeHtml(err.message)}</div>`;
       }
     } finally {
       submit.disabled = false;

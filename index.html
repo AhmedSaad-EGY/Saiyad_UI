@@ -14,7 +14,13 @@
     href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Cairo:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap"
     rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="preload" href="js/config.js?v=20260517" as="script">
+  <link rel="preload" href="js/api.js?v=20260517" as="script">
+  <link rel="preload" href="js/auth.js?v=20260517" as="script">
+  <link rel="preload" href="js/utils.js?v=20260517" as="script">
+  <link rel="preload" href="js/app.js?v=20260517" as="script">
+  <link rel="preload" href="js/router.js?v=20260517" as="script">
+  <link rel="stylesheet" href="css/style.css?v=20260517">
 </head>
 
 <body>
@@ -60,6 +66,8 @@
                     data-i18n="nav.myProducts">My Products</span></a>
                 <a href="#/dashboard?tab=wishlist" class="dropdown-item" data-roles="all"><i class="fas fa-heart"></i> <span
                     data-i18n="nav.wishlist">Wishlist</span></a>
+                <a href="#/subscriptions" class="dropdown-item" data-roles="all"><i class="fas fa-crown"></i> <span
+                    data-i18n="subscriptions.title">Subscriptions</span></a>
                 <a href="#/admin" class="dropdown-item" data-roles="Admin"><i class="fas fa-shield-alt"></i> <span
                     data-i18n="admin.title">Admin</span></a>
                 <div class="dropdown-divider"></div>
@@ -123,33 +131,40 @@
   </footer>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
-  <script src="js/config.js?v=20260516-v9"></script>
-  <script src="js/api.js?v=20260516-v9"></script>
-  <script src="js/auth.js"></script>
-  <script src="js/utils.js"></script>
-  <script src="js/translations.js"></script>
+  <script defer src="js/config.js?v=20260517"></script>
+  <script defer src="js/api.js?v=20260517"></script>
+  <script defer src="js/auth.js?v=20260517"></script>
+  <script defer src="js/utils.js?v=20260517"></script>
+  <script defer src="js/translations.js?v=20260517"></script>
   <!-- Page handlers must be loaded before router -->
-  <script src="pages/home.js"></script>
-  <script src="pages/login.js"></script>
-  <script src="pages/register.js"></script>
-  <script src="pages/forgot-password.js"></script>
-  <script src="pages/reset-password.js"></script>
-  <script src="pages/products.js"></script>
-  <script src="pages/product-detail.js"></script>
-  <script src="pages/auctions.js"></script>
-  <script src="pages/auction-detail.js"></script>
-  <script src="pages/cart.js"></script>
-  <script src="pages/dashboard.js"></script>
-  <script src="pages/verify-email.js"></script>
-  <script src="pages/shipping.js"></script>
-  <script src="pages/seller-profile.js"></script>
-  <script src="pages/profile.js"></script>
-  <script src="pages/order-detail.js"></script>
-  <script src="pages/admin.js"></script>
-  <script src="js/background.js"></script>
-  <script src="js/signalr.js"></script>
-  <script src="js/router.js"></script>
-  <script src="js/app.js"></script>
+  <script defer src="pages/home.js?v=20260517"></script>
+  <script defer src="pages/login.js?v=20260517"></script>
+  <script defer src="pages/register.js?v=20260517"></script>
+  <script defer src="pages/forgot-password.js?v=20260517"></script>
+  <script defer src="pages/reset-password.js?v=20260517"></script>
+  <script defer src="pages/products.js?v=20260517"></script>
+  <script defer src="pages/product-detail.js?v=20260517"></script>
+  <script defer src="pages/auctions.js?v=20260517"></script>
+  <script defer src="pages/auction-detail.js?v=20260517"></script>
+  <script defer src="pages/cart.js?v=20260517"></script>
+  <script defer src="pages/dashboard.js?v=20260517"></script>
+  <script defer src="pages/verify-email.js?v=20260517"></script>
+  <script defer src="pages/shipping.js?v=20260517"></script>
+  <script defer src="pages/checkout.js?v=20260517"></script>
+  <script defer src="pages/seller-profile.js?v=20260517"></script>
+  <script defer src="pages/profile.js?v=20260517"></script>
+  <script defer src="pages/order-detail.js?v=20260517"></script>
+  <script defer src="pages/admin.js?v=20260517"></script>
+  <script defer src="pages/terms.js?v=20260517"></script>
+  <script defer src="pages/privacy.js?v=20260517"></script>
+  <script defer src="pages/auction-requests.js?v=20260517"></script>
+  <script defer src="pages/auction-requests-review.js?v=20260517"></script>
+  <script defer src="pages/auctioneer-analytics.js?v=20260517"></script>
+  <script defer src="pages/subscriptions.js?v=20260517"></script>
+  <script defer src="js/background.js?v=20260517"></script>
+  <script defer src="js/signalr.js?v=20260517"></script>
+  <script defer src="js/router.js?v=20260517"></script>
+  <script defer src="js/app.js?v=20260517"></script>
 </body>
 
 </html>

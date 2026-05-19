@@ -21,6 +21,11 @@ async function renderOrderDetail(container) {
           <div><strong>${t('order.buyer')}:</strong> ${escapeHtml(order.buyerName || 'N/A')}</div>
           <div><strong>${t('order.total')}:</strong> ${formatPrice(order.totalPrice)}</div>
         </div>
+        ${order.status === "Pending" || order.status === "Confirmed" ? `
+          <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border)">
+            <button class="btn btn-outline" id="cancelOrderBtn" style="color:var(--danger);border-color:var(--danger)"><i class="fas fa-times"></i> ${t('order.cancel')}</button>
+          </div>
+        ` : ""}
       </div>
       <div class="card">
         <h3 style="margin-bottom:12px">${t('order.items')}</h3>
@@ -40,7 +45,25 @@ async function renderOrderDetail(container) {
             </tbody>
           </table>
         </div>
-      </div>`;
+      </div>
+      <div id="cancelOrderResult"></div>`;
+      const cancelBtn = document.getElementById("cancelOrderBtn");
+      if (cancelBtn) {
+        cancelBtn.addEventListener("click", async () => {
+          if (!confirm(t("order.cancelConfirm"))) return;
+          cancelBtn.disabled = true;
+          cancelBtn.innerHTML = `<i class="fas fa-spinner spinner"></i> ${t("order.cancelling")}`;
+          try {
+            await api.put(`/orders/${orderId}/cancel`);
+            document.getElementById("cancelOrderResult").innerHTML = `<div class="alert alert-success">${t("order.cancelled")}</div>`;
+            setTimeout(() => navigate(`order-detail?id=${orderId}`), 1500);
+          } catch (err) {
+            document.getElementById("cancelOrderResult").innerHTML = `<div class="alert alert-error">${err.message || t("order.cancelError")}</div>`;
+            cancelBtn.disabled = false;
+            cancelBtn.innerHTML = `<i class="fas fa-times"></i> ${t("order.cancel")}`;
+          }
+        });
+      }
   } catch {
     container.innerHTML = `<div class="empty-state"><i class="fas fa-file-invoice"></i><h3>${t('order.notFound')}</h3><a href="#/dashboard?tab=orders" class="btn btn-primary" style="margin-top:16px">${t('order.backToOrders')}</a></div>`;
   }

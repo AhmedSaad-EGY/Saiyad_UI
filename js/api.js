@@ -1,13 +1,34 @@
+let _cachedAccessToken = localStorage.getItem('accessToken') || null;
+
+function getAccessToken() {
+  return _cachedAccessToken || localStorage.getItem('accessToken');
+}
+
+function setAccessToken(token) {
+  _cachedAccessToken = token;
+  if (token) localStorage.setItem('accessToken', token);
+  else localStorage.removeItem('accessToken');
+}
+
+function clearTokens() {
+  _cachedAccessToken = null;
+  localStorage.removeItem('accessToken');
+  localStorage.removeItem('refreshToken');
+  localStorage.removeItem('user');
+}
+
 async function request(endpoint, options = {}) {
-  const token = localStorage.getItem("accessToken");
+  const token = getAccessToken();
   const headers = { "Content-Type": "application/json", ...options.headers };
   if (token) headers["Authorization"] = `Bearer ${token}`;
+  const { signal, ...fetchOptions } = options;
 
   let res;
   try {
     res = await fetch(`${APP_CONFIG.apiBaseUrl}${endpoint}`, {
-      ...options,
+      ...fetchOptions,
       headers,
+      signal: signal || undefined,
     });
   } catch {
     throw new Error("Network error. Please check your connection.");
@@ -18,9 +39,7 @@ async function request(endpoint, options = {}) {
     if (refreshed) {
       return request(endpoint, { ...options, _retry: true });
     }
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
-    localStorage.removeItem("user");
+    clearTokens();
     if (typeof updateNavbar === "function") updateNavbar();
     if (typeof navigate === "function") navigate("login");
     throw new Error("Session expired. Please log in again.");
@@ -64,8 +83,11 @@ const api = {
   patch: (url, body) =>
     request(url, { method: "PATCH", body: JSON.stringify(body) }),
   delete: (url) => request(url, { method: "DELETE" }),
+  abort: () => {
+    return new AbortController();
+  },
   upload: async (url, formData) => {
-    const token = localStorage.getItem("accessToken");
+    const token = getAccessToken();
     const headers = {};
     if (token) headers["Authorization"] = `Bearer ${token}`;
     let res;
@@ -106,13 +128,11 @@ async function refreshAccessToken() {
     });
     if (!res.ok) throw new Error("Refresh failed");
     const data = await res.json();
-    localStorage.setItem("accessToken", data.token);
+    setAccessToken(data.token);
     localStorage.setItem("refreshToken", data.refreshToken);
     return true;
   } catch {
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
-    localStorage.removeItem("user");
+    clearTokens();
     return false;
   }
 }

@@ -76,17 +76,14 @@ async function renderProducts(_container, _fullPath, params) {
 
   const searchInput = document.getElementById('productSearch');
   const categorySelect = document.getElementById('productCategory');
-  const sortSelect = document.getElementById('productSort');
   if (params.search) searchInput.value = params.search;
   if (params.categoryId) categorySelect.value = params.categoryId;
-  if (params.sort) sortSelect.value = params.sort;
 
   await loadProducts();
 
   function reloadFromFilters() { page = 1; syncUrl(); loadProducts(); }
   searchInput.addEventListener('input', debounce(reloadFromFilters, 400));
   categorySelect.addEventListener('change', reloadFromFilters);
-  sortSelect.addEventListener('change', reloadFromFilters);
 }
 
 function debounce(fn, ms) {

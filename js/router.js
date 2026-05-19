@@ -1,3 +1,27 @@
+const ROLES = Object.freeze({
+  ADMIN:       'Admin',
+  CUSTOMER:    'Customer',
+  FISHERMAN:   'Fisherman',
+  BAIT_SELLER: 'BaitSeller',
+  AUCTIONEER:  'Auctioneer',
+});
+
+const SELLER_ROLES = [ROLES.FISHERMAN, ROLES.BAIT_SELLER, ROLES.AUCTIONEER];
+
+const routeGuards = {
+  'admin':                   (user) => !!user && user.role === ROLES.ADMIN,
+  'cart':                    (user) => !!user,
+  'checkout':                (user) => !!user,
+  'dashboard':               (user) => !!user,
+  'shipping':                (user) => !!user,
+  'order-detail':            (user) => !!user,
+  'profile':                 (user) => !!user,
+  'auction-requests':        (user) => !!user,
+  'auction-requests-review': (user) => !!user,
+  'auctioneer-analytics':    (user) => !!user,
+  'subscriptions':           (user) => !!user,
+};
+
 const routeMap = {
   "": "renderHome",
   login: "renderLogin",
@@ -19,11 +43,50 @@ const routeMap = {
   terms: "renderTerms",
   privacy: "renderPrivacy",
   profile: "renderUserProfile",
+  "auction-requests": "renderAuctionRequests",
+  "auction-requests-review": "renderAuctionRequestsReview",
+  "auctioneer-analytics": "renderAuctioneerAnalytics",
+  subscriptions: "renderSubscriptions",
+};
+
+const routeTitleKeys = {
+  "": "home.welcome",
+  login: "nav.login",
+  register: "nav.register",
+  "forgot-password": "auth.forgotPassword",
+  "reset-password": "auth.resetPassword",
+  products: "products.title",
+  "product-detail": "products.title",
+  auctions: "auctions.title",
+  "auction-detail": "auctions.title",
+  cart: "nav.cart",
+  checkout: "cart.title",
+  dashboard: "nav.dashboard",
+  "verify-email": "verify.title",
+  shipping: "shipping.title",
+  "seller-profile": "seller.title",
+  "order-detail": "order.title",
+  admin: "admin.title",
+  terms: "auth.termsAndConditions",
+  privacy: "auth.privacyPolicy",
+  profile: "dash.profile",
+  "auction-requests": "auctionRequests.title",
+  "auction-requests-review": "auctionRequestsReview.title",
+  "auctioneer-analytics": "analytics.title",
+  subscriptions: "subscriptions.title",
 };
 
 let currentRouteKey = null;
 let currentParams = {};
-window.onRouteCleanup = null;
+window._routeCleanups = [];
+function registerRouteCleanup(fn) {
+  window._routeCleanups.push(fn);
+}
+function runRouteCleanups() {
+  window._routeCleanups.forEach(fn => { try { fn(); } catch(e) { console.warn('Cleanup error:', e); } });
+  window._routeCleanups = [];
+}
+let _navTimer = null;
 
 function navigate(path) {
   window.location.hash = `#/${path}`;
@@ -43,12 +106,22 @@ function getHandler(routeKey) {
   return null;
 }
 
-async function router() {
+async function router(force = false) {
   const { route, params } = getRoute();
   const app = document.getElementById("app");
 
   const routeKey = route.includes("/") ? route.split("/")[0] : route;
   const handler = getHandler(routeKey);
+
+  // Enforce route guards
+  const guard = routeGuards[routeKey];
+  if (guard) {
+    const user = (typeof getUser === 'function') ? getUser() : null;
+    if (!guard(user)) {
+      window.location.hash = user ? '#/' : '#/login';
+      return;
+    }
+  }
 
   if (!handler) {
     app.style.opacity = "1";
@@ -70,29 +143,55 @@ async function router() {
   }
 
   // Cleanup previous route resources (intervals, listeners)
-  if (typeof window.onRouteCleanup === "function") {
-    window.onRouteCleanup();
-    window.onRouteCleanup = null;
-  }
+  runRouteCleanups();
 
   // Allow re-render when route key is same but params changed (e.g. dashboard tabs)
   const paramsChanged =
     JSON.stringify(currentParams) !== JSON.stringify(params);
-  if (currentRouteKey === routeKey && !paramsChanged && routeKey !== "") return;
+  if (
+    currentRouteKey === routeKey &&
+    !paramsChanged &&
+    routeKey !== "" &&
+    !force
+  )
+    return;
   currentRouteKey = routeKey;
   currentParams = { ...params };
+
+  // Hide back-to-top on nav
+  const btt = document.getElementById("backToTop");
+  if (btt) btt.classList.remove("visible");
 
   app.style.opacity = "0";
   app.style.transform = "translateY(8px)";
   app.style.transition = "opacity 0.15s ease, transform 0.15s ease";
 
-  setTimeout(async () => {
-    showLoading(app, "page");
-    window.scrollTo({ top: 0, behavior: "smooth" });
+  // Show loading skeleton immediately
+  showLoading(app, "page");
+  window.scrollTo({ top: 0, behavior: "smooth" });
 
+  if (_navTimer) clearTimeout(_navTimer);
+  _navTimer = setTimeout(async () => {
+    _navTimer = null;
+    // Guard: if route changed during the delay, skip stale render
+    const { route: curRoute } = getRoute();
+    if (routeKey !== (curRoute.includes("/") ? curRoute.split("/")[0] : curRoute)) return;
     const fullPath = route;
     await handler(app, fullPath, params);
     updateNavbar();
+
+    // Set page title
+    const titleKey = routeTitleKeys[routeKey];
+    document.title = (titleKey ? t(titleKey) : "Sayiad") + " — Sayiad";
+
+    // Focus main content for keyboard users
+    app.setAttribute("tabindex", "-1");
+    app.focus({ preventScroll: true });
+    app.removeAttribute("tabindex");
+
+    // Announce page change to screen readers
+    const live = document.getElementById("ariaLive");
+    if (live) live.textContent = `Navigated to ${document.title}`;
 
     requestAnimationFrame(() => {
       app.style.opacity = "1";
@@ -106,6 +205,9 @@ async function router() {
     }, 250);
   }, 150);
 }
+
+window.ROLES = ROLES;
+window.SELLER_ROLES = SELLER_ROLES;
 
 window.addEventListener("hashchange", router);
 window.addEventListener("DOMContentLoaded", router);

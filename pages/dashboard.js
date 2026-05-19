@@ -7,7 +7,11 @@ async function renderDashboard(container, route, params) {
   const tabs = [
     { id: "overview", icon: "fa-tachometer-alt", label: t("dash.overview") },
     { id: "orders", icon: "fa-box", label: t("dash.orders") },
-    ...(hasAnyRole("Fisherman", "BaitSeller", "Auctioneer") ? [{ id: "products", icon: "fa-tag", label: t("dash.products") }] : []),
+    ...(hasAnyRole(...(window.SELLER_ROLES || ["Fisherman", "BaitSeller", "Auctioneer"])) ? [{ id: "products", icon: "fa-tag", label: t("dash.products") }] : []),
+    ...(hasRole("Auctioneer") ? [{ id: "auctions", icon: "fa-gavel", label: t("dash.auctions") }] : []),
+    ...(hasAnyRole("Fisherman") ? [{ id: "auction-requests", icon: "fa-file-export", label: t("auctionRequests.title") }] : []),
+    ...(hasAnyRole("Auctioneer") ? [{ id: "auction-requests-review", icon: "fa-clipboard-list", label: t("auctionRequestsReview.title") }] : []),
+    ...(hasAnyRole("Auctioneer") ? [{ id: "auctioneer-analytics", icon: "fa-chart-bar", label: t("analytics.title") }] : []),
     { id: "wishlist", icon: "fa-heart", label: t("dash.wishlist") },
     { id: "notifications", icon: "fa-bell", label: t("dash.notifications") },
     { id: "profile", icon: "fa-user", label: t("dash.profile") },
@@ -42,12 +46,28 @@ async function renderDashboard(container, route, params) {
 
   const content = document.getElementById("dashContent");
 
+  // Show skeleton immediately for tab switch
+  const skeletonType = tab === "orders" || tab === "products" ? "table" : tab === "profile" || tab === "password" ? "form" : "page";
+  showLoading(content, skeletonType);
+
   switch (tab) {
     case "orders":
       renderOrders(content);
       break;
     case "products":
       renderMyProducts(content);
+      break;
+    case "auctions":
+      renderAuctions(content);
+      break;
+    case "auction-requests":
+      if (typeof window.renderAuctionRequests === "function") window.renderAuctionRequests(content);
+      break;
+    case "auction-requests-review":
+      if (typeof window.renderAuctionRequestsReview === "function") window.renderAuctionRequestsReview(content);
+      break;
+    case "auctioneer-analytics":
+      if (typeof window.renderAuctioneerAnalytics === "function") window.renderAuctioneerAnalytics(content);
       break;
     case "wishlist":
       renderWishlist(content);
@@ -87,18 +107,22 @@ async function renderOverview(content, user) {
       `<h3><i class="fas fa-box"></i> ${t("dash.orders")}</h3><p style="font-size:2rem;font-weight:700;color:var(--primary)">${orders.totalCount || orders.total || 0}</p><p style="color:var(--text-muted)">${t("dash.totalOrders")}</p>`;
   } catch {
     document.getElementById("dashOrders").innerHTML =
-      `<div class="alert alert-info">${t("common.error")}</div>`;
+      `<div class="alert alert-info" role="alert">${t("common.error")}</div>`;
   }
 
-  try {
-    const products = await api
-      .get("/products/my", { pageSize: 1 })
-      .catch(() => null);
+  const sellerRoles = hasAnyRole(...(window.SELLER_ROLES || ["Fisherman", "BaitSeller", "Auctioneer"]));
+  if (sellerRoles) {
+    try {
+      const products = await api.get("/products/my", { pageSize: 1 });
+      document.getElementById("dashProducts").innerHTML =
+        `<h3><i class="fas fa-tag"></i> ${t("dash.products")}</h3><p style="font-size:2rem;font-weight:700;color:var(--primary)">${products.totalCount || products.total || 0}</p><p style="color:var(--text-muted)">${t("dash.yourProducts")}</p>`;
+    } catch (e) {
+      document.getElementById("dashProducts").innerHTML =
+        `<div class="card" style="text-align:center;padding:24px"><h3><i class="fas fa-tag"></i> ${t("dash.products")}</h3><p style="color:var(--text-muted);margin-top:8px">${t("dash.productsNotAvailable")}</p></div>`;
+    }
+  } else {
     document.getElementById("dashProducts").innerHTML =
-      `<h3><i class="fas fa-tag"></i> ${t("dash.products")}</h3><p style="font-size:2rem;font-weight:700;color:var(--primary)">${products.totalCount || products.total || 0}</p><p style="color:var(--text-muted)">${t("dash.yourProducts")}</p>`;
-  } catch {
-    document.getElementById("dashProducts").innerHTML =
-      `<div class="alert alert-info">${t("common.error")}</div>`;
+      `<div class="card" style="text-align:center;padding:24px"><h3><i class="fas fa-tag"></i> ${t("dash.products")}</h3><p style="color:var(--text-muted);margin-top:8px">${t("dash.productsNotAvailable")}</p></div>`;
   }
 }
 
@@ -137,7 +161,10 @@ async function renderOrders(content) {
                 <td style="font-weight:600">${formatPrice(o.totalPrice)}</td>
                 <td><span class="status ${statusClass(o.status)}">${tStatus(o.status)}</span></td>
                 <td>${formatDate(o.createdAt || o.orderDate)}</td>
-                <td><a href="#/order-detail?id=${o.id}" class="btn btn-outline btn-sm">${t("dash.view")}</a></td>
+                <td>
+                  <a href="#/order-detail?id=${o.id}" class="btn btn-outline btn-sm">${t("dash.view")}</a>
+                  ${o.status === "Pending" || o.status === "Confirmed" ? `<button class="btn btn-outline btn-sm cancel-order-btn" data-order-id="${o.id}" style="color:var(--danger);border-color:var(--danger);margin-inline-start:4px">${t("order.cancel")}</button>` : ""}
+                </td>
               </tr>
             `,
               )
@@ -163,8 +190,27 @@ async function renderOrders(content) {
         }
       });
       observeAnimations();
+
+      list.querySelectorAll(".cancel-order-btn").forEach((btn) => {
+        btn.addEventListener("click", async (e) => {
+          e.preventDefault();
+          const orderId = btn.dataset.orderId;
+          if (!confirm(t("order.cancelConfirm"))) return;
+          btn.disabled = true;
+          btn.innerHTML = `<i class="fas fa-spinner spinner"></i> ${t("order.cancelling")}`;
+          try {
+            await api.put(`/orders/${orderId}/cancel`);
+            alert(t("order.cancelled"));
+            loadOrders();
+          } catch (err) {
+            alert(err.message || t("order.cancelError"));
+            btn.disabled = false;
+            btn.textContent = t("order.cancel");
+          }
+        });
+      });
     } catch (e) {
-      list.innerHTML = `<div class="alert alert-error">${escapeHtml(e.message)}</div>`;
+      list.innerHTML = `<div class="alert alert-error" role="alert">${escapeHtml(e.message)}</div>`;
     }
   }
 
@@ -182,11 +228,11 @@ async function renderMyProducts(content) {
       <form id="myProductForm" novalidate>
         <div class="form-group"><label class="form-label">${t("product.title")} *</label><input type="text" class="form-input" id="prodTitle" required></div>
         <div class="form-group"><label class="form-label">${t("product.description")} *</label><textarea class="form-textarea" id="prodDesc" required></textarea></div>
-        <div class="form-group"><label class="form-label">Brand *</label><input type="text" class="form-input" id="prodBrand" required></div>
+        <div class="form-group"><label class="form-label">${t("product.brand") || "Brand"} *</label><input type="text" class="form-input" id="prodBrand" required></div>
         <div class="form-group"><label class="form-label">${t("product.price")} *</label><input type="number" class="form-input" id="prodPrice" min="0" step="0.01" required></div>
-        <div class="form-group"><label class="form-label">Stock Quantity *</label><input type="number" class="form-input" id="prodStock" min="0" value="1" required></div>
-        <div class="form-group"><label class="form-label">Location *</label><input type="text" class="form-input" id="prodLocation" required></div>
-        <div class="form-group"><label class="form-label">Category *</label><select class="form-select" id="prodCategory"><option value="">Loading...</option></select></div>
+        <div class="form-group"><label class="form-label">${t("product.stock") || "Stock Quantity"} *</label><input type="number" class="form-input" id="prodStock" min="0" value="1" required></div>
+        <div class="form-group"><label class="form-label">${t("product.location") || "Location"} *</label><input type="text" class="form-input" id="prodLocation" required></div>
+        <div class="form-group"><label class="form-label">${t("product.category") || "Category"} *</label><select class="form-select" id="prodCategory"><option value="">${t("common.loading") || "Loading..."}</option></select></div>
         <div class="form-group"><label class="form-label">${t("product.condition")}</label><select class="form-select" id="prodCondition"><option value="0">${t("product.new")}</option><option value="1">${t("product.used")}</option></select></div>
           <div class="form-group">
             <label class="form-label">${t("product.images")}</label>
@@ -201,8 +247,32 @@ async function renderMyProducts(content) {
     <div id="myProductsList"><i class="fas fa-spinner spinner"></i> ${t("common.loading")}</div>`;
 
   document.getElementById("showProductForm").addEventListener("click", () => {
-    document.getElementById("productFormContainer").classList.toggle("hidden");
+    const form = document.getElementById("productFormContainer");
+    form.classList.toggle("hidden");
+    // Restore saved draft
+    const draft = JSON.parse(localStorage.getItem("product_draft") || "null");
+    if (draft) {
+      Object.keys(draft).forEach((id) => {
+        const el = document.getElementById(id);
+        if (el) el.value = draft[id];
+      });
+    }
   });
+
+  // Auto-save product form draft every 5s
+  const DRAFT_KEY = "product_draft";
+  const draftFields = ["prodTitle", "prodDesc", "prodBrand", "prodPrice", "prodCondition", "prodStock", "prodLocation", "prodCategory"];
+  const _draftInterval = setInterval(() => {
+    const form = document.getElementById("productFormContainer");
+    if (form && !form.classList.contains("hidden")) {
+      const draft = {};
+      draftFields.forEach((id) => {
+        const el = document.getElementById(id);
+        if (el) draft[id] = el.value;
+      });
+      localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+    }
+  }, 5000);
 
   document.getElementById("prodImageInput")?.addEventListener("change", (e) => {
     const file = e.target.files[0];
@@ -252,16 +322,20 @@ async function renderMyProducts(content) {
         }
 
         showToast(t("product.saved"), "success");
+        localStorage.removeItem("product_draft");
         document.getElementById("myProductForm").reset();
         document.getElementById("productFormContainer").classList.add("hidden");
         renderMyProducts(content);
       } catch (err) {
-        alertDiv.innerHTML = `<div class="alert alert-error">${escapeHtml(err.message)}</div>`;
+        alertDiv.innerHTML = `<div class="alert alert-error" role="alert">${escapeHtml(err.message)}</div>`;
       } finally {
         submit.disabled = false;
         submit.textContent = t("product.save");
       }
     });
+
+  // Register route cleanup to stop draft autosave interval
+  registerRouteCleanup(() => clearInterval(_draftInterval));
 
   // Load categories for the product form
   (async () => {
@@ -271,7 +345,7 @@ async function renderMyProducts(content) {
         const cats = await api.get("/categories");
         const list = Array.isArray(cats) ? cats : cats.items || cats.data || [];
         sel.innerHTML = list.map(c => `<option value="${c.id}">${escapeHtml(c.name)}</option>`).join("");
-      } catch { sel.innerHTML = '<option value="">Failed to load</option>'; }
+      } catch { sel.innerHTML = `<option value="">${t("common.loadFailed") || "Failed to load"}</option>`; }
     }
   })();
 
@@ -297,7 +371,7 @@ async function renderMyProducts(content) {
               <td>${p.stockQuantity ?? "-"}</td>
               <td style="display:flex;gap:4px;flex-wrap:nowrap">
                 <a href="#/product-detail?id=${p.id}" class="btn btn-outline btn-sm">${t("dash.view")}</a>
-                ${!p.isAuctioned && hasAnyRole("Auctioneer","Fisherman","BaitSeller") ? `<button class="btn btn-primary btn-sm start-auction-btn" data-product-id="${p.id}" data-product-title="${escapeHtml(p.title)}" aria-label="${t("auction.startAuction")}"><i class="fas fa-gavel"></i></button>` : ""}
+                ${!p.isAuctioned && hasAnyRole(...(window.SELLER_ROLES || ["Auctioneer","Fisherman","BaitSeller"])) ? `<button class="btn btn-primary btn-sm start-auction-btn" data-product-id="${p.id}" data-product-title="${escapeHtml(p.title)}" aria-label="${t("auction.startAuction")}"><i class="fas fa-gavel"></i></button>` : ""}
               </td>
             </tr>
           `,
@@ -319,7 +393,7 @@ async function renderMyProducts(content) {
     });
   } catch (e) {
     document.getElementById("myProductsList").innerHTML =
-      `<div class="alert alert-error">${escapeHtml(e.message)}</div>`;
+      `<div class="card" style="text-align:center;padding:24px"><h3><i class="fas fa-tag"></i> ${t("dash.products")}</h3><p style="color:var(--text-muted);margin-top:8px">${t("dash.productsNotAvailable")}</p></div>`;
   }
 }
 
@@ -401,12 +475,55 @@ function showAuctionModal(productId, productTitle) {
       const content = document.getElementById("dashContent");
       if (content) renderMyProducts(content);
     } catch (err) {
-      alertDiv.innerHTML = `<div class="alert alert-error">${escapeHtml(err.message)}</div>`;
+      alertDiv.innerHTML = `<div class="alert alert-error" role="alert">${escapeHtml(err.message)}</div>`;
     } finally {
       submit.disabled = false;
       submit.textContent = t("auctions.title");
     }
   });
+}
+
+async function renderAuctions(content) {
+  content.innerHTML = `
+    <div class="card">
+      <h3><i class="fas fa-gavel"></i> ${t("dash.auctions")}</h3>
+      <div id="auctionProductsList"><i class="fas fa-spinner spinner"></i> ${t("common.loading")}</div>
+    </div>
+  `;
+  try {
+    let data, products;
+    try {
+      data = await api.get("/products/my", { pageSize: 100 });
+      products = data.items || data.data || data || [];
+    } catch {
+      data = await api.get("/products", { pageSize: 100 });
+      products = data.items || data.data || data || [];
+    }
+    const list = document.getElementById("auctionProductsList");
+    const available = products.filter(p => !p.isAuctioned);
+    if (!available.length) {
+      list.innerHTML = `<p style="color:var(--text-muted);padding:24px;text-align:center">${t("dash.noProducts")}</p>`;
+      return;
+    }
+    list.innerHTML = available.map(p => `
+      <div class="card card-sm" style="display:flex;justify-content:space-between;align-items:center;gap:12px">
+        <div>
+          <strong>${escapeHtml(p.title)}</strong>
+          <span style="color:var(--text-muted);font-size:0.82rem;margin-inline-start:8px">${t("cart.price")}: ${formatPrice(p.price)}</span>
+        </div>
+        <button class="btn btn-primary btn-sm start-auction-btn" data-product-id="${p.id}" data-product-title="${escapeHtml(p.title)}"><i class="fas fa-gavel"></i> ${t("auction.startAuction")}</button>
+      </div>
+    `).join("");
+
+    list.querySelectorAll(".start-auction-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        showAuctionModal(parseInt(btn.dataset.productId), btn.dataset.productTitle);
+      });
+    });
+  } catch (e) {
+    document.getElementById("auctionProductsList").innerHTML =
+      `<div class="alert alert-error" role="alert">${escapeHtml(e.message)}</div>`;
+  }
 }
 
 async function renderWishlist(content) {
@@ -447,7 +564,12 @@ async function renderWishlist(content) {
 
     document.querySelectorAll(".remove-wishlist").forEach((btn) => {
       btn.addEventListener("click", async () => {
-        if (!confirm(t("wishlist.confirmRemove"))) return;
+        const ok = await showConfirm(
+          t("wishlist.confirmRemove"),
+          t("wishlist.confirmRemoveDesc") || t("wishlist.confirmRemove"),
+          { type: "danger", confirmText: t("common.remove") || "Remove" },
+        );
+        if (!ok) return;
         try {
           await api.delete(`/wishlist/${btn.dataset.id}`);
           showToast(t("product.wishlistUpdated"), "success");
@@ -460,7 +582,7 @@ async function renderWishlist(content) {
     observeAnimations();
   } catch (e) {
     document.getElementById("wishlistItems").innerHTML =
-      `<div class="alert alert-error">${escapeHtml(e.message)}</div>`;
+      `<div class="alert alert-error" role="alert">${escapeHtml(e.message)}</div>`;
   }
 }
 
@@ -515,7 +637,7 @@ async function renderNotifications(content) {
     observeAnimations();
   } catch (e) {
     document.getElementById("notifList").innerHTML =
-      `<div class="alert alert-error">${escapeHtml(e.message)}</div>`;
+      `<div class="alert alert-error" role="alert">${escapeHtml(e.message)}</div>`;
   }
 }
 
@@ -582,9 +704,9 @@ function renderProfile(content, user) {
         });
         localStorage.setItem("user", JSON.stringify(data.user || data));
         updateNavbar();
-        alertDiv.innerHTML = `<div class="alert alert-success">${t("dash.profileUpdated")}</div>`;
+        alertDiv.innerHTML = `<div class="alert alert-success" role="alert">${t("dash.profileUpdated")}</div>`;
       } catch (err) {
-        alertDiv.innerHTML = `<div class="alert alert-error">${escapeHtml(err.message)}</div>`;
+        alertDiv.innerHTML = `<div class="alert alert-error" role="alert">${escapeHtml(err.message)}</div>`;
       } finally {
         submit.disabled = false;
         submit.textContent = t("dash.updateProfile");
@@ -669,10 +791,10 @@ function renderChangePassword(content) {
           currentPassword: oldInput.value,
           newPassword: newInput.value,
         });
-        alertDiv.innerHTML = `<div class="alert alert-success">${t("dash.passwordChanged")}</div>`;
+        alertDiv.innerHTML = `<div class="alert alert-success" role="alert">${t("dash.passwordChanged")}</div>`;
         document.getElementById("passwordForm").reset();
       } catch (err) {
-        alertDiv.innerHTML = `<div class="alert alert-error">${escapeHtml(err.message)}</div>`;
+        alertDiv.innerHTML = `<div class="alert alert-error" role="alert">${escapeHtml(err.message)}</div>`;
       } finally {
         submit.disabled = false;
         submit.textContent = t("dash.changePwBtn");

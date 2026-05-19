@@ -1,3 +1,5 @@
+let _animObserver = null;
+
 function $(sel, parent = document) {
   return parent.querySelector(sel);
 }
@@ -53,13 +55,13 @@ function showLoading(container, type = "page") {
 }
 
 function showError(container, msg) {
-  container.innerHTML = `<div class="alert alert-error">${escapeHtml(msg || t("common.error"))}</div>`;
+  container.innerHTML = `<div class="alert alert-error" role="alert">${escapeHtml(msg || t("common.error"))}</div>`;
 }
 
 function showErrorWithRetry(container, msg, retryFn) {
   const id = "retry_" + Math.random().toString(36).slice(2, 8);
   container.innerHTML = `
-    <div class="empty-state">
+    <div class="empty-state" role="alert">
       <i class="fas fa-exclamation-triangle"></i>
       <h3>${t("common.error")}</h3>
       <p>${escapeHtml(msg || t("common.error"))}</p>
@@ -196,6 +198,7 @@ function statusClass(status) {
     Paid: "paid",
     Shipped: "shipped",
     Delivered: "available",
+    Approved: "active",
     Valid: "active",
     Rejected: "draft",
     Winning: "available",
@@ -206,7 +209,8 @@ function statusClass(status) {
 function tStatus(status, prefix = "order") {
   if (status == null) return "";
   const numMap = ["Available", "Sold", "Draft"];
-  const label = typeof status === "number" ? (numMap[status] ?? status) : status;
+  const label =
+    typeof status === "number" ? (numMap[status] ?? status) : status;
   const key = `${prefix}.status${label}`;
   const translated = t(key);
   return translated || label;
@@ -250,8 +254,75 @@ function progressiveImg(src, alt = "", className = "") {
   return `
     <div class="${className} progressive-wrap" style="position:relative;overflow:hidden;background:var(--body-bg)">
       <div id="${id}-placeholder" style="position:absolute;inset:0;background:var(--border);filter:blur(30px);transform:scale(1.2);opacity:1;transition:opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1)"></div>
-      <img id="${id}-img" src="${escapeHtml(src)}" alt="${escapeHtml(alt)}" style="width:100%;height:100%;object-fit:cover;opacity:0;transform:scale(1.05);transition:opacity 0.6s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)" loading="lazy" onload="document.getElementById('${id}-placeholder').style.opacity='0';this.style.opacity='1';this.style.transform='scale(1)'">
+      <img id="${id}-img" src="${escapeHtml(src)}" alt="${escapeHtml(alt)}" style="width:100%;height:100%;object-fit:cover;opacity:0;transform:scale(1.05);transition:opacity 0.6s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)" loading="lazy" data-pi-id="${id}">
     </div>`;
+}
+
+function activateProgressiveImages(root = document) {
+  root.querySelectorAll('img[data-pi-id]').forEach(img => {
+    const id = img.dataset.piId;
+    const placeholder = document.getElementById(id + '-placeholder');
+    if (!placeholder) return;
+    if (img.complete && img.naturalWidth > 0) {
+      placeholder.style.opacity = '0';
+      img.style.opacity = '1';
+      img.style.transform = 'scale(1)';
+      img.removeAttribute('data-pi-id');
+    } else {
+      img.addEventListener('load', function onImgLoad() {
+        placeholder.style.opacity = '0';
+        img.style.opacity = '1';
+        img.style.transform = 'scale(1)';
+        img.removeAttribute('data-pi-id');
+        img.removeEventListener('load', onImgLoad);
+      });
+      img.addEventListener('error', function onImgError() {
+        placeholder.style.opacity = '0';
+        img.style.opacity = '0.3';
+        img.removeAttribute('data-pi-id');
+        img.removeEventListener('error', onImgError);
+      });
+    }
+  });
+}
+
+/* ===== Scroll-triggered animations ===== */
+function observeAnimations(root = document) {
+  if (_animObserver) {
+    _animObserver.disconnect();
+    _animObserver = null;
+  }
+  const els = (root === document ? document : root).querySelectorAll(
+    ".animate-on-scroll:not(.visible)",
+  );
+
+  if ("IntersectionObserver" in window) {
+    _animObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+            entry.target
+              .querySelectorAll(".animate-on-scroll:not(.visible)")
+              .forEach((child) => child.classList.add("visible"));
+            _animObserver.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.1, rootMargin: "0px 0px -50px 0px" },
+    );
+
+    els.forEach((el) => _animObserver.observe(el));
+  } else {
+    els.forEach((el) => el.classList.add("visible"));
+  }
+}
+
+function disconnectAnimObserver() {
+  if (_animObserver) {
+    _animObserver.disconnect();
+    _animObserver = null;
+  }
 }
 
 /* ===== Recently viewed ===== */
@@ -311,6 +382,7 @@ function openQuickView(product) {
   const overlay = document.createElement("div");
   overlay.className = "modal-overlay show";
   overlay.setAttribute("role", "dialog");
+  overlay.setAttribute("aria-modal", "true");
   overlay.setAttribute("aria-label", "Quick view");
 
   const title = product.title || product.product?.title || "Product";
@@ -343,8 +415,33 @@ function openQuickView(product) {
     </div>
   `;
 
-  overlay.addEventListener("click", () => { overlay.remove(); if (prevFocus && typeof prevFocus.focus === "function") prevFocus.focus(); });
+  function focusTrap(e) {
+    const focusable = overlay.querySelectorAll('a, button, input, select, textarea, [tabindex]:not([tabindex="-1"])');
+    if (!focusable.length) return;
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (e.key === "Tab") {
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    }
+  }
+  function closeQuickView() {
+    overlay.remove();
+    document.removeEventListener("keydown", onQuickViewKey);
+    document.removeEventListener("keydown", focusTrap);
+    if (prevFocus && typeof prevFocus.focus === "function") prevFocus.focus();
+  }
+  function onQuickViewKey(e) {
+    if (e.key === "Escape") closeQuickView();
+  }
+  overlay.addEventListener("click", (e) => {
+    if (e.target === overlay) closeQuickView();
+  });
+  document.addEventListener("keydown", onQuickViewKey);
+  document.addEventListener("keydown", focusTrap);
   document.body.appendChild(overlay);
+  // Focus first element
+  requestAnimationFrame(() => { const f = overlay.querySelector('a, button, input, select, textarea, [tabindex]:not([tabindex="-1"])'); if (f) f.focus(); });
 }
 
 /* ===== Lightbox ===== */
@@ -380,9 +477,20 @@ function openLightbox(images, startIndex = 0) {
     });
   };
 
+  function lightboxFocusTrap(e) {
+    const focusable = lb.querySelectorAll('a, button, input, select, textarea, [tabindex]:not([tabindex="-1"])');
+    if (!focusable.length) return;
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (e.key === "Tab") {
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    }
+  }
   function close() {
     lb.remove();
     document.removeEventListener("keydown", onKey);
+    document.removeEventListener("keydown", lightboxFocusTrap);
     if (prevFocus && typeof prevFocus.focus === "function") prevFocus.focus();
   }
   function onKey(e) {
@@ -406,9 +514,12 @@ function openLightbox(images, startIndex = 0) {
   render();
   document.body.appendChild(lb);
   document.addEventListener("keydown", onKey);
+  document.addEventListener("keydown", lightboxFocusTrap);
   lb.addEventListener("click", (e) => {
     if (e.target === lb) close();
   });
+  // Focus the close button on open
+  requestAnimationFrame(() => { const b = lb.querySelector(".lightbox-close"); if (b) b.focus(); });
 }
 
 /* ===== Form validation helpers ===== */
@@ -477,34 +588,49 @@ function validateForm(formEl, rules) {
       }
     }
     if (rule.minLength && el.value.trim().length < rule.minLength) {
-      showFieldError(el, rule.messages?.minLength || `${t("auth.password")} must be at least ${rule.minLength} characters.`);
+      showFieldError(
+        el,
+        rule.messages?.minLength || `${t("auth.passwordMinLength")}`,
+      );
       if (!firstInvalid) firstInvalid = el;
       continue;
     }
     if (rule.hasUppercase && el.value.trim()) {
       if (!/[A-Z]/.test(el.value)) {
-        showFieldError(el, rule.messages?.hasUppercase || t("auth.passwordRequiresUppercase"));
+        showFieldError(
+          el,
+          rule.messages?.hasUppercase || t("auth.passwordRequiresUppercase"),
+        );
         if (!firstInvalid) firstInvalid = el;
         continue;
       }
     }
     if (rule.hasLowercase && el.value.trim()) {
       if (!/[a-z]/.test(el.value)) {
-        showFieldError(el, rule.messages?.hasLowercase || t("auth.passwordRequiresLowercase"));
+        showFieldError(
+          el,
+          rule.messages?.hasLowercase || t("auth.passwordRequiresLowercase"),
+        );
         if (!firstInvalid) firstInvalid = el;
         continue;
       }
     }
     if (rule.hasDigit && el.value.trim()) {
       if (!/\d/.test(el.value)) {
-        showFieldError(el, rule.messages?.hasDigit || t("auth.passwordRequiresDigit"));
+        showFieldError(
+          el,
+          rule.messages?.hasDigit || t("auth.passwordRequiresDigit"),
+        );
         if (!firstInvalid) firstInvalid = el;
         continue;
       }
     }
     if (rule.hasSpecialChar && el.value.trim()) {
       if (!/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(el.value)) {
-        showFieldError(el, rule.messages?.specialChar || t("auth.invalidSpecialChar"));
+        showFieldError(
+          el,
+          rule.messages?.specialChar || t("auth.invalidSpecialChar"),
+        );
         if (!firstInvalid) firstInvalid = el;
         continue;
       }
@@ -517,14 +643,21 @@ function validateForm(formEl, rules) {
       }
     }
     if (rule.matches && el.value !== rule.matches.element.value) {
-      showFieldError(el, rule.messages?.matches || t("auth.passwordsDoNotMatch"));
+      showFieldError(
+        el,
+        rule.messages?.matches || t("auth.passwordsDoNotMatch"),
+      );
       if (!firstInvalid) firstInvalid = el;
       continue;
     }
     if (rule.minAge && el.value) {
       const age = calculateAge(el.value);
       if (isNaN(age) || age < rule.minAge) {
-        showFieldError(el, rule.messages?.minAge || t("auth.minAgeRequired").replace("{minAge}", rule.minAge));
+        showFieldError(
+          el,
+          rule.messages?.minAge ||
+            t("auth.minAgeRequired").replace("{minAge}", rule.minAge),
+        );
         if (!firstInvalid) firstInvalid = el;
       }
     }
@@ -547,4 +680,163 @@ function calculateAge(birthdate) {
   const m = today.getMonth() - birth.getMonth();
   if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
   return age;
+}
+
+/**
+ * Triggers a celebratory confetti burst
+ */
+function triggerConfetti() {
+  const colors = [
+    "#0ea5e9",
+    "#059669",
+    "#f59e0b",
+    "#e11d48",
+    "#7c3aed",
+    "#f472b6",
+  ];
+  const count = 60;
+
+  for (let i = 0; i < count; i++) {
+    const p = document.createElement("div");
+    p.className = "confetti-particle";
+    p.style.left = Math.random() * 100 + "vw";
+    p.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+    p.style.animationDuration = Math.random() * 2 + 3 + "s";
+    p.style.opacity = (Math.random() * 0.5 + 0.5).toString();
+    document.body.appendChild(p);
+    setTimeout(() => p.remove(), 5000);
+  }
+}
+
+/**
+ * Debounce helper to limit function execution rate
+ * @param {Function} fn - The function to debounce
+ * @param {number} delay - Delay in milliseconds
+ */
+function debounce(fn, delay) {
+  let timeout;
+  return function (...args) {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => fn.apply(this, args), delay);
+  };
+}
+
+/**
+ * Premium replacement for window.confirm()
+ * @param {string} title - Modal title
+ * @param {string} message - Detailed message
+ * @param {object} options - Configuration (type: 'danger'|'primary', confirmText, cancelText)
+ * @returns {Promise<boolean>}
+ */
+async function showConfirm(title, message, options = {}) {
+  const {
+    type = "primary",
+    confirmText = getCurrentLang() === "ar" ? "تأكيد" : "Confirm",
+    cancelText = getCurrentLang() === "ar" ? "إلغاء" : "Cancel",
+    icon = type === "danger" ? "fa-exclamation-triangle" : "fa-question-circle"
+  } = options;
+
+  return new Promise((resolve) => {
+    const prevFocus = document.activeElement;
+    const overlay = document.createElement("div");
+    overlay.className = "modal-overlay show confirm-modal-overlay";
+    overlay.setAttribute("role", "alertdialog");
+    overlay.setAttribute("aria-modal", "true");
+
+    overlay.innerHTML = `
+      <div class="modal modal-confirm" onclick="event.stopPropagation()">
+        <div class="confirm-icon ${type}">
+          <i class="fas ${icon}"></i>
+        </div>
+        <h3>${escapeHtml(title)}</h3>
+        <p>${escapeHtml(message)}</p>
+        <div class="modal-actions">
+          <button class="btn btn-ghost" id="confirmCancel">${cancelText}</button>
+          <button class="btn btn-${type}" id="confirmProceed">${confirmText}</button>
+        </div>
+      </div>
+    `;
+
+    const close = (result) => {
+      overlay.classList.remove("show");
+      setTimeout(() => {
+        overlay.remove();
+        if (prevFocus) prevFocus.focus();
+        resolve(result);
+      }, 200);
+    };
+
+    overlay.querySelector("#confirmProceed").addEventListener("click", () => close(true));
+    overlay.querySelector("#confirmCancel").addEventListener("click", () => close(false));
+
+    overlay.addEventListener("click", (e) => {
+      if (e.target === overlay) {
+        const modal = overlay.querySelector(".modal-confirm");
+        modal.classList.remove("shake");
+        void modal.offsetWidth; // Trigger reflow to restart animation
+        modal.classList.add("shake");
+      }
+    });
+
+    document.body.appendChild(overlay);
+
+    // Accessibility: Focus the confirm button by default
+    setTimeout(() => {
+      const proceedBtn = overlay.querySelector("#confirmProceed");
+      proceedBtn?.focus();
+    }, 50);
+
+    overlay.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") close(false);
+    });
+  });
+}
+
+// ============================================================
+// SHARED PRODUCT CARD RENDERER
+// Canonical location. Used by: home.js, products.js, product-detail.js
+// Do NOT redefine this function in any other file.
+// ============================================================
+function renderProductCards(container, products) {
+  if (!products || !products.length) {
+    renderEmptyState(container, {
+      icon: 'fa-fish',
+      title: t('products.noProducts'),
+      desc: t('products.noProductsDesc'),
+    });
+    return;
+  }
+  container.innerHTML = products.map((p, i) => {
+    const title = p.title || p.productTitle || 'Product';
+    const img = p.primaryImageUrl || p.imageUrl || '';
+    const statusText = tStatus(p.status, "product");
+    return `
+      <a href="#/product-detail?id=${p.id}"
+         class="product-card animate-on-scroll stagger-${Math.min(i + 1, 8)}"
+         aria-label="${escapeHtml(title)} — ${formatPrice(p.price)}">
+        <div class="product-card-img">
+          ${img
+            ? `<img src="${escapeHtml(img)}" alt="${escapeHtml(title)}" loading="lazy">`
+            : `<div class="img-placeholder"><i class="fas fa-image"></i></div>`}
+          ${p.status != null
+            ? `<span class="product-card-badge ${statusClass(p.status)}">${escapeHtml(statusText)}</span>`
+            : ''}
+          <button class="quick-add-btn" data-quick-add="${p.id}" aria-label="Add to cart" title="Add to cart"><i class="fas fa-cart-plus"></i></button>
+        </div>
+        <div class="product-card-body">
+          <div class="product-card-title">${escapeHtml(title)}</div>
+          <div class="product-card-price">${formatPrice(p.price)}</div>
+          <div class="product-card-meta">
+            ${p.categoryName
+              ? `<span class="product-card-category"><i class="fas fa-tag"></i>${escapeHtml(p.categoryName)}</span>`
+              : ''}
+            ${p.stockQuantity != null
+              ? `<span class="product-card-stock">${p.stockQuantity} ${t('products.inStock')}</span>`
+              : ''}
+          </div>
+        </div>
+      </a>
+    `;
+  }).join('');
+  observeAnimations();
 }

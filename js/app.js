@@ -3,17 +3,16 @@
 // ============================================================
 function showToast(msg, type = "info") {
   const existing = document.querySelector(".toast-container");
-    const container =
+  const container =
     existing ||
     (() => {
       const c = document.createElement("div");
       c.className = "toast-container";
       const isRtl = document.documentElement.dir === "rtl";
-      c.style.cssText =
-        `position:fixed;bottom:20px;${isRtl ? "left" : "right"}:20px;z-index:9999;display:flex;flex-direction:column;gap:10px;pointer-events:none`;
+      c.style.cssText = `position:fixed;bottom:20px;${isRtl ? "left" : "right"}:20px;z-index:9999;display:flex;flex-direction:column;gap:10px;pointer-events:none`;
       document.body.appendChild(c);
       return c;
-    })();
+})();
 
   const toast = document.createElement("div");
   const colors = {
@@ -29,6 +28,7 @@ function showToast(msg, type = "info") {
     warning: "fa-exclamation-triangle",
   };
 
+  toast.setAttribute("role", "alert");
   toast.style.cssText = `
     padding: 16px 24px;
     border-radius: 12px;
@@ -46,15 +46,23 @@ function showToast(msg, type = "info") {
     border: 1px solid rgba(255,255,255,0.1);
   `;
   toast.style.background = colors[type] || colors.info;
-  const iconEl = document.createElement('i');
+  const iconEl = document.createElement("i");
   iconEl.className = `fas ${icons[type] || icons.info}`;
-  iconEl.setAttribute('aria-hidden', 'true');
-  iconEl.style.cssText = 'font-size:1.1rem;flex-shrink:0';
-  const textEl = document.createElement('span');
+  iconEl.setAttribute("aria-hidden", "true");
+  iconEl.style.cssText = "font-size:1.1rem;flex-shrink:0";
+  const textEl = document.createElement("span");
   textEl.textContent = msg;
   toast.appendChild(iconEl);
   toast.appendChild(textEl);
 
+  // Limit visible toasts to 3
+  while (container.children.length >= 3) {
+    const first = container.firstElementChild;
+    first.style.transition = "all 0.2s ease";
+    first.style.opacity = "0";
+    first.style.transform = "translateX(30px)";
+    setTimeout(() => first.remove(), 200);
+  }
   container.appendChild(toast);
   const live = document.getElementById("ariaLive");
   if (live) live.textContent = msg;
@@ -92,13 +100,6 @@ injectedStyles.textContent = `
   .navbar {
     transition: background-color 0.4s ease, backdrop-filter 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease !important;
   }
-  .navbar.scrolled {
-    background-color: var(--nav-bg) !important;
-    backdrop-filter: blur(24px) saturate(1.8) !important;
-    -webkit-backdrop-filter: blur(24px) saturate(1.8) !important;
-    box-shadow: 0 10px 30px -10px oklch(0 0 0 / 0.12) !important;
-    border-bottom-color: oklch(1 0 0 / 0.1) !important;
-  }
   @media (max-width: 480px) {
     .toast-container {
       right: 12px !important;
@@ -117,38 +118,45 @@ document.head.appendChild(injectedStyles);
 // INTERSECTION OBSERVER — Scroll Animations
 // ============================================================
 function observeAnimations(root = document) {
-  const els = (root === document ? document : root)
-    .querySelectorAll('.animate-on-scroll:not(.visible)');
+  const els = (root === document ? document : root).querySelectorAll(
+    ".animate-on-scroll:not(.visible)",
+  );
 
-  if ('IntersectionObserver' in window) {
+  if ("IntersectionObserver" in window) {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((e) => {
           if (e.isIntersecting) {
-            e.target.classList.add('visible');
+            e.target.classList.add("visible");
             observer.unobserve(e.target);
           }
         });
       },
-      { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
+      { threshold: 0.1, rootMargin: "0px 0px -40px 0px" },
     );
     els.forEach((el) => observer.observe(el));
   } else {
-    els.forEach((el) => el.classList.add('visible'));
+    els.forEach((el) => el.classList.add("visible"));
   }
 }
 
 // ============================================================
 // NAVBAR SCROLL EFFECT
 // ============================================================
+let scrollTicking = false;
 window.addEventListener(
   "scroll",
   () => {
-    const navbar = document.querySelector(".navbar");
-    if (!navbar) return;
-    navbar.classList.toggle("scrolled", window.scrollY > 20);
-    const btt = document.getElementById("backToTop");
-    if (btt) btt.classList.toggle("visible", window.scrollY > 400);
+    if (!scrollTicking) {
+      window.requestAnimationFrame(() => {
+        const navbar = document.querySelector(".navbar");
+        if (navbar) navbar.classList.toggle("scrolled", window.scrollY > 20);
+        const btt = document.getElementById("backToTop");
+        if (btt) btt.classList.toggle("visible", window.scrollY > 400);
+        scrollTicking = false;
+      });
+      scrollTicking = true;
+    }
   },
   { passive: true },
 );
@@ -170,12 +178,18 @@ document.addEventListener("click", (e) => {
 
 document.getElementById("userDropdown")?.addEventListener("click", (e) => {
   e.stopPropagation();
-  document.getElementById("dropdownMenu")?.classList.toggle("show");
+  const menu = document.getElementById("dropdownMenu");
+  const isOpen = menu?.classList.toggle("show");
+  e.currentTarget.setAttribute("aria-expanded", isOpen ? "true" : "false");
 });
 
-document.getElementById("logoutBtn")?.addEventListener("click", (e) => {
+document.getElementById("logoutBtn")?.addEventListener("click", async (e) => {
   e.preventDefault();
-  logout();
+  const ok = await showConfirm(t("auth.logoutTitle"), t("auth.logoutConfirm"), {
+    type: "danger",
+    confirmText: t("nav.logout"),
+  });
+  if (ok) logout();
 });
 
 // Mobile drawer overlay
@@ -189,7 +203,16 @@ function openDrawer() {
   drawer.classList.add("open");
   overlay?.classList.add("open");
   document.body.classList.add("nav-open");
-  const firstFocusable = drawer.querySelector('a, button, input, select, textarea, [tabindex]:not([tabindex="-1"])');
+
+  const btn = document.getElementById("hamburger");
+  if (btn) {
+    btn.innerHTML = '<i class="fas fa-times"></i>';
+    btn.setAttribute("aria-expanded", "true");
+  }
+
+  const firstFocusable = drawer.querySelector(
+    'a, button, input, select, textarea, [tabindex]:not([tabindex="-1"])',
+  );
   firstFocusable?.focus();
 }
 
@@ -197,11 +220,13 @@ function closeDrawer() {
   document.getElementById("navDrawer")?.classList.remove("open");
   navOverlay?.classList.remove("open");
   document.body.classList.remove("nav-open");
+
   const btn = document.getElementById("hamburger");
   if (btn) {
     btn.innerHTML = '<i class="fas fa-bars"></i>';
     btn.setAttribute("aria-expanded", "false");
   }
+
   btn?.focus();
 }
 
@@ -210,47 +235,47 @@ document.getElementById("hamburger")?.addEventListener("click", () => {
   const btn = document.getElementById("hamburger");
   if (drawer?.classList.contains("open")) {
     closeDrawer();
-    if (btn) {
-      btn.innerHTML = '<i class="fas fa-bars"></i>';
-      btn.setAttribute("aria-expanded", "false");
-    }
   } else {
     openDrawer();
-    if (btn) {
-      btn.innerHTML = '<i class="fas fa-times"></i>';
-      btn.setAttribute("aria-expanded", "true");
-    }
   }
 });
 
 navOverlay?.addEventListener("click", closeDrawer);
-navOverlay?.addEventListener("touchend", (e) => {
-  e.preventDefault();
-  closeDrawer();
-}, { passive: false });
-navOverlay?.addEventListener("touchstart", (e) => {
-  if (e.target === navOverlay) closeDrawer();
-}, { passive: true });
+navOverlay?.addEventListener(
+  "touchend",
+  (e) => {
+    e.preventDefault();
+    closeDrawer();
+  },
+  { passive: false },
+);
+navOverlay?.addEventListener(
+  "touchstart",
+  (e) => {
+    if (e.target === navOverlay) closeDrawer();
+  },
+  { passive: true },
+);
 
 // Inject nav icons into drawer links
 (function injectNavIcons() {
   const iconMap = {
-    '#/': 'fa-home',
-    '#/products': 'fa-store',
-    '#/auctions': 'fa-gavel',
-    '#/cart': 'fa-shopping-cart',
-    '#/dashboard': 'fa-tachometer-alt',
-    '#/profile': 'fa-user',
-    '#/shipping': 'fa-map-marker-alt',
-    '#/admin': 'fa-shield-alt',
+    "#/": "fa-home",
+    "#/products": "fa-store",
+    "#/auctions": "fa-gavel",
+    "#/cart": "fa-shopping-cart",
+    "#/dashboard": "fa-tachometer-alt",
+    "#/profile": "fa-user",
+    "#/shipping": "fa-map-marker-alt",
+    "#/admin": "fa-shield-alt",
   };
-  document.querySelectorAll('.nav-links .nav-link').forEach(link => {
-    const href = link.getAttribute('href');
+  document.querySelectorAll(".nav-links .nav-link").forEach((link) => {
+    const href = link.getAttribute("href");
     const iconClass = iconMap[href];
-    if (iconClass && !link.querySelector('.nav-icon')) {
-      const icon = document.createElement('i');
+    if (iconClass && !link.querySelector(".nav-icon")) {
+      const icon = document.createElement("i");
       icon.className = `fas ${iconClass} nav-icon`;
-      icon.setAttribute('aria-hidden', 'true');
+      icon.setAttribute("aria-hidden", "true");
       link.insertBefore(icon, link.firstChild);
     }
   });
@@ -262,6 +287,23 @@ document.addEventListener("keydown", (e) => {
     document.getElementById("navDrawer")?.classList.contains("open")
   ) {
     closeDrawer();
+  }
+});
+
+// Quick add to cart delegation
+document.addEventListener("click", async (e) => {
+  const btn = e.target.closest(".quick-add-btn");
+  if (!btn) return;
+  e.preventDefault();
+  e.stopPropagation();
+  if (!(await requireAuth())) return;
+  const productId = parseInt(btn.dataset.quickAdd);
+  try {
+    await api.post("/cart/items", { productId, quantity: 1 });
+    showToast(t("product.addedToCart"), "success");
+    document.dispatchEvent(new CustomEvent("cart-updated"));
+  } catch (err) {
+    showToast(err.message, "error");
   }
 });
 
@@ -305,9 +347,76 @@ function applyTheme(theme) {
     theme === "dark"
       ? '<i class="fas fa-sun"></i>'
       : '<i class="fas fa-moon"></i>';
+  themeToggle.setAttribute("aria-pressed", theme === "dark" ? "true" : "false");
+}
+
+// ============================================================
+// REDUCED MOTION TOGGLE
+// ============================================================
+(function initMotionToggle() {
+  const saved = localStorage.getItem("sayiad_reduced_motion");
+  if (saved === "true") {
+    document.documentElement.classList.add("reduce-motion");
+  }
+  const themeBtn = document.getElementById("themeToggle");
+  if (themeBtn && !document.getElementById("motionToggle")) {
+    const btn = document.createElement("button");
+    btn.id = "motionToggle";
+    btn.className = "toggle-btn";
+    btn.title = "Toggle animations";
+    btn.setAttribute("aria-label", "Toggle reduced motion");
+    btn.setAttribute("aria-pressed", saved === "true" ? "true" : "false");
+    btn.innerHTML = saved === "true"
+      ? '<i class="fas fa-pause-circle"></i>'
+      : '<i class="fas fa-play-circle"></i>';
+    themeBtn.parentNode.insertBefore(btn, themeBtn.nextSibling);
+    btn.addEventListener("click", () => {
+      const next = !document.documentElement.classList.toggle("reduce-motion");
+      localStorage.setItem("sayiad_reduced_motion", next);
+      btn.setAttribute("aria-pressed", next ? "true" : "false");
+      btn.innerHTML = next
+        ? '<i class="fas fa-pause-circle"></i>'
+        : '<i class="fas fa-play-circle"></i>';
+    });
+  }
+})();
+
+function initHeroTilt() {
+  const hero = document.querySelector(".hero");
+  const content = document.querySelector(".hero-content");
+  if (!hero || !content) return;
+
+  hero.addEventListener("mousemove", (e) => {
+    const rect = hero.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+
+    const rotateX = (y - centerY) / 25;
+    const rotateY = (centerX - x) / 25;
+
+    content.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(20px)`;
+  });
+
+  hero.addEventListener("mouseleave", () => {
+    content.style.transform = `rotateX(0deg) rotateY(0deg) translateZ(0)`;
+  });
+}
+
+function syncUserRoleAttribute() {
+  const user = typeof getUser === "function" ? getUser() : null;
+  if (user && user.role) {
+    document.documentElement.setAttribute("data-user-role", user.role);
+  } else {
+    document.documentElement.removeAttribute("data-user-role");
+  }
 }
 
 applyTheme(savedTheme);
+syncUserRoleAttribute();
+initHeroTilt();
 
 themeToggle.addEventListener("click", () => {
   const current = document.documentElement.getAttribute("data-theme");
@@ -338,6 +447,7 @@ function applyLanguage(lang) {
   document.documentElement.lang = lang;
   document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
   langToggle.textContent = lang === "ar" ? "AR" : "EN";
+  langToggle.setAttribute("aria-pressed", lang === "ar" ? "true" : "false");
 }
 
 function handleLangChange(next) {
@@ -348,8 +458,8 @@ function handleLangChange(next) {
   setTimeout(() => {
     setLanguage(next);
     applyLanguage(next);
-    // Let router handle the full render + fade-in
-    router();
+    // Force router to re-render despite same route/params to update translations
+    router(true);
     setTimeout(() => {
       app.style.transition = "";
       app.style.opacity = "";
@@ -365,9 +475,10 @@ langToggle.addEventListener("click", () => {
 });
 
 // ============================================================
-// RIPPLE EFFECT
+// RIPPLE EFFECT (disable for reduced motion)
 // ============================================================
 document.addEventListener("click", (e) => {
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   const btn = e.target.closest(".btn:not(.btn-ghost):not(.btn-icon)");
   if (!btn) return;
   const rect = btn.getBoundingClientRect();
@@ -394,37 +505,71 @@ document.addEventListener("mousedown", () => {
 // GLOBAL ERROR HANDLER
 // ============================================================
 window.addEventListener("unhandledrejection", (e) => {
-  if (e.reason?.message?.includes("Network error") || e.reason?.message?.includes("Session expired")) return;
+  if (
+    e.reason?.message?.includes("Network error") ||
+    e.reason?.message?.includes("Session expired")
+  )
+    return;
   console.warn("Unhandled Promise Rejection:", e.reason);
 });
 window.addEventListener("error", (e) => {
-  if (e.message?.includes("ResizeObserver")) { e.preventDefault(); return; }
+  if (e.message?.includes("ResizeObserver")) {
+    e.preventDefault();
+    return;
+  }
   console.warn("Global Error:", e.message);
 });
+
+// ============================================================
+// ONBOARDING TOUR
+// ============================================================
+(function showOnboarding() {
+  if (localStorage.getItem("sayiad_tour_done")) return;
+  const steps = [
+    { title: t("home.welcome"), desc: t("tour.welcome"), icon: "fa-fish" },
+    { title: t("nav.products"), desc: t("tour.products"), icon: "fa-store" },
+    { title: t("nav.auctions"), desc: t("tour.auctions"), icon: "fa-gavel" },
+  ];
+  let step = 0;
+  const overlay = document.createElement("div");
+  overlay.className = "tour-overlay";
+  overlay.innerHTML = `
+    <div class="tour-card">
+      <div class="tour-icon"><i class="fas ${steps[0].icon}"></i></div>
+      <h3 class="tour-title">${steps[0].title}</h3>
+      <p class="tour-desc">${steps[0].desc}</p>
+      <div class="tour-dots">${steps.map((_, i) => `<span class="tour-dot${i === 0 ? " active" : ""}"></span>`).join("")}</div>
+      <div class="tour-actions">
+        <button class="btn btn-ghost btn-sm tour-skip">${t("common.cancel")}</button>
+        <button class="btn btn-primary btn-sm tour-next">${t("common.next")}</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+  overlay.querySelector(".tour-next").addEventListener("click", () => {
+    step++;
+    if (step >= steps.length) {
+      localStorage.setItem("sayiad_tour_done", "1");
+      overlay.remove();
+      return;
+    }
+    overlay.querySelector(".tour-icon i").className = `fas ${steps[step].icon}`;
+    overlay.querySelector(".tour-title").textContent = steps[step].title;
+    overlay.querySelector(".tour-desc").textContent = steps[step].desc;
+    overlay.querySelectorAll(".tour-dot").forEach((d, i) => d.classList.toggle("active", i === step));
+    overlay.querySelector(".tour-next").textContent = step === steps.length - 1 ? t("common.start") : t("common.next");
+  });
+  overlay.querySelector(".tour-skip").addEventListener("click", () => {
+    localStorage.setItem("sayiad_tour_done", "1");
+    overlay.remove();
+  });
+})();
 
 // ============================================================
 // SERVICE WORKER
 // ============================================================
 if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("/sw.js").then((reg) => {
-    reg.addEventListener("updatefound", () => {
-      const newSW = reg.installing;
-      newSW.addEventListener("statechange", () => {
-        if (newSW.state === "installed" && navigator.serviceWorker.controller) {
-          // New SW installed but waiting — activate immediately and reload
-          newSW.postMessage({ action: "skipWaiting" });
-        }
-      });
-    });
-    // Reload page when a new SW takes over
-    navigator.serviceWorker.addEventListener("controllerchange", () => {
-      window.location.reload();
-    });
-  }).catch(() => {});
+  navigator.serviceWorker.register("/sw.js").catch(() => {});
 }
 
-// ============================================================
-// INIT
-// ============================================================
-updateNavbar();
-updateStaticText();
+

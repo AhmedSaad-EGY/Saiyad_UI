@@ -18,6 +18,8 @@ async function renderHome(container) {
       <div class="feature-card animate-on-scroll stagger-4"><i class="fas fa-shield-alt"></i><h3>${t("home.securePayments")}</h3><p>${t("home.securePaymentsDesc")}</p></div>
     </div>
 
+    <div id="roleQuickLinks" class="hidden"></div>
+
     <div class="section-header animate-on-scroll"><h2>${t("home.latestProducts")}</h2><a href="#/products" class="btn btn-outline btn-sm">${t("home.viewAll")}</a></div>
     <div id="homeProducts" class="product-grid"></div>
 
@@ -27,6 +29,23 @@ async function renderHome(container) {
   `;
 
   try {
+    // Role-based quick links
+    const rql = document.getElementById("roleQuickLinks");
+    if (rql && isAuthenticated()) {
+      const user = getUser();
+      const roleLinks = [];
+      if (hasAnyRole("Fisherman", "BaitSeller", "Auctioneer")) {
+        roleLinks.push(`<a href="#/dashboard?tab=products" class="btn btn-outline btn-sm"><i class="fas fa-tag"></i> ${t("nav.myProducts")}</a>`);
+      }
+      if (hasRole("Admin")) {
+        roleLinks.push(`<a href="#/admin" class="btn btn-outline btn-sm"><i class="fas fa-shield-alt"></i> ${t("admin.title")}</a>`);
+      }
+      if (roleLinks.length) {
+        rql.className = "section-header animate-on-scroll";
+        rql.innerHTML = `<h2><i class="fas fa-user"></i> ${t("common.quickLinks")}</h2><div style="display:flex;gap:8px;flex-wrap:wrap">${roleLinks.join("")}</div>`;
+      }
+    }
+
     const [products, auctions] = await Promise.all([
       api.get("/products", { pageSize: 4 }),
       api.get("/auctions", { pageSize: 4 }),
@@ -57,49 +76,6 @@ async function renderHome(container) {
         desc: escapeHtml(e.message),
       });
   }
-}
-
-function renderProductCards(container, products) {
-  if (!products || !products.length) {
-    renderEmptyState(container, {
-      icon: 'fa-fish',
-      title: t('products.noProducts'),
-      desc: t('products.noProductsDesc'),
-    });
-    return;
-  }
-  container.innerHTML = products.map((p, i) => {
-    const title = p.title || p.productTitle || 'Product';
-    const img = p.primaryImageUrl || p.imageUrl || '';
-    const statusText = tStatus(p.status, "product");
-    return `
-      <a href="#/product-detail?id=${p.id}"
-         class="product-card animate-on-scroll stagger-${Math.min(i + 1, 8)}"
-         aria-label="${escapeHtml(title)} — ${formatPrice(p.price)}">
-        <div class="product-card-img">
-          ${img
-            ? `<img src="${escapeHtml(img)}" alt="${escapeHtml(title)}" loading="lazy">`
-            : `<div class="img-placeholder"><i class="fas fa-image"></i></div>`}
-          ${p.status != null
-            ? `<span class="product-card-badge ${statusClass(p.status)}">${escapeHtml(statusText)}</span>`
-            : ''}
-        </div>
-        <div class="product-card-body">
-          <div class="product-card-title">${escapeHtml(title)}</div>
-          <div class="product-card-price">${formatPrice(p.price)}</div>
-          <div class="product-card-meta">
-            ${p.categoryName
-              ? `<span class="product-card-category"><i class="fas fa-tag"></i>${escapeHtml(p.categoryName)}</span>`
-              : ''}
-            ${p.stockQuantity != null
-              ? `<span class="product-card-stock">${p.stockQuantity} ${t('products.inStock')}</span>`
-              : ''}
-          </div>
-        </div>
-      </a>
-    `;
-  }).join('');
-  observeAnimations();
 }
 
 function renderAuctionCards(container, auctions) {
@@ -145,4 +121,5 @@ function renderAuctionCards(container, auctions) {
     `;
     })
     .join("");
+  activateProgressiveImages(container);
 }

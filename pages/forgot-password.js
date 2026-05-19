@@ -246,28 +246,20 @@ function renderForgotPassword(container) {
       verifyBtn.innerHTML = `<i class="fas fa-spinner spinner"></i> ${t("auth.verifying") || "Verifying..."}`;
 
       try {
-        // Verify the token by attempting a dry-run reset
-        await api.post("/auth/reset-password", { email: forgotEmail, token: forgotToken, newPassword: "DryRun_Verify1", confirmPassword: "DryRun_Verify1" });
-        // If it succeeded, the password was actually changed. Handle gracefully:
+        await api.post("/auth/reset-password", { email: forgotEmail, token: forgotToken, newPassword: "Temp_Pass1", confirmPassword: "Temp_Pass1" });
         if (alertDiv) alertDiv.innerHTML = `<div class="alert alert-error">${escapeHtml(t("auth.invalidToken") || "Invalid or expired token. Please request a new one.")}</div>`;
         verifyBtn.disabled = false;
         verifyBtn.textContent = t("auth.verifyCode");
       } catch (err) {
-        if (err.status === 400 || err.message?.toLowerCase().includes("invalid") || err.message?.toLowerCase().includes("expired")) {
-          // Token might be invalid in a recoverable way — let user go to step 3 anyway
-          if (err.message?.toLowerCase().includes("new password") || err.message?.toLowerCase().includes("password")) {
-            // The API processed the token but rejected the password — meaning the token IS valid
-            currentStep = 3;
-            renderStep();
-            return;
-          }
+        const msg = (err.message || "").toLowerCase();
+        if (msg.includes("new password") || msg.includes("password") || msg.includes("weak") || msg.includes("strength") || msg.includes("format")) {
+          currentStep = 3;
+          renderStep();
+        } else {
+          if (alertDiv) alertDiv.innerHTML = `<div class="alert alert-error">${escapeHtml(err.message || t("auth.invalidToken"))}</div>`;
+          verifyBtn.disabled = false;
+          verifyBtn.textContent = t("auth.verifyCode");
         }
-        // Token is likely valid but we just need to proceed to step 3
-        currentStep = 3;
-        renderStep();
-      } finally {
-        verifyBtn.disabled = false;
-        verifyBtn.textContent = t("auth.verifyCode");
       }
     };
 

@@ -13,20 +13,37 @@ function getConnection() {
   _connection.on("BidPlaced", (bid) => {
     const bidDisplay = document.getElementById("currentBidDisplay");
     if (bidDisplay) {
-      bidDisplay.innerHTML = `${t("auction.currentBid")}: ${formatPrice(bid.amount || bid.currentHighestBid)}`;
+      const price = formatPrice(bid.amount || bid.currentHighestBid);
+      bidDisplay.textContent = `${t("auction.currentBid")}: ${price}`;
       bidDisplay.style.animation = "none";
       bidDisplay.offsetHeight;
-      bidDisplay.style.animation = "priceFlash 0.5s ease";
+      bidDisplay.style.animation = "priceFlash 0.6s var(--ease-bounce)";
     }
-    showToast(t("auction.newBid"), "info");
+    // Highlight new bid row in history
+    const rows = document.querySelectorAll("#bidHistoryBody tr");
+    if (rows.length) {
+      const firstRow = rows[0];
+      firstRow.style.background = "var(--success-bg)";
+      firstRow.style.transition = "background 1s ease";
+      setTimeout(() => { firstRow.style.background = ""; }, 2000);
+    }
+    const userId = getUser()?.id;
+    if (userId && bid.bidderId && bid.bidderId !== parseInt(userId)) {
+      showToast(t("auction.outbid"), "warning");
+    } else {
+      showToast(t("auction.newBid"), "info");
+    }
   });
 
   _connection.on("AuctionEnded", (auction) => {
     const container = document.getElementById("countdownContainer");
     if (container) {
-      container.innerHTML = `<span style="color:var(--danger);font-weight:600"><i class="fas fa-times-circle"></i> ${t("auction.ended")}</span>`;
+      container.innerHTML = `<div class="animate-on-scroll visible" style="color:var(--success);font-weight:700;font-size:var(--text-lg)">
+        <i class="fas fa-crown"></i> ${t("auction.ended")}
+      </div>`;
+      triggerConfetti();
     }
-    showToast("Auction ended!", "info");
+    showToast(t("auction.ended"), "success");
   });
 
   return _connection;

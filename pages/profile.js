@@ -9,9 +9,11 @@ async function renderUserProfile(container) {
   container.innerHTML = `
     <div class="profile-page">
       <div class="profile-hero card animate-on-scroll">
-        <div class="profile-avatar">
-          <i class="fas fa-user"></i>
+        <div class="profile-avatar" id="profileAvatar" title="Click to upload photo">
+          <span class="avatar-overlay"><i class="fas fa-camera"></i></span>
+          ${user?.profileImageUrl ? `<img src="${user.profileImageUrl}" alt="Profile">` : `<i class="fas fa-user"></i>`}
         </div>
+        <input type="file" id="profileAvatarInput" accept="image/jpeg,image/png,image/webp">
         <div class="profile-hero-info">
           <h1 class="profile-name">${escapeHtml(user?.fullName || t('dash.profile'))}</h1>
           <p class="profile-email"><i class="fas fa-envelope"></i> ${escapeHtml(user?.email || '')}</p>
@@ -105,4 +107,36 @@ async function renderUserProfile(container) {
   });
 
   observeAnimations();
+
+  // Avatar upload
+  document.getElementById("profileAvatar")?.addEventListener("click", () => {
+    document.getElementById("profileAvatarInput")?.click();
+  });
+  document.getElementById("profileAvatarInput")?.addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = async (ev) => {
+      const dataUrl = ev.target.result;
+      try {
+        const u = getUser();
+        await api.put("/users/profile", {
+          fullName: u?.fullName || "",
+          phone: u?.phone || "",
+          profileImageUrl: dataUrl,
+        });
+        const updated = getUser();
+        updated.profileImageUrl = dataUrl;
+        localStorage.setItem("user", JSON.stringify(updated));
+        const avatar = document.getElementById("profileAvatar");
+        if (avatar) {
+          avatar.innerHTML = `<span class="avatar-overlay"><i class="fas fa-camera"></i></span><img src="${dataUrl}" alt="Profile">`;
+        }
+        showToast("Profile photo updated!", "success");
+      } catch (err) {
+        showToast(err.message, "error");
+      }
+    };
+    reader.readAsDataURL(file);
+  });
 }
