@@ -206,7 +206,7 @@ function openDrawer() {
 
   const btn = document.getElementById("hamburger");
   if (btn) {
-    btn.innerHTML = '<i class="fas fa-times"></i>';
+    btn.innerHTML = '<i class="fas fa-times" aria-hidden="true"></i>';
     btn.setAttribute("aria-expanded", "true");
   }
 
@@ -223,7 +223,7 @@ function closeDrawer() {
 
   const btn = document.getElementById("hamburger");
   if (btn) {
-    btn.innerHTML = '<i class="fas fa-bars"></i>';
+    btn.innerHTML = '<i class="fas fa-bars" aria-hidden="true"></i>';
     btn.setAttribute("aria-expanded", "false");
   }
 
