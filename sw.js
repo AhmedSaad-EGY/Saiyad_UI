@@ -120,14 +120,13 @@ self.addEventListener("fetch", (event) => {
   event.respondWith(
     fetch(request)
       .then((networkResponse) => {
-        // Only cache successful responses
-        if (networkResponse.ok) {
-          // Use pathname only as cache key (ignores ?v=... query strings correctly,
-          // but since we fetch from network first, the response is always fresh anyway)
+        // Clone immediately while body is still fresh, before returning it.
+        const responseToCache = networkResponse.ok
+          ? networkResponse.clone()
+          : null;
+        if (responseToCache) {
           const cacheKey = url.pathname === "/" ? "/index.html" : url.pathname;
-          caches
-            .open(CACHE_VERSION)
-            .then((cache) => cache.put(cacheKey, networkResponse.clone()));
+          caches.open(CACHE_VERSION).then((cache) => cache.put(cacheKey, responseToCache));
         }
         return networkResponse;
       })
