@@ -110,6 +110,7 @@ const translations = {
     "auth.emailNotVerified": "Email not verified.",
     "auth.checkInbox": "Please check your inbox and click the verification link.",
     "auth.checkSpam": "Didn't get it? Check your spam folder.",
+    "auth.emailNotFoundRegister": "Email not found. Would you like to register?",
 
     // Products
     "products.title": "Products",
@@ -417,6 +418,8 @@ const translations = {
     "common.recentlyViewed": "Recently Viewed",
     "common.quickLinks": "Quick Links",
     "common.cancel": "Cancel",
+    "common.close": "Close",
+    "common.back": "Back",
     "common.title": "Title",
 
     // Auction Requests
@@ -640,6 +643,7 @@ const translations = {
     "auth.emailNotVerified": "البريد الإلكتروني غير مُتحقق منه.",
     "auth.checkInbox": "يرجى التحقق من بريدك الوارد والنقر على رابط التحقق.",
     "auth.checkSpam": "لم تستلمه؟ تحقق من مجلد الرسائل غير المرغوب فيها.",
+    "auth.emailNotFoundRegister": "البريد الإلكتروني غير موجود. هل تريد التسجيل؟",
 
     // Products
     "products.title": "المنتجات",
@@ -947,6 +951,8 @@ const translations = {
     "common.recentlyViewed": "تم العرض مؤخراً",
     "common.quickLinks": "روابط سريعة",
     "common.cancel": "إلغاء",
+    "common.close": "إغلاق",
+    "common.back": "رجوع",
     "common.title": "العنوان",
 
     // Auction Requests
