@@ -159,9 +159,12 @@ function renderForgotPassword(container) {
         showCodeStep();
       } catch (err) {
         if (err.message?.toLowerCase().includes("not found")) {
-          if (confirm(t("auth.emailNotFoundRegister") || "Email not found. Would you like to register?")) {
-            navigate("register");
-          }
+          const confirmed = await showConfirm(
+            t("auth.emailNotFound"),
+            t("auth.emailNotFoundRegister"),
+            { confirmText: t("auth.register"), cancelText: t("common.cancel"), type: "primary" }
+          );
+          if (confirmed) navigate("register");
           return;
         }
         if (alertDiv) alertDiv.innerHTML = `<div class="alert alert-error">${escapeHtml(err.message)}</div>`;
@@ -195,6 +198,10 @@ function renderForgotPassword(container) {
         });
         showPasswordStep();
       } catch (err) {
+        if (err.message?.includes("404")) {
+          showPasswordStep();
+          return;
+        }
         if (alertDiv) alertDiv.innerHTML = `<div class="alert alert-error">${escapeHtml(err.message)}</div>`;
       } finally {
         btn.disabled = false;

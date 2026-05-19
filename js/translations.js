@@ -110,6 +110,7 @@ const translations = {
     "auth.emailNotVerified": "Email not verified.",
     "auth.checkInbox": "Please check your inbox and click the verification link.",
     "auth.checkSpam": "Didn't get it? Check your spam folder.",
+    "auth.emailNotFound": "Email Not Found",
     "auth.emailNotFoundRegister": "Email not found. Would you like to register?",
 
     // Products
@@ -643,6 +644,7 @@ const translations = {
     "auth.emailNotVerified": "البريد الإلكتروني غير مُتحقق منه.",
     "auth.checkInbox": "يرجى التحقق من بريدك الوارد والنقر على رابط التحقق.",
     "auth.checkSpam": "لم تستلمه؟ تحقق من مجلد الرسائل غير المرغوب فيها.",
+    "auth.emailNotFound": "البريد الإلكتروني غير موجود",
     "auth.emailNotFoundRegister": "البريد الإلكتروني غير موجود. هل تريد التسجيل؟",
 
     // Products
