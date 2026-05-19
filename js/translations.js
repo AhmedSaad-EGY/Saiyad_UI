@@ -107,6 +107,8 @@ const translations = {
     "auth.updatingPassword": "Updating password...",
     "auth.passwordResetSuccess":
       "Password updated successfully! Redirecting to login...",
+    "auth.tokenPlaceholder": "Paste the code from your email",
+    "auth.tokenHint": "Enter the 6-digit code sent to your email",
     "auth.emailNotVerified": "Email not verified.",
     "auth.checkInbox": "Please check your inbox and click the verification link.",
     "auth.checkSpam": "Didn't get it? Check your spam folder.",
