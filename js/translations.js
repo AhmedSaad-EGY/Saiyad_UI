@@ -110,6 +110,10 @@ const translations = {
     "auth.emailNotVerified": "Email not verified.",
     "auth.checkInbox": "Please check your inbox and click the verification link.",
     "auth.checkSpam": "Didn't get it? Check your spam folder.",
+    "auth.resendVerification": "Resend Verification",
+    "auth.verificationSent": "Verification email sent!",
+    "auth.sending": "Sending...",
+    "auth.sent": "Sent!",
     "auth.emailNotFound": "Email Not Found",
     "auth.emailNotFoundRegister": "Email not found. Would you like to register?",
 
@@ -644,6 +648,10 @@ const translations = {
     "auth.emailNotVerified": "البريد الإلكتروني غير مُتحقق منه.",
     "auth.checkInbox": "يرجى التحقق من بريدك الوارد والنقر على رابط التحقق.",
     "auth.checkSpam": "لم تستلمه؟ تحقق من مجلد الرسائل غير المرغوب فيها.",
+    "auth.resendVerification": "إعادة إرسال التحقق",
+    "auth.verificationSent": "تم إرسال بريد التحقق!",
+    "auth.sending": "جارٍ الإرسال...",
+    "auth.sent": "تم الإرسال!",
     "auth.emailNotFound": "البريد الإلكتروني غير موجود",
     "auth.emailNotFoundRegister": "البريد الإلكتروني غير موجود. هل تريد التسجيل؟",
 
