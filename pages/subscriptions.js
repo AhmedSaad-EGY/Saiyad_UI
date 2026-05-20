@@ -1,6 +1,19 @@
 async function renderSubscriptions(container) {
   if (!(await requireAuth())) return;
 
+  const user = getUser();
+  const sellerRoles = window.SELLER_ROLES || ['Fisherman', 'BaitSeller', 'Auctioneer'];
+  if (!user || !sellerRoles.includes(user.role)) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <i class="fas fa-crown"></i>
+        <h3>${t("subscriptions.sellerOnly") || "Seller Accounts Only"}</h3>
+        <p style="color:var(--text-muted)">${t("subscriptions.sellerOnlyDesc") || "Subscription plans are available for sellers. Upgrade your account to access premium features."}</p>
+        ${hasAnyRole('Customer') ? `<a href="#/dashboard?tab=profile" class="btn btn-primary" style="margin-top:12px">${t("common.goToDashboard") || "Go to Dashboard"}</a>` : ''}
+      </div>`;
+    return;
+  }
+
   const contentId = "subContent";
   container.innerHTML = `
     <div class="section-header"><h2><i class="fas fa-crown"></i> ${t("subscriptions.title")}</h2></div>

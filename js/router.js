@@ -19,7 +19,7 @@ const routeGuards = {
   'auction-requests':        (user) => !!user,
   'auction-requests-review': (user) => !!user,
   'auctioneer-analytics':    (user) => !!user,
-  'subscriptions':           (user) => !!user,
+  'subscriptions':           (user) => !!user && SELLER_ROLES.includes(user.role),
 };
 
 const routeMap = {
