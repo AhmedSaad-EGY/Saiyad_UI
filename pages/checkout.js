@@ -40,7 +40,10 @@ async function renderCheckout(container) {
               (item) => `
             <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)">
               <span>${escapeHtml(item.productTitle || `Product #${item.productId}`)} <small class="text-muted">x${item.quantity || 1}</small></span>
-              <span style="font-weight:600">${formatPrice((item.price || 0) * (item.quantity || 1))}</span>
+              <span style="font-weight:600">${formatPrice(
+                (item.product?.price || item.unitPrice || item.price || 0) *
+                (item.quantity || 1)
+              )}</span>
             </div>
           `,
             )
@@ -203,10 +206,8 @@ async function renderCheckout(container) {
             await api.post(`/payments/${payment.id}/confirm`);
           }
 
-          alertDiv.innerHTML = `<div class="alert alert-success"><i class="fas fa-check-circle"></i> ${t("cart.orderSuccess")}</div>`;
-          btn.innerHTML = `<i class="fas fa-check"></i> ${t("cart.orderSuccess")}`;
-
-          setTimeout(() => navigate("dashboard?tab=orders"), 2000);
+          document.dispatchEvent(new CustomEvent("cart-updated"));
+          navigate("order-confirmation?id=" + order_id);
         } catch (err) {
           alertDiv.innerHTML = `<div class="alert alert-error">${escapeHtml(err.message || t("cart.orderError"))}</div>`;
           btn.disabled = false;

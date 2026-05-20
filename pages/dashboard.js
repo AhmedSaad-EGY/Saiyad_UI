@@ -111,6 +111,35 @@ async function renderOverview(content, user) {
   }
 
   const sellerRoles = hasAnyRole(...(window.SELLER_ROLES || ["Fisherman", "BaitSeller", "Auctioneer"]));
+
+  if (sellerRoles) {
+    try {
+      await api.get("/seller-profile/me");
+    } catch (profileErr) {
+      const is404 = profileErr?.status === 404
+        || String(profileErr?.message || "").includes("404")
+        || String(profileErr?.message || "").toLowerCase().includes("not found");
+      if (is404 && !document.getElementById("sellerOnboardBanner")) {
+        const overviewEl = document.getElementById("dashOverview") || content;
+        const banner = document.createElement("div");
+        banner.id = "sellerOnboardBanner";
+        banner.className = "alert alert-info animate-on-scroll";
+        banner.setAttribute("role", "status");
+        banner.style.cssText = "margin-bottom:16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap";
+        banner.innerHTML = `
+          <i class="fas fa-store" style="font-size:1.2rem;flex-shrink:0"></i>
+          <span style="flex:1">
+            <strong>${t("seller.setupRequired") || "Set up your seller profile"}</strong> —
+            ${t("seller.setupDesc") || "Complete your seller profile before listing products."}
+          </span>
+          <a href="#/seller-profile" class="btn btn-primary btn-sm">
+            ${t("seller.create") || "Set up profile"} <i class="fas fa-arrow-right"></i>
+          </a>`;
+        overviewEl.prepend(banner);
+      }
+    }
+  }
+
   if (sellerRoles) {
     try {
       const products = await api.get("/products/my", { pageSize: 1 });
@@ -195,7 +224,12 @@ async function renderOrders(content) {
         btn.addEventListener("click", async (e) => {
           e.preventDefault();
           const orderId = btn.dataset.orderId;
-          if (!confirm(t("order.cancelConfirm"))) return;
+          const ok = await showConfirm(
+            t("order.cancel"),
+            t("order.cancelConfirm"),
+            { type: "danger", confirmText: t("order.cancel") }
+          );
+          if (!ok) return;
           btn.disabled = true;
           btn.innerHTML = `<i class="fas fa-spinner spinner"></i> ${t("order.cancelling")}`;
           try {
@@ -322,6 +356,26 @@ async function renderMyProducts(content) {
 
         const fileInput = document.getElementById("prodImageInput");
         if (fileInput.files.length) {
+          const imageFile = fileInput.files[0];
+          const ALLOWED = ["image/jpeg", "image/png", "image/webp"];
+          if (!ALLOWED.includes(imageFile.type)) {
+            showToast(
+              t("product.invalidImageType") || "Only JPG, PNG and WebP images are allowed.",
+              "error"
+            );
+            submit.disabled = false;
+            submit.textContent = t("product.save") || "Save";
+            return;
+          }
+          if (imageFile.size > 5 * 1024 * 1024) {
+            showToast(
+              t("product.imageTooLarge") || "Image must be under 5 MB.",
+              "error"
+            );
+            submit.disabled = false;
+            submit.textContent = t("product.save") || "Save";
+            return;
+          }
           const formData = new FormData();
           formData.append("file", fileInput.files[0]);
           document.getElementById("uploadProgress").textContent =
@@ -565,9 +619,22 @@ async function renderWishlist(content) {
             <tr>
               <td><a href="#/product-detail?id=${w.productId}" style="text-decoration:none;color:var(--text);font-weight:500">${escapeHtml(w.product?.title || `Product #${w.productId}`)}</a></td>
               <td>${w.product?.price ? formatPrice(w.product.price) : "-"}</td>
-              <td style="display:flex;gap:8px">
-                <a href="#/product-detail?id=${w.productId}" class="btn btn-primary btn-sm">${t("dash.view")}</a>
-                <button class="btn btn-danger btn-sm remove-wishlist" data-id="${w.productId}"><i class="fas fa-trash"></i></button>
+              <td>
+                <div style="display:flex;gap:6px;flex-wrap:wrap">
+                  <a href="#/product-detail?id=${w.productId}"
+                     class="btn btn-outline btn-sm">
+                    <i class="fas fa-eye"></i> ${t("common.view") || "View"}
+                  </a>
+                  <button class="btn btn-primary btn-sm add-wishlist-to-cart"
+                    data-product-id="${w.productId}"
+                    aria-label="${t('product.addToCart')}">
+                    <i class="fas fa-cart-plus"></i>
+                  </button>
+                  <button class="btn btn-ghost btn-sm remove-wishlist"
+                    data-id="${w.productId}" aria-label="${t('common.remove')}">
+                    <i class="fas fa-trash" style="color:var(--danger)"></i>
+                  </button>
+                </div>
               </td>
             </tr>
           `,
@@ -594,6 +661,31 @@ async function renderWishlist(content) {
         }
       });
     });
+
+    content.querySelectorAll(".add-wishlist-to-cart").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        btn.disabled = true;
+        btn.innerHTML = `<i class="fas fa-spinner spinner"></i>`;
+        try {
+          await api.post("/cart/items", {
+            productId: parseInt(btn.dataset.productId),
+            quantity: 1,
+          });
+          showToast(t("product.addedToCart"), "success");
+          updateCartBadge();
+          btn.innerHTML = `<i class="fas fa-check"></i>`;
+          setTimeout(() => {
+            btn.disabled = false;
+            btn.innerHTML = `<i class="fas fa-cart-plus"></i>`;
+          }, 1500);
+        } catch (e) {
+          showToast(e.message, "error");
+          btn.disabled = false;
+          btn.innerHTML = `<i class="fas fa-cart-plus"></i>`;
+        }
+      });
+    });
+
     observeAnimations();
   } catch (e) {
     document.getElementById("wishlistItems").innerHTML =

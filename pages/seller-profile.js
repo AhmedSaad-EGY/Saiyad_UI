@@ -24,6 +24,33 @@ async function renderSellerProfile(container) {
             ${profile.location ? `<p><i class="fas fa-map-marker-alt"></i> ${escapeHtml(profile.location)}</p>` : ''}
           </div>
         </div>`;
+
+    // Load seller's public product listings
+    try {
+      const sellerProducts = await api.get("/products", {
+        sellerId: userId,
+        pageSize: 8,
+        page: 1,
+      });
+      const items = sellerProducts.items || sellerProducts.data || [];
+      if (items.length) {
+        const productsSection = document.createElement("div");
+        productsSection.style.marginTop = "32px";
+        productsSection.innerHTML = `
+          <div class="section-header">
+            <h3><i class="fas fa-tag"></i> ${t("seller.listings") || "Products"}</h3>
+          </div>
+          <div class="product-grid" id="sellerProductGrid"></div>
+        `;
+        container.appendChild(productsSection);
+        renderProductCards(
+          document.getElementById("sellerProductGrid"),
+          items
+        );
+        observeAnimations();
+      }
+    } catch {}
+    }
     } catch {
       container.innerHTML = `<div class="empty-state"><i class="fas fa-store"></i><h3>${t('seller.notFound')}</h3></div>`;
     }
@@ -31,7 +58,7 @@ async function renderSellerProfile(container) {
   }
 
   if (!await requireAuth()) return;
-  if (!hasAnyRole('Fisherman', 'BaitSeller')) {
+  if (!hasAnyRole(...(window.SELLER_ROLES || ['Fisherman', 'BaitSeller', 'Auctioneer']))) {
     container.innerHTML = `<div class="empty-state"><i class="fas fa-store"></i><h3>${t('seller.noProfile')}</h3></div>`;
     return;
   }

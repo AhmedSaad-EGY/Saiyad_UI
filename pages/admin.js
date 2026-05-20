@@ -33,48 +33,99 @@ async function renderAdmin(container) {
   });
 
   function loadTab() {
-    if (activeTab === "users") loadUsers();
-    else if (activeTab === "reports") loadReports();
-    else if (activeTab === "orders") loadAdminOrders();
-    else if (activeTab === "categories") loadCategories();
+    if (activeTab === "users") {
+      content.innerHTML = `<div id="usersPanel"></div>`;
+      loadUsers();
+    } else if (activeTab === "reports") {
+      loadReports();
+    } else if (activeTab === "orders") {
+      content.innerHTML = `<div id="ordersPanel"></div>`;
+      loadAdminOrders();
+    } else if (activeTab === "categories") {
+      loadCategories();
+    }
   }
 
+  let _usersPage = 1;
+  const _usersPageSize = 20;
+
   async function loadUsers() {
-    showLoading(content);
+    const panel = document.getElementById("usersPanel");
+    if (!panel) return;
+    panel.innerHTML = `<div style="padding:24px;text-align:center">
+      <i class="fas fa-spinner spinner"></i> ${t("common.loading")}</div>`;
     try {
-      const data = await api.get("/users", { page: 1, pageSize: 50 });
-      const users = data.items || data.data || data || [];
-      content.innerHTML = `
-        <div class="table-wrapper"><table>
-          <thead><tr><th>${t("admin.id")}</th><th>${t("admin.name")}</th><th>${t("admin.email")}</th><th>${t("admin.role")}</th><th>${t("admin.status")}</th><th></th></tr></thead>
-          <tbody>${users
-            .map(
-              (u) => `
-            <tr>
-              <td>${u.id}</td>
-              <td>${escapeHtml(u.fullName)}</td>
-              <td>${escapeHtml(u.email)}</td>
-              <td>${u.role}</td>
-              <td><span class="status ${u.isActive ? "status-available" : "status-sold"}">${u.isActive ? t("admin.active") : t("admin.inactive")}</span></td>
-              <td><button class="btn btn-sm ${u.isActive ? "btn-danger" : "btn-success"} toggle-user" data-id="${u.id}">${t("admin.toggleStatus")}</button></td>
-            </tr>`,
-            )
-            .join("")}
-          </tbody>
-        </table></div>`;
-      content.querySelectorAll(".toggle-user").forEach((btn) => {
+      const data = await api.get("/users", { page: _usersPage, pageSize: _usersPageSize });
+      const users = data.items || data.data || [];
+      const total = data.totalCount || data.total || users.length;
+      const pages = Math.ceil(total / _usersPageSize);
+
+      panel.innerHTML = `
+        <div class="table-wrapper">
+          <table>
+            <thead><tr>
+              <th>${t("auth.fullName")}</th>
+              <th>${t("auth.email")}</th>
+              <th>${t("auth.role")}</th>
+              <th>${t("product.status")}</th>
+              <th></th>
+            </tr></thead>
+            <tbody>
+              ${users.map(u => `
+                <tr>
+                  <td>${escapeHtml(u.fullName || u.name || "-")}</td>
+                  <td>${escapeHtml(u.email || "-")}</td>
+                  <td><span class="category-tag">${escapeHtml(u.role || "-")}</span></td>
+                  <td><span class="status ${u.isActive !== false ? "status-available" : "status-draft"}">
+                    ${u.isActive !== false ? t("admin.active") : t("admin.suspended")}
+                  </span></td>
+                  <td>
+                    <button class="btn btn-outline btn-sm toggle-user-btn"
+                      data-user-id="${escapeHtml(String(u.id))}"
+                      data-active="${u.isActive !== false}">
+                      ${u.isActive !== false ? t("admin.suspend") : t("admin.activate")}
+                    </button>
+                  </td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
+        </div>
+        <div style="display:flex;justify-content:center;align-items:center;gap:8px;margin-top:16px">
+          <button class="btn btn-sm btn-ghost" id="usersPrevBtn"
+            ${_usersPage <= 1 ? "disabled" : ""}>
+            <i class="fas fa-chevron-left"></i>
+          </button>
+          <span style="font-size:0.88rem;color:var(--text-muted)">
+            ${t("common.page") || "Page"} ${_usersPage} / ${pages || 1}
+          </span>
+          <button class="btn btn-sm btn-ghost" id="usersNextBtn"
+            ${_usersPage >= pages ? "disabled" : ""}>
+            <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>`;
+
+      panel.querySelector("#usersPrevBtn")?.addEventListener("click", () => {
+        if (_usersPage > 1) { _usersPage--; loadUsers(); }
+      });
+      panel.querySelector("#usersNextBtn")?.addEventListener("click", () => {
+        if (_usersPage < pages) { _usersPage++; loadUsers(); }
+      });
+
+      panel.querySelectorAll(".toggle-user-btn").forEach(btn => {
         btn.addEventListener("click", async () => {
+          btn.disabled = true;
           try {
-            await api.patch(`/users/${btn.dataset.id}/toggle-status`);
-            showToast(t("admin.userToggled"), "success");
+            await api.patch(`/users/${btn.dataset.userId}/toggle-status`);
             loadUsers();
-          } catch (err) {
-            showToast(err.message, "error");
+          } catch (e) {
+            showToast(e.message, "error");
+            btn.disabled = false;
           }
         });
       });
-    } catch (err) {
-      showError(content, err.message);
+    } catch (e) {
+      panel.innerHTML = `<div class="alert alert-error">${escapeHtml(e.message)}</div>`;
     }
   }
 
@@ -118,31 +169,69 @@ async function renderAdmin(container) {
     }
   }
 
+  let _ordersPage = 1;
+  const _ordersPageSize = 20;
+
   async function loadAdminOrders() {
-    showLoading(content);
+    const panel = document.getElementById("ordersPanel");
+    if (!panel) return;
+    panel.innerHTML = `<div style="padding:24px;text-align:center">
+      <i class="fas fa-spinner spinner"></i> ${t("common.loading")}</div>`;
     try {
-      const data = await api.get("/orders", { page: 1, pageSize: 50 });
-      const orders = data.items || data.data || data || [];
-      content.innerHTML = `
-        <div class="table-wrapper"><table>
-          <thead><tr><th>${t("dash.orderNum")}</th><th>${t("order.buyer")}</th><th>${t("order.total")}</th><th>${t("order.status")}</th><th>${t("dash.date")}</th><th></th></tr></thead>
-          <tbody>${orders
-            .map(
-              (o) => `
-            <tr>
-              <td>#${o.id}</td>
-              <td>${escapeHtml(o.buyerName || "-")}</td>
-              <td>${formatPrice(o.totalPrice)}</td>
-              <td><span class="status ${statusClass(o.status)}">${tStatus(o.status)}</span></td>
-              <td>${formatDate(o.createdAt)}</td>
-              <td><a href="#/order-detail?id=${o.id}" class="btn btn-sm btn-ghost">${t("dash.view")}</a></td>
-            </tr>`,
-            )
-            .join("")}
-          </tbody>
-        </table></div>`;
-    } catch (err) {
-      showError(content, err.message);
+      const data = await api.get("/orders", { page: _ordersPage, pageSize: _ordersPageSize });
+      const orders = data.items || data.data || [];
+      const total = data.totalCount || data.total || orders.length;
+      const pages = Math.ceil(total / _ordersPageSize);
+
+      panel.innerHTML = `
+        <div class="table-wrapper">
+          <table>
+            <thead><tr>
+              <th>#</th>
+              <th>${t("order.buyer")}</th>
+              <th>${t("cart.total")}</th>
+              <th>${t("product.status")}</th>
+              <th>${t("dash.date")}</th>
+              <th></th>
+            </tr></thead>
+            <tbody>
+              ${orders.map(o => `
+                <tr>
+                  <td>#${escapeHtml(String(o.id))}</td>
+                  <td>${escapeHtml(o.buyerName || "-")}</td>
+                  <td style="font-weight:600">${formatPrice(o.totalPrice)}</td>
+                  <td><span class="status ${statusClass(o.status)}">${tStatus(o.status)}</span></td>
+                  <td>${formatDate(o.createdAt || o.orderDate)}</td>
+                  <td><a href="#/order-detail?id=${o.id}" class="btn btn-outline btn-sm">
+                    ${t("dash.view")}
+                  </a></td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
+        </div>
+        <div style="display:flex;justify-content:center;align-items:center;gap:8px;margin-top:16px">
+          <button class="btn btn-sm btn-ghost" id="adminOrdersPrevBtn"
+            ${_ordersPage <= 1 ? "disabled" : ""}>
+            <i class="fas fa-chevron-left"></i>
+          </button>
+          <span style="font-size:0.88rem;color:var(--text-muted)">
+            ${t("common.page") || "Page"} ${_ordersPage} / ${pages || 1}
+          </span>
+          <button class="btn btn-sm btn-ghost" id="adminOrdersNextBtn"
+            ${_ordersPage >= pages ? "disabled" : ""}>
+            <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>`;
+
+      panel.querySelector("#adminOrdersPrevBtn")?.addEventListener("click", () => {
+        if (_ordersPage > 1) { _ordersPage--; loadAdminOrders(); }
+      });
+      panel.querySelector("#adminOrdersNextBtn")?.addEventListener("click", () => {
+        if (_ordersPage < pages) { _ordersPage++; loadAdminOrders(); }
+      });
+    } catch (e) {
+      panel.innerHTML = `<div class="alert alert-error">${escapeHtml(e.message)}</div>`;
     }
   }
 
@@ -194,7 +283,12 @@ async function renderAdmin(container) {
         });
       content.querySelectorAll(".delete-cat").forEach((btn) => {
         btn.addEventListener("click", async () => {
-          if (!confirm(t("admin.confirmDeleteCategory"))) return;
+          const ok = await showConfirm(
+            t("admin.confirmDeleteCategory"),
+            t("admin.confirmDeleteCategoryDesc") || "This action cannot be undone.",
+            { type: "danger", confirmText: t("common.delete") || "Delete" }
+          );
+          if (!ok) return;
           try {
             await api.delete(`/categories/${btn.dataset.id}`);
             showToast(t("admin.categoryDeleted"), "success");

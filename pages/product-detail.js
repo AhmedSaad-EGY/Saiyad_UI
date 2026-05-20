@@ -12,10 +12,16 @@ async function renderProductDetail(container, route, params) {
     const isAvailable = p.status === "Available" || p.status === 0;
 
     // Fetch reviews in parallel
-    const [ratingData, reviewsData] = await Promise.all([
+    const [ratingData, reviewsData, wishlistData] = await Promise.all([
       api.get(`/reviews/product/${id}/rating`).catch(() => null),
       api.get(`/reviews/product/${id}`).catch(() => null),
+      isAuthenticated()
+        ? api.get("/wishlist").catch(() => null)
+        : Promise.resolve(null),
     ]);
+    const wishlistItems = wishlistData?.items || wishlistData?.data || wishlistData || [];
+    let isWishlisted = Array.isArray(wishlistItems) &&
+      wishlistItems.some(w => w.productId === p.id || w.id === p.id);
     const avgRating = ratingData?.averageRating;
     const reviewCount = ratingData?.reviewCount || 0;
     const reviews =
@@ -48,8 +54,33 @@ async function renderProductDetail(container, route, params) {
           ${p.brand ? `<p style="margin-bottom:8px"><strong>${t("product.brand")}:</strong> ${escapeHtml(p.brand)}</p>` : ""}
           <div class="detail-desc">${escapeHtml(p.description || t("product.noDescription"))}</div>
           <div style="display:flex;gap:12px;flex-wrap:wrap">
-            <button class="btn btn-primary btn-lg" id="addToCartBtn" ${!isAvailable ? "disabled" : ""}><i class="fas fa-shopping-cart"></i> ${t("product.addToCart")}</button>
-            <button class="btn btn-outline btn-lg" id="addToWishlistBtn"><i class="fas fa-heart"></i> ${t("product.wishlist")}</button>
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+              <div style="display:flex;align-items:center;border:1px solid var(--border);
+                   border-radius:var(--border-radius-md);overflow:hidden;height:44px">
+                <button type="button" id="qtyMinus" aria-label="Decrease quantity"
+                  style="width:40px;height:100%;background:var(--card-bg);border:none;
+                         font-size:1.1rem;cursor:pointer;color:var(--text-primary)">−</button>
+                <input type="number" id="productQty" value="1" min="1"
+                  max="${p.stockQuantity || 99}" aria-label="Quantity"
+                  style="width:48px;height:100%;border:none;text-align:center;
+                         background:var(--card-bg);font-size:0.95rem;
+                         color:var(--text-primary);font-family:inherit">
+                <button type="button" id="qtyPlus" aria-label="Increase quantity"
+                  style="width:40px;height:100%;background:var(--card-bg);border:none;
+                         font-size:1.1rem;cursor:pointer;color:var(--text-primary)">+</button>
+              </div>
+              <button class="btn btn-primary btn-lg" id="addToCartBtn"
+                ${!isAvailable ? "disabled" : ""} style="flex:1;min-width:160px">
+                <i class="fas fa-shopping-cart"></i> ${t("product.addToCart")}
+              </button>
+            </div>
+            <button class="btn ${isWishlisted ? 'btn-danger' : 'btn-outline'} btn-lg"
+              id="addToWishlistBtn" aria-pressed="${isWishlisted}"
+              title="${isWishlisted ? t('product.removeFromWishlist') || 'Remove from wishlist'
+                            : t('product.wishlist')}">
+              <i class="${isWishlisted ? 'fas' : 'far'} fa-heart"></i>
+              ${isWishlisted ? (t('product.removeFromWishlist') || 'Wishlisted') : t("product.wishlist")}
+            </button>
             ${p.isAuctioned && p.auctionId ? `<a href="#/auction-detail?id=${p.auctionId}" class="btn btn-success btn-lg"><i class="fas fa-gavel"></i> ${t("product.viewAuction")}</a>` : !p.isAuctioned && getUser()?.id === p.sellerId && hasAnyRole("Auctioneer", "Fisherman", "BaitSeller") ? `<button class="btn btn-primary btn-lg" id="startAuctionBtn"><i class="fas fa-gavel"></i> ${t("auction.startAuction")}</button>` : ""}
             ${p.sellerId ? `<a href="#/seller-profile?userId=${p.sellerId}" class="btn btn-outline btn-lg"><i class="fas fa-envelope"></i> ${t("product.contactSeller")}</a>` : ""}
           </div>
@@ -138,12 +169,25 @@ async function renderProductDetail(container, route, params) {
       if (allImages.length) openLightbox(allImages, 0);
     });
     if (isAvailable) {
+      const qtyInput = document.getElementById("productQty");
+      document.getElementById("qtyMinus")?.addEventListener("click", () => {
+        const v = parseInt(qtyInput.value) || 1;
+        if (v > 1) qtyInput.value = v - 1;
+      });
+      document.getElementById("qtyPlus")?.addEventListener("click", () => {
+        const v = parseInt(qtyInput.value) || 1;
+        const max = parseInt(qtyInput.max) || 99;
+        if (v < max) qtyInput.value = v + 1;
+      });
       document
         .getElementById("addToCartBtn")
         .addEventListener("click", async () => {
           if (!(await requireAuth())) return;
           try {
-            await api.post("/cart/items", { productId: p.id, quantity: 1 });
+            await api.post("/cart/items", {
+              productId: p.id,
+              quantity: parseInt(document.getElementById("productQty")?.value) || 1
+            });
             showToast(t("product.addedToCart"), "success");
             updateCartBadge();
           } catch (e) {
@@ -158,7 +202,22 @@ async function renderProductDetail(container, route, params) {
         if (!(await requireAuth())) return;
         try {
           await api.post("/wishlist/toggle", { productId: p.id });
-          showToast(t("product.wishlistUpdated"), "success");
+          isWishlisted = !isWishlisted;
+          const wBtn = document.getElementById("addToWishlistBtn");
+          if (wBtn) {
+            wBtn.className = `btn ${isWishlisted ? 'btn-danger' : 'btn-outline'} btn-lg`;
+            wBtn.setAttribute("aria-pressed", String(isWishlisted));
+            wBtn.title = isWishlisted
+              ? t('product.removeFromWishlist') || 'Remove from wishlist'
+              : t('product.wishlist');
+            wBtn.innerHTML = `<i class="${isWishlisted ? 'fas' : 'far'} fa-heart"></i>
+              ${isWishlisted ? (t('product.removeFromWishlist') || 'Wishlisted') : t("product.wishlist")}`;
+          }
+          showToast(
+            isWishlisted ? t("product.addedToWishlist") || t("product.wishlistUpdated")
+                       : t("product.removedFromWishlist") || t("product.wishlistUpdated"),
+            "success"
+          );
         } catch (e) {
           showToast(e.message, "error");
         }
@@ -305,8 +364,28 @@ async function renderProductDetail(container, route, params) {
             .classList.add("hidden");
           document.getElementById("reviewComment").value = "";
           ratingVal.value = "0";
-          stars.forEach((s) => (s.style.color = "var(--text-muted)"));
-          router();
+          stars.forEach((s) => {
+            s.style.color = "var(--text-muted)";
+            s.style.transform = "scale(1)";
+          });
+          const reviewsList = document.getElementById("reviewsList");
+          const user = getUser();
+          const noReviewsMsg = reviewsList?.querySelector("p");
+          if (noReviewsMsg) noReviewsMsg.remove();
+          if (reviewsList) {
+            const newReview = document.createElement("div");
+            newReview.className = "notif-item";
+            newReview.style.animation = "slideUp 0.3s ease";
+            newReview.innerHTML = `
+              <div style="flex:1">
+                <strong>${escapeHtml(user?.fullName || "You")}</strong>
+                <span style="color:#f59e0b">${renderStars(rating)}</span>
+                ${comment ? `<p style="color:var(--text-secondary);font-size:0.9rem;margin-top:4px">
+                  ${escapeHtml(comment)}</p>` : ""}
+                <small style="color:var(--text-muted)">${formatDate(new Date().toISOString())}</small>
+              </div>`;
+            reviewsList.insertAdjacentElement("afterbegin", newReview);
+          }
         } catch (err) {
           alertDiv.innerHTML = `<div class="alert alert-error">${escapeHtml(err.message)}</div>`;
         } finally {

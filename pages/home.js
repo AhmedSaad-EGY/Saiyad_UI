@@ -28,6 +28,53 @@ async function renderHome(container) {
     <div id="recentlyViewed"></div>
   `;
 
+  // Inject skeleton placeholder cards immediately — replaced when data arrives
+  function injectSkeletonCards(gridId, count = 4) {
+    const grid = document.getElementById(gridId);
+    if (!grid) return;
+    grid.innerHTML = Array.from({ length: count }, () => `
+      <div class="product-card" style="pointer-events:none;animation:none">
+        <div class="product-card-img"
+          style="background:var(--background-secondary);height:180px;
+                 border-radius:var(--border-radius-md) var(--border-radius-md) 0 0;
+                 background-size:200% 100%;
+                 animation:shimmer 1.4s infinite linear;
+                 background-image:linear-gradient(
+                   90deg,
+                   var(--background-secondary) 0%,
+                   var(--color-border-tertiary, rgba(0,0,0,0.06)) 40%,
+                   var(--background-secondary) 80%
+                 )">
+        </div>
+        <div class="product-card-body" style="padding:12px">
+          <div style="height:14px;border-radius:4px;margin-bottom:8px;width:75%;
+               background:var(--background-secondary);
+               background-size:200% 100%;
+               animation:shimmer 1.4s infinite linear;
+               background-image:linear-gradient(
+                 90deg,
+                 var(--background-secondary) 0%,
+                 var(--color-border-tertiary, rgba(0,0,0,0.06)) 40%,
+                 var(--background-secondary) 80%
+               )"></div>
+          <div style="height:12px;border-radius:4px;width:40%;
+               background:var(--background-secondary);
+               background-size:200% 100%;
+               animation:shimmer 1.4s infinite linear;
+               background-image:linear-gradient(
+                 90deg,
+                 var(--background-secondary) 0%,
+                 var(--color-border-tertiary, rgba(0,0,0,0.06)) 40%,
+                 var(--background-secondary) 80%
+               )"></div>
+        </div>
+      </div>
+    `).join("");
+  }
+
+  injectSkeletonCards("homeProducts", 4);
+  injectSkeletonCards("homeAuctions", 4);
+
   try {
     // Role-based quick links
     const rql = document.getElementById("roleQuickLinks");

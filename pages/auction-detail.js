@@ -15,10 +15,10 @@ async function renderAuctionDetail(container, route, params) {
     joinAuctionGroup(parseInt(id));
 
     const _timers = [];
-    window.onRouteCleanup = () => {
+    registerRouteCleanup(() => {
       leaveAuctionGroup(parseInt(id));
       _timers.forEach(t => clearInterval(t));
-    };
+    });
 
     function render(a) {
           const now = new Date();

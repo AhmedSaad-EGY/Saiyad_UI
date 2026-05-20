@@ -86,7 +86,4 @@ async function renderProducts(_container, _fullPath, params) {
   categorySelect.addEventListener('change', reloadFromFilters);
 }
 
-function debounce(fn, ms) {
-  let timer;
-  return (...args) => { clearTimeout(timer); timer = setTimeout(() => fn(...args), ms); };
-}
+

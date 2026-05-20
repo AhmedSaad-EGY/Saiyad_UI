@@ -346,7 +346,7 @@ function showVerificationOverlay(email, password) {
     overlay.classList.remove("show");
     setTimeout(() => overlay.remove(), 350);
   };
-  window.onRouteCleanup = cleanup;
+  registerRouteCleanup(cleanup);
 
   // Poll every 3s
   const interval = setInterval(async () => {
@@ -388,6 +388,6 @@ function showVerificationOverlay(email, password) {
     clearInterval(interval);
     overlay.classList.remove("show");
     setTimeout(() => overlay.remove(), 350);
-    window.onRouteCleanup = null;
+
   });
 }

@@ -3,7 +3,7 @@
   <h1>Sayiad — Fishing Marketplace & Auctions</h1>
   <p>Egypt's premier platform for buying, selling, and auctioning fishing gear</p>
 
-  [![Live Demo](https://img.shields.io/badge/Live%20Demo-sayiad.vercel.app-0077b6?style=for-the-badge&logo=vercel)](https://sayiad.vercel.app)
+  [![Live Demo](https://img.shields.io/badge/Live%20Demo-saiyad--eg.vercel.app-0077b6?style=for-the-badge&logo=vercel)](https://saiyad-eg.vercel.app)
   [![API](https://img.shields.io/badge/API-runasp.net-023e8a?style=for-the-badge&logo=swagger)](https://sayiad.runasp.net/swagger/index.html)
   [![License](https://img.shields.io/badge/License-MIT-success?style=for-the-badge)](LICENSE)
 </div>
@@ -219,5 +219,5 @@ MIT License — see [LICENSE](LICENSE) for details.
 <div align="center">
   Made for fishermen, by fishermen 🎣
   <br>
-  <a href="https://sayiad.vercel.app">sayiad.vercel.app</a>
+  <a href="https://saiyad-eg.vercel.app">saiyad-eg.vercel.app</a>
 </div>

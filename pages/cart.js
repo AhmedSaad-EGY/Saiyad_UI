@@ -52,13 +52,31 @@ async function renderCart(container) {
     const tbody = document.getElementById("cartItems");
     tbody.innerHTML = items
       .map((item, idx) => {
-        const price = item.price || 0;
+        const price = item.unitPrice || item.price || 0;
         const qty = item.quantity || 1;
         const subtotal = price * qty;
         total += subtotal;
         return `
         <tr>
-          <td class="cart-product-cell"><a href="#/product-detail?id=${item.productId}">${escapeHtml(item.productTitle || `Product #${item.productId}`)}</a></td>
+          <td class="cart-product-cell">
+            <a href="#/product-detail?id=${item.productId}"
+               style="display:flex;align-items:center;gap:10px;text-decoration:none;
+                      color:var(--text-primary)">
+              ${item.productImageUrl || item.imageUrl
+                ? `<img src="${escapeHtml(item.productImageUrl || item.imageUrl)}"
+                       alt="${escapeHtml(item.productTitle || '')}"
+                       style="width:48px;height:48px;object-fit:cover;border-radius:6px;
+                              flex-shrink:0;border:1px solid var(--border)"
+                       loading="lazy">`
+                : `<div style="width:48px;height:48px;border-radius:6px;
+                        background:var(--background-secondary);display:flex;
+                        align-items:center;justify-content:center;flex-shrink:0;
+                        border:1px solid var(--border)">
+                     <i class="fas fa-image" style="color:var(--text-muted);font-size:1.2rem"></i>
+                   </div>`}
+              <span>${escapeHtml(item.productTitle || `Product #${item.productId}`)}</span>
+            </a>
+          </td>
           <td class="cart-price-cell">${formatPrice(price)}</td>
           <td class="cart-qty-cell"><input type="number" class="form-input cart-qty-input" value="${qty}" min="1" data-id="${item.productId}" data-price="${price}" /></td>
           <td class="cart-subtotal-cell">${formatPrice(subtotal)}</td>

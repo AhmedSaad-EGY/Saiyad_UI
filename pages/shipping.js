@@ -82,7 +82,12 @@ async function renderShipping(container) {
 
       list.querySelectorAll(".delete-addr").forEach((btn) => {
         btn.addEventListener("click", async () => {
-          if (!confirm(t("shipping.confirmDelete"))) return;
+          const ok = await showConfirm(
+            t("shipping.confirmDelete"),
+            t("shipping.confirmDeleteDesc") || t("shipping.confirmDelete"),
+            { type: "danger", confirmText: t("common.delete") || "Delete" }
+          );
+          if (!ok) return;
           try {
             await api.delete(`/shipping-addresses/${btn.dataset.id}`);
             showToast(t("shipping.deleted"), "success");
