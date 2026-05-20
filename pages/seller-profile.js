@@ -50,7 +50,6 @@ async function renderSellerProfile(container) {
         observeAnimations();
       }
     } catch {}
-    }
     } catch {
       container.innerHTML = `<div class="empty-state"><i class="fas fa-store"></i><h3>${t('seller.notFound')}</h3></div>`;
     }
