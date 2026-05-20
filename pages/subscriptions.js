@@ -8,6 +8,11 @@ async function renderSubscriptions(container) {
 
   const content = document.getElementById(contentId);
 
+  function formatUSD(n) {
+    try { return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(n); }
+    catch { return "$" + Number(n || 0).toFixed(2); }
+  }
+
   const plans = [
     {
       id: 0,
@@ -75,7 +80,7 @@ async function renderSubscriptions(container) {
             <p style="color:var(--text-muted);font-size:0.88rem">${escapeHtml(p.description)}</p>
           </div>
           <div style="text-align:center;margin-bottom:16px">
-            <span style="font-size:2rem;font-weight:700">${p.price > 0 ? formatPrice(p.price) : t("subscriptions.free")}</span>
+            <span style="font-size:2rem;font-weight:700">${p.price > 0 ? formatUSD(p.price) : t("subscriptions.free")}</span>
             <span style="color:var(--text-muted)">${p.billingCycle === 'Yearly' ? t("subscriptions.perYear") : p.billingCycle === 'Monthly' ? t("subscriptions.perMonth") : ''}</span>
           </div>
           <ul style="list-style:none;padding:0;margin:0 0 16px;flex:1">${features.map(f => `<li style="padding:6px 0;border-bottom:1px solid var(--border)"><i class="fas fa-check" style="color:var(--success);margin-right:8px;width:16px"></i>${escapeHtml(f)}</li>`).join("")}</ul>
