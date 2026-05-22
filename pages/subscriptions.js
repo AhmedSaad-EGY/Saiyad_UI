@@ -23,12 +23,14 @@ async function renderSubscriptions(container) {
   }
 
   try {
-    const [plans, mySubData] = await Promise.all([
+    const [plans, mySubData, walletData] = await Promise.all([
       api.get("/subscriptionplans"),
       api.get("/subscriptions/my").catch(() => null),
+      api.get("/wallet").catch(() => null),
     ]);
 
     const mySub = mySubData || null;
+    const walletBalance = walletData?.availableBalance ?? null;
 
     const user = getUser();
     const role = user?.role || "";
@@ -49,12 +51,21 @@ async function renderSubscriptions(container) {
         <h3 style="margin:0 0 6px">${roleHeading}</h3>
         <p style="margin:0;opacity:0.85">${roleDesc}</p>
       </div>
-      ${mySub ? `<div class="card" style="max-width:400px;margin-bottom:24px;padding:16px;border-left:4px solid var(--primary)">
-        <strong>${t("subscriptions.currentPlan")}:</strong> ${escapeHtml(mySub.tier || t("subscriptions.noPlan"))}
-        ${mySub.endDate ? `<br><small style="color:var(--text-muted)">${t("common.endsIn")}: ${new Date(mySub.endDate).toLocaleDateString()}</small>` : ''}
-      </div>` : ''}
+      <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:24px">
+        ${walletBalance !== null ? `<div class="card card-sm" style="padding:12px 20px;display:flex;align-items:center;gap:12px">
+          <i class="fas fa-wallet" style="font-size:1.2rem;color:var(--primary)"></i>
+          <div><small style="color:var(--text-muted)">${t("wallet.available")}</small>
+          <div style="font-weight:700">${formatCurrency(walletBalance, "EGP")}</div></div>
+        </div>` : ''}
+        ${mySub ? `<div class="card card-sm" style="padding:12px 20px;display:flex;align-items:center;gap:12px">
+          <i class="fas fa-crown" style="font-size:1.2rem;color:var(--primary)"></i>
+          <div><small style="color:var(--text-muted)">${t("subscriptions.currentPlan")}</small>
+          <div style="font-weight:700">${escapeHtml(mySub.tier || t("subscriptions.noPlan"))}${mySub.endDate ? `<span style="color:var(--text-muted);font-weight:400;font-size:0.85rem"> · ${t("common.endsIn")}: ${new Date(mySub.endDate).toLocaleDateString()}</span>` : ''}</div></div>
+        </div>` : ''}
+      </div>
       <div class="grid grid-3" style="align-items:stretch">${(plans || []).map(p => {
         const isCurrent = mySub && (mySub.tier === p.tier || mySub.planName === p.name);
+        const insufficient = !isCurrent && p.price > 0 && walletBalance !== null && walletBalance < p.price;
         const features = p.features || [];
         const isPopular = p.sortOrder === 3;
         const iconMap = { "Free": "fa-crown", "Basic": "fa-gem", "Pro": "fa-rocket", "Enterprise": "fa-crown" };
@@ -71,7 +82,7 @@ async function renderSubscriptions(container) {
             <span style="color:var(--text-muted)">${p.billingCycle === 'Yearly' ? t("subscriptions.perYear") : p.billingCycle === 'Monthly' ? t("subscriptions.perMonth") : ''}</span>
           </div>
           <ul style="list-style:none;padding:0;margin:0 0 16px;flex:1">${features.map(f => `<li style="padding:6px 0;border-bottom:1px solid var(--border)"><i class="fas fa-check" style="color:var(--success);margin-right:8px;width:16px"></i>${escapeHtml(f)}</li>`).join("")}</ul>
-          <button class="btn ${isCurrent ? 'btn-ghost' : 'btn-primary'}" data-plan-tier="${p.tier}" ${isCurrent ? 'disabled' : ''}>${isCurrent ? t("subscriptions.current") : t("subscriptions.upgrade")}</button>
+          <button class="btn ${isCurrent ? 'btn-ghost' : insufficient ? 'btn-outline' : 'btn-primary'}" data-plan-tier="${p.tier}" ${isCurrent || insufficient ? 'disabled' : ''} title="${insufficient ? t("subscriptions.insufficientFunds") : ''}">${isCurrent ? t("subscriptions.current") : insufficient ? t("subscriptions.insufficientFunds") : t("subscriptions.upgrade")}</button>
         </div>`;
       }).join("")}</div>`;
 

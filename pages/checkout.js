@@ -4,12 +4,14 @@ async function renderCheckout(container) {
   showLoading(container, "form");
 
   try {
-    const [cart, savedAddresses] = await Promise.all([
+    const [cart, savedAddresses, walletData] = await Promise.all([
       api.get("/cart"),
       api.get("/shippingaddresses").catch(() => []),
+      api.get("/wallet").catch(() => null),
     ]);
     const items = cart.items || [];
     const addresses = Array.isArray(savedAddresses) ? savedAddresses : [];
+    const availableBalance = walletData?.availableBalance ?? null;
 
     if (!items.length) {
       container.innerHTML = `
@@ -83,6 +85,14 @@ async function renderCheckout(container) {
         </div>
         <div class="card" style="grid-column:2">
           <h3 style="margin-bottom:16px">${t("cart.paymentMethod")}</h3>
+          <div style="margin-bottom:16px;padding:12px;border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;gap:12px">
+            <i class="fas fa-wallet" style="font-size:1.3rem;color:var(--primary)"></i>
+            <div>
+              <small style="color:var(--text-muted)">${t("wallet.available")}</small>
+              <div style="font-weight:700;font-size:1.1rem">${availableBalance !== null ? formatPrice(availableBalance) : t("common.loading")}</div>
+            </div>
+            <a href="#/wallet" class="btn btn-sm btn-outline" style="margin-left:auto"><i class="fas fa-plus"></i> ${t("wallet.deposit")}</a>
+          </div>
           <select class="form-select" id="paymentMethod" style="margin-bottom:20px">
             <option value="CreditCard">${t("cart.creditCard")}</option>
             <option value="CashOnDelivery">${t("cart.cashOnDelivery")}</option>
@@ -158,6 +168,13 @@ async function renderCheckout(container) {
         btn.innerHTML = `<i class="fas fa-spinner spinner"></i> ${t("cart.placingOrder")}`;
 
         try {
+          if (availableBalance !== null && availableBalance < total) {
+            btn.disabled = false;
+            btn.innerHTML = `<i class="fas fa-lock"></i> ${t("cart.placeOrder")}`;
+            alertDiv.innerHTML = `<div class="alert alert-error"><i class="fas fa-exclamation-circle"></i> ${t("cart.insufficientWallet")} — <a href="#/wallet" style="color:inherit;text-decoration:underline"><i class="fas fa-plus"></i> ${t("wallet.deposit")}</a></div>`;
+            return;
+          }
+
           let addr_id;
 
           if (selectedAddressId) {

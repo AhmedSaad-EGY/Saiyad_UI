@@ -21,13 +21,27 @@ async function renderWallet(container) {
   function txnIcon(type) {
     switch (type) {
       case "Deposit": return "fa-arrow-down text-success";
-      case "Credit": return "fa-arrow-down text-success";
+      case "Credit":  return "fa-arrow-down text-success";
       case "Release": return "fa-undo text-info";
-      case "Hold": return "fa-lock text-warning";
-      case "Debit": return "fa-arrow-up text-danger";
+      case "Hold":    return "fa-lock text-warning";
+      case "Debit":   return "fa-arrow-up text-danger";
       case "Transfer": return "fa-exchange-alt text-primary";
-      default: return "fa-circle text-muted";
+      case "PlatformFee": return "fa-percentage text-primary";
+      case "SubscriptionPayment": return "fa-crown text-warning";
+      case "AuctionPayment": return "fa-gavel text-danger";
+      case "AuctionPayout": return "fa-hand-holding-usd text-success";
+      default:        return "fa-circle text-muted";
     }
+  }
+
+  function txnLabel(type) {
+    const labels = {
+      "PlatformFee": t("wallet.platformFee"),
+      "SubscriptionPayment": t("wallet.subPayment"),
+      "AuctionPayment": t("wallet.auctionPayment"),
+      "AuctionPayout": t("wallet.auctionPayout"),
+    };
+    return labels[type] || type;
   }
 
   try {
@@ -94,7 +108,7 @@ async function renderWallet(container) {
         var html = '<div class="wallet-txn-table"><table><thead><tr><th>' + t("wallet.date") + '</th><th>' + t("wallet.type") + '</th><th>' + t("wallet.description") + '</th><th>' + t("wallet.amount") + '</th></tr></thead><tbody>';
         for (const txn of data.items) {
           var amtClass = txn.amount >= 0 ? "text-success" : "text-danger";
-          html += '<tr><td>' + formatDate(txn.createdAt) + '</td><td><i class="fas ' + txnIcon(txn.type) + '"></i> ' + txn.type + '</td><td>' + (txn.description || "") + '</td><td class="' + amtClass + '">' + formatEGP(txn.amount) + '</td></tr>';
+          html += '<tr><td>' + formatDate(txn.createdAt) + '</td><td><i class="fas ' + txnIcon(txn.type) + '"></i> ' + escapeHtml(txnLabel(txn.type)) + '</td><td>' + escapeHtml(txn.description || "") + '</td><td class="' + amtClass + '">' + formatEGP(txn.amount) + '</td></tr>';
         }
         html += '</tbody></table></div>';
         if (data.totalPages > 1) {

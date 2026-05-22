@@ -219,6 +219,7 @@ const translations = {
     "cart.browseProducts": "Browse Products",
     "cart.cleared": "Cart cleared!",
     "cart.placeOrder": "Place Order",
+    "cart.insufficientWallet": "Insufficient wallet balance. Please deposit funds first.",
     "cart.placingOrder": "Placing Order...",
     "cart.shippingAddress": "Shipping Address",
     "cart.city": "City",
@@ -523,12 +524,14 @@ const translations = {
     "analytics.finishedAuctions": "Finished Auctions",
     "analytics.totalBids": "Total Bids",
     "analytics.totalRevenue": "Total Revenue",
+    "analytics.totalFees": "Total Fees Earned",
+    "analytics.feeIncome": "Fee Income",
+    "analytics.availableInWallet": "in wallet",
     "analytics.recentAuctions": "Recent Auctions",
-    "analytics.topAuctions": "Top Auctions by Bids",
     "analytics.startingPrice": "Starting Price",
     "analytics.currentPrice": "Current Price",
     "analytics.bidCount": "Bids",
-    "analytics.endTime": "Ends",
+    "analytics.endTime": "End Time",
     "analytics.noData": "No auction data available",
 
     // Scheduling
@@ -556,6 +559,10 @@ const translations = {
     "wallet.amount": "Amount",
     "wallet.noTransactions": "No transactions yet",
     "wallet.loadError": "Failed to load wallet data.",
+    "wallet.platformFee": "Platform Fee",
+    "wallet.subPayment": "Subscription",
+    "wallet.auctionPayment": "Auction Payment",
+    "wallet.auctionPayout": "Auction Payout",
 
     // Subscriptions
     "subscriptions.title": "Subscription Plans",
@@ -590,6 +597,7 @@ const translations = {
     "subscriptions.auctioneerDesc": "Buy a subscription to accept and manage more auctions with advanced features",
     "subscriptions.sellerHeading": "Upgrade Your Experience",
     "subscriptions.sellerDesc": "Buy a subscription to unlock more listings, auctions, and premium features",
+    "subscriptions.insufficientFunds": "Insufficient Balance",
 
     // Footer
     "footer.tagline":
@@ -824,6 +832,7 @@ const translations = {
     "cart.browseProducts": "تصفح المنتجات",
     "cart.cleared": "تم تفريغ العربة!",
     "cart.placeOrder": "تقديم الطلب",
+    "cart.insufficientWallet": "رصيد المحفظة غير كافٍ. يرجى إيداع الأموال أولاً.",
     "cart.placingOrder": "جاري تقديم الطلب...",
     "cart.shippingAddress": "عنوان الشحن",
     "cart.city": "المدينة",
@@ -1128,12 +1137,14 @@ const translations = {
     "analytics.finishedAuctions": "المزادات المنتهية",
     "analytics.totalBids": "إجمالي المزايدات",
     "analytics.totalRevenue": "إجمالي الإيرادات",
+    "analytics.totalFees": "إجمالي الرسوم المكتسبة",
+    "analytics.feeIncome": "دخل الرسوم",
+    "analytics.availableInWallet": "في المحفظة",
     "analytics.recentAuctions": "أحدث المزادات",
-    "analytics.topAuctions": "أفضل المزادات بالمزايدات",
     "analytics.startingPrice": "سعر البداية",
     "analytics.currentPrice": "السعر الحالي",
-    "analytics.bidCount": "المزايدات",
-    "analytics.endTime": "ينتهي",
+    "analytics.bidCount": "العروض",
+    "analytics.endTime": "وقت الانتهاء",
     "analytics.noData": "لا توجد بيانات مزادات متاحة",
 
     // Scheduling
@@ -1161,6 +1172,10 @@ const translations = {
     "wallet.amount": "المبلغ",
     "wallet.noTransactions": "لا توجد معاملات بعد",
     "wallet.loadError": "فشل تحميل بيانات المحفظة.",
+    "wallet.platformFee": "رسوم المنصة",
+    "wallet.subPayment": "اشتراك",
+    "wallet.auctionPayment": "دفعة مزاد",
+    "wallet.auctionPayout": "دفعة البائع",
 
     // Subscriptions
     "subscriptions.title": "خطط الاشتراك",
@@ -1195,6 +1210,7 @@ const translations = {
     "subscriptions.auctioneerDesc": "اشترك لقبول وإدارة المزيد من المزادات بميزات متقدمة",
     "subscriptions.sellerHeading": "طور تجربتك",
     "subscriptions.sellerDesc": "اشترك لفتح المزيد من الإعلانات والمزادات والميزات المميزة",
+    "subscriptions.insufficientFunds": "رصيد غير كافٍ",
 
     // Footer
     "footer.tagline": "سوق الصيد الأول في مصر — اشترِ، بع، وشارك في المزادات.",

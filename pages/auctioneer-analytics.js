@@ -11,9 +11,16 @@ async function renderAuctioneerAnalytics(container) {
 
   const content = document.getElementById("analyticsContent");
   try {
-    const data = await api.get("/auctions/dashboard");
+    const [data, txnData] = await Promise.all([
+      api.get("/auctions/dashboard"),
+      api.get("/wallet/transactions", { page: 1, pageSize: 100 }).catch(() => null),
+    ]);
+
     const dash = data || {};
     const recent = dash.recentAuctions || dash.recent || [];
+    const feeTxns = (txnData?.items || []).filter(t => t.type === "PlatformFee");
+    const totalFees = feeTxns.reduce((s, t) => s + Math.abs(t.amount), 0);
+    const wallet = await api.get("/wallet").catch(() => null);
 
     content.innerHTML = `
       <div class="grid grid-4" style="margin-bottom:24px">
@@ -44,7 +51,18 @@ async function renderAuctioneerAnalytics(container) {
           <div style="font-size:1.6rem;font-weight:700">${dash.totalRevenue != null ? formatPrice(dash.totalRevenue) : formatPrice(0)}</div>
           <div style="color:var(--text-muted);font-size:0.88rem">${t("analytics.totalRevenue")}</div>
         </div>
+        <div class="card" style="text-align:center;padding:20px;border-left:3px solid var(--primary)">
+          <i class="fas fa-percentage" style="font-size:1.8rem;color:var(--primary);margin-bottom:8px"></i>
+          <div style="font-size:1.6rem;font-weight:700">${formatPrice(totalFees)}</div>
+          <div style="color:var(--text-muted);font-size:0.88rem">${t("analytics.totalFees")}</div>
+          <small style="color:var(--text-muted)">${wallet ? formatPrice(wallet.availableBalance) + " " + t("analytics.availableInWallet") : ""}</small>
+        </div>
       </div>
+      ${feeTxns.length > 0 ? `
+      <div class="card" style="margin-top:16px">
+        <h3 style="margin-bottom:12px">${t("analytics.feeIncome")}</h3>
+        <div class="table-responsive"><table class="table"><thead><tr><th>${t("wallet.date")}</th><th>${t("wallet.amount")}</th><th>${t("wallet.description")}</th></tr></thead><tbody>${feeTxns.map(t => `<tr><td>${new Date(t.createdAt).toLocaleDateString()}</td><td style="font-weight:600">${formatPrice(t.amount)}</td><td>${escapeHtml(t.description || "")}</td></tr>`).join("")}</tbody></table></div>
+      </div>` : ''}
       ${recent.length > 0 ? `
       <div class="card" style="margin-top:16px">
         <h3 style="margin-bottom:12px">${t("analytics.recentAuctions")}</h3>

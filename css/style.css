@@ -1344,6 +1344,22 @@ body:not(.keyboard-nav) *:focus {
   color: var(--danger) !important;
 }
 
+.text-success {
+  color: var(--success) !important;
+}
+
+.text-warning {
+  color: var(--warning) !important;
+}
+
+.text-info {
+  color: oklch(0.6 0.15 200) !important;
+}
+
+.text-primary {
+  color: var(--primary) !important;
+}
+
 .dropdown-divider {
   height: 1px;
   background: var(--border);
