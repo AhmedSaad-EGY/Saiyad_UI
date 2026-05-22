@@ -4,7 +4,22 @@
 
 ---
 
-## Latest Session: Wave 4 — Bid-Wallet Integration (May 22, 2026)
+## Latest Session: Wave 5 — Product Review Flow (May 22, 2026)
+
+### Backend — New products require admin approval
+- **ProductStatus.PendingReview** added — new products start as PendingReview
+- **Admin endpoints** — `GET /api/products/pending-review`, `PATCH /{id}/approve`, `PATCH /{id}/reject`
+- **Public listing** — filters `Status == Available`, hiding pending/rejected products
+- **Migration** `AddProductReview` — adds `ReviewedByUserId`, `ReviewedAt`, `RejectionReason` columns
+
+### Frontend — Pending badge + Admin review tab
+- Seller's "My Products" page shows `PendingReview` badge (yellow/orange pill) on unapproved items
+- Admin dashboard gets a "Product Reviews" tab with table of pending products + approve/reject buttons
+- Product detail page: if viewer is the seller and status is PendingReview, shows "Under Review" banner
+- Rejected products show the rejection reason in the seller's product list
+- New translation keys for review statuses (EN + AR)
+
+## Previous: Wave 4 — Bid-Wallet Integration (May 22, 2026)
 
 ### Backend — Bets hold funds, release on outbid/end
 - **AuctionManager** — `IWalletManager` injected; bid placement now checks `HasSufficientBalanceAsync`, holds `HoldFundsAsync` on win, `ReleaseHeldFundsAsync` on outbid
