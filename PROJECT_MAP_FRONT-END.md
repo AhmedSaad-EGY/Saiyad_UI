@@ -4,25 +4,21 @@
 
 ---
 
-## Latest Session: Waves 6–7 — Platform Wallet, Revenue Tab, Dynamic Currency (May 22, 2026)
+## Latest Session: Post-Waves 6–7 — Revenue Flow Corrections (May 22, 2026)
 
-### Revenue tab in admin panel (`admin.js`)
-- New `{ id: "revenue" }` tab with 4 stat cards: Wallet Balance, Held Balance, Available Balance, Total Fees Collected
-- Fee income table: lists `PlatformFee` + `SubscriptionPayment` transactions with type badge, amount, reference, description, date
-- Fetches `GET /api/wallet` for balance and `GET /api/wallet/transactions` for paginated history
-- Consolidates fees across both auction (5%) and subscription payment sources
+### ⚠️ Known Issue: Subscription page has no role-specific content
+- Currently shows same generic plan cards for all roles (Customer, Fisherman, BaitSeller, Auctioneer)
+- **Fix:** Detect user role at top of `subscriptions.js`, show role-specific heading + description
+  - **Customer** sees: "Unlock More Bids — buy a subscription to bid on more auctions"
+  - **Auctioneer** sees: "Grow Your Business — buy a subscription to accept and manage more auctions"
+  - **Fisherman/BaitSeller** sees: generic seller upgrade message
 
-### Dynamic currency display (`subscriptions.js`)
-- `formatUSD(n)` → `formatCurrency(amount, currency)` reading `p.Currency` dynamically from API
-- All subscription plan cards now display "EGP" instead of "$"
-- Translations: `admin.revenue`, `admin.platformBalance`, `admin.totalFees`, `admin.feeIncome` added (EN + AR)
+### ✅ Correct: Revenue tab in admin panel (`admin.js`)
+- `{ id: "revenue" }` tab with 4 stat cards + fee income table
+- Shows both auction and subscription payment income
 
-### Backend (no new frontend changes for):
-- Admin wallet seeded on startup (`sayiadapp@gmail.com`)
-- `CreditPlatformFeeAsync` / `DeductForSubscriptionAsync` in `IWalletManager`
-- Auction 5% fee → admin wallet (both `EndAuctionAsync` + `AuctionExpiryService`)
-- Subscription price deducted from wallet on upgrade
-- Subscription plan prices converted USD→EGP (×50)
+### ✅ Correct: Dynamic currency display (`subscriptions.js`)
+- `formatCurrency(amount, currency)` reading `p.Currency` from API
 
 **Build:** 0 errors | **Tests:** 22/23 (same pre-existing)
 
