@@ -584,6 +584,12 @@ const translations = {
     "subscriptions.learnMore": "Learn More",
     "subscriptions.upgradeSuccess": "Subscription upgraded successfully!",
     "subscriptions.loadError": "Failed to load subscription data.",
+    "subscriptions.customerHeading": "Unlock More Bids",
+    "subscriptions.customerDesc": "Buy a subscription to bid on more auctions and get better deals",
+    "subscriptions.auctioneerHeading": "Grow Your Business",
+    "subscriptions.auctioneerDesc": "Buy a subscription to accept and manage more auctions with advanced features",
+    "subscriptions.sellerHeading": "Upgrade Your Experience",
+    "subscriptions.sellerDesc": "Buy a subscription to unlock more listings, auctions, and premium features",
 
     // Footer
     "footer.tagline":
@@ -1183,6 +1189,12 @@ const translations = {
     "subscriptions.learnMore": "اعرف المزيد",
     "subscriptions.upgradeSuccess": "تمت ترقية الاشتراك بنجاح!",
     "subscriptions.loadError": "تعذر تحميل بيانات الاشتراك.",
+    "subscriptions.customerHeading": "افتح المزيد من العروض",
+    "subscriptions.customerDesc": "اشترك للمزايدة على المزيد من المزادات والحصول على صفقات أفضل",
+    "subscriptions.auctioneerHeading": "طور أعمالك",
+    "subscriptions.auctioneerDesc": "اشترك لقبول وإدارة المزيد من المزادات بميزات متقدمة",
+    "subscriptions.sellerHeading": "طور تجربتك",
+    "subscriptions.sellerDesc": "اشترك لفتح المزيد من الإعلانات والمزادات والميزات المميزة",
 
     // Footer
     "footer.tagline": "سوق الصيد الأول في مصر — اشترِ، بع، وشارك في المزادات.",

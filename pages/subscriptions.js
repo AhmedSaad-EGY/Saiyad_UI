@@ -30,7 +30,25 @@ async function renderSubscriptions(container) {
 
     const mySub = mySubData || null;
 
+    const user = getUser();
+    const role = user?.role || "";
+    let roleHeading, roleDesc;
+    if (role === "Customer") {
+      roleHeading = t("subscriptions.customerHeading");
+      roleDesc = t("subscriptions.customerDesc");
+    } else if (role === "Auctioneer") {
+      roleHeading = t("subscriptions.auctioneerHeading");
+      roleDesc = t("subscriptions.auctioneerDesc");
+    } else {
+      roleHeading = t("subscriptions.sellerHeading");
+      roleDesc = t("subscriptions.sellerDesc");
+    }
+
     content.innerHTML = `
+      <div class="card" style="padding:20px;margin-bottom:24px;background:var(--primary-gradient, linear-gradient(135deg,var(--primary),var(--primary-light)));color:var(--text-inverse);border:none">
+        <h3 style="margin:0 0 6px">${roleHeading}</h3>
+        <p style="margin:0;opacity:0.85">${roleDesc}</p>
+      </div>
       ${mySub ? `<div class="card" style="max-width:400px;margin-bottom:24px;padding:16px;border-left:4px solid var(--primary)">
         <strong>${t("subscriptions.currentPlan")}:</strong> ${escapeHtml(mySub.tier || t("subscriptions.noPlan"))}
         ${mySub.endDate ? `<br><small style="color:var(--text-muted)">${t("common.endsIn")}: ${new Date(mySub.endDate).toLocaleDateString()}</small>` : ''}
