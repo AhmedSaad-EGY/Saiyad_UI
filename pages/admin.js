@@ -12,6 +12,7 @@ async function renderAdmin(container) {
     { id: "orders", icon: "fa-box", label: t("admin.orders") },
     { id: "categories", icon: "fa-tags", label: t("admin.categories") },
     { id: "plans", icon: "fa-crown", label: t("admin.plans") },
+    { id: "revenue", icon: "fa-chart-line", label: t("admin.revenue") },
   ];
 
   let activeTab = "users";
@@ -51,6 +52,8 @@ async function renderAdmin(container) {
     } else if (activeTab === "plans") {
       content.innerHTML = `<div id="plansPanel"></div>`;
       loadPlans();
+    } else if (activeTab === "revenue") {
+      loadRevenue();
     }
   }
 
@@ -429,6 +432,67 @@ async function renderAdmin(container) {
     overlay.addEventListener("click", (e) => { if (e.target === overlay) overlay.remove(); });
     setTimeout(() => overlay.querySelector("#fmSave")?.focus(), 100);
     return overlay;
+  }
+
+  async function loadRevenue() {
+    showLoading(content);
+    try {
+      const [wallet, txns] = await Promise.all([
+        api.get("/wallet"),
+        api.get("/wallet/transactions", { page: 1, pageSize: 100 }),
+      ]);
+
+      const items = txns.items || txns.data || [];
+      const feeTxns = items.filter(t => t.type === "PlatformFee" || t.type === "SubscriptionPayment");
+      const totalFees = feeTxns.reduce((sum, t) => sum + Math.abs(t.amount), 0);
+
+      content.innerHTML = `
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:24px">
+          <div class="card card-sm" style="padding:16px;text-align:center">
+            <small style="color:var(--text-muted)">${t("admin.platformBalance")}</small>
+            <div style="font-size:1.5rem;font-weight:700">${formatPrice(wallet.balance || 0)}</div>
+          </div>
+          <div class="card card-sm" style="padding:16px;text-align:center">
+            <small style="color:var(--text-muted)">${t("wallet.held")}</small>
+            <div style="font-size:1.5rem;font-weight:700">${formatPrice(wallet.heldBalance || 0)}</div>
+          </div>
+          <div class="card card-sm" style="padding:16px;text-align:center">
+            <small style="color:var(--text-muted)">${t("wallet.available")}</small>
+            <div style="font-size:1.5rem;font-weight:700">${formatPrice(wallet.availableBalance || 0)}</div>
+          </div>
+          <div class="card card-sm" style="padding:16px;text-align:center;border-left:3px solid var(--primary)">
+            <small style="color:var(--text-muted)">${t("admin.totalFees")}</small>
+            <div style="font-size:1.5rem;font-weight:700;color:var(--primary)">${formatPrice(totalFees)}</div>
+          </div>
+        </div>
+        <h3 style="margin-bottom:12px">${t("admin.feeIncome")}</h3>
+        <div class="table-wrapper">
+          <table>
+            <thead><tr>
+              <th>${t("admin.id")}</th>
+              <th>${t("wallet.type")}</th>
+              <th>${t("wallet.amount")}</th>
+              <th>Reference</th>
+              <th>${t("wallet.description")}</th>
+              <th>${t("dash.date")}</th>
+            </tr></thead>
+            <tbody>
+              ${feeTxns.length ? feeTxns.map(t => `
+                <tr>
+                  <td>${t.id}</td>
+                  <td><span class="status ${t.type === "PlatformFee" ? "status-available" : "status-pending"}">${t.type}</span></td>
+                  <td style="font-weight:600">${formatPrice(t.amount)}</td>
+                  <td>${t.referenceType || "-"} #${t.referenceId || "-"}</td>
+                  <td>${escapeHtml(t.description || "-")}</td>
+                  <td>${formatDate(t.createdAt)}</td>
+                </tr>
+              `              ).join("") : `<tr><td colspan="6" style="text-align:center;color:var(--text-muted)">No fee transactions yet</td></tr>`}
+            </tbody>
+          </table>
+        </div>`;
+    } catch (err) {
+      showError(content, err.message);
+    }
   }
 
   async function loadPlans() {

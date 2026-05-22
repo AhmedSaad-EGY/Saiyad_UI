@@ -391,6 +391,10 @@ const translations = {
     "admin.categoryAdded": "Category added",
     "admin.reportResolved": "Report resolved",
     "admin.productStatusUpdated": "Product status updated",
+    "admin.revenue": "Revenue",
+    "admin.platformBalance": "Platform Balance",
+    "admin.totalFees": "Total Fees Collected",
+    "admin.feeIncome": "Fee Income",
 
     // Order Detail
     "order.title": "Order Details",
@@ -986,6 +990,10 @@ const translations = {
     "admin.categoryAdded": "تم إضافة التصنيف",
     "admin.reportResolved": "تم حل البلاغ",
     "admin.productStatusUpdated": "تم تحديث حالة المنتج",
+    "admin.revenue": "الإيرادات",
+    "admin.platformBalance": "رصيد المنصة",
+    "admin.totalFees": "إجمالي الرسوم المحصلة",
+    "admin.feeIncome": "دخل الرسوم",
 
     // Order Detail
     "order.title": "تفاصيل الطلب",
