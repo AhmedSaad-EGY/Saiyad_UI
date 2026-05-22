@@ -4,15 +4,27 @@
 
 ---
 
-## Latest Session: Wave 6 — Platform Fee & Auction Settlement (May 22, 2026)
+## Latest Session: Waves 6–7 — Platform Wallet, Revenue Tab, Dynamic Currency (May 22, 2026)
 
-### On auction end with winner: wallet deduction + 95% seller payout
-- **WalletManager.SettleAuctionPaymentAsync** — new method: deducts winning bid from winner's wallet (releases hold), credits seller 95% (5% platform fee implicit)
-- **EndAuctionAsync** and **AuctionExpiryService** both call settlement on winner
-- **Email notifications** updated to mention wallet deduction and 95% payout
-- **Seller notification** now includes exact payout amount
-- **Frontend**: No changes needed — wallet balance deduction and credit are automatic; auction winner already sees "You won" modal, seller already sees "Auction Ended" notification
-- **Build:** 0 errors | **Tests:** 22/23 (same pre-existing)
+### Revenue tab in admin panel (`admin.js`)
+- New `{ id: "revenue" }` tab with 4 stat cards: Wallet Balance, Held Balance, Available Balance, Total Fees Collected
+- Fee income table: lists `PlatformFee` + `SubscriptionPayment` transactions with type badge, amount, reference, description, date
+- Fetches `GET /api/wallet` for balance and `GET /api/wallet/transactions` for paginated history
+- Consolidates fees across both auction (5%) and subscription payment sources
+
+### Dynamic currency display (`subscriptions.js`)
+- `formatUSD(n)` → `formatCurrency(amount, currency)` reading `p.Currency` dynamically from API
+- All subscription plan cards now display "EGP" instead of "$"
+- Translations: `admin.revenue`, `admin.platformBalance`, `admin.totalFees`, `admin.feeIncome` added (EN + AR)
+
+### Backend (no new frontend changes for):
+- Admin wallet seeded on startup (`sayiadapp@gmail.com`)
+- `CreditPlatformFeeAsync` / `DeductForSubscriptionAsync` in `IWalletManager`
+- Auction 5% fee → admin wallet (both `EndAuctionAsync` + `AuctionExpiryService`)
+- Subscription price deducted from wallet on upgrade
+- Subscription plan prices converted USD→EGP (×50)
+
+**Build:** 0 errors | **Tests:** 22/23 (same pre-existing)
 
 ## Previous: Wave 5 — Product Review Flow (May 22, 2026)
 
@@ -527,19 +539,21 @@ const connection = new signalR.HubConnectionBuilder()
 
 ### `subscriptions.js` — `#/subscriptions`
 - Fetches plans from `GET /api/subscriptionplans` (previously hardcoded)
-- Plan cards: icon, price (USD), feature list, "Most Popular" badge
+- Plan cards: icon, price (EGP via `formatCurrency`), feature list, "Most Popular" badge
 - Current plan card
 - Upgrade button with loading spinner
 - Disabled "Current" button on active plan
 - Fetches `/subscriptions/my` for current user status
+- Currency formatted dynamically via `formatCurrency(p.price, p.Currency)`
 
 ### `admin.js` — `#/admin`
 - Admin role-gated (route guard + role check)
-- Tabs: Users, Reports, Products, Orders, Categories, Plans
+- Tabs: Users, Reports, Products, Orders, Categories, Plans, Revenue
 - **Users**: paginated table (20/page), suspend/activate toggle
 - **Reports**: list + resolve with confirmation
 - **Orders**: paginated table (20/page)
 - **Categories**: list + add/delete with `showConfirm`
+- **Revenue**: wallet balance cards + fee income table (`PlatformFee` + `SubscriptionPayment`)
 
 ### `privacy.js` — `#/privacy`
 - Static privacy policy with TOC (4 sections)
