@@ -1,306 +1,622 @@
-# Sayiad Frontend — Project Map
+# Sayiad — Frontend Project Map
+
+**Date:** 2026-05-22 | **Vanilla JS SPA | Bilingual (EN/AR) | PWA**
+
+---
+
+## Latest Session: Wave 4 — Bid-Wallet Integration (May 22, 2026)
+
+### Backend — Bets hold funds, release on outbid/end
+- **AuctionManager** — `IWalletManager` injected; bid placement now checks `HasSufficientBalanceAsync`, holds `HoldFundsAsync` on win, `ReleaseHeldFundsAsync` on outbid
+- **Auto-bid resolution** — each round releases previous winner's funds, holds auto-bidder's funds
+- **Auction end / expiry** — releases held funds when reserve not met (no winner)
+- **Build:** 0 errors | **Tests:** 22/23 (same pre-existing)
+
+### Frontend — No changes required
+- Wallet balance display already shows `AvailableBalance` (which accounts for held funds)
+- No new UI needed — bid button already has error handling for insufficient funds
+- The `HasSufficientBalance` check returns a 400 error if wallet is too low
+- Existing `wallet.js` deposit page already allows users to top up before bidding
+
+## Previous: Wave 3 — Quota System + SubscriptionPlan (May 21, 2026)
+
+### Backend — Quota System
+- **SubscriptionPlan entity** — DB table with tier limits (auctions, bids, requests per month)
+- **SubscriptionPlansController** — 5 endpoints (public list + Admin CRUD)
+- **SubscriptionManager** — replaced hardcoded `TierLimits` dict with DB lookups
+- **AuctionManager** — bid quota + request quota enforcement added
+- **Migration** `AddSubscriptionPlans` — creates table + seeds 4 default plans (Free/Basic/Pro/Enterprise)
+- 4 default plans seeded (Free: 3/3/3, Basic: 10/20/10, Pro: 25/50/25, Enterprise: 100/200/100)
+
+### Frontend — Dynamic plan cards + Admin plan management
+- `subscriptions.js` — now fetches plans from `GET /api/subscriptionplans` instead of hardcoded array
+- `admin.js` — new "Plans" tab with table, edit modal, delete confirmation, add form
+
+**Build:** 0 errors | **Tests:** 22/23 (same pre-existing)
+
+### Backend — Wallet System
+- New **Wallet** entity (`Balance`, `HeldBalance`, `AvailableBalance`, `RowVersion`)
+- New **WalletTransaction** entity (`Amount`, `Type`, `ReferenceType`, `ReferenceId`, `BalanceSnapshot`)
+- New `WalletRepository`, `WalletManager`, `WalletController` (3 endpoints)
+- Auto-creates wallet on user registration (`AuthManager`)
+- Migration: `AddWalletSystem`
+
+### Frontend — Wallet page
+- New `pages/wallet.js` — displays balance card (total, held, available), deposit input, paginated transaction table
+- Route `#/wallet` → guard: any authenticated user, title key: `wallet.title`
+- Navbar dropdown: Wallet link visible for `Customer,Fisherman,BaitSeller,Auctioneer` (all non-Admin)
+- Precache added to `sw.js`
+- 14 translation keys (EN + AR)
+
+**Build:** 0 errors | **Tests:** 22/23 (same pre-existing)
+
+### Backend changes
+- **Admin removed** from: Orders, Cart, Wishlist, Shipping, Payments, Reviews (create/delete), Reports (create), Subscriptions (upgrade/my), Place Bid
+- **Admin added** to: Start auction, Approve/Reject auction requests
+- **Auctioneer removed** from: ALL e-commerce (orders, cart, wishlist, shipping, payments, reviews, reports) + ALL product endpoints (CRUD, images, get-my)
+- **Auctioneer kept** on: Start/End auctions, Approve/Reject requests, View analytics, Subscriptions
+
+### Frontend changes
+- `SELLER_ROLES`: Auctioneer removed (now: Fisherman, BaitSeller only)
+- Navbar: My Orders/Wishlist → `Customer,Fisherman,BaitSeller`; My Products → `Fisherman,BaitSeller`; Subscriptions → `Customer,Fisherman,BaitSeller,Auctioneer`
+- Route guards: cart/checkout/shipping/order-detail now check for e-commerce roles; auction-requests-review/analytics also allow Admin
+- Dashboard: orders/wishlist hidden for Admin/Auctioneer; products hidden for Auctioneer; review+analytics tabs visible to Admin too
+- Profile: orders/wishlist/shipping links hidden for Admin/Auctioneer; My Products hidden for Auctioneer
+- Seller profile/Home/Product detail: Auctioneer removed from all seller-role checks
+
+**Build:** 0 errors | **Tests:** 22/23 (same pre-existing failure)
+
+---
 
 ## Overview
-Vanilla JS single-page application for the Sayiad (صياد) fishing marketplace & auction platform. Connected to `https://sayiad.runasp.net/api`.
 
-## Tech Stack
-- **Vanilla JS** — no frameworks
-- **CSS Custom Properties (OKLCH)** — theming (dark/light), design tokens, glassmorphism, gold seller theme
-- **Hash-based SPA Router** — `#/route?param=value` with route guards (role-based access control)
-- **Font Awesome 6** — icons (CDN)
-- **SignalR** — real-time auction bids (Microsoft CDN via `<script>`)
-- **Service Worker** — offline caching of app shell (precache + cache-first for static assets)
-- **Google Fonts** — Inter (Latin) + Cairo (Arabic) + Syne (headings)
-- **Vercel** — deployment config with API rewrites
+Vanilla JS single-page application for the Sayiad (صياد) fishing marketplace & auction platform. Connected to `https://sayiad.runasp.net/api`. Hash-based routing with role-based guards, real-time bidding via SignalR, dark/light theme, full Arabic/English i18n.
 
-## Project Structure
+**Live:** `https://saiyad-eg.vercel.app`
+
+---
+
+## TECH STACK
+
+| Component | Detail |
+|-----------|--------|
+| **Vanilla JS** | ES2022, no frameworks, IIFE modules, `defer` scripts |
+| **CSS** | Custom Properties (OKLCH), glassmorphism, skeleton shimmers, dark/light mode, RTL |
+| **Font Awesome 6** | Icons (CDN) |
+| **SignalR** | Real-time auction bids (Microsoft CDN via `<script>`) |
+| **Service Worker** | Offline caching, precache + cache-first for static assets |
+| **Google Fonts** | Inter (Latin), Cairo (Arabic), Syne (headings) |
+| **Vercel** | SPA rewrites + API proxy |
+
+---
+
+## PROJECT STRUCTURE
 
 ```
 Front-end/
-├── index.html              # Entry point, navbar, footer, skip-link, aria-live region,
-│                           # 24 page script tags (defer), preload links, cache-busting (?v=)
-├── sw.js                   # Service worker (precache + cache-first strategies)
-├── PROJECT_MAP_FRONT-END.md # This file
-├── README.md               # Placeholder
+├── index.html                  # Entry point — preloads, 25 page scripts (defer), navbar, footer
+├── sw.js                       # Service worker — sayiad-v10, 36 precached assets
+├── PROJECT_MAP_FRONT-END.md   # This file
+├── USER_ROLE.md                # Permission matrix for all 5 roles
+├── USER_SEES.md                # What each role sees (profile, dashboard, navbar)
+├── README.md
 ├── LICENSE
-├── logo.png                # Favicon + nav logo
-├── vercel.json             # SPA rewrites + API proxy to sayiad.runasp.net
-├── .vscode/
-│   └── launch.json         # Chrome debug config for localhost:8080
+├── logo.png                    # Favicon + nav logo
+├── .gitignore
+├── vercel.json                 # SPA rewrites + API proxy to sayiad.runasp.net
 ├── css/
-│   └── style.css           # Full design system (~4750 lines): OKLCH tokens, reset, navbar glass,
-│                           # buttons, forms, hero, product/auction cards, lightbox, dashboard,
-│                           # skeleton loaders (5 types), shimmer, confetti, subscriptions,
-│                           # gold seller theme, glassmorphism, urgency palette, RTL, dark mode,
-│                           # responsive breakpoints, keyframes, stagger animations (1-8),
-│                           # prefers-reduced-motion, back-to-top, mobile drawer, floating cart bar
+│   └── style.css               # ~5,000 lines — full design system
 ├── js/
-│   ├── config.js           # APP_CONFIG.apiBaseUrl + swaggerUrl + signalrHubUrl — single URL source
-│   ├── api.js              # Fetch wrapper with JWT injection, access token caching, auto-refresh
-│   │                       # token flow, AbortController support, error extraction
-│   │                       # (message/title/detail/errors), buildQuery, upload file
-│   ├── auth.js             # getuser, isAuthenticated, requireAuth, logout, hasRole, hasAnyRole,
-│   │                       # getRoleFromToken (JWT payload parsing), updateNavbar, updateCartBadge,
-│   │                       # updateNotifBadge, cart badge caching + invalidation, aria attributes
-│   │                       # on user dropdown, notifications polling every 60s
-│   ├── router.js           # Hash router (24 routes in routeMap), ROLES constants, routeGuards
-│   │                       # (7 guarded routes), param diff for re-render, force re-render param,
-│   │                       # page transition (opacity + translateY), registerRouteCleanup /
-│   │                       # runRouteCleanups array, back-to-top dismiss, dynamic document title
-│   │                       # via routeTitleKeys, a11y focus management, aria-live announcements,
-│   │                       # 404 page with CTAs
-│   ├── utils.js            # $, $$, showLoading (5 skeleton types), showError (role="alert"),
-│   │                       # showErrorWithRetry, renderEmptyState (7 SVG illustrations + hover
-│   │                       # float), escapeHtml, formatDate (Intl), formatPrice (EGP),
-│   │                       # statusClass (15+ statuses), tStatus, renderStars, transitionContent,
-│   │                       # progressiveImg + activateProgressiveImages (blur-up),
-│   │                       # observeAnimations + disconnectAnimObserver, trackRecentlyViewed,
-│   │                       # renderRecentlyViewed, emptyIllustration (7 SVGs), openQuickView
-│   │                       # (focus trap, Esc, overlay click), openLightbox (focus trap, arrow
-│   │                       # nav, RTL-aware), showFieldError / clearFieldError / clearAllFieldErrors,
-│   │                       # getPasswordStrength (5-criteria), validateForm (10+ rule types),
-│   │                       # calculateAge, triggerConfetti (60 particles), debounce (400ms),
-│   │                       # showConfirm (custom modal with Promise, shake, Esc, focus),
-│   │                       # renderProductCards (canonical, stagger, quick-add btn, badge, stock)
-│   ├── translations.js     # en/ar i18n (~450 keys each), t() with {placeholder} replace,
-│   │                       # setLanguage() (persists to sayiad_lang, dir/lang attr, re-render),
-│   │                       # getCurrentLang(), updateStaticText (data-i18n, data-i18n-title,
-│   │                       # data-i18n-placeholder)
-│   ├── background.js       # Canvas animated water background (IIFE, 3 sine-wave layers + rising
-│   │                       # particles), reads --blob-* CSS vars, MutationObserver for theme
-│   │                       # changes, debounced resize handler (150ms)
-│   ├── signalr.js          # SignalR connection management, BidPlaced handler (price flash
-│   │                       # animation + bid history green highlight + outbid/self-bid toast),
-│   │                       # AuctionEnded handler (countdown display update + confetti + toast),
-│   │                       # leaveAuctionGroup(), stopSignalR()
-│   └── app.js              # Toast system (RTL-aware, aria-live, max 3 visible), IntersectionObserver
-│                           # scroll animations, navbar scroll glass effect, back-to-top button,
-│                           # mobile drawer (open/close/ESC/resize, body scroll lock), theme toggle
-│                           # (smooth CSS transition), language toggle (fade + router reload),
-│                           # reduced motion toggle, onboarding tour (3-step), hero tilt parallax,
-│                           # syncUserRoleAttribute (data-user-role on html), quick-add-to-cart
-│                           # delegation, ripple effect, keyboard nav detection ('keyboard-user'
-│                           # class on body), service worker registration
-└── pages/
-    ├── home.js             # Hero with tilt effect, role-based quick links, features grid (4),
-    │                       # latest products + active auctions (4 each) via renderProductCards,
-    │                       # recently viewed strip, loading/error states
-    ├── login.js            # Login form with email/password, inline validation via Constraint API,
-    │                       # password visibility toggle, forgot password link, unverified email
-    │                       # warning + resend verification (i18n keys), auto-login redirect
-    ├── register.js         # Register form with role selector (Customer/Fisherman/BaitSeller/
-    │                       # Auctioneer), conditional Fishing License field, birthdate + age calc,
-    │                       # password strength meter + confirm match, terms checkbox,
-    │                       # email uniqueness check via blur, auto-login after verify redirect
-    ├── forgot-password.js  # Email form → success with 60s countdown resend + change email link
-    ├── reset-password.js   # Token from URL, new password + confirm, strength meter, auto-redirect
-    ├── products.js         # Product listing with search (debounced 400ms), category filter, sort
-    │                       # (price low/high, high/low, newest), URL param persistence, pagination
-    ├── product-detail.js   # Product images (lightbox gallery), meta, add-to-cart, wishlist toggle,
-    │                       # seller link + contact button, similar products (renderProductCards),
-    │                       # reviews section (star rating, submit, delete), recently viewed track
-    ├── auctions.js         # Auction listing with search, status filter, pagination, URL params
-    ├── auction-detail.js   # Countdown timer (live update via setInterval), bid history table,
-    │                       # bid placement (input + draggable slider synced), auto-refresh SignalR+
-    │                       # fallback 10s poll, price flash animation, urgency pulse on <1hr,
-    │                       # outbid/self-bid toast, breadcrumb, recently viewed track
-    ├── cart.js             # Cart table with quantity +/- update, remove (confirm dialog), clear,
-    │                       # total calculation, floating mobile bar, browse products CTA when
-    │                       # empty, checkout button
-    ├── checkout.js         # Shipping address form (name, phone, city, gov, street, postal code) +
-    │                       # order creation + payment method selector (Credit Card / COD)
-    ├── dashboard.js        # Sidebar tabs (11): overview (stats cards), orders (paginated table +
-    │                       # cancel button for Pending/Confirmed), products (create + list + image
-    │                       # preview + draft autosave), auctions (Auctioneer: start auction modal
-    │                       # with scheduling), auction-requests (Fisherman), auction-requests-review
-    │                       # (Auctioneer), auctioneer-analytics (Auctioneer), wishlist (remove),
-    │                       # notifications (mark read + mark all), profile update (avatar upload),
-    │                       # change password (strength meter), mobile tab selector
-    ├── verify-email.js     # Token verification, auto-login with stored credentials fallback
-    ├── shipping.js         # CRUD shipping addresses (list, add form inline, delete confirm)
-    ├── seller-profile.js   # View public profile by userId, create/edit own seller profile form
-    ├── order-detail.js     # Single order view with items table, seller links, cancel button
-    │                       # (shown for Pending/Confirmed status only, confirm dialog, success/
-    │                       # error alert)
-    ├── profile.js          # User profile page: avatar upload (camera overlay, file input, save
-    │                       # as data URL), role-based quick links to dashboard sections, account
-    │                       # info display
-    ├── auction-requests.js # Fisherman: submit auction request form (title, desc, fish type,
-    │                       # quantity KG, estimated value, catch location/date, image URL) +
-    │                       # view own requests table with status badges
-    ├── auction-requests-review.js # Auctioneer: review pending requests, filter (Pending/
-    │                       # Approved/Rejected/All), approve with scheduling modal (start/end
-    │                       # datetime picker), reject with reason textarea, loading states
-    ├── auctioneer-analytics.js # Auctioneer: analytics stats cards (total/active/finished
-    │                       # auctions, total bids, revenue) + recent auctions table via Promise.all
-    ├── subscriptions.js    # Subscription tiers display (Free/Premium/Pro) in 3-column grid,
-    │                       # current plan card, upgrade flow with loading spinner, feature lists,
-    │                       # "Most Popular" badge
-    ├── admin.js            # Admin panel: Users tab (toggle active/inactive), Reports (resolve),
-    │                       # Orders (view all), Categories (add/delete) — role-gated to Admin
-    ├── privacy.js          # Privacy policy static page (4 sections)
-    └── terms.js            # Terms & conditions static page (6 sections)
+│   ├── config.js               # APP_CONFIG — apiBaseUrl, signalrHubUrl, swaggerUrl
+│   ├── api.js                  # Fetch wrapper — JWT injection, auto-refresh, AbortController
+│   ├── auth.js                 # Auth state — getUser, isAuthenticated, hasRole, hasAnyRole
+│   ├── router.js               # Hash router — 24 routes, routeGuards, page transitions
+│   ├── utils.js                # DOM helpers, skeletons, formatting, modals, recently-viewed
+│   ├── translations.js         # i18n — ~450 keys per language (EN/AR), t(), setLanguage()
+│   ├── background.js           # Canvas underwater animation — fish, kelp, bubbles, light rays
+│   ├── signalr.js              # SignalR connection — BidPlaced, AuctionEnded, auto-reconnect
+│   ├── app.js                  # App entry — toast, init, event delegation, SW registration
+│   └── pages/                  # 25 page scripts (one per route)
+│       ├── home.js
+│       ├── login.js
+│       ├── register.js
+│       ├── forgot-password.js
+│       ├── reset-password.js
+│       ├── verify-email.js
+│       ├── products.js
+│       ├── product-detail.js
+│       ├── auctions.js
+│       ├── auction-detail.js
+│       ├── cart.js
+│       ├── checkout.js
+│       ├── dashboard.js
+│       ├── shipping.js
+│       ├── seller-profile.js
+│       ├── order-detail.js
+│       ├── profile.js
+│       ├── auction-requests.js
+│       ├── auction-requests-review.js
+│       ├── auctioneer-analytics.js
+│       ├── subscriptions.js
+│       ├── admin.js
+│       ├── privacy.js
+│       └── terms.js
 ```
 
-## Key Features
+---
 
-### UI / UX
-- Dark/light theme toggle with localStorage persistence and smooth CSS transitions (OKLCH colors)
-- Arabic/English i18n (~450 keys each) with full RTL support, `data-i18n` attribute binding
-- Gold role-specific theme for seller roles (Fisherman/BaitSeller/Auctioneer) with shimmer gradients
-- Glassmorphism navbar, cards, modals with backdrop-filter
-- Scroll-triggered animations via IntersectionObserver with 8 stagger levels
-- Canvas animated background (3 sine-wave layers + rising particles, theme-aware via MutationObserver)
-- Page transitions: opacity + translateY fade on route change
-- Onboarding tour (3-step) for first-time visitors
-- Reduced motion toggle for accessibility
-- Button ripple effect
-- Toast notification system (slide-in, auto-dismiss, max 3 visible, RTL-aware, aria-live)
-- Keyboard nav detection (focus rings only on Tab, `keyboard-user` class on body)
-- `prefers-reduced-motion` support (disables all animations)
-- Responsive layout (1024px, 768px, 480px breakpoints)
-- Skeleton loading system (5 layout variants: page, card, detail, table, form)
-- Mobile nav: slide-in drawer (RTL-aware), backdrop overlay with blur, body scroll lock, ESC/overlay/resize close
-- Back-to-top button (appears after 400px scroll, smooth scroll)
-- Floating cart summary bar on mobile (sticky bottom)
-- Skeleton-to-content morph transition (`transitionContent`)
-- Quick-view modal on product/auction cards (focus trap, Esc key, overlay click to close)
-- Empty state SVG illustrations (cart, products, auctions, bell, orders, search, heart) with hover float
-- Recently viewed products strip (localStorage, horizontal scroll, 12 max)
-- Progressive image loading (blur-up placeholder → full image crossfade)
-- Lightbox gallery (full-screen overlay, arrow navigation, keyboard support, RTL-aware)
-- Bid countdown urgency animation (red pulsing border + "Ending soon" badge for <1hr)
-- Animated price change on auction (flash green highlight + scale on bid update via SignalR)
-- Draggable bid slider (range slider synced with number input, min→max×10)
-- Confetti burst effect on auction end (`triggerConfetti`)
-- `showConfirm` custom modal (Promise-based, shake on overlay click, Esc key, focus trap, role="alertdialog")
+## CORE MODULES
 
-### Routing
-- Hash-based SPA router with role-based route guards (ROLES constant, 7 guarded routes)
-- 24 routes mapped in `routeMap` with dynamic document titles via `routeTitleKeys`
-- Detects dashboard tab changes via JSON.stringify param diff, skips identical navigations
-- Force re-render parameter (`router(true)`)
-- `registerRouteCleanup` / `runRouteCleanups` array for clearing intervals/listeners on route change
-- Query param persistence in URL hash for products (`search`, `categoryId`, `sort`, `page`)
-- Query param persistence for auctions (`search`, `status`, `page`)
-- Language switch triggers re-render via router() for full i18n consistency
-- 404 page with contextual CTAs (go home, browse products)
-- aria-live announcements on route change for screen readers
-- Focus management (tabindex on main content on navigation)
+### `js/config.js`
+```js
+const APP_CONFIG = {
+  apiBaseUrl: "https://sayiad.runasp.net/api",
+  swaggerUrl: "https://sayiad.runasp.net/swagger/index.html",
+  signalrHubUrl: "https://sayiad.runasp.net/hubs/auction"
+};
+```
 
-### Forms & Validation
-- 10+ rule types in `validateForm`: required, email, minLength, hasUppercase, hasLowercase, hasDigit, hasSpecialChar, phone, matches, minAge
-- Inline field validation (red border + error text per field + shake animation)
-- Errors clear on input
-- Constraint Validation API integration
-- `for`/`id` labels, `autocomplete`, `required`, `inputmode` attributes
-- Submit button with spinner while loading
-- Password visibility toggle (login, register, reset-password)
-- Password strength meter (5 criteria: length 8+, length 12+, uppercase+lowercase, digit, special char)
-- Confirm password with match validation
-- Email validation on blur (login + register)
-- Age calculation from birthdate (register)
-- Role-specific fields (Fishing License for Fisherman)
-- Terms & conditions checkbox with legal links
+### `js/api.js`
+| Function | Description |
+|----------|-------------|
+| `api.get(url, params, signal)` | GET with query params, signal for abort |
+| `api.post(url, body, signal)` | POST JSON or FormData |
+| `api.put(url, body)` | PUT JSON |
+| `api.delete(url)` | DELETE |
+| `api.upload(url, formData)` | POST FormData (file upload) |
 
-### Data
-- API fetch wrapper with JWT Bearer token injection, in-memory access token caching
-- Token refresh flow (`/auth/refresh`) with automatic retry
-- AbortController support (`api.abort()`)
-- Cart quantity/remove via event delegation + cache invalidation
-- Pagination for products, auctions, dashboard orders
-- Error states with retry button (`showErrorWithRetry`)
-- Locale-aware `formatDate` (`Intl.DateTimeFormat`) and `formatPrice` (`Intl.NumberFormat`, EGP)
-- Debounced search inputs (400ms)
-- Notifications polling every 60s
-- Email uniqueness check before registration
-- SignalR real-time updates with WebSocket fallback
+**Features:**
+- JWT Bearer token injection (in-memory cache + localStorage fallback)
+- 401 auto-refresh via `/auth/refresh` + retry original request
+- Network error wrapping with descriptive messages
+- `buildQuery(params)` — builds query string from object
 
-### Accessibility
-- Skip-to-content link (hidden until focused via Tab)
-- `aria-live="polite"` region for toast announcements + route changes
-- `role="alertdialog"` on confirm and modal dialogs
-- `aria-modal="true"` on overlays
-- `aria-label` on product/auction card links (title + price)
-- `aria-hidden="true"` on decorative icons
-- `.sr-only` CSS utility class
-- Semantic `<a>` wrapping for product/auction cards
-- Keyboard-navigable with visible focus rings (Tab-only)
-- Lightbox with `role="dialog"` and `aria-label`
-- Focus restoration after closing lightbox/quick-view/confirm modals
-- Focus trap in modals (Tab cycling, no escape to background)
-- Navbar dropdown with `aria-haspopup`, `aria-expanded`
-- `prefers-reduced-motion` query disables all non-essential animations
+### `js/auth.js`
+| Function | Description |
+|----------|-------------|
+| `getUser()` | Returns parsed user from localStorage |
+| `isAuthenticated()` | Checks accessToken exists and not expired |
+| `requireAuth()` | Redirects to `#/login` if not authenticated |
+| `logout()` | Clears tokens + user, calls POST `/auth/logout`, redirects |
+| `getRoleFromToken()` | Parses JWT payload to extract role |
+| `hasRole(role)` | Checks if current user has specific role |
+| `hasAnyRole(...roles)` | Checks if user has any of the listed roles |
+| `updateNavbar()` | Updates nav dropdown based on auth state + role |
+| `updateCartBadge()` | Fetches cart count, caches, updates badge |
+| `updateNotifBadge()` | Fetches unread count, updates badge |
+| `startNotifPolling()` | Polls `/notifications/unread-count` every 60s |
+| `stopNotifPolling()` | Stops polling interval |
 
-### Admin
-- Role-gated (`Admin` role only, enforced by route guard + dashboard tab)
-- 4 tabs: Users (toggle active/inactive), Reports (resolve with confirmation), Orders (view all), Categories (add/delete)
+**Token flow:**
+- Access token: 60min expiry, stored in localStorage + in-memory
+- Refresh token: 7 days, stored in localStorage
+- On 401: POST `/auth/refresh` → new access token → retry
 
-### Auction Requests (Fisherman)
-- Role-gated to `Fisherman` role
-- Dashboard tab + direct route (`#/auction-requests`)
-- Submit form: product title, description, fish type, quantity (KG), estimated value, catch location/date, image URL
-- View own requests table with status badges (Pending/Approved/Rejected) and rejection reason
-- Form validation (required fields + number min="0")
-- Submit button with loading spinner, alerts on success/error
-- Empty state with CTA to create first request
+### `js/router.js`
+| Item | Description |
+|------|-------------|
+| `ROUTES` | Enum: Admin="Admin", Customer="Customer", Fisherman="Fisherman", BaitSeller="BaitSeller", Auctioneer="Auctioneer" |
+| `SELLER_ROLES` | [Fisherman, BaitSeller] |
+| `routeGuards` | Object mapping route → required role(s); 12 protected routes |
+| `routeMap` | 25 route entries mapping hash → render function + title key |
+| `routeTitles` | Title keys for each route (i18n) |
+| `registerRouteCleanup(fn)` | Hooks cleanup callback into route change |
+| `runRouteCleanups` | Array of cleanup callbacks |
+| `navigate(hash, force)` | Sets location.hash, optionally forces re-render |
+| `handleRoute()` | Main router: parse hash, check guards, run cleanup, render page, update title, focus management |
 
-### Auction Requests Review (Auctioneer)
-- Role-gated to `Auctioneer` role
-- Dashboard tab + direct route (`#/auction-requests-review`)
+**Route guards (12 protected routes):**
+- Cart, Checkout, Dashboard, Shipping, Order Detail, Profile, Subscriptions, Wallet → any authenticated
+- Admin → Admin role only
+- Auction Requests → Fisherman only
+- Auction Requests Review → Auctioneer only
+- Auctioneer Analytics → Auctioneer only
+
+**Route map (25 routes):**
+```
+"#/home" | "#/login" | "#/register" | "#/forgot-password" | "#/reset-password"
+"#/verify-email" | "#/products" | "#/product-detail" | "#/auctions"
+"#/auction-detail" | "#/cart" | "#/checkout" | "#/dashboard"
+"#/shipping" | "#/seller-profile" | "#/order-detail" | "#/profile"
+"#/auction-requests" | "#/auction-requests-review" | "#/auctioneer-analytics"
+"#/subscriptions" | "#/wallet" | "#/admin" | "#/privacy" | "#/terms"
+```
+
+### `js/utils.js`
+| Function | Description |
+|----------|-------------|
+| `$(selector, parent)` | querySelector shorthand |
+| `$$(selector, parent)` | querySelectorAll shorthand |
+| `showLoading(container, type)` | Injects skeleton HTML (page/card/detail/table/form/auth) |
+| `showError(container, msg)` | Shows error alert in container |
+| `showErrorWithRetry(container, msg, retryFn)` | Error with retry button |
+| `renderEmptyState(container, type)` | SVG illustration + message (7 types) |
+| `escapeHtml(str)` | HTML-entity escape |
+| `formatPrice(amount)` | EGP formatting via Intl.NumberFormat |
+| `formatDate(dateStr, style)` | Date formatting via Intl.DateTimeFormat |
+| `statusClass(status)` | CSS class mapping for 15+ statuses |
+| `tStatus(status)` | i18n translated status label |
+| `renderStars(rating, size)` | Star SVG rendering (full/half/empty) |
+| `debounce(fn, delay)` | Global debounce utility (default 400ms) |
+| `showFieldError(field, msg)` / `clearFieldError(field)` / `clearAllFieldErrors(form)` | Inline field validation |
+| `getPasswordStrength(password)` | 5-criteria strength meter (0-5) |
+| `validateForm(form, rules)` | Validates against 10+ rule types |
+| `calculateAge(birthdate)` | Age from date |
+| `triggerConfetti()` | 60-particle canvas confetti burst |
+| `showConfirm(options)` | Promise-based custom modal (danger type, shake, Esc, focus trap) |
+| `setupModal(modal)` / `closeModal(modal)` | Modal open/close with focus trap |
+| `confirmDialog(msg)` | Simple confirm dialog |
+| `initScrollAnimations()` / `disconnectAnimObserver()` | IntersectionObserver scroll animations |
+| `trackRecentlyViewed(product)` / `renderRecentlyViewed(container)` | localStorage recently viewed (12 max) |
+| `renderProductCards(container, products, options)` | Renders product cards (canonical URL, stagger, quick-add, badge, stock) |
+| `openQuickView(product, type)` | Quick-view modal with focus trap |
+| `openLightbox(images, startIndex)` | Full-screen gallery with arrow nav |
+| `transitionContent(container, newHtml)` | Skeleton-to-content morph |
+| `progressiveImg(img)` / `activateProgressiveImages()` | Blur-up image loading |
+| `togglePasswordVisibility(input, toggleBtn)` | Show/hide password |
+
+### `js/translations.js`
+- `translations` — Object with `en` and `ar` keys, ~470 keys each
+- `t(key, params)` — Returns translated string with `{placeholder}` substitution
+- `setLanguage(lang)` — Persists to localStorage `sayiad_lang`, sets `dir`/`lang` attributes, re-renders
+- `getCurrentLang()` — Returns `'en'` or `'ar'`
+- `updateStaticText()` — Updates `data-i18n`, `data-i18n-title`, `data-i18n-placeholder` elements
+
+### `js/background.js`
+- IIFE that draws canvas underwater scene
+- Elements: 3 sine-wave layers, rising particles (bubbles), kelp, light rays, fish
+- Reads `--blob-*` CSS variables for theme-aware colors
+- MutationObserver on `data-theme` for dark/light transitions
+- Debounced resize handler (150ms)
+- Disables on `prefers-reduced-motion`
+
+### `js/signalr.js`
+```js
+const connection = new signalR.HubConnectionBuilder()
+  .withUrl(`${APP_CONFIG.signalrHubUrl}`, {
+    accessTokenFactory: () => getAccessToken()
+  })
+  .withAutomaticReconnect([0, 2000, 5000, 10000, 30000])
+  .build();
+```
+
+| Function | Description |
+|----------|-------------|
+| `startSignalR()` | Starts connection |
+| `stopSignalR()` | Stops connection |
+| `joinAuctionGroup(auctionId)` | Joins SignalR group `auction-{id}` |
+| `leaveAuctionGroup(auctionId)` | Leaves group |
+| `placeBid(auctionId, amount, maxAutoBid)` | Places bid via SignalR |
+
+**Event handlers:**
+- `BidPlaced` — Price flash animation, bid history green highlight, outbid/self-bid toast
+- `AuctionEnded` — Countdown display update, confetti, winner announcement toast
+- `AuctionExtended` — End time update
+
+### `js/app.js`
+| Function | Description |
+|----------|-------------|
+| `showToast(msg, type)` | Toast notification (success/error/info/warning), RTL-aware, max 3 visible, auto-dismiss |
+| Route handler wrapper | try/catch with loading state |
+| `initApp()` | Main init: navbar, footer, theme, language, SW, background, event delegation |
+| `handleNavOverlay()` | Mobile nav drawer open/close/ESC/resize |
+| `handleSearchToggle()` | Search bar toggle |
+| `handleScrollHeader()` | Navbar scroll glass effect, back-to-top |
+| `syncUserRoleAttribute()` | Sets `data-user-role` on `<html>` for CSS targeting |
+| Onboarding tour | 3-step first-visit tour |
+| Hero tilt parallax | Mouse-move tilt on hero section |
+| Ripple effect | Button click ripple |
+| Keyboard nav detection | `keyboard-user` class on `<body>` |
+
+**Event delegation (global listeners):**
+- `click` on `[data-action="quick-add"]` — Quick add to cart
+- `click` on `[data-action="logout"]` — Logout
+- Navigation overlay toggle
+- Search toggle
+- Theme toggle
+- Language toggle
+
+---
+
+## PAGE SCRIPTS — All 24 Pages
+
+### `home.js` — `#/home`
+- Hero with tilt parallax effect
+- Role-based quick link cards (different CTAs per role)
+- Features grid (4 items)
+- Latest products section (4 cards via `renderProductCards`)
+- Active auctions section (4 cards)
+- Recently viewed strip (from localStorage)
+- Skeleton shimmer injected before API calls
+
+### `login.js` — `#/login`
+- Email + password form with inline validation
+- Password visibility toggle
+- Forgot password link
+- Unverified email warning + resend verification button
+- Auto-login redirect on success
+- i18n error messages
+
+### `register.js` — `#/register`
+- 3-step wizard: (1) profile info, (2) role selection, (3) seller details
+- Role selector: Customer/Fisherman/BaitSeller/Auctioneer
+- Conditional Fishing License field (when Fisherman selected)
+- Birthdate picker + age 18+ validation
+- Password strength meter + confirm match
+- Terms checkbox with legal links
+- Email uniqueness check on blur
+- Auto-login on success, overlay poll for email verification
+- `registerRouteCleanup` for cleanup on page leave
+
+### `forgot-password.js` — `#/forgot-password`
+- 3-step flow:
+  1. Email input → on 404 redirects to register
+  2. 6-digit OTP → verify via `/auth/verify-reset-code`
+  3. New password + confirm → POST `/auth/reset-password`
+- 60s countdown on OTP resend
+- Password strength meter
+- Progress indicator (step 1/2/3)
+
+### `reset-password.js` — `#/reset-password`
+- Token from URL query param
+- New password + confirm with strength meter
+- Auto-redirect to login on success
+
+### `verify-email.js` — `#/verify-email`
+- Token from URL query params
+- GET `/auth/verify-email?token=...`
+- Auto-login with stored credentials fallback
+- Auto-redirect after 2s on success
+- Error display on failure
+
+### `products.js` — `#/products`
+- Product grid with search, filters, pagination
+- Filters: category (dropdown), condition (tabs), sort (price low/high, high/low, newest), InStock toggle
+- URL param persistence (search, categoryId, sort, page)
+- Debounced search (400ms via global `debounce`)
+- Pagination controls (prev/next + page info)
+- Skeleton shimmer loading
+
+### `product-detail.js` — `#/product-detail`
+- Product images gallery (lightbox on click)
+- Breadcrumb navigation
+- Meta: price, stock, condition, location, brand, category
+- Quantity selector + add-to-cart
+- Wishlist toggle (stateful filled/outline button via API fetch)
+- Seller link + contact button
+- Similar products (via `renderProductCards`)
+- Reviews section: list with star ratings, submit form (star selector + comment), delete own review, in-place append
+- Recently viewed track (localStorage)
+
+### `auctions.js` — `#/auctions`
+- Auction grid with search + status filter
+- Status filter (Active/Finished/Cancelled) wired to API + URL sync
+- Countdown timer on each card
+- URL param persistence (search, status, page)
+- Pagination controls
+- Skeleton shimmer loading
+
+### `auction-detail.js` — `#/auction-detail`
+- Countdown timer (live `setInterval` update)
+- Bid history table (real-time via SignalR + 10s fallback poll)
+- Bid placement: number input + draggable slider (synced, min→max*10)
+- Auto-bid toggle with max amount field
+- Price flash animation on new bid (SignalR)
+- Urgency pulse on < 1hr remaining
+- Outbid/self-bid toasts
+- Breadcrumb
+- Recently viewed track
+- Winner display on auction end
+
+### `cart.js` — `#/cart`
+- Cart table: product thumbnail (48x48), title, unit price, quantity stepper (+/-), subtotal, remove
+- Quantity update via +/- buttons with `cart-updated` event
+- Remove with `showConfirm` dialog
+- Clear cart button
+- Total calculation
+- Floating mobile cart bar (sticky bottom)
+- Checkout button
+- Empty state SVG
+
+### `checkout.js` — `#/checkout`
+- Shipping address: new address form OR select existing
+- Fields: full name, phone, city, governorate, street, postal code
+- Shipping method selector
+- Payment method: Credit Card / Cash on Delivery
+- Order summary with total
+- Creates address → creates order → initiates payment
+- Navigates to order confirmation on success
+- Dispatches `cart-updated` event
+- API path: uses `/shippingaddresses` (no hyphen, C3 fix applied)
+
+### `dashboard.js` — `#/dashboard`
+- Sidebar with 11 tabs (role-gated visibility)
+- **Overview tab**: stats cards + seller onboarding banner (if no seller profile)
+- **Orders tab**: paginated table + cancel via `showConfirm`
+- **Products tab**: create form + list + image preview + draft autosave + image type/size validation
+- **Auctions tab** (Auctioneer only): start auction modal with scheduling
+- **Auction Requests tab** (Fisherman only): submit request form + list
+- **Auction Requests Review tab** (Auctioneer only): approve/reject workflow
+- **Auctioneer Analytics tab** (Auctioneer only): stats + recent auctions
+- **Wishlist tab**: remove + add-to-cart with spinner
+- **Notifications tab**: mark read + mark all
+- **Profile tab**: avatar upload + info edit
+- **Password tab**: change password with strength meter
+- Mobile tab selector dropdown
+
+### `shipping.js` — `#/shipping`
+- Address list with set-default toggle
+- Add new address inline form
+- Delete via `showConfirm`
+- API path: uses `/shippingaddresses` (no hyphen, C3 fix applied)
+
+### `seller-profile.js` — `#/seller-profile`
+- Public view: store info + seller's products (by userId from query param)
+- Edit/create own seller profile form
+- Role check includes Auctioneer via `SELLER_ROLES`
+
+### `order-detail.js` — `#/order-detail`
+- Order info: ID, date, status, total
+- Items table with product links + seller links
+- Shipping address display
+- Cancel button (Pending/Confirmed only) with `showConfirm`
+- Success/error alert
+- Order timeline
+
+### `profile.js` — `#/profile`
+- Avatar upload: camera overlay, file input, save as data URL
+- Account info: name, email, phone, role badge
+- Stats: order count, wishlist count, notification count
+- Quick Links: role-gated (My Products for sellers, Dashboard for Fisherman/BaitSeller)
+- Edit profile button
+- Change password button
+
+### `auction-requests.js` — `#/auction-requests`
+- Fisherman role-gated
+- Submit form: title, description, fish type, quantity KG, estimated value, catch location/date, image URL
+- Form validation (required + number min=0)
+- Submit with loading spinner
+- Own requests table with status badges (Pending/Approved/Rejected) + rejection reason
+- Empty state with CTA
+
+### `auction-requests-review.js` — `#/auction-requests-review`
+- Auctioneer role-gated
 - Filter tabs: Pending / Approved / Rejected / All
-- Table of requests with fisherman name, details, status badges
-- Approve: scheduling modal with StartTime (required, min=1h from now) + EndTime (optional, default start+7d)
-- Reject: modal with rejection reason textarea (required)
-- Loading states on action buttons, success/error feedback
+- Requests table: fisherman name, details, status badges
+- Approve: scheduling modal (StartTime required, min 1h from now, EndTime optional default +7d)
+- Reject: modal with reason textarea (required)
+- Loading states on actions
 
-### Auctioneer Analytics
-- Role-gated to `Auctioneer` role
-- Dashboard tab + direct route (`#/auctioneer-analytics`)
+### `auctioneer-analytics.js` — `#/auctioneer-analytics`
+- Auctioneer role-gated
 - Stats cards: Total Auctions, Active Auctions, Finished Auctions, Total Bids, Total Revenue
-- Recent auctions table with status, prices, bid count, end time
-- Concurrent API calls via `Promise.all`
+- Recent auctions table
+- Concurrent API via `Promise.all`
 
-### Subscription Plans & Upgrade
-- Dashboard dropdown link + direct route (`#/subscriptions`)
+### `wallet.js` — `#/wallet`
 - Requires authentication (any role)
-- Plan cards in 3-column grid with icon, price, feature list, "Most Popular" badge
-- Current plan card shown above with plan name
-- Upgrade button with loading spinner, auto-refresh on success
+- Balance card: total balance, held balance, available balance
+- Deposit input + button (calls `POST /api/wallet/deposit`)
+- Paginated transaction history table (calls `GET /api/wallet/transactions`)
+- i18n for all text, EGP currency formatting via Intl
+
+### `subscriptions.js` — `#/subscriptions`
+- Fetches plans from `GET /api/subscriptionplans` (previously hardcoded)
+- Plan cards: icon, price (USD), feature list, "Most Popular" badge
+- Current plan card
+- Upgrade button with loading spinner
 - Disabled "Current" button on active plan
+- Fetches `/subscriptions/my` for current user status
 
-### Order Cancellation
-- Cancel button on orders with `Pending` or `Confirmed` status
-- Two entry points: dashboard orders table + order detail page
-- Confirmation dialog (`confirm()`)
-- API: `PUT /orders/{id}/cancel`
-- Success: refreshes order view + alert
-- Failure: error message, button re-enabled
+### `admin.js` — `#/admin`
+- Admin role-gated (route guard + role check)
+- Tabs: Users, Reports, Products, Orders, Categories, Plans
+- **Users**: paginated table (20/page), suspend/activate toggle
+- **Reports**: list + resolve with confirmation
+- **Orders**: paginated table (20/page)
+- **Categories**: list + add/delete with `showConfirm`
 
-### Email Verification Resend
-- Integrated into login page's unverified email warning
-- "Resend Verification Email" button on API "verify your email" error
-- API: `POST /auth/resend-verification` with email
-- Error message fallback on failure
+### `privacy.js` — `#/privacy`
+- Static privacy policy with TOC (4 sections)
+- Bilingual inline content (EN/AR)
+- Scroll-reveal animations
 
-### Checkout / Payment
-- Requires auth (route guard)
-- Shipping address form (full name, phone, city, governorate, street, postal code)
-- Creates shipping address → creates order → initiates payment
-- Payment method selector (Credit Card / Cash on Delivery)
+### `terms.js` — `#/terms`
+- Static terms & conditions with TOC (6 sections)
+- Bilingual inline content (EN/AR)
+- Scroll-reveal animations
 
-### Performance
-- Service worker precaches app shell (31 items)
-- Cache-first for static assets (GET requests to same origin, non-API)
-- CSS animations only animate `transform` and `opacity`
-- Canvas background uses `requestAnimationFrame` with minimal draw calls
-- Progressive image loading (blur-up technique)
-- Debounced search inputs (400ms)
-- Debounced canvas resize handler (150ms)
-- In-memory access token caching (avoids repeated localStorage reads)
-- Cart badge caching with invalidation on cart mutations
+---
 
-## Key Config
+## DESIGN SYSTEM (`css/style.css`)
+
+### CSS Custom Properties (OKLCH)
+```
+--primary: oklch(0.55 0.22 265)       /* Blue */
+--primary-light: oklch(0.7 0.16 265)   /* Lighter blue */
+--surface: oklch(0.97 0.01 265)        /* Light bg */
+--text: oklch(0.15 0.02 265)           /* Near-black */
+--glass-bg: oklch(0.97 0.01 265 / 0.7) /* Glassmorphism */
+--gold-gradient: oklch(0.7 0.18 85)    /* Seller gold theme */
+--danger: oklch(0.6 0.22 25)           /* Red */
+--success: oklch(0.6 0.18 145)         /* Green */
+--warning: oklch(0.7 0.17 85)          /* Amber */
+```
+
+Dark mode overrides via `[data-theme="dark"]`: surfaces become darker, text lighter.
+
+### Major Sections
+- **Reset** — box-sizing, margin/padding reset
+- **Typography** — Inter/Cairo/Syne fonts, RTL overrides for Arabic
+- **Navbar** — near-solid backgrounds (not glass), dropdown with role-gated items
+- **Buttons** — primary, secondary, outline, ghost, danger, gold seller theme, ripple
+- **Forms** — inputs, selects, textareas, validation states, password strength meter
+- **Hero** — full-width landing section
+- **Product/Auction cards** — glassmorphism, hover lift, gold border for sellers
+- **Lightbox** — full-screen overlay, arrow nav, keyboard support
+- **Dashboard** — sidebar layout, tab content, stats cards
+- **Skeleton loaders** — 5 types (page, card, detail, table, form, auth)
+- **Shimmer** — animated gradient for loading states
+- **Confetti** — canvas burst animation
+- **Subscriptions** — pricing grid, feature comparison
+- **Gold seller theme** — shimmer gradients for seller roles
+- **Glassmorphism** — card/modals with backdrop blur
+- **Urgency palette** — red pulse for ending soon auctions
+- **Back-to-top** — fixed button, appears at 400px
+- **Mobile drawer** — slide-in nav, safe-area support
+- **Floating cart bar** — sticky bottom on mobile
+- **Toast notifications** — slide-in, auto-dismiss, max 3 visible
+- **Responsive** — 1024px, 768px, 480px breakpoints
+- **Accessibility** — `.sr-only`, focus rings, `prefers-reduced-motion`
+
+---
+
+## SERVICE WORKER (`sw.js`)
+
+| Setting | Value |
+|---------|-------|
+| Cache name | `sayiad-v10` |
+| Precache | 37 assets (all core JS + 25 page scripts + CSS) |
+| Navigation | NetworkFirst (HTML) |
+| Static assets | CacheFirst (CSS, JS, images, fonts) |
+| API calls (`/api/`) | NetworkOnly (bypass cache) |
+| Broadcast channel | `sw-updates` for update notifications |
+
+---
+
+## ROUTING SUMMARY
+
+| Route | Page Script | Auth Required | Role Required |
+|-------|-------------|---------------|---------------|
+| `#/home` | home.js | ❌ | — |
+| `#/login` | login.js | ❌ | — |
+| `#/register` | register.js | ❌ | — |
+| `#/forgot-password` | forgot-password.js | ❌ | — |
+| `#/reset-password` | reset-password.js | ❌ | — |
+| `#/verify-email` | verify-email.js | ❌ | — |
+| `#/products` | products.js | ❌ | — |
+| `#/product-detail` | product-detail.js | ❌ | — |
+| `#/auctions` | auctions.js | ❌ | — |
+| `#/auction-detail` | auction-detail.js | ❌ | — |
+| `#/cart` | cart.js | ✅ | Any |
+| `#/checkout` | checkout.js | ✅ | Any |
+| `#/dashboard` | dashboard.js | ✅ | Any |
+| `#/shipping` | shipping.js | ✅ | Any |
+| `#/order-detail` | order-detail.js | ✅ | Any |
+| `#/profile` | profile.js | ✅ | Any |
+| `#/subscriptions` | subscriptions.js | ✅ | Any |
+| `#/wallet` | wallet.js | ✅ | Any |
+| `#/auction-requests` | auction-requests.js | ✅ | Fisherman |
+| `#/auction-requests-review` | auction-requests-review.js | ✅ | Auctioneer |
+| `#/auctioneer-analytics` | auctioneer-analytics.js | ✅ | Auctioneer |
+| `#/admin` | admin.js | ✅ | Admin |
+| `#/privacy` | privacy.js | ❌ | — |
+| `#/terms` | terms.js | ❌ | — |
+| `#/seller-profile` | seller-profile.js | ❌ | — |
+
+---
+
+## KEY CONFIG
 
 | File | Setting | Value |
 |------|---------|-------|
@@ -309,25 +625,62 @@ Front-end/
 | `js/config.js` | `signalrHubUrl` | `https://sayiad.runasp.net/hubs/auction` |
 | `vercel.json` | API rewrite | `/api/*` → `https://sayiad.runasp.net/api/*` |
 | `js/translations.js` | `currentLang` | `en` or `ar` (localStorage `sayiad_lang`) |
+| `sw.js` | Cache version | `sayiad-v10` (increment on deploy) |
 | CSS `:root` | `--primary` | `oklch(0.55 0.22 265)` |
-| CSS `:root` | `--blob-1 / --blob-2 / --blob-3` | Canvas wave colors (light theme) |
 | CSS `[data-theme="dark"]` | `--primary` | `oklch(0.7 0.16 265)` |
 
-## Running Locally
+---
+
+## PERFORMANCE FEATURES
+
+- Service worker precache (37 app shell items)
+- Cache-first for static assets (CSS, JS, images, fonts)
+- CSS animations on `transform` + `opacity` only
+- Canvas background via `requestAnimationFrame`
+- Progressive image loading (blur-up → crossfade)
+- Debounced search (400ms)
+- Debounced canvas resize (150ms)
+- In-memory access token cache
+- Cart badge caching with mutation invalidation
+- Skeleton loaders for all page types
+
+## ACCESSIBILITY
+
+- Skip-link to main content
+- `aria-live="polite"` for toasts + route changes
+- `role="alertdialog"` on confirm/prompt modals
+- `aria-modal="true"` on overlays
+- `aria-label` on interactive elements
+- `.sr-only` CSS utility
+- Semantic HTML (nav, main, section, footer)
+- Focus trap in modals/lightbox
+- Focus restoration on modal close
+- Keyboard nav detection (focus rings on Tab only)
+- `prefers-reduced-motion` support
+
+## PWA
+
+- Web app manifest via `index.html` meta tags
+- Service worker with precache + runtime caching
+- Offline-capable app shell
+- Update notification via broadcast channel
+- Mobile-friendly responsive layout
+
+## RUNNING LOCALLY
 
 ```powershell
-# Frontend (uses Node.js static server)
+# Frontend (static server)
 node "C:\Users\pcc\AppData\Local\Temp\opencode\serve-frontend.js"
-# Opens at http://localhost:8000
+# → http://localhost:8000
 
 # Backend API
-dotnet run --project "F:\DEPI Graduation Project\Sayiad.API"
-# Runs at https://localhost:7030
+dotnet run --project "F:\DEPI Graduation Project\Back-end\Sayiad.API"
+# → https://localhost:7030
 ```
 
-## Deployment
+## DEPLOYMENT
 
-- **API**: Published via Web Deploy to `sayiad.runasp.net`
-  - Profile: `Sayiad.API\Properties\PublishProfiles\site68284-WebDeploy.pubxml`
-  - Credentials: `sayiad.runasp.net-WebDeploy.publishSettings`
-- **Frontend**: Configured for Vercel deployment with SPA rewrites and API proxy (`vercel.json`)
+- **API**: Web Deploy → `sayiad.runasp.net`
+- **Frontend**: Vercel → `saiyad-eg.vercel.app` (with API proxy rewrites)
+- **Cache version**: Bump `sayiad-v10` in `sw.js` on deploy
+- **Build**: No build step (static files)
