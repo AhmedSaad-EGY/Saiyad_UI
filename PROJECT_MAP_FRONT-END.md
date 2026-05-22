@@ -4,20 +4,20 @@
 
 ---
 
-## Latest Session: Post-Waves 6–7 — Revenue Flow Corrections (May 22, 2026)
+## Latest Session: Role-Based Subscriptions + Revenue Tab (May 22, 2026)
 
-### ⚠️ Known Issue: Subscription page has no role-specific content
-- Currently shows same generic plan cards for all roles (Customer, Fisherman, BaitSeller, Auctioneer)
-- **Fix:** Detect user role at top of `subscriptions.js`, show role-specific heading + description
-  - **Customer** sees: "Unlock More Bids — buy a subscription to bid on more auctions"
-  - **Auctioneer** sees: "Grow Your Business — buy a subscription to accept and manage more auctions"
-  - **Fisherman/BaitSeller** sees: generic seller upgrade message
+### ✅ Role-based subscription page (`subscriptions.js`)
+- Detects user role at top via `getUser().role`
+- **Customer** sees: "Unlock More Bids" — "Buy a subscription to bid on more auctions"
+- **Auctioneer** sees: "Grow Your Business" — "Buy a subscription to accept and manage more auctions"
+- **Fisherman/BaitSeller** sees: "Upgrade Your Experience" — generic seller upgrade message
+- New translation keys (EN + AR): `subscriptions.customerHeading/Desc`, `subscriptions.auctioneerHeading/Desc`, `subscriptions.sellerHeading/Desc`
 
-### ✅ Correct: Revenue tab in admin panel (`admin.js`)
+### ✅ Revenue tab in admin panel (`admin.js`)
 - `{ id: "revenue" }` tab with 4 stat cards + fee income table
-- Shows both auction and subscription payment income
+- Shows both auction (auctioneer) and subscription payment income
 
-### ✅ Correct: Dynamic currency display (`subscriptions.js`)
+### ✅ Dynamic currency display (`subscriptions.js`)
 - `formatCurrency(amount, currency)` reading `p.Currency` from API
 
 **Build:** 0 errors | **Tests:** 22/23 (same pre-existing)
