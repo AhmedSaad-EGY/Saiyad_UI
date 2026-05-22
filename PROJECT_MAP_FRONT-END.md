@@ -4,7 +4,17 @@
 
 ---
 
-## Latest Session: Wave 5 — Product Review Flow (May 22, 2026)
+## Latest Session: Wave 6 — Platform Fee & Auction Settlement (May 22, 2026)
+
+### On auction end with winner: wallet deduction + 95% seller payout
+- **WalletManager.SettleAuctionPaymentAsync** — new method: deducts winning bid from winner's wallet (releases hold), credits seller 95% (5% platform fee implicit)
+- **EndAuctionAsync** and **AuctionExpiryService** both call settlement on winner
+- **Email notifications** updated to mention wallet deduction and 95% payout
+- **Seller notification** now includes exact payout amount
+- **Frontend**: No changes needed — wallet balance deduction and credit are automatic; auction winner already sees "You won" modal, seller already sees "Auction Ended" notification
+- **Build:** 0 errors | **Tests:** 22/23 (same pre-existing)
+
+## Previous: Wave 5 — Product Review Flow (May 22, 2026)
 
 ### Backend — New products require admin approval
 - **ProductStatus.PendingReview** added — new products start as PendingReview
