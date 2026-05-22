@@ -19,13 +19,29 @@ function getConnection() {
       bidDisplay.offsetHeight;
       bidDisplay.style.animation = "priceFlash 0.6s var(--ease-bounce)";
     }
-    // Highlight new bid row in history
-    const rows = document.querySelectorAll("#bidHistoryBody tr");
-    if (rows.length) {
-      const firstRow = rows[0];
-      firstRow.style.background = "var(--success-bg)";
-      firstRow.style.transition = "background 1s ease";
-      setTimeout(() => { firstRow.style.background = ""; }, 2000);
+    const bidList = document.getElementById("bidList");
+    if (bidList) {
+      bidList.querySelector(".empty-state")?.remove();
+      const row = document.createElement("div");
+      row.className = "bid-item";
+      row.style.background = "var(--success-bg)";
+      row.style.transition = "background 1s ease";
+      const bidder =
+        bid.userName ||
+        bid.bidderName ||
+        bid.fullName ||
+        (bid.bidderId ? `User #${bid.bidderId}` : "User");
+      row.innerHTML = `
+        <span><strong>${escapeHtml(bidder)}</strong> <small>${formatDate(bid.createdAt || new Date().toISOString())}</small></span>
+        <span style="font-weight:700;color:var(--success)">${formatPrice(bid.amount || bid.currentHighestBid)} ${bid.isAutoBid ? '<i class="fas fa-robot" title="Auto bid"></i>' : ""}</span>
+      `;
+      bidList.prepend(row);
+      setTimeout(() => { row.style.background = ""; }, 2000);
+    }
+    const bidCount = document.getElementById("bidCountDisplay");
+    if (bidCount) {
+      const nextCount = Number(bid.bidCount) || Number(bidCount.textContent || 0) + 1;
+      bidCount.textContent = nextCount;
     }
     const userId = getUser()?.id;
     if (userId && bid.bidderId && bid.bidderId !== parseInt(userId)) {

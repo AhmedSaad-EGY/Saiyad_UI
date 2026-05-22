@@ -126,7 +126,7 @@ document.addEventListener("cart-updated", () => {
 async function updateNotifBadge() {
   const badge = document.getElementById("notifBadge");
   if (!isAuthenticated()) {
-    badge?.classList.add("hidden");
+    stopNotifPolling();
     return;
   }
   try {
@@ -137,7 +137,8 @@ async function updateNotifBadge() {
       badge.classList.remove("hidden");
     } else badge?.classList.add("hidden");
   } catch {
-    badge?.classList.add("hidden");
+    if (!isAuthenticated()) stopNotifPolling();
+    else badge?.classList.add("hidden");
   }
 }
 

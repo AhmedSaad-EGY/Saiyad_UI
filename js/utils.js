@@ -41,6 +41,13 @@ function showLoading(container, type = "page") {
         <div class="skeleton skeleton-row"></div>
         <div class="skeleton skeleton-row"></div>
       </div>`,
+    auth: `
+      <div class="auth-page skeleton-shimmer" style="min-height:300px">
+        <div class="skeleton" style="width:40%;height:28px;margin:0 auto 24px"></div>
+        <div class="skeleton" style="height:44px;margin-bottom:12px;border-radius:8px"></div>
+        <div class="skeleton" style="height:44px;margin-bottom:20px;border-radius:8px"></div>
+        <div class="skeleton" style="height:44px;width:100%;border-radius:8px"></div>
+      </div>`,
     form: `
       <div class="skeleton-form skeleton-shimmer" style="padding:16px 0">
         <div class="skeleton skeleton-text" style="width:30%"></div>
@@ -191,6 +198,8 @@ function statusClass(status) {
     Available: "available",
     Sold: "sold",
     Draft: "draft",
+    Rejected: "draft",
+    Suspended: "draft",
     Active: "active",
     Finished: "finished",
     Cancelled: "draft",
@@ -200,7 +209,6 @@ function statusClass(status) {
     Delivered: "available",
     Approved: "active",
     Valid: "active",
-    Rejected: "draft",
     Winning: "available",
   };
   return `status-${map[status] || "draft"}`;
@@ -212,6 +220,20 @@ function tStatus(status, prefix = "order") {
   const label =
     typeof status === "number" ? (numMap[status] ?? status) : status;
   const key = `${prefix}.status${label}`;
+  const translated = t(key);
+  return translated || label;
+}
+
+function tCondition(condition) {
+  if (condition == null || condition === "") return t("common.N/A");
+  const labels = {
+    0: "New",
+    1: "Used",
+    New: "New",
+    Used: "Used",
+  };
+  const label = labels[condition] || condition;
+  const key = `product.condition${label}`;
   const translated = t(key);
   return translated || label;
 }
@@ -350,7 +372,10 @@ function renderRecentlyViewed(container) {
           <div class="recently-viewed-info">
             <span class="recently-viewed-title">${escapeHtml(v.title)}</span>
             ${v.price != null ? `<span class="recently-viewed-price">${formatPrice(v.price)}</span>` : ""}
-          </div>
+            <span class="recently-viewed-type" style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--text-muted)">
+              <i class="fas ${v.type === "auction" ? "fa-gavel" : "fa-tag"}" aria-hidden="true"></i>
+              ${v.type === "auction" ? t("nav.auctions") : t("nav.products")}
+            </span>
         </a>
       `,
         )
@@ -408,7 +433,7 @@ function openQuickView(product) {
           <p style="color:var(--text-secondary);font-size:0.88rem;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden">${escapeHtml(desc) || t("product.noDescription")}</p>
           <div class="modal-actions" style="margin-top:20px">
             <a href="${link}" class="btn btn-primary" onclick="this.closest('.modal-overlay').remove()"><i class="fas fa-eye"></i> ${t("common.page")}</a>
-            <button class="btn btn-ghost" onclick="this.closest('.modal-overlay').remove()">${t("common.retry") || "Close"}</button>
+            <button class="btn btn-ghost" onclick="this.closest('.modal-overlay').remove()">${t("common.close") || "Close"}</button>
           </div>
         </div>
       </div>

@@ -4,8 +4,12 @@ async function renderCheckout(container) {
   showLoading(container, "form");
 
   try {
-    const cart = await api.get("/cart");
+    const [cart, savedAddresses] = await Promise.all([
+      api.get("/cart"),
+      api.get("/shippingaddresses").catch(() => []),
+    ]);
     const items = cart.items || [];
+    const addresses = Array.isArray(savedAddresses) ? savedAddresses : [];
 
     if (!items.length) {
       container.innerHTML = `
@@ -36,7 +40,10 @@ async function renderCheckout(container) {
               (item) => `
             <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)">
               <span>${escapeHtml(item.productTitle || `Product #${item.productId}`)} <small class="text-muted">x${item.quantity || 1}</small></span>
-              <span style="font-weight:600">${formatPrice((item.price || 0) * (item.quantity || 1))}</span>
+              <span style="font-weight:600">${formatPrice(
+                (item.product?.price || item.unitPrice || item.price || 0) *
+                (item.quantity || 1)
+              )}</span>
             </div>
           `,
             )
@@ -47,8 +54,9 @@ async function renderCheckout(container) {
           </div>
           <hr style="border-color:var(--border);margin:16px 0">
           <h3 style="margin-bottom:16px">${t("cart.shippingAddress")}</h3>
+          <div id="savedAddressesWrap"></div>
           <form id="addressForm">
-            <div class="grid grid-2" style="gap:12px">
+            <div id="addressFields" class="grid grid-2" style="gap:12px">
               <div class="form-group">
                 <label class="form-label" for="addrFullName">${t("auth.fullName")} *</label>
                 <input type="text" class="form-input" id="addrFullName" name="fullName" autocomplete="name" required>
@@ -71,6 +79,7 @@ async function renderCheckout(container) {
               </div>
             </div>
           </form>
+          <div id="newAddressLink" style="margin-top:8px;display:none"><a href="#" id="showNewAddressForm" style="font-size:0.9rem"><i class="fas fa-plus"></i> ${t("shipping.addNew")}</a></div>
         </div>
         <div class="card" style="grid-column:2">
           <h3 style="margin-bottom:16px">${t("cart.paymentMethod")}</h3>
@@ -85,6 +94,60 @@ async function renderCheckout(container) {
       </div>
     `;
 
+    let selectedAddressId = null;
+
+    ["addrFullName", "addrPhone", "addrAddressLine", "addrCity"].forEach((id) => {
+      document.getElementById(id).addEventListener("input", () => clearFieldError(document.getElementById(id)));
+    });
+
+    if (addresses.length > 0) {
+      const wrap = document.getElementById("savedAddressesWrap");
+      wrap.innerHTML = `
+        <div style="margin-bottom:12px">
+          <label style="font-weight:600;display:block;margin-bottom:8px">${t("shipping.savedAddresses") || "Saved Addresses"}</label>
+          ${addresses.map((a, i) => `
+            <label class="radio-card" style="display:flex;align-items:flex-start;gap:8px;padding:10px;margin-bottom:6px;border:1px solid var(--border);border-radius:8px;cursor:pointer;background:var(--card-bg)">
+              <input type="radio" name="savedAddr" value="${a.id}" ${i === 0 ? "checked" : ""} style="margin-top:3px">
+              <div>
+                <strong>${escapeHtml(a.fullName || a.fullName || "")}</strong><br>
+                <span style="font-size:0.85rem;color:var(--text-muted)">${escapeHtml(a.addressLine || "")}, ${escapeHtml(a.city || "")}${a.postalCode ? ` - ${escapeHtml(a.postalCode)}` : ""}</span><br>
+                <span style="font-size:0.85rem;color:var(--text-muted)">${escapeHtml(a.phone || "")}</span>
+              </div>
+            </label>
+          `).join("")}
+          <label class="radio-card" style="display:flex;align-items:center;gap:8px;padding:10px;margin-bottom:6px;border:1px dashed var(--border);border-radius:8px;cursor:pointer;background:var(--card-bg)">
+            <input type="radio" name="savedAddr" value="new" style="margin:0">
+            <span><i class="fas fa-plus"></i> ${t("shipping.addNew")}</span>
+          </label>
+        </div>
+      `;
+      selectedAddressId = addresses[0].id;
+      document.getElementById("addressFields").style.display = "none";
+
+      wrap.querySelectorAll("input[name='savedAddr']").forEach((radio) => {
+        radio.addEventListener("change", () => {
+          const fields = document.getElementById("addressFields");
+          const newLink = document.getElementById("newAddressLink");
+          if (radio.value === "new") {
+            fields.style.display = "";
+            newLink.style.display = "none";
+            selectedAddressId = null;
+          } else {
+            fields.style.display = "none";
+            newLink.style.display = "";
+            selectedAddressId = Number(radio.value);
+          }
+        });
+      });
+
+      document.getElementById("showNewAddressForm").addEventListener("click", (e) => {
+        e.preventDefault();
+        const newRadio = wrap.querySelector("input[value='new']");
+        if (newRadio) newRadio.checked = true;
+        newRadio.dispatchEvent(new Event("change"));
+      });
+    }
+
     document
       .getElementById("placeOrderBtn")
       .addEventListener("click", async () => {
@@ -95,28 +158,40 @@ async function renderCheckout(container) {
         btn.innerHTML = `<i class="fas fa-spinner spinner"></i> ${t("cart.placingOrder")}`;
 
         try {
-          const fullName = document.getElementById("addrFullName").value.trim();
-          const phone = document.getElementById("addrPhone").value.trim();
-          const addressLine = document.getElementById("addrAddressLine").value.trim();
-          const city = document.getElementById("addrCity").value.trim();
-          const postalCode = document.getElementById("addrPost").value.trim();
+          let addr_id;
 
-          if (!fullName || !phone || !addressLine || !city) {
-            alertDiv.innerHTML = `<div class="alert alert-error">${t("cart.requiredFields")}</div>`;
-            btn.disabled = false;
-            btn.innerHTML = `<i class="fas fa-lock"></i> ${t("cart.placeOrder")}`;
-            return;
+          if (selectedAddressId) {
+            addr_id = selectedAddressId;
+          } else {
+            clearAllFieldErrors(document.getElementById("addressForm"));
+            const rules = [
+              { element: document.getElementById("addrFullName"), required: true },
+              { element: document.getElementById("addrPhone"), required: true, phone: true },
+              { element: document.getElementById("addrAddressLine"), required: true },
+              { element: document.getElementById("addrCity"), required: true },
+            ];
+            if (!validateForm(document.getElementById("addressForm"), rules)) {
+              btn.disabled = false;
+              btn.innerHTML = `<i class="fas fa-lock"></i> ${t("cart.placeOrder")}`;
+              return;
+            }
+
+            const fullName = document.getElementById("addrFullName").value.trim();
+            const phone = document.getElementById("addrPhone").value.trim();
+            const addressLine = document.getElementById("addrAddressLine").value.trim();
+            const city = document.getElementById("addrCity").value.trim();
+            const postalCode = document.getElementById("addrPost").value.trim();
+
+            const addr = await api.post("/shippingaddresses", {
+              fullName,
+              phone,
+              city,
+              addressLine,
+              postalCode: postalCode || undefined,
+            });
+            addr_id = addr.id;
           }
 
-          const addr = await api.post("/shipping-addresses", {
-            fullName,
-            phone,
-            city,
-            addressLine,
-            postalCode: postalCode || undefined,
-          });
-
-          const addr_id = addr.id;
           const order = await api.post("/orders", {
             shippingAddressId: addr_id,
           });
@@ -131,10 +206,8 @@ async function renderCheckout(container) {
             await api.post(`/payments/${payment.id}/confirm`);
           }
 
-          alertDiv.innerHTML = `<div class="alert alert-success"><i class="fas fa-check-circle"></i> ${t("cart.orderSuccess")}</div>`;
-          btn.innerHTML = `<i class="fas fa-check"></i> ${t("cart.orderSuccess")}`;
-
-          setTimeout(() => navigate("dashboard?tab=orders"), 2000);
+          document.dispatchEvent(new CustomEvent("cart-updated"));
+          navigate("order-detail?id=" + order_id);
         } catch (err) {
           alertDiv.innerHTML = `<div class="alert alert-error">${escapeHtml(err.message || t("cart.orderError"))}</div>`;
           btn.disabled = false;

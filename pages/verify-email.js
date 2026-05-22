@@ -17,7 +17,7 @@ function renderVerifyEmail(container) {
           <div class="empty-state">
             <i class="fas fa-check-circle" style="color:var(--success)"></i>
             <h3>${t("verify.success")}</h3>
-            <p>${t("verify.loggingIn")}</p>
+            <p>${t("verify.redirecting")}</p>
           </div>
         </div></div>`;
 
@@ -27,10 +27,12 @@ function renderVerifyEmail(container) {
       // Redirect to login (auto-login with password removed for security)
       setTimeout(() => navigate("login"), 2000);
     })
-    .catch(() => {
+    .catch((err) => {
       container.innerHTML = `
         <div class="auth-page"><div class="card">
-          <div class="empty-state"><i class="fas fa-exclamation-triangle"></i><h3>${t("verify.error")}</h3><a href="#/login" class="btn btn-primary" style="margin-top:16px">${t("auth.login")}</a></div>
-        </div></div>`;
+          <div class="empty-state"><i class="fas fa-exclamation-triangle"></i><h3>${t("verify.error")}</h3>
+          <p style="font-size:var(--text-sm);opacity:0.7;margin-top:4px">${escapeHtml(err.message || "")}</p>
+          <a href="#/login" class="btn btn-primary" style="margin-top:16px">${t("auth.login")}</a>
+        </div></div></div>`;
     });
 }

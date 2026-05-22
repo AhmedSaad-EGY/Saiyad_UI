@@ -22,13 +22,14 @@ async function renderAuctionRequests(container) {
   async function loadRequests() {
     const content = document.getElementById("auctionReqContent");
     try {
-      const requests = await api.get("/auctions/requests/my");
-      if (!requests || requests.length === 0) {
+      const res = await api.get("/auctions/requests/my", { page: 1, pageSize: 50 });
+      const items = res?.items || res?.data || [];
+      if (!items || items.length === 0) {
         content.innerHTML = `<div class="empty-state"><i class="fas fa-gavel"></i><h3>${t("auctionRequests.noRequests")}</h3><p>${t("auctionRequests.noRequestsDesc")}</p><button class="btn btn-primary" id="emptyRequestBtn"><i class="fas fa-plus"></i> ${t("auctionRequests.requestAuction")}</button></div>`;
         document.getElementById("emptyRequestBtn")?.addEventListener("click", () => showForm(null));
         return;
       }
-      content.innerHTML = `<div class="table-responsive"><table class="table"><thead><tr><th>${t("auctionRequests.productTitle")}</th><th>${t("auctionRequests.fishType")}</th><th>${t("auctionRequests.quantityKg")}</th><th>${t("auctionRequests.estimatedValue")}</th><th>${t("auctionRequests.status")}</th><th>${t("auctionRequests.createdAt")}</th>${t("auctionRequests.rejectionReason") ? '<th>' + t("auctionRequests.rejectionReason") + '</th>' : ''}</tr></thead><tbody>${requests.map(r => `<tr><td>${escapeHtml(r.productTitle)}</td><td>${escapeHtml(r.fishType)}</td><td>${r.quantityKg}</td><td>${r.estimatedValue}</td><td><span class="${statusClass(r.status)}">${t('auctionRequests.' + r.status.toLowerCase())}</span></td><td>${new Date(r.createdAt).toLocaleDateString()}</td><td>${r.status === 'Rejected' ? escapeHtml(r.rejectionReason || '-') : '-'}</td></tr>`).join("")}</tbody></table></div>`;
+      content.innerHTML = `<div class="table-responsive"><table class="table"><thead><tr><th>${t("auctionRequests.productTitle")}</th><th>${t("auctionRequests.fishType")}</th><th>${t("auctionRequests.quantityKg")}</th><th>${t("auctionRequests.estimatedValue")}</th><th>${t("auctionRequests.status")}</th><th>${t("auctionRequests.createdAt")}</th>${t("auctionRequests.rejectionReason") ? '<th>' + t("auctionRequests.rejectionReason") + '</th>' : ''}</tr></thead><tbody>${items.map(r => `<tr><td>${escapeHtml(r.productTitle)}</td><td>${escapeHtml(r.fishType)}</td><td>${r.quantityKg}</td><td>${r.estimatedValue}</td><td><span class="${statusClass(r.status)}">${t('auctionRequests.' + r.status.toLowerCase())}</span></td><td>${new Date(r.createdAt).toLocaleDateString()}</td><td>${r.status === 'Rejected' ? escapeHtml(r.rejectionReason || '-') : '-'}</td></tr>`).join("")}</tbody></table></div>`;
     } catch (err) {
       content.innerHTML = `<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><h3>${t("common.error")}</h3><p>${escapeHtml(err.message)}</p></div>`;
     }

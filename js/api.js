@@ -17,6 +17,21 @@ function clearTokens() {
   localStorage.removeItem('user');
 }
 
+async function parseResponse(res) {
+  const text = await res.text();
+  if (!text) return null;
+  const contentType = res.headers.get("content-type") || "";
+  if (contentType.includes("application/json") || /^[\[{]/.test(text.trim())) {
+    try {
+      return JSON.parse(text);
+    } catch {
+      if (!res.ok) return { message: text };
+      throw new Error("Invalid JSON response from server.");
+    }
+  }
+  return res.ok ? text : { message: text };
+}
+
 async function request(endpoint, options = {}) {
   const token = getAccessToken();
   const headers = { "Content-Type": "application/json", ...options.headers };
@@ -45,8 +60,7 @@ async function request(endpoint, options = {}) {
     throw new Error("Session expired. Please log in again.");
   }
 
-  const text = await res.text();
-  const data = text ? JSON.parse(text) : null;
+  const data = await parseResponse(res);
 
   if (!res.ok) {
     let msg =
@@ -100,8 +114,7 @@ const api = {
     } catch {
       throw new Error("Network error. Please check your connection.");
     }
-    const text = await res.text();
-    const data = text ? JSON.parse(text) : null;
+    const data = await parseResponse(res);
     if (!res.ok) {
       const msg =
         data?.message ||
@@ -127,7 +140,7 @@ async function refreshAccessToken() {
       body: JSON.stringify({ refreshToken }),
     });
     if (!res.ok) throw new Error("Refresh failed");
-    const data = await res.json();
+    const data = await parseResponse(res);
     setAccessToken(data.token);
     localStorage.setItem("refreshToken", data.refreshToken);
     return true;

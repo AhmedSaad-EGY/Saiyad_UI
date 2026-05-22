@@ -31,7 +31,7 @@ function renderRegister(container) {
             <label class="form-label" for="regPassword">${t("auth.password")}</label>
             <div class="password-wrapper">
               <input type="password" class="form-input" id="regPassword" name="password" placeholder="${t("auth.password")}" required autocomplete="new-password" minlength="8">
-              <button type="button" class="toggle-password" id="regTogglePw" aria-label="${t("auth.showPassword")}" <i class="fas fa-eye"></i></button>
+              <button type="button" class="toggle-password" id="regTogglePw" aria-label="${t("auth.showPassword")}"><i class="fas fa-eye"></i></button>
             </div>
             <div class="password-strength" id="regStrength"><div class="password-strength-bar" id="regStrengthBar"></div></div>
             <div class="password-strength-text" id="regStrengthText"></div>
@@ -259,13 +259,20 @@ function renderRegister(container) {
       // Only email is needed for potential auto-login after verification.
       sessionStorage.setItem("pendingLoginEmail", savedEmail);
 
-      await api.post("/auth/register", {
+      const registerPayload = {
         fullName: regName.value.trim(),
         email: savedEmail,
         phone: regPhone.value.trim(),
         password: savedPassword,
         role: regRole.value,
-      });
+      };
+      if (regRole.value === "Fisherman") {
+        registerPayload.licenseNumber = document
+          .getElementById("regLicense")
+          ?.value.trim();
+      }
+
+      await api.post("/auth/register", registerPayload);
 
       regForm.reset();
       strengthBar.className = "password-strength-bar strength-empty";
@@ -346,7 +353,7 @@ function showVerificationOverlay(email, password) {
     overlay.classList.remove("show");
     setTimeout(() => overlay.remove(), 350);
   };
-  window.onRouteCleanup = cleanup;
+  registerRouteCleanup(cleanup);
 
   // Poll every 3s
   const interval = setInterval(async () => {
@@ -388,6 +395,6 @@ function showVerificationOverlay(email, password) {
     clearInterval(interval);
     overlay.classList.remove("show");
     setTimeout(() => overlay.remove(), 350);
-    window.onRouteCleanup = null;
+
   });
 }

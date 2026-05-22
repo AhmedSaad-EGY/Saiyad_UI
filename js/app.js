@@ -206,7 +206,7 @@ function openDrawer() {
 
   const btn = document.getElementById("hamburger");
   if (btn) {
-    btn.innerHTML = '<i class="fas fa-times"></i>';
+    btn.innerHTML = '<i class="fas fa-times" aria-hidden="true"></i>';
     btn.setAttribute("aria-expanded", "true");
   }
 
@@ -223,7 +223,7 @@ function closeDrawer() {
 
   const btn = document.getElementById("hamburger");
   if (btn) {
-    btn.innerHTML = '<i class="fas fa-bars"></i>';
+    btn.innerHTML = '<i class="fas fa-bars" aria-hidden="true"></i>';
     btn.setAttribute("aria-expanded", "false");
   }
 
@@ -566,10 +566,105 @@ window.addEventListener("error", (e) => {
 })();
 
 // ============================================================
-// SERVICE WORKER
+// SERVICE WORKER — update detection + refresh banner
 // ============================================================
 if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("/sw.js").catch(() => {});
+  navigator.serviceWorker
+    .register("/sw.js")
+    .then((registration) => {
+
+      // ── 1. Check if a new SW is already waiting right now ──
+      if (registration.waiting) {
+        showUpdateBanner(registration.waiting);
+      }
+
+      // ── 2. Detect when a new SW finishes installing ──
+      registration.addEventListener("updatefound", () => {
+        const newWorker = registration.installing;
+        if (!newWorker) return;
+        newWorker.addEventListener("statechange", () => {
+          if (
+            newWorker.state === "installed" &&
+            navigator.serviceWorker.controller
+          ) {
+            // New SW installed and waiting — show the banner
+            showUpdateBanner(newWorker);
+          }
+        });
+      });
+
+      // ── 3. When the SW controller changes, reload to apply update ──
+      let refreshing = false;
+      navigator.serviceWorker.addEventListener("controllerchange", () => {
+        if (refreshing) return;
+        refreshing = true;
+        window.location.reload();
+      });
+    })
+    .catch(() => {});
+}
+
+function showUpdateBanner(worker) {
+  // Don't show twice
+  if (document.getElementById("swUpdateBanner")) return;
+
+  const banner = document.createElement("div");
+  banner.id = "swUpdateBanner";
+  banner.setAttribute("role", "status");
+  banner.setAttribute("aria-live", "polite");
+  banner.style.cssText = [
+    "position:fixed",
+    "bottom:16px",
+    "left:50%",
+    "transform:translateX(-50%)",
+    "z-index:99999",
+    "background:var(--color-background-primary, #fff)",
+    "color:var(--color-text-primary, #1a1a1a)",
+    "border:1px solid var(--color-border-secondary, #e0e0e0)",
+    "border-radius:var(--border-radius-lg, 12px)",
+    "padding:12px 20px",
+    "display:flex",
+    "align-items:center",
+    "gap:14px",
+    "box-shadow:0 8px 32px rgba(0,0,0,0.18)",
+    "max-width:420px",
+    "width:calc(100vw - 32px)",
+    "font-size:14px",
+    "animation:slideUp 0.35s cubic-bezier(0.34,1.56,0.64,1) both",
+  ].join(";");
+
+  banner.innerHTML = `
+    <i class="fas fa-arrow-up-circle" style="color:var(--primary,#1D6ECC);font-size:1.3rem;flex-shrink:0"></i>
+    <span style="flex:1;font-weight:500">
+      A new version is available.
+    </span>
+    <button id="swUpdateBtn"
+      style="background:var(--primary,#1D6ECC);color:#fff;border:none;
+             border-radius:var(--border-radius-md,8px);padding:7px 16px;
+             font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;
+             font-family:inherit">
+      Refresh
+    </button>
+    <button id="swDismissBtn" aria-label="Dismiss"
+      style="background:transparent;border:none;cursor:pointer;
+             color:var(--color-text-secondary,#888);font-size:18px;line-height:1;
+             padding:0 2px">
+      ×
+    </button>
+  `;
+
+  document.body.appendChild(banner);
+
+  document.getElementById("swUpdateBtn").addEventListener("click", () => {
+    banner.remove();
+    // Tell the waiting SW to skip waiting and become active
+    worker.postMessage("SKIP_WAITING");
+  });
+
+  document.getElementById("swDismissBtn").addEventListener("click", () => {
+    banner.style.animation = "fadeOut 0.2s ease both";
+    setTimeout(() => banner.remove(), 200);
+  });
 }
 
 

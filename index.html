@@ -48,7 +48,7 @@
             <a href="#/login" class="btn btn-outline btn-sm" id="loginBtn" data-i18n="nav.login">Login</a>
             <a href="#/register" class="btn btn-primary btn-sm" id="registerBtn" data-i18n="nav.register">Register</a>
             <a href="#/dashboard?tab=notifications" class="notif-bell hidden" id="notifBell" aria-label="Notifications">
-              
+              <i class="fas fa-bell" aria-hidden="true"></i>
               <span id="notifBadge" class="badge hidden">0</span>
             </a>
             <div class="dropdown hidden" id="userMenu">
@@ -60,13 +60,15 @@
                     data-i18n="dash.profile">Profile</span></a>
                 <a href="#/dashboard" class="dropdown-item" data-roles="all"><i class="fas fa-tachometer-alt"></i> <span
                     data-i18n="nav.dashboard">Dashboard</span></a>
-                <a href="#/dashboard?tab=orders" class="dropdown-item" data-roles="all"><i class="fas fa-box"></i> <span
+                <a href="#/dashboard?tab=orders" class="dropdown-item" data-roles="Customer,Fisherman,BaitSeller"><i class="fas fa-box"></i> <span
                     data-i18n="nav.myOrders">My Orders</span></a>
-                <a href="#/dashboard?tab=products" class="dropdown-item" data-roles="Fisherman,BaitSeller,Auctioneer"><i class="fas fa-tag"></i> <span
+                <a href="#/dashboard?tab=products" class="dropdown-item" data-roles="Fisherman,BaitSeller"><i class="fas fa-tag"></i> <span
                     data-i18n="nav.myProducts">My Products</span></a>
-                <a href="#/dashboard?tab=wishlist" class="dropdown-item" data-roles="all"><i class="fas fa-heart"></i> <span
+                <a href="#/dashboard?tab=wishlist" class="dropdown-item" data-roles="Customer,Fisherman,BaitSeller"><i class="fas fa-heart"></i> <span
                     data-i18n="nav.wishlist">Wishlist</span></a>
-                <a href="#/subscriptions" class="dropdown-item" data-roles="all"><i class="fas fa-crown"></i> <span
+                <a href="#/wallet" class="dropdown-item" data-roles="Customer,Fisherman,BaitSeller,Auctioneer"><i class="fas fa-wallet"></i> <span
+                    data-i18n="nav.wallet">Wallet</span></a>
+                <a href="#/subscriptions" class="dropdown-item" data-roles="Customer,Fisherman,BaitSeller,Auctioneer"><i class="fas fa-crown"></i> <span
                     data-i18n="subscriptions.title">Subscriptions</span></a>
                 <a href="#/admin" class="dropdown-item" data-roles="Admin"><i class="fas fa-shield-alt"></i> <span
                     data-i18n="admin.title">Admin</span></a>
@@ -78,7 +80,7 @@
           </div>
         </div>
       </div>
-      <button class="hamburger" id="hamburger" aria-label="Toggle menu"><i class="fas fa-bars"></i></button>
+      <button class="hamburger" id="hamburger" aria-label="Toggle menu"><i class="fas fa-bars" aria-hidden="true"></i></button>
     </div>
     <div class="nav-overlay" id="navOverlay"></div>
   </nav>
@@ -161,6 +163,7 @@
   <script defer src="pages/auction-requests-review.js?v=20260517"></script>
   <script defer src="pages/auctioneer-analytics.js?v=20260517"></script>
   <script defer src="pages/subscriptions.js?v=20260517"></script>
+  <script defer src="pages/wallet.js?v=20260517"></script>
   <script defer src="js/background.js?v=20260517"></script>
   <script defer src="js/signalr.js?v=20260517"></script>
   <script defer src="js/router.js?v=20260517"></script>

@@ -4,173 +4,19 @@ function renderForgotPassword(container) {
     return;
   }
 
-  showLoading(container, "form");
+  showLoading(container, "auth");
 
   setTimeout(() => {
-    // ===== State =====
-    let currentStep = 1;
     let forgotEmail = "";
-    let forgotToken = "";
+    let forgotCode = "";
     let countdownInterval = null;
     let resendSeconds = 0;
-
-    const renderStep = () => {
-      const card = container.querySelector(".card");
-      if (!card) return;
-
-      const stepsHtml = `
-        <div class="forgot-steps">
-          <span class="forgot-step ${currentStep >= 1 ? "active" : ""} ${currentStep > 1 ? "done" : ""}">${t("auth.email")}</span>
-          <span class="forgot-step-line ${currentStep >= 2 ? "active" : ""}"></span>
-          <span class="forgot-step ${currentStep >= 2 ? "active" : ""} ${currentStep > 2 ? "done" : ""}">${t("auth.verificationCode")}</span>
-          <span class="forgot-step-line ${currentStep >= 3 ? "active" : ""}"></span>
-          <span class="forgot-step ${currentStep >= 3 ? "active" : ""}">${t("auth.resetPassword")}</span>
-        </div>
-      `;
-
-      const alertDiv = document.getElementById("forgotAlert");
-      const form = document.getElementById("forgotForm");
-
-      if (currentStep === 1) {
-        card.querySelector("h2").innerHTML = `<i class="fas fa-unlock"></i> ${t("auth.forgotPassword")}`;
-        if (alertDiv) alertDiv.innerHTML = "";
-        if (form) form.style.display = "block";
-        document.getElementById("stepContent").innerHTML = `
-          <div class="form-group">
-            <label class="form-label" for="forgotEmail">${t("auth.email")}</label>
-            <input type="email" class="form-input" id="forgotEmail" name="email" placeholder="your@email.com" value="${escapeHtml(forgotEmail)}" required autocomplete="email" inputmode="email">
-            <div class="form-hint">${t("auth.resetLinkSent")}</div>
-          </div>
-          <button type="submit" class="btn btn-primary btn-block btn-lg" id="forgotSubmit">${t("auth.sendResetLink")}</button>
-        `;
-        const emailInput = document.getElementById("forgotEmail");
-        emailInput.addEventListener("input", () => clearFieldError(emailInput));
-        emailInput.focus();
-        document.getElementById("forgotSubmit").addEventListener("click", (e) => {
-          e.preventDefault();
-          handleStep1();
-        });
-        // Also submit on enter
-        emailInput.addEventListener("keydown", (e) => {
-          if (e.key === "Enter") { e.preventDefault(); handleStep1(); }
-        });
-      } else if (currentStep === 2) {
-        card.querySelector("h2").innerHTML = `<i class="fas fa-key"></i> ${t("auth.verificationCode")}`;
-        if (form) form.style.display = "block";
-        document.getElementById("stepContent").innerHTML = `
-          <div class="form-group">
-            <label class="form-label" for="forgotToken">${t("auth.verificationCode")}</label>
-            <input type="text" class="form-input" id="forgotToken" name="token" placeholder="${t("auth.tokenPlaceholder")}" value="${escapeHtml(forgotToken)}" required autocomplete="off" inputmode="text">
-            <div class="form-hint">${t("auth.tokenHint")}</div>
-          </div>
-          <button type="submit" class="btn btn-primary btn-block btn-lg" id="forgotVerifyBtn">${t("auth.verifyCode")}</button>
-          <div style="margin-top:12px;display:flex;flex-direction:column;gap:8px">
-            <button id="resendCodeBtn" class="btn btn-ghost btn-block" disabled>${t("auth.resendCode")}</button>
-            <button id="backToEmailBtn" class="btn btn-ghost btn-block"><i class="fas fa-arrow-left"></i> ${t("auth.email")}</button>
-          </div>
-        `;
-        const tokenInput = document.getElementById("forgotToken");
-        tokenInput.addEventListener("input", () => {
-          clearFieldError(tokenInput);
-          // Auto-extract token from pasted URL
-          const val = tokenInput.value.trim();
-          const match = val.match(/[?&]token=([^&\s]+)/);
-          if (match) {
-            tokenInput.value = decodeURIComponent(match[1]);
-          }
-        });
-        tokenInput.focus();
-
-        // Start or continue resend countdown
-        startResendCountdown();
-
-        document.getElementById("forgotVerifyBtn").addEventListener("click", (e) => {
-          e.preventDefault();
-          handleStep2();
-        });
-        tokenInput.addEventListener("keydown", (e) => {
-          if (e.key === "Enter") { e.preventDefault(); handleStep2(); }
-        });
-        document.getElementById("resendCodeBtn").addEventListener("click", handleResend);
-        document.getElementById("backToEmailBtn").addEventListener("click", () => {
-          cleanup();
-          currentStep = 1;
-          renderStep();
-        });
-      } else if (currentStep === 3) {
-        card.querySelector("h2").innerHTML = `<i class="fas fa-key"></i> ${t("auth.resetPassword")}`;
-        if (form) form.style.display = "block";
-        document.getElementById("stepContent").innerHTML = `
-          <div class="form-group">
-            <label class="form-label" for="forgotNewPw">${t("auth.newPassword")}</label>
-            <div class="password-wrapper">
-              <input type="password" class="form-input" id="forgotNewPw" name="newPassword" placeholder="${t("auth.newPassword")}" required autocomplete="new-password" minlength="8">
-              <button type="button" class="toggle-password" id="forgotTogglePw" aria-label="${t("auth.showPassword")}"><i class="fas fa-eye"></i></button>
-            </div>
-            <div class="password-strength" id="forgotStrength"><div class="password-strength-bar" id="forgotStrengthBar"></div></div>
-            <div class="password-strength-text" id="forgotStrengthText"></div>
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="forgotConfirmPw">${t("auth.confirmNewPassword")}</label>
-            <div class="password-wrapper">
-              <input type="password" class="form-input" id="forgotConfirmPw" name="confirmPassword" placeholder="${t("auth.confirmNewPassword")}" required autocomplete="new-password" minlength="8">
-            </div>
-          </div>
-          <button type="submit" class="btn btn-primary btn-block btn-lg" id="forgotResetBtn">${t("auth.resetPassword")}</button>
-        `;
-        const newPw = document.getElementById("forgotNewPw");
-        const confirmPw = document.getElementById("forgotConfirmPw");
-        const strengthBar = document.getElementById("forgotStrengthBar");
-        const strengthText = document.getElementById("forgotStrengthText");
-        const toggleBtn = document.getElementById("forgotTogglePw");
-
-        toggleBtn.addEventListener("click", () => {
-          const isPw = newPw.type === "password";
-          newPw.type = isPw ? "text" : "password";
-          toggleBtn.innerHTML = isPw ? '<i class="fas fa-eye-slash"></i>' : '<i class="fas fa-eye"></i>';
-        });
-
-        newPw.addEventListener("input", () => {
-          clearFieldError(newPw);
-          const pw = newPw.value;
-          if (!pw) {
-            strengthBar.className = "password-strength-bar strength-empty";
-            strengthText.textContent = "";
-            return;
-          }
-          const result = getPasswordStrength(pw);
-          strengthBar.className = "password-strength-bar " + result.cls;
-          strengthText.textContent = result.label;
-          strengthText.style.color = getComputedStyle(strengthBar).backgroundColor;
-          if (confirmPw.value && pw !== confirmPw.value) {
-            showFieldError(confirmPw, t("auth.passwordsDoNotMatch"));
-          } else {
-            clearFieldError(confirmPw);
-          }
-        });
-        confirmPw.addEventListener("input", () => {
-          clearFieldError(confirmPw);
-          if (confirmPw.value && confirmPw.value !== newPw.value) {
-            showFieldError(confirmPw, t("auth.passwordsDoNotMatch"));
-          }
-        });
-        newPw.focus();
-
-        document.getElementById("forgotResetBtn").addEventListener("click", (e) => {
-          e.preventDefault();
-          handleStep3();
-        });
-        confirmPw.addEventListener("keydown", (e) => {
-          if (e.key === "Enter") { e.preventDefault(); handleStep3(); }
-        });
-      }
-    };
 
     const startResendCountdown = () => {
       if (countdownInterval) clearInterval(countdownInterval);
       resendSeconds = 60;
       const updateBtn = () => {
-        const btn = document.getElementById("resendCodeBtn");
+        const btn = document.getElementById("resendBtn");
         if (btn) {
           btn.disabled = resendSeconds > 0;
           btn.innerHTML = `<i class="fas fa-redo"></i> ${t("auth.resendCode")} ${resendSeconds > 0 ? `(${resendSeconds}s)` : ""}`;
@@ -198,6 +44,100 @@ function renderForgotPassword(container) {
       }
     };
 
+    const showEmailStep = () => {
+      const alertDiv = document.getElementById("forgotAlert");
+      if (alertDiv) alertDiv.innerHTML = "";
+      document.getElementById("forgotForm").style.display = "block";
+      document.querySelector(".card h2").innerHTML = `<i class="fas fa-unlock"></i> ${t("auth.forgotPassword")}`;
+      document.getElementById("stepContent").innerHTML = `
+        <div class="form-group">
+          <label class="form-label" for="forgotEmail">${t("auth.email")}</label>
+          <input type="email" class="form-input" id="forgotEmail" name="email" placeholder="your@email.com" required autocomplete="email" inputmode="email">
+        </div>
+        <button type="submit" class="btn btn-primary btn-block btn-lg" id="forgotEmailBtn">${t("auth.sendResetLink")}</button>
+      `;
+      const emailInput = document.getElementById("forgotEmail");
+      emailInput.focus();
+      document.getElementById("forgotEmailBtn").addEventListener("click", (e) => {
+        e.preventDefault();
+        handleStep1();
+      });
+      emailInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") { e.preventDefault(); handleStep1(); }
+      });
+    };
+
+    const showCodeStep = () => {
+      const alertDiv = document.getElementById("forgotAlert");
+      if (alertDiv) alertDiv.innerHTML = "";
+      document.getElementById("forgotForm").style.display = "block";
+      document.querySelector(".card h2").innerHTML = `<i class="fas fa-shield-alt"></i> ${t("auth.verificationCode")}`;
+      document.getElementById("stepContent").innerHTML = `
+        <div class="alert alert-success" style="margin-bottom:16px">
+          <i class="fas fa-envelope"></i> ${t("auth.resetLinkSent")}
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="forgotCode">${t("auth.verificationCode")}</label>
+          <input type="text" class="form-input" id="forgotCode" name="code" placeholder="${t("auth.tokenPlaceholder") || "Enter the 6-digit code"}" required autocomplete="off" inputmode="numeric" maxlength="6" style="text-align:center;font-size:1.5rem;letter-spacing:8px">
+        </div>
+        <button type="submit" class="btn btn-primary btn-block btn-lg" id="forgotCodeBtn">${t("auth.verifyCode")}</button>
+        <div style="margin-top:12px">
+          <button id="resendBtn" class="btn btn-ghost btn-block" disabled><i class="fas fa-redo"></i> ${t("auth.resendCode")}</button>
+          <button id="backToEmailBtn" class="btn btn-ghost btn-block" style="margin-top:4px"><i class="fas fa-arrow-left"></i> ${t("common.back")}</button>
+        </div>
+      `;
+      document.getElementById("forgotCode").focus();
+      startResendCountdown();
+      document.getElementById("forgotCodeBtn").addEventListener("click", (e) => {
+        e.preventDefault();
+        handleStep2();
+      });
+      document.getElementById("forgotCode").addEventListener("keydown", (e) => {
+        if (e.key === "Enter") { e.preventDefault(); handleStep2(); }
+      });
+      document.getElementById("resendBtn").addEventListener("click", handleResend);
+      document.getElementById("backToEmailBtn").addEventListener("click", () => {
+        if (countdownInterval) clearInterval(countdownInterval);
+        showEmailStep();
+      });
+    };
+
+    const showPasswordStep = () => {
+      const alertDiv = document.getElementById("forgotAlert");
+      if (alertDiv) alertDiv.innerHTML = "";
+      document.getElementById("forgotForm").style.display = "block";
+      document.querySelector(".card h2").innerHTML = `<i class="fas fa-key"></i> ${t("auth.newPassword")}`;
+      document.getElementById("stepContent").innerHTML = `
+        <div class="form-group">
+          <label class="form-label" for="forgotNewPw">${t("auth.newPassword")}</label>
+          <div class="password-wrapper">
+            <input type="password" class="form-input" id="forgotNewPw" name="newPassword" placeholder="${t("auth.newPassword")}" required autocomplete="new-password" minlength="8">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="forgotConfirmPw">${t("auth.confirmNewPassword")}</label>
+          <div class="password-wrapper">
+            <input type="password" class="form-input" id="forgotConfirmPw" name="confirmPassword" placeholder="${t("auth.confirmNewPassword")}" required autocomplete="new-password" minlength="8">
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block btn-lg" id="forgotResetBtn"><i class="fas fa-key"></i> ${t("auth.resetPassword")}</button>
+        <div style="margin-top:12px">
+          <button id="backToCodeBtn" class="btn btn-ghost btn-block"><i class="fas fa-arrow-left"></i> ${t("common.back")}</button>
+        </div>
+      `;
+      document.getElementById("forgotNewPw").focus();
+      document.getElementById("forgotResetBtn").addEventListener("click", (e) => {
+        e.preventDefault();
+        handleStep3();
+      });
+      document.getElementById("forgotConfirmPw").addEventListener("keydown", (e) => {
+        if (e.key === "Enter") { e.preventDefault(); handleStep3(); }
+      });
+      document.getElementById("backToCodeBtn").addEventListener("click", () => {
+        showCodeStep();
+      });
+    };
+
     const handleStep1 = async () => {
       const alertDiv = document.getElementById("forgotAlert");
       const emailInput = document.getElementById("forgotEmail");
@@ -210,56 +150,62 @@ function renderForgotPassword(container) {
       }
 
       forgotEmail = emailInput.value.trim();
-      const submitBtn = document.getElementById("forgotSubmit");
-      submitBtn.disabled = true;
-      submitBtn.innerHTML = `<i class="fas fa-spinner spinner"></i> ${t("auth.sendingResetLink")}`;
+      const btn = document.getElementById("forgotEmailBtn");
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fas fa-spinner spinner"></i> ${t("auth.sendingResetLink")}`;
 
       try {
         await api.post("/auth/forgot-password", { email: forgotEmail });
-        if (alertDiv) {
-          alertDiv.innerHTML = `<div class="alert alert-success"><i class="fas fa-check-circle"></i> ${t("auth.resetLinkSent")}</div>`;
-        }
-        currentStep = 2;
-        renderStep();
+        showCodeStep();
       } catch (err) {
+        if (err.message?.toLowerCase().includes("not found")) {
+          const confirmed = await showConfirm(
+            t("auth.emailNotFound"),
+            t("auth.emailNotFoundRegister"),
+            { confirmText: t("auth.register"), cancelText: t("common.cancel"), type: "primary" }
+          );
+          if (confirmed) navigate("register");
+          return;
+        }
         if (alertDiv) alertDiv.innerHTML = `<div class="alert alert-error">${escapeHtml(err.message)}</div>`;
       } finally {
-        submitBtn.disabled = false;
-        submitBtn.textContent = t("auth.sendResetLink");
+        btn.disabled = false;
+        btn.textContent = t("auth.sendResetLink");
       }
     };
 
     const handleStep2 = async () => {
       const alertDiv = document.getElementById("forgotAlert");
-      const tokenInput = document.getElementById("forgotToken");
+      const codeInput = document.getElementById("forgotCode");
       clearAllFieldErrors(document.getElementById("forgotForm"));
       if (alertDiv) alertDiv.innerHTML = "";
 
-      if (!tokenInput.value.trim()) {
-        showFieldError(tokenInput, t("auth.fieldRequired"));
+      if (!codeInput.value.trim()) {
+        showFieldError(codeInput, t("auth.fieldRequired"));
         return;
       }
 
-      forgotToken = tokenInput.value.trim();
-      const verifyBtn = document.getElementById("forgotVerifyBtn");
-      verifyBtn.disabled = true;
-      verifyBtn.innerHTML = `<i class="fas fa-spinner spinner"></i> ${t("auth.verifying") || "Verifying..."}`;
+      forgotCode = codeInput.value.trim();
+
+      const btn = document.getElementById("forgotCodeBtn");
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fas fa-spinner spinner"></i> ${t("auth.verifying") || "Verifying..."}`;
 
       try {
-        await api.post("/auth/reset-password", { email: forgotEmail, token: forgotToken, newPassword: "Temp_Pass1", confirmPassword: "Temp_Pass1" });
-        if (alertDiv) alertDiv.innerHTML = `<div class="alert alert-error">${escapeHtml(t("auth.invalidToken") || "Invalid or expired token. Please request a new one.")}</div>`;
-        verifyBtn.disabled = false;
-        verifyBtn.textContent = t("auth.verifyCode");
+        await api.post("/auth/verify-reset-code", {
+          email: forgotEmail,
+          token: forgotCode,
+        });
+        showPasswordStep();
       } catch (err) {
-        const msg = (err.message || "").toLowerCase();
-        if (msg.includes("new password") || msg.includes("password") || msg.includes("weak") || msg.includes("strength") || msg.includes("format")) {
-          currentStep = 3;
-          renderStep();
-        } else {
-          if (alertDiv) alertDiv.innerHTML = `<div class="alert alert-error">${escapeHtml(err.message || t("auth.invalidToken"))}</div>`;
-          verifyBtn.disabled = false;
-          verifyBtn.textContent = t("auth.verifyCode");
+        if (err.message?.includes("404")) {
+          showPasswordStep();
+          return;
         }
+        if (alertDiv) alertDiv.innerHTML = `<div class="alert alert-error">${escapeHtml(err.message)}</div>`;
+      } finally {
+        btn.disabled = false;
+        btn.textContent = t("auth.verifyCode");
       }
     };
 
@@ -270,34 +216,36 @@ function renderForgotPassword(container) {
       clearAllFieldErrors(document.getElementById("forgotForm"));
       if (alertDiv) alertDiv.innerHTML = "";
 
-      const rules = [
-        {
-          element: newPw, required: true, minLength: 8,
-          hasUppercase: true, hasLowercase: true, hasDigit: true,
-          messages: { minLength: t("auth.passwordMinLength") },
-        },
-        {
-          element: confirmPw, required: true,
-          matches: { element: newPw },
-          messages: { matches: t("auth.passwordsDoNotMatch") },
-        },
-      ];
-      if (!validateForm(document.getElementById("forgotForm"), rules)) return;
+      if (!newPw.value || newPw.value.length < 8) {
+        showFieldError(newPw, t("auth.passwordMinLength"));
+        return;
+      }
 
-      const resetBtn = document.getElementById("forgotResetBtn");
-      resetBtn.disabled = true;
-      resetBtn.innerHTML = `<i class="fas fa-spinner spinner"></i> ${t("auth.updatingPassword")}`;
+      if (newPw.value !== confirmPw.value) {
+        showFieldError(confirmPw, t("auth.passwordsDoNotMatch"));
+        return;
+      }
+
+      const btn = document.getElementById("forgotResetBtn");
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fas fa-spinner spinner"></i> ${t("auth.updatingPassword")}`;
 
       try {
-        await api.post("/auth/reset-password", { email: forgotEmail, token: forgotToken, newPassword: newPw.value, confirmPassword: confirmPw.value });
+        await api.post("/auth/reset-password", {
+          email: forgotEmail,
+          token: forgotCode,
+          newPassword: newPw.value,
+          confirmPassword: confirmPw.value,
+        });
         if (alertDiv) alertDiv.innerHTML = `<div class="alert alert-success"><i class="fas fa-check-circle"></i> ${t("auth.passwordResetSuccess")}</div>`;
         document.getElementById("forgotForm").style.display = "none";
+        document.querySelector(".card h2").innerHTML = `<i class="fas fa-check-circle"></i> ${t("auth.passwordResetSuccess")}`;
         setTimeout(() => navigate("login"), 2500);
       } catch (err) {
         if (alertDiv) alertDiv.innerHTML = `<div class="alert alert-error">${escapeHtml(err.message)}</div>`;
       } finally {
-        resetBtn.disabled = false;
-        resetBtn.textContent = t("auth.resetPassword");
+        btn.disabled = false;
+        btn.textContent = t("auth.resetPassword");
       }
     };
 
@@ -306,18 +254,10 @@ function renderForgotPassword(container) {
     };
     window.onRouteCleanup = cleanup;
 
-    // Render initial HTML
     container.innerHTML = `
       <div class="auth-page">
         <div class="card">
           <h2><i class="fas fa-unlock"></i> ${t("auth.forgotPassword")}</h2>
-          <div class="forgot-steps">
-            <span class="forgot-step active">${t("auth.email")}</span>
-            <span class="forgot-step-line"></span>
-            <span class="forgot-step">${t("auth.verificationCode")}</span>
-            <span class="forgot-step-line"></span>
-            <span class="forgot-step">${t("auth.resetPassword")}</span>
-          </div>
           <div id="forgotAlert"></div>
           <form id="forgotForm" novalidate>
             <div id="stepContent"></div>
@@ -327,6 +267,6 @@ function renderForgotPassword(container) {
       </div>
     `;
 
-    renderStep();
+    showEmailStep();
   }, 300);
 }

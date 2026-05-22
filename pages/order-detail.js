@@ -50,7 +50,12 @@ async function renderOrderDetail(container) {
       const cancelBtn = document.getElementById("cancelOrderBtn");
       if (cancelBtn) {
         cancelBtn.addEventListener("click", async () => {
-          if (!confirm(t("order.cancelConfirm"))) return;
+          const ok = await showConfirm(
+            t("order.cancel"),
+            t("order.cancelConfirm"),
+            { type: "danger", confirmText: t("order.cancel") }
+          );
+          if (!ok) return;
           cancelBtn.disabled = true;
           cancelBtn.innerHTML = `<i class="fas fa-spinner spinner"></i> ${t("order.cancelling")}`;
           try {

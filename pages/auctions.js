@@ -19,8 +19,10 @@ async function renderAuctions(_container, _fullPath, params) {
 
   function syncUrl() {
     const s = document.getElementById("auctionSearch")?.value || "";
+    const st = document.getElementById("auctionStatus")?.value || "";
     const qp = new URLSearchParams();
     if (s) qp.set("search", s);
+    if (st) qp.set("status", st);
     if (page > 1) qp.set("page", page);
     const qs = qp.toString();
     history.replaceState(null, "", qs ? `#/auctions?${qs}` : "#/auctions");
@@ -32,8 +34,10 @@ async function renderAuctions(_container, _fullPath, params) {
     const search = document.getElementById("auctionSearch")?.value || "";
 
     try {
+      const status = document.getElementById("auctionStatus")?.value || "";
       const apiParams = { page, pageSize };
       if (search) apiParams.SearchTerm = search;
+      if (status) apiParams.status = status;
 
       const data = await api.get("/auctions", apiParams);
       const items = data.items || data.data || [];
@@ -41,6 +45,7 @@ async function renderAuctions(_container, _fullPath, params) {
         renderEmptyState(list, {
           icon: "fa-gavel",
           title: t("home.noAuctions"),
+          desc: t("auctions.noAuctionsDesc"),
           actionText: t("common.clearFilters"),
           actionHref: "#/auctions",
         });

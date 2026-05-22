@@ -31,7 +31,7 @@ async function renderShipping(container) {
     submit.disabled = true;
     submit.innerHTML = `<i class="fas fa-spinner spinner"></i> ${t("shipping.saving")}`;
     try {
-      await api.post("/shipping-addresses", {
+      await api.post("/shippingaddresses", {
         fullName: document.getElementById("shipName").value.trim(),
         phone: document.getElementById("shipPhone").value.trim(),
         city: document.getElementById("shipCity").value.trim(),
@@ -54,7 +54,7 @@ async function renderShipping(container) {
   async function loadAddresses() {
     showLoading(list);
     try {
-      const data = await api.get("/shipping-addresses");
+      const data = await api.get("/shippingaddresses");
       const addresses = Array.isArray(data) ? data : [];
       if (!addresses.length) {
         renderEmptyState(list, {
@@ -82,9 +82,14 @@ async function renderShipping(container) {
 
       list.querySelectorAll(".delete-addr").forEach((btn) => {
         btn.addEventListener("click", async () => {
-          if (!confirm(t("shipping.confirmDelete"))) return;
+          const ok = await showConfirm(
+            t("shipping.confirmDelete"),
+            t("shipping.confirmDeleteDesc") || t("shipping.confirmDelete"),
+            { type: "danger", confirmText: t("common.delete") || "Delete" }
+          );
+          if (!ok) return;
           try {
-            await api.delete(`/shipping-addresses/${btn.dataset.id}`);
+            await api.delete(`/shippingaddresses/${btn.dataset.id}`);
             showToast(t("shipping.deleted"), "success");
             loadAddresses();
           } catch (err) {

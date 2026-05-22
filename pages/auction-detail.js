@@ -15,10 +15,10 @@ async function renderAuctionDetail(container, route, params) {
     joinAuctionGroup(parseInt(id));
 
     const _timers = [];
-    window.onRouteCleanup = () => {
+    registerRouteCleanup(() => {
       leaveAuctionGroup(parseInt(id));
       _timers.forEach(t => clearInterval(t));
-    };
+    });
 
     function render(a) {
           const now = new Date();
@@ -74,9 +74,14 @@ async function renderAuctionDetail(container, route, params) {
                     <input type="range" class="bid-slider" id="bidSlider" min="0" max="1000" step="0.01" value="0" aria-label="Bid amount slider">
                     <div class="bid-slider-labels"><span id="sliderMin"></span><span id="sliderMax"></span></div>
                   </div>
+                  <div style="display:flex;gap:6px;margin-top:6px">
+                    <button class="btn btn-outline btn-sm quick-bid" data-add="${a.minimumIncrement}">+${formatPrice(a.minimumIncrement)}</button>
+                    <button class="btn btn-outline btn-sm quick-bid" data-pct="5">+5%</button>
+                    <button class="btn btn-outline btn-sm quick-bid" data-pct="10">+10%</button>
+                  </div>
                   <div style="display:flex;align-items:center;gap:8px;margin-top:8px">
-                    <label style="display:flex;align-items:center;gap:6px;font-size:var(--text-sm);cursor:pointer">
-                      <input type="checkbox" id="autoBidToggle"> <i class="fas fa-robot"></i> Auto-bid
+                    <label for="autoBidToggle" style="display:flex;align-items:center;gap:6px;font-size:var(--text-sm);cursor:pointer">
+                      <input type="checkbox" id="autoBidToggle"> <i class="fas fa-robot" aria-hidden="true"></i> ${t("auction.autoBid")}
                     </label>
                     <div id="autoBidMaxWrap" class="hidden" style="flex:1">
                       <input type="number" class="form-input" id="autoBidMax" step="0.01" min="0" placeholder="Max bid amount" style="padding:6px 10px;font-size:var(--text-sm)">
@@ -107,7 +112,7 @@ async function renderAuctionDetail(container, route, params) {
         const sliderMin = document.getElementById('sliderMin');
         const sliderMax = document.getElementById('sliderMax');
         const minBid = a.currentHighestBid ? a.currentHighestBid + a.minimumIncrement : a.startingPrice;
-        const maxBid = minBid * 10;
+        const maxBid = a.reservePrice && a.reservePrice > minBid ? a.reservePrice * 1.5 : minBid * 5;
         if (bidSlider) {
           bidSlider.min = minBid;
           bidSlider.max = maxBid;
@@ -121,6 +126,21 @@ async function renderAuctionDetail(container, route, params) {
             if (!isNaN(v) && v >= minBid && v <= maxBid) bidSlider.value = v;
           });
         }
+
+        // Quick-bid buttons
+        $$('.quick-bid').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            const add = parseFloat(btn.dataset.add);
+            if (add) {
+              bidInput.value = (minBid + add).toFixed(2);
+            } else {
+              const pct = parseFloat(btn.dataset.pct) / 100;
+              bidInput.value = (minBid * (1 + pct)).toFixed(2);
+            }
+            const v = parseFloat(bidInput.value);
+            if (!isNaN(v) && v >= minBid && v <= maxBid) bidSlider.value = v;
+          });
+        });
 
         const timer = setInterval(() => {
           const diff = Math.max(0, Math.floor((end - new Date()) / 1000));
@@ -159,7 +179,13 @@ async function renderAuctionDetail(container, route, params) {
             const body = { amount };
             if (document.getElementById('autoBidToggle')?.checked) {
               const maxBid = parseFloat(document.getElementById('autoBidMax')?.value);
-              if (maxBid && maxBid > amount) body.maxAutoBidAmount = maxBid;
+              if (!maxBid || maxBid <= amount) {
+                document.getElementById('bidAlert').innerHTML = `<div class="alert alert-error">${t("auction.autoBidMaxRequired")}</div>`;
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fas fa-gavel"></i> ${t('auction.placeBid')}`;
+                return;
+              }
+              body.maxAutoBidAmount = maxBid;
             }
             await api.post(`/auctions/${id}/bids`, body);
             document.getElementById('bidAlert').innerHTML = `<div class="alert alert-success">${t('auction.bidPlaced')}</div>`;

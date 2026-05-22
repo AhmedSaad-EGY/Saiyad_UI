@@ -26,7 +26,7 @@ async function renderUserProfile(container) {
           <a href="#/dashboard?tab=profile" class="btn btn-outline btn-sm">
             <i class="fas fa-edit"></i> ${t('dash.updateProfile')}
           </a>
-          <a href="#/dashboard?tab=change-password" class="btn btn-ghost btn-sm">
+          <a href="#/dashboard?tab=password" class="btn btn-ghost btn-sm">
             <i class="fas fa-lock"></i> ${t('dash.changePassword')}
           </a>
         </div>
@@ -53,30 +53,36 @@ async function renderUserProfile(container) {
       <div class="profile-quick-links card animate-on-scroll stagger-2">
         <h3>${t('common.quickLinks')}</h3>
         <div class="profile-links-grid">
-          <a href="#/dashboard?tab=orders" class="profile-link-card">
-            <i class="fas fa-shopping-bag"></i>
-            <span>${t('dash.orders')}</span>
-          </a>
-          <a href="#/dashboard?tab=wishlist" class="profile-link-card">
-            <i class="fas fa-heart"></i>
-            <span>${t('dash.wishlist')}</span>
-          </a>
-          <a href="#/shipping" class="profile-link-card">
-            <i class="fas fa-map-marker-alt"></i>
-            <span>${t('dash.addresses')}</span>
-          </a>
+          ${user?.role !== 'Admin' && user?.role !== 'Auctioneer' ? `
+            <a href="#/dashboard?tab=orders" class="profile-link-card">
+              <i class="fas fa-shopping-bag"></i>
+              <span>${t('dash.orders')}</span>
+            </a>
+          ` : ''}
+          ${user?.role !== 'Admin' && user?.role !== 'Auctioneer' ? `
+            <a href="#/dashboard?tab=wishlist" class="profile-link-card">
+              <i class="fas fa-heart"></i>
+              <span>${t('dash.wishlist')}</span>
+            </a>
+          ` : ''}
+          ${user?.role !== 'Admin' && user?.role !== 'Auctioneer' ? `
+            <a href="#/shipping" class="profile-link-card">
+              <i class="fas fa-map-marker-alt"></i>
+              <span>${t('dash.addresses')}</span>
+            </a>
+          ` : ''}
           <a href="#/dashboard?tab=notifications" class="profile-link-card">
             <i class="fas fa-bell"></i>
             <span>${t('dash.notifications')}</span>
           </a>
-          ${user?.role === 'Fisherman' || user?.role === 'BaitSeller' || user?.role === 'Auctioneer' ? `
+          ${user?.role === 'Fisherman' || user?.role === 'BaitSeller' ? `
             <a href="#/dashboard?tab=products" class="profile-link-card">
               <i class="fas fa-store"></i>
               <span>${t('dash.myProducts')}</span>
             </a>
           ` : ''}
           ${user?.role === 'Fisherman' || user?.role === 'BaitSeller' ? `
-            <a href="#/dashboard?tab=seller" class="profile-link-card">
+            <a href="#/dashboard?tab=overview" class="profile-link-card">
               <i class="fas fa-chart-line"></i>
               <span>${t('dash.sellerDashboard')}</span>
             </a>
@@ -112,31 +118,39 @@ async function renderUserProfile(container) {
   document.getElementById("profileAvatar")?.addEventListener("click", () => {
     document.getElementById("profileAvatarInput")?.click();
   });
-  document.getElementById("profileAvatarInput")?.addEventListener("change", (e) => {
+  document.getElementById("profileAvatarInput")?.addEventListener("change", async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = async (ev) => {
-      const dataUrl = ev.target.result;
-      try {
-        const u = getUser();
-        await api.put("/users/profile", {
-          fullName: u?.fullName || "",
-          phone: u?.phone || "",
-          profileImageUrl: dataUrl,
-        });
-        const updated = getUser();
-        updated.profileImageUrl = dataUrl;
-        localStorage.setItem("user", JSON.stringify(updated));
-        const avatar = document.getElementById("profileAvatar");
-        if (avatar) {
-          avatar.innerHTML = `<span class="avatar-overlay"><i class="fas fa-camera"></i></span><img src="${dataUrl}" alt="Profile">`;
-        }
-        showToast("Profile photo updated!", "success");
-      } catch (err) {
-        showToast(err.message, "error");
+
+    if (file.size > 500_000) {
+      showToast("Image must be under 500 KB.", "error");
+      e.target.value = "";
+      return;
+    }
+
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      const upload = await api.upload("/upload", formData);
+      const imageUrl = upload?.url || upload?.data?.url;
+
+      if (!imageUrl) throw new Error("Upload did not return a URL.");
+
+      const u = getUser();
+      await api.put("/users/profile", {
+        fullName: u?.fullName || "",
+        phone: u?.phone || "",
+        profileImageUrl: imageUrl,
+      });
+      const updated = { ...u, profileImageUrl: imageUrl };
+      localStorage.setItem("user", JSON.stringify(updated));
+      const avatar = document.getElementById("profileAvatar");
+      if (avatar) {
+        avatar.innerHTML = `<span class="avatar-overlay"><i class="fas fa-camera"></i></span><img src="${imageUrl}" alt="Profile">`;
       }
-    };
-    reader.readAsDataURL(file);
+      showToast("Profile photo updated!", "success");
+    } catch (err) {
+      showToast(err.message, "error");
+    }
   });
 }

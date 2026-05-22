@@ -4,6 +4,24 @@ async function renderProducts(_container, _fullPath, params) {
     <div class="search-bar">
       <input type="text" class="form-input" id="productSearch" placeholder="${t('products.search')}" />
       <select class="form-select" id="productCategory"><option value="">${t('products.allCategories')}</option></select>
+      <select class="form-select" id="productCondition">
+        <option value="">${t('products.allConditions')}</option>
+        <option value="New">${t('product.new')}</option>
+        <option value="Used">${t('product.used')}</option>
+      </select>
+      <select class="form-select" id="productSort">
+        <option value="">${t('products.sort')}</option>
+        <option value="newest">${t('products.newest')}</option>
+        <option value="price-asc">${t('products.priceLowHigh')}</option>
+        <option value="price-desc">${t('products.priceHighLow')}</option>
+      </select>
+      <input type="number" class="form-input" id="productMinPrice" min="0" step="1" placeholder="${t('products.minPrice')}" />
+      <input type="number" class="form-input" id="productMaxPrice" min="0" step="1" placeholder="${t('products.maxPrice')}" />
+      <label class="filter-check">
+        <input type="checkbox" id="productInStock" />
+        <span>${t('products.inStockOnly')}</span>
+      </label>
+      <a href="#/products" class="btn btn-ghost btn-sm" id="clearProductFilters">${t('common.clearFilters')}</a>
     </div>
     <div id="productList" class="product-grid"></div>
     <div id="productPagination" style="display:flex;justify-content:center;gap:8px;margin-top:24px"></div>
@@ -29,9 +47,19 @@ async function renderProducts(_container, _fullPath, params) {
   function syncUrl() {
     const s = document.getElementById('productSearch')?.value || '';
     const c = document.getElementById('productCategory')?.value || '';
+    const condition = document.getElementById('productCondition')?.value || '';
+    const sort = document.getElementById('productSort')?.value || '';
+    const minPrice = document.getElementById('productMinPrice')?.value || '';
+    const maxPrice = document.getElementById('productMaxPrice')?.value || '';
+    const inStock = document.getElementById('productInStock')?.checked || false;
     const qp = new URLSearchParams();
     if (s) qp.set('search', s);
     if (c) qp.set('categoryId', c);
+    if (condition) qp.set('condition', condition);
+    if (sort) qp.set('sort', sort);
+    if (minPrice) qp.set('minPrice', minPrice);
+    if (maxPrice) qp.set('maxPrice', maxPrice);
+    if (inStock) qp.set('inStock', '1');
     if (page > 1) qp.set('page', page);
     const qs = qp.toString();
     history.replaceState(null, '', qs ? `#/products?${qs}` : '#/products');
@@ -42,13 +70,32 @@ async function renderProducts(_container, _fullPath, params) {
     showLoading(list, 'card');
     const search = document.getElementById('productSearch')?.value || '';
     const categoryId = document.getElementById('productCategory')?.value || '';
+    const condition = document.getElementById('productCondition')?.value || '';
+    const sort = document.getElementById('productSort')?.value || '';
+    const minPrice = document.getElementById('productMinPrice')?.value || '';
+    const maxPrice = document.getElementById('productMaxPrice')?.value || '';
+    const inStock = document.getElementById('productInStock')?.checked || false;
 
     try {
       const apiParams = { page, pageSize };
       if (search) apiParams.searchTerm = search;
       if (categoryId) apiParams.categoryId = categoryId;
+      if (condition) apiParams.condition = condition;
+      if (minPrice) apiParams.minPrice = minPrice;
+      if (maxPrice) apiParams.maxPrice = maxPrice;
+      if (inStock) apiParams.inStock = true;
+      if (sort === 'newest') apiParams.sortBy = 'createdAt';
+      if (sort === 'price-asc') { apiParams.sortBy = 'price'; apiParams.sortDirection = 'asc'; }
+      if (sort === 'price-desc') { apiParams.sortBy = 'price'; apiParams.sortDirection = 'desc'; }
       const data = await api.get('/products', apiParams);
-      const items = data.items || data.data || [];
+      let items = data.items || data.data || [];
+      if (condition) items = items.filter(p => String(p.condition) === condition || (condition === 'New' && String(p.condition) === '0') || (condition === 'Used' && String(p.condition) === '1'));
+      if (minPrice) items = items.filter(p => Number(p.price || 0) >= Number(minPrice));
+      if (maxPrice) items = items.filter(p => Number(p.price || 0) <= Number(maxPrice));
+      if (inStock) items = items.filter(p => Number(p.stockQuantity || 0) > 0);
+      if (sort === 'newest') items = [...items].sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+      if (sort === 'price-asc') items = [...items].sort((a, b) => Number(a.price || 0) - Number(b.price || 0));
+      if (sort === 'price-desc') items = [...items].sort((a, b) => Number(b.price || 0) - Number(a.price || 0));
       if (!items.length) {
         renderEmptyState(list, { icon: 'fa-box-open', title: t('products.noProducts'), desc: t('common.clearFilters'), actionText: t('common.clearFilters'), actionHref: '#/products' });
       } else {
@@ -76,17 +123,29 @@ async function renderProducts(_container, _fullPath, params) {
 
   const searchInput = document.getElementById('productSearch');
   const categorySelect = document.getElementById('productCategory');
+  const conditionSelect = document.getElementById('productCondition');
+  const sortSelect = document.getElementById('productSort');
+  const minPriceInput = document.getElementById('productMinPrice');
+  const maxPriceInput = document.getElementById('productMaxPrice');
+  const inStockInput = document.getElementById('productInStock');
   if (params.search) searchInput.value = params.search;
   if (params.categoryId) categorySelect.value = params.categoryId;
+  if (params.condition) conditionSelect.value = params.condition;
+  if (params.sort) sortSelect.value = params.sort;
+  if (params.minPrice) minPriceInput.value = params.minPrice;
+  if (params.maxPrice) maxPriceInput.value = params.maxPrice;
+  if (params.inStock === '1') inStockInput.checked = true;
 
   await loadProducts();
 
   function reloadFromFilters() { page = 1; syncUrl(); loadProducts(); }
   searchInput.addEventListener('input', debounce(reloadFromFilters, 400));
   categorySelect.addEventListener('change', reloadFromFilters);
+  conditionSelect.addEventListener('change', reloadFromFilters);
+  sortSelect.addEventListener('change', reloadFromFilters);
+  minPriceInput.addEventListener('input', debounce(reloadFromFilters, 500));
+  maxPriceInput.addEventListener('input', debounce(reloadFromFilters, 500));
+  inStockInput.addEventListener('change', reloadFromFilters);
 }
 
-function debounce(fn, ms) {
-  let timer;
-  return (...args) => { clearTimeout(timer); timer = setTimeout(() => fn(...args), ms); };
-}
+

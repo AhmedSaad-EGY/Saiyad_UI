@@ -6,20 +6,21 @@ const ROLES = Object.freeze({
   AUCTIONEER:  'Auctioneer',
 });
 
-const SELLER_ROLES = [ROLES.FISHERMAN, ROLES.BAIT_SELLER, ROLES.AUCTIONEER];
+const SELLER_ROLES = [ROLES.FISHERMAN, ROLES.BAIT_SELLER];
 
 const routeGuards = {
   'admin':                   (user) => !!user && user.role === ROLES.ADMIN,
-  'cart':                    (user) => !!user,
-  'checkout':                (user) => !!user,
+  'cart':                    (user) => !!user && hasAnyRole(ROLES.CUSTOMER, ROLES.FISHERMAN, ROLES.BAIT_SELLER),
+  'checkout':                (user) => !!user && hasAnyRole(ROLES.CUSTOMER, ROLES.FISHERMAN, ROLES.BAIT_SELLER),
   'dashboard':               (user) => !!user,
-  'shipping':                (user) => !!user,
-  'order-detail':            (user) => !!user,
+  'shipping':                (user) => !!user && hasAnyRole(ROLES.CUSTOMER, ROLES.FISHERMAN, ROLES.BAIT_SELLER),
+  'order-detail':            (user) => !!user && hasAnyRole(ROLES.CUSTOMER, ROLES.FISHERMAN, ROLES.BAIT_SELLER),
   'profile':                 (user) => !!user,
-  'auction-requests':        (user) => !!user,
-  'auction-requests-review': (user) => !!user,
-  'auctioneer-analytics':    (user) => !!user,
-  'subscriptions':           (user) => !!user,
+  'auction-requests':        (user) => !!user && user.role === ROLES.FISHERMAN,
+  'auction-requests-review': (user) => !!user && hasAnyRole(ROLES.AUCTIONEER, ROLES.ADMIN),
+  'auctioneer-analytics':    (user) => !!user && hasAnyRole(ROLES.AUCTIONEER, ROLES.ADMIN),
+  'subscriptions':           (user) => !!user && hasAnyRole(ROLES.CUSTOMER, ROLES.FISHERMAN, ROLES.BAIT_SELLER, ROLES.AUCTIONEER),
+  'wallet':                  (user) => !!user,
 };
 
 const routeMap = {
@@ -47,6 +48,7 @@ const routeMap = {
   "auction-requests-review": "renderAuctionRequestsReview",
   "auctioneer-analytics": "renderAuctioneerAnalytics",
   subscriptions: "renderSubscriptions",
+  wallet: "renderWallet",
 };
 
 const routeTitleKeys = {
@@ -74,6 +76,7 @@ const routeTitleKeys = {
   "auction-requests-review": "auctionRequestsReview.title",
   "auctioneer-analytics": "analytics.title",
   subscriptions: "subscriptions.title",
+  wallet: "wallet.title",
 };
 
 let currentRouteKey = null;

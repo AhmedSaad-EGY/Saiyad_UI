@@ -202,7 +202,7 @@
         ctx.fillStyle = grad;
         ctx.fillRect(0, 0, W, H);
 
-        // Layer 2: God rays
+        // Layer 2: sun rays
         for (let i = 0; i < 5; i++) {
           const rx = W * 0.1 + Math.sin(t * 0.02 + i * 1.2) * W * 0.3;
           const rw = 20 + Math.sin(t * 0.03 + i * 0.8) * 10;
