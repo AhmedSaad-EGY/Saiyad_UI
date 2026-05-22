@@ -4,7 +4,32 @@
 
 ---
 
-## Latest Session: Role-Based Subscriptions + Revenue Tab (May 22, 2026)
+## Latest Session: FE-BE Alignment — Wallet Aware Checkout, Txn Icons, Auctioneer Earnings (May 22, 2026)
+
+### ✅ Wallet-aware checkout (`checkout.js`)
+- Fetches wallet balance on checkout load, displays available balance near payment method
+- "Deposit" button links to `#/wallet`
+- Before placing order: checks `availableBalance >= total`, shows error + deposit link if insufficient
+- Prevents users from hitting backend "insufficient funds" error
+
+### ✅ Wallet transaction icons + labels (`wallet.js`)
+- New `txnIcon()` entries: `PlatformFee`→fa-percentage, `SubscriptionPayment`→fa-crown, `AuctionPayment`→fa-gavel, `AuctionPayout`→fa-hand-holding-usd
+- New `txnLabel()` function for translated type names (EN/AR via `translations.js`)
+- New translation keys: `wallet.platformFee`, `wallet.subPayment`, `wallet.auctionPayment`, `wallet.auctionPayout`
+
+### ✅ Missing CSS utility classes (`style.css`)
+- Added `.text-success`, `.text-warning`, `.text-info`, `.text-primary` using existing oklch variables
+
+### ✅ Auctioneer earnings view (`auctioneer-analytics.js`)
+- New "Total Fees Earned" card showing aggregated `PlatformFee` income from auctions
+- Fee income table below with date, amount, description
+- Wallet available balance shown in the fee card
+
+### ✅ Subscription wallet balance (`subscriptions.js`)
+- Fetches wallet alongside plans + subscription data
+- Shows available balance card below role banner
+- Disables upgrade button + shows "Insufficient Balance" if `walletBalance < planPrice`
+- Translation key: `subscriptions.insufficientFunds`
 
 ### ✅ Role-based subscription page (`subscriptions.js`)
 - Detects user role at top via `getUser().role`
