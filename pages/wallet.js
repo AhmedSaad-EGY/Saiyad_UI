@@ -105,16 +105,16 @@ async function renderWallet(container) {
           txnList.innerHTML = '<p class="text-muted" style="text-align:center;padding:32px">' + t("wallet.noTransactions") + '</p>';
           return;
         }
-        var html = '<div class="wallet-txn-table"><table><thead><tr><th>' + t("wallet.date") + '</th><th>' + t("wallet.type") + '</th><th>' + t("wallet.description") + '</th><th>' + t("wallet.amount") + '</th></tr></thead><tbody>';
+        let html = '<div class="wallet-txn-table"><table><thead><tr><th>' + t("wallet.date") + '</th><th>' + t("wallet.type") + '</th><th>' + t("wallet.description") + '</th><th>' + t("wallet.amount") + '</th></tr></thead><tbody>';
         for (const txn of data.items) {
-          var amtClass = txn.amount >= 0 ? "text-success" : "text-danger";
+          let amtClass = txn.amount >= 0 ? "text-success" : "text-danger";
           html += '<tr><td>' + formatDate(txn.createdAt) + '</td><td><i class="fas ' + txnIcon(txn.type) + '"></i> ' + escapeHtml(txnLabel(txn.type)) + '</td><td>' + escapeHtml(txn.description || "") + '</td><td class="' + amtClass + '">' + formatEGP(txn.amount) + '</td></tr>';
         }
         html += '</tbody></table></div>';
         if (data.totalPages > 1) {
           html += '<div class="pagination" style="display:flex;gap:8px;justify-content:center;margin-top:16px">';
-          for (var p = 1; p <= data.totalPages; p++) {
-            var active = p === data.page ? "active" : "";
+          for (let p = 1; p <= data.totalPages; p++) {
+            let active = p === data.page ? "active" : "";
             html += '<button class="btn btn-sm ' + (active === "active" ? "btn-primary" : "btn-outline") + '" data-page="' + p + '">' + p + '</button>';
           }
           html += '</div>';

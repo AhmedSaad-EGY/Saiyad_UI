@@ -517,7 +517,7 @@ async function renderAdmin(container) {
             <tr>
               <td>${escapeHtml(p.name)}</td>
               <td>${p.tier}</td>
-              <td>$${Number(p.price).toFixed(2)}</td>
+              <td>${formatPrice(p.price)}</td>
               <td>${p.maxAuctionsPerMonth}</td>
               <td>${p.maxBidsPerMonth}</td>
               <td>${p.maxAuctionRequestsPerMonth}</td>
@@ -543,14 +543,14 @@ async function renderAdmin(container) {
             { key: "sortOrder", label: "Sort Order", value: String(p.sortOrder), type: "number" },
             { key: "isActive", label: "Active", value: String(p.isActive), type: "checkbox" },
           ];
-          var formHtml = fields.map(f =>
+          let formHtml = fields.map(f =>
             f.type === "checkbox"
               ? '<label style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><input type="checkbox" id="ef-' + f.key + '" ' + (f.value === "true" ? "checked" : "") + '> ' + f.label + '</label>'
               : '<div style="margin-bottom:8px"><label style="display:block;font-size:0.85rem;margin-bottom:2px">' + f.label + '</label><input type="' + f.type + '" id="ef-' + f.key + '" class="form-control" value="' + escapeHtml(f.value) + '"></div>'
           ).join("");
 
           showFormModal("Edit Plan", formHtml, async function() {
-            var body = {};
+            let body = {};
             fields.forEach(function(f) {
               if (f.key === "isActive") body[f.key] = document.getElementById("ef-" + f.key).checked;
               else if (f.type === "number") body[f.key] = parseFloat(document.getElementById("ef-" + f.key).value) || 0;
@@ -567,7 +567,7 @@ async function renderAdmin(container) {
 
       panel.querySelectorAll(".delete-plan-btn").forEach(btn => {
         btn.addEventListener("click", async function() {
-          var ok = await showConfirm("Delete plan?", "Delete \"" + btn.dataset.name + "\"? This cannot be undone.", { type: "danger", confirmText: "Delete" });
+          const ok = await showConfirm("Delete plan?", "Delete \"" + btn.dataset.name + "\"? This cannot be undone.", { type: "danger", confirmText: "Delete" });
           if (!ok) return;
           try {
             await api.delete("/subscriptionplans/" + btn.dataset.id);
@@ -578,8 +578,8 @@ async function renderAdmin(container) {
       });
 
       document.getElementById("addPlanBtn")?.addEventListener("click", function() {
-        var tierOptions = ["Free", "Basic", "Pro", "Enterprise"].map(function(t) { return '<option value="' + t + '">' + t + '</option>'; }).join("");
-        var formHtml =
+        const tierOptions = ["Free", "Basic", "Pro", "Enterprise"].map(function(t) { return '<option value="' + t + '">' + t + '</option>'; }).join("");
+        const formHtml =
           '<div style="margin-bottom:8px"><label>Tier</label><select id="af-tier" class="form-control">' + tierOptions + '</select></div>' +
           '<div style="margin-bottom:8px"><label>Name</label><input id="af-name" class="form-control"></div>' +
           '<div style="margin-bottom:8px"><label>Description</label><input id="af-desc" class="form-control"></div>' +
@@ -596,7 +596,7 @@ async function renderAdmin(container) {
               name: document.getElementById("af-name").value,
               description: document.getElementById("af-desc").value,
               price: parseFloat(document.getElementById("af-price").value) || 0,
-              currency: "USD",
+              currency: "EGP",
               billingCycle: "Monthly",
               maxAuctionsPerMonth: parseInt(document.getElementById("af-auctions").value) || 3,
               maxBidsPerMonth: parseInt(document.getElementById("af-bids").value) || 3,

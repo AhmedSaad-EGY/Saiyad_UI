@@ -115,32 +115,6 @@ injectedStyles.textContent = `
 document.head.appendChild(injectedStyles);
 
 // ============================================================
-// INTERSECTION OBSERVER — Scroll Animations
-// ============================================================
-function observeAnimations(root = document) {
-  const els = (root === document ? document : root).querySelectorAll(
-    ".animate-on-scroll:not(.visible)",
-  );
-
-  if ("IntersectionObserver" in window) {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e) => {
-          if (e.isIntersecting) {
-            e.target.classList.add("visible");
-            observer.unobserve(e.target);
-          }
-        });
-      },
-      { threshold: 0.1, rootMargin: "0px 0px -40px 0px" },
-    );
-    els.forEach((el) => observer.observe(el));
-  } else {
-    els.forEach((el) => el.classList.add("visible"));
-  }
-}
-
-// ============================================================
 // NAVBAR SCROLL EFFECT
 // ============================================================
 let scrollTicking = false;

@@ -1,6 +1,6 @@
 async function renderAuctioneerAnalytics(container) {
   if (!(await requireAuth())) return;
-  if (!hasAnyRole("Auctioneer")) {
+  if (!hasAnyRole("Auctioneer", "Admin")) {
     container.innerHTML = `<div class="empty-state"><i class="fas fa-chart-bar"></i><h3>${t("common.pageNotFound")}</h3></div>`;
     return;
   }

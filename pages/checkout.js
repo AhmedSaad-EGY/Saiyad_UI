@@ -119,7 +119,7 @@ async function renderCheckout(container) {
             <label class="radio-card" style="display:flex;align-items:flex-start;gap:8px;padding:10px;margin-bottom:6px;border:1px solid var(--border);border-radius:8px;cursor:pointer;background:var(--card-bg)">
               <input type="radio" name="savedAddr" value="${a.id}" ${i === 0 ? "checked" : ""} style="margin-top:3px">
               <div>
-                <strong>${escapeHtml(a.fullName || a.fullName || "")}</strong><br>
+                <strong>${escapeHtml(a.fullName || a.name || "")}</strong><br>
                 <span style="font-size:0.85rem;color:var(--text-muted)">${escapeHtml(a.addressLine || "")}, ${escapeHtml(a.city || "")}${a.postalCode ? ` - ${escapeHtml(a.postalCode)}` : ""}</span><br>
                 <span style="font-size:0.85rem;color:var(--text-muted)">${escapeHtml(a.phone || "")}</span>
               </div>

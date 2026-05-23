@@ -123,7 +123,7 @@ async function renderUserProfile(container) {
     if (!file) return;
 
     if (file.size > 500_000) {
-      showToast("Image must be under 500 KB.", "error");
+      showToast(t("profile.imageTooLarge"), "error");
       e.target.value = "";
       return;
     }
@@ -134,7 +134,7 @@ async function renderUserProfile(container) {
       const upload = await api.upload("/upload", formData);
       const imageUrl = upload?.url || upload?.data?.url;
 
-      if (!imageUrl) throw new Error("Upload did not return a URL.");
+      if (!imageUrl) throw new Error(t("profile.uploadNoUrl"));
 
       const u = getUser();
       await api.put("/users/profile", {
@@ -148,7 +148,7 @@ async function renderUserProfile(container) {
       if (avatar) {
         avatar.innerHTML = `<span class="avatar-overlay"><i class="fas fa-camera"></i></span><img src="${imageUrl}" alt="Profile">`;
       }
-      showToast("Profile photo updated!", "success");
+      showToast(t("profile.photoUpdated"), "success");
     } catch (err) {
       showToast(err.message, "error");
     }

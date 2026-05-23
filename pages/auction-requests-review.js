@@ -1,6 +1,6 @@
 async function renderAuctionRequestsReview(container) {
   if (!(await requireAuth())) return;
-  if (!hasAnyRole("Auctioneer")) {
+  if (!hasAnyRole("Auctioneer", "Admin")) {
     container.innerHTML = `<div class="empty-state"><i class="fas fa-gavel"></i><h3>${t("common.pageNotFound")}</h3></div>`;
     return;
   }
@@ -56,8 +56,8 @@ async function renderAuctionRequestsReview(container) {
         <form id="approveForm" novalidate>
           <div class="form-group"><label class="form-label">${t("scheduling.endTime")} *</label><input type="datetime-local" class="form-input" id="appEndTime" value="${fmt(defaultEnd)}" required></div>
           <div class="form-group"><label class="form-label">${t("analytics.startingPrice")} *</label><input type="number" class="form-input" id="appStartingPrice" step="0.01" min="0" required placeholder="0.00"></div>
-          <div class="form-group"><label class="form-label">${t("auction.reservePrice") || "Reserve Price"}</label><input type="number" class="form-input" id="appReservePrice" step="0.01" min="0" placeholder="0.00"></div>
-          <div class="form-group"><label class="form-label">${t("auction.minimumIncrement") || "Minimum Increment"}</label><input type="number" class="form-input" id="appMinIncrement" step="0.01" min="0" placeholder="0.00"></div>
+          <div class="form-group"><label class="form-label">${t("auction.reservePrice")}</label><input type="number" class="form-input" id="appReservePrice" step="0.01" min="0" placeholder="0.00"></div>
+          <div class="form-group"><label class="form-label">${t("auction.minimumIncrement")}</label><input type="number" class="form-input" id="appMinIncrement" step="0.01" min="0" placeholder="0.00"></div>
           <div style="display:flex;gap:8px;margin-top:16px">
             <button type="submit" class="btn btn-primary" id="confirmApproveBtn"><i class="fas fa-check"></i> ${t("auctionRequestsReview.approve")}</button>
             <button type="button" class="btn btn-ghost" id="cancelApproveBtn">${t("common.cancel")}</button>

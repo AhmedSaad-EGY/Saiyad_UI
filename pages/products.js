@@ -89,13 +89,6 @@ async function renderProducts(_container, _fullPath, params) {
       if (sort === 'price-desc') { apiParams.sortBy = 'price'; apiParams.sortDirection = 'desc'; }
       const data = await api.get('/products', apiParams);
       let items = data.items || data.data || [];
-      if (condition) items = items.filter(p => String(p.condition) === condition || (condition === 'New' && String(p.condition) === '0') || (condition === 'Used' && String(p.condition) === '1'));
-      if (minPrice) items = items.filter(p => Number(p.price || 0) >= Number(minPrice));
-      if (maxPrice) items = items.filter(p => Number(p.price || 0) <= Number(maxPrice));
-      if (inStock) items = items.filter(p => Number(p.stockQuantity || 0) > 0);
-      if (sort === 'newest') items = [...items].sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
-      if (sort === 'price-asc') items = [...items].sort((a, b) => Number(a.price || 0) - Number(b.price || 0));
-      if (sort === 'price-desc') items = [...items].sort((a, b) => Number(b.price || 0) - Number(a.price || 0));
       if (!items.length) {
         renderEmptyState(list, { icon: 'fa-box-open', title: t('products.noProducts'), desc: t('common.clearFilters'), actionText: t('common.clearFilters'), actionHref: '#/products' });
       } else {

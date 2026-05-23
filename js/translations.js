@@ -198,6 +198,7 @@ const translations = {
     "auction.endingSoon": "Ending soon!",
     "auction.newBid": "New bid placed!",
     "auction.startAuction": "Start Auction",
+    "auction.startNew": "Start New Auction",
     "auction.autoBid": "Auto bid",
     "auction.autoBidMaxRequired": "Enter a max auto-bid amount higher than your bid.",
     "auction.statusActive": "Active",
@@ -268,6 +269,9 @@ const translations = {
     "dash.date": "Date",
     "dash.view": "View",
     "dash.myProducts": "My Products",
+    "profile.imageTooLarge": "Image must be under 500 KB.",
+    "profile.uploadNoUrl": "Upload did not return a URL.",
+    "profile.photoUpdated": "Profile photo updated!",
 
     // Verify Email
     "verify.title": "Verify Email",
@@ -396,6 +400,7 @@ const translations = {
     "admin.platformBalance": "Platform Balance",
     "admin.totalFees": "Total Fees Collected",
     "admin.feeIncome": "Fee Income",
+    "admin.addPlan": "Add Plan",
 
     // Order Detail
     "order.title": "Order Details",
@@ -454,6 +459,8 @@ const translations = {
     "common.next": "Next",
     "common.N/A": "N/A",
     "common.search": "Search",
+    "common.select": "Select",
+    "common.required": "Required",
     "common.retry": "Retry",
     "common.page": "Page",
     "common.clearFilters": "Clear Filters",
@@ -468,6 +475,10 @@ const translations = {
     "common.close": "Close",
     "common.back": "Back",
     "common.title": "Title",
+    "common.name": "Name",
+    "common.tier": "Tier",
+    "common.status": "Status",
+    "common.actions": "Actions",
     "common.view": "View",
     "auth.loginRequired": "Please log in to continue.",
 
@@ -811,6 +822,7 @@ const translations = {
     "auction.endingSoon": "سينتهي قريباً!",
     "auction.newBid": "تم تقديم مزايدة جديدة!",
     "auction.startAuction": "بدء مزاد",
+    "auction.startNew": "بدء مزاد جديد",
     "auction.autoBid": "مزايدة تلقائية",
     "auction.autoBidMaxRequired": "أدخل حد مزايدة تلقائية أعلى من مزايدتك.",
     "auction.statusActive": "نشط",
@@ -880,6 +892,9 @@ const translations = {
     "dash.date": "التاريخ",
     "dash.view": "عرض",
     "dash.myProducts": "منتجاتي",
+    "profile.imageTooLarge": "يجب أن تكون الصورة أقل من 500 كيلوبايت.",
+    "profile.uploadNoUrl": "الرفع لم يُرجع رابطًا.",
+    "profile.photoUpdated": "تم تحديث الصورة الشخصية!",
 
     // Verify Email
     "verify.title": "تأكيد البريد الإلكتروني",
@@ -1009,6 +1024,7 @@ const translations = {
     "admin.platformBalance": "رصيد المنصة",
     "admin.totalFees": "إجمالي الرسوم المحصلة",
     "admin.feeIncome": "دخل الرسوم",
+    "admin.addPlan": "إضافة خطة",
 
     // Order Detail
     "order.title": "تفاصيل الطلب",
@@ -1067,6 +1083,8 @@ const translations = {
     "common.next": "التالي",
     "common.N/A": "غير متاح",
     "common.search": "بحث",
+    "common.select": "اختيار",
+    "common.required": "مطلوب",
     "common.retry": "إعادة المحاولة",
     "common.page": "صفحة",
     "common.clearFilters": "مسح التصفية",
@@ -1081,6 +1099,10 @@ const translations = {
     "common.close": "إغلاق",
     "common.back": "رجوع",
     "common.title": "العنوان",
+    "common.name": "الاسم",
+    "common.tier": "المستوى",
+    "common.status": "الحالة",
+    "common.actions": "الإجراءات",
     "common.view": "عرض",
     "auth.loginRequired": "يرجى تسجيل الدخول للمتابعة.",
 
