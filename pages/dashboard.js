@@ -543,13 +543,22 @@ function showAuctionModal(productId, productTitle) {
   overlay.setAttribute("aria-label", "Start Auction");
 
   const prevFocus = document.activeElement;
-  const minEnd = new Date(Date.now() + 3600000).toISOString().slice(0, 16); // min 1hr from now
+  const minEnd = new Date(Date.now() + 3600000).toISOString().slice(0, 16);
+
+  const needsProductPicker = !productId;
 
   overlay.innerHTML = `
     <div class="modal" onclick="event.stopPropagation()" style="max-width:460px">
-      <h3><i class="fas fa-gavel"></i> ${t("auctions.title")} — ${escapeHtml(productTitle)}</h3>
+      <h3><i class="fas fa-gavel"></i> ${t("auctions.title")}${productTitle ? ` — ${escapeHtml(productTitle)}` : ""}</h3>
       <div id="auctionModalAlert"></div>
       <form id="auctionModalForm" novalidate>
+        ${needsProductPicker ? `
+        <div class="form-group">
+          <label class="form-label">${t("admin.products") || "Product"} *</label>
+          <select class="form-select" id="auctionProductSelect" required>
+            <option value="">${t("common.loading")}...</option>
+          </select>
+        </div>` : ""}
         <div class="form-group">
           <label class="form-label">${t("auction.end")} *</label>
           <input type="datetime-local" class="form-input" id="auctionEndTime" min="${minEnd}" required>
@@ -579,6 +588,17 @@ function showAuctionModal(productId, productTitle) {
   });
   document.body.appendChild(overlay);
 
+  if (needsProductPicker) {
+    const select = document.getElementById("auctionProductSelect");
+    api.get("/products", { IsAuctioned: false, PageSize: 200 }).then(data => {
+      const items = data.items || data.data || [];
+      select.innerHTML = '<option value="">-- ' + (t("common.select") || "Select") + ' --</option>'
+        + items.map(p => '<option value="' + p.id + '">' + escapeHtml(p.title) + ' - ' + formatPrice(p.price) + '</option>').join("");
+    }).catch(() => {
+      select.innerHTML = '<option value="">' + (t("common.error") || "Error") + '</option>';
+    });
+  }
+
   function close() {
     overlay.remove();
     document.removeEventListener("keydown", onKey);
@@ -598,8 +618,14 @@ function showAuctionModal(productId, productTitle) {
     submit.innerHTML = `<i class="fas fa-spinner spinner"></i> ${t("auction.placingBid")}`;
 
     try {
+      const selectedId = needsProductPicker
+        ? parseInt(document.getElementById("auctionProductSelect").value)
+        : productId;
+      if (!selectedId || isNaN(selectedId)) {
+        throw new Error(t("common.required") || "Please select a product");
+      }
       await api.post("/auctions", {
-        productId,
+        productId: selectedId,
         endTime: new Date(document.getElementById("auctionEndTime").value).toISOString(),
         startingPrice: parseFloat(document.getElementById("auctionStartPrice").value),
         reservePrice: parseFloat(document.getElementById("auctionReservePrice").value) || 0,
@@ -607,7 +633,6 @@ function showAuctionModal(productId, productTitle) {
       });
       showToast(t("auctions.title") + " started!", "success");
       close();
-      // Refresh the products list
       const content = document.getElementById("dashContent");
       if (content) renderMyProducts(content);
     } catch (err) {
@@ -621,45 +646,13 @@ function showAuctionModal(productId, productTitle) {
 
 async function renderAuctions(content) {
   content.innerHTML = `
-    <div class="card">
+    <div class="card" style="text-align:center;padding:32px">
       <h3><i class="fas fa-gavel"></i> ${t("dash.auctions")}</h3>
-      <div id="auctionProductsList"><i class="fas fa-spinner spinner"></i> ${t("common.loading")}</div>
+      <p style="color:var(--text-muted);margin-bottom:16px">${t("auction.startNew") || "Start a new auction for any product"}</p>
+      <button class="btn btn-primary" id="createNewAuctionBtn"><i class="fas fa-plus"></i> ${t("auctions.title") || "Create Auction"}</button>
     </div>
   `;
-  try {
-    let data, products;
-    try {
-      data = await api.get("/products/my", { pageSize: 100 });
-      products = data.items || data.data || data || [];
-    } catch {
-      data = await api.get("/products", { pageSize: 100 });
-      products = data.items || data.data || data || [];
-    }
-    const list = document.getElementById("auctionProductsList");
-    const available = products.filter(p => !p.isAuctioned);
-    if (!available.length) {
-      list.innerHTML = `<p style="color:var(--text-muted);padding:24px;text-align:center">${t("dash.noProducts")}</p>`;
-      return;
-    }
-    list.innerHTML = available.map(p => `
-      <div class="card card-sm" style="display:flex;justify-content:space-between;align-items:center;gap:12px">
-        <div>
-          <strong>${escapeHtml(p.title)}</strong>
-          <span style="color:var(--text-muted);font-size:0.82rem;margin-inline-start:8px">${t("cart.price")}: ${formatPrice(p.price)}</span>
-        </div>
-        <button class="btn btn-primary btn-sm start-auction-btn" data-product-id="${p.id}" data-product-title="${escapeHtml(p.title)}"><i class="fas fa-gavel"></i> ${t("auction.startAuction")}</button>
-      </div>
-    `).join("");
-
-    list.querySelectorAll(".start-auction-btn").forEach(btn => {
-      btn.addEventListener("click", () => {
-        showAuctionModal(parseInt(btn.dataset.productId), btn.dataset.productTitle);
-      });
-    });
-  } catch (e) {
-    document.getElementById("auctionProductsList").innerHTML =
-      `<div class="alert alert-error" role="alert">${escapeHtml(e.message)}</div>`;
-  }
+  document.getElementById("createNewAuctionBtn").addEventListener("click", () => showAuctionModal());
 }
 
 async function renderWishlist(content) {
