@@ -1,5 +1,34 @@
 # Sayiad — Frontend Project Map
 
+## Latest Session: FE Deep Audit & Fix — 14 Issues Across 7 Waves (May 23, 2026)
+
+### ✅ Wave 1 — Missing translation keys
+- Added 8 missing keys (`common.select`, `common.required`, `auction.startNew`, `admin.addPlan`, `common.name`, `common.tier`, `common.status`, `common.actions`) in both EN and AR
+
+### ✅ Wave 2 — products.js client-side re-filtering removed
+- Removed lines 92-98 that re-filtered and re-sorted items client-side after API call, which broke pagination and had brittle int↔string comparisons for condition
+
+### ✅ Wave 3 — admin.js hardcoded USD fixed
+- Plan price display: `$${Number(p.price).toFixed(2)}` → `formatPrice(p.price)`
+- New plan creation: `currency: "USD"` → `currency: "EGP"`
+
+### ✅ Wave 4 — profile.js avatar upload translated
+- Hardcoded English strings → `t("profile.imageTooLarge")`, `t("profile.uploadNoUrl")`, `t("profile.photoUpdated")`
+
+### ✅ Wave 5 — Role checks include Admin
+- `auctioneer-analytics.js` + `auction-requests-review.js`: `hasAnyRole("Auctioneer")` → `hasAnyRole("Auctioneer", "Admin")`
+
+### ✅ Wave 6 — Duplicate `observeAnimations` removed
+- Removed the version in `app.js` (lines 120-141) — kept the `utils.js` version which has proper disconnect/observer logic
+
+### ✅ Wave 7 — Minor fixes
+- `checkout.js:122` — `a.fullName || a.fullName` → `a.fullName || a.name`
+- `auction-requests-review.js:59-60` — Removed `||` fallback English strings (keys exist)
+- `wallet.js` — Replaced `var` with `let`/`const`
+- `admin.js` — Replaced `var` with `let`/`const`
+
+---
+
 **Date:** 2026-05-22 | **Vanilla JS SPA | Bilingual (EN/AR) | PWA**
 
 ---

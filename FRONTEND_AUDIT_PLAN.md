@@ -55,8 +55,15 @@
 
 ---
 
-## Execution Order
-1. Create this file ✅
-2. Wave 1 → Wave 2 → Wave 3 → Wave 4 → Wave 5 → Wave 6 → Wave 7
-3. Build + commit both repos
-4. Update `PROJECT_MAP_FRONT-END.md`
+## Execution Status
+1. ✅ Create this file
+2. ✅ Wave 1 — Missing translation keys added (8 keys)
+3. ✅ Wave 2 — products.js client-side re-filtering removed
+4. ✅ Wave 3 — admin.js hardcoded USD fixed (display + currency)
+5. ✅ Wave 4 — profile.js avatar upload translated
+6. ✅ Wave 5 — Role checks include Admin
+7. ✅ Wave 6 — Duplicate observeAnimations removed
+8. ✅ Wave 7 — Minor fixes (fullName, labels, var→let/const)
+9. ✅ Committed (frontend)
+10. ⬜ Backend changes needed? No — all frontend-only audit fixes.
+11. ⬜ PROJECT_MAP updated: yes
