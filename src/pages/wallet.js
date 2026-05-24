@@ -162,7 +162,10 @@ export default async function renderWallet(container) {
               </div>
             </template>
             <template x-if="currentPage && (!currentPage.items || currentPage.items.length === 0)">
-              <p class="text-muted" style="text-align:center;padding:32px">${t("wallet.noTransactions")}</p>
+              <div class="empty-state" style="margin-top:16px">
+                <div class="empty-state-visual"><i class="fas fa-receipt" style="font-size:2.5rem;color:var(--text-muted)"></i></div>
+                <p style="color:var(--text-muted);margin:0">${t("wallet.noTransactions")}</p>
+              </div>
             </template>
           </div>
         </div>

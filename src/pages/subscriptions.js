@@ -133,6 +133,13 @@ export default async function renderSubscriptions(container) {
               </div>
             </template>
           </div>
+          <template x-if="!loading && plans.length === 0">
+            <div class="empty-state" style="margin-top:24px">
+              <div class="empty-state-visual"><i class="fas fa-crown" style="font-size:3rem;color:var(--text-muted)"></i></div>
+              <h3>${t("subscriptions.noPlans") || "No plans available"}</h3>
+              <p style="color:var(--text-muted)">${t("subscriptions.noPlansDesc") || "Subscription plans are not available at this time."}</p>
+            </div>
+          </template>
         </div>
       </template>
     </div>`;
