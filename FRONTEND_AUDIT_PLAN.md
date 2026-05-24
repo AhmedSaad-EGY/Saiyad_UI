@@ -67,3 +67,21 @@
 9. ✅ Committed (frontend)
 10. ⬜ Backend changes needed? No — all frontend-only audit fixes.
 11. ⬜ PROJECT_MAP updated: yes
+
+---
+
+## Remaining Gaps (Wave 8 — ✅ Completed)
+
+| # | File | Issue | Status |
+|---|------|-------|--------|
+| 1 | `admin.js:539` | Edit plan form: `"Price (USD)"` → `"Price (EGP)"` | ✅ |
+| 2 | `admin.js:586` | Add plan form: `"Price (USD)"` → `"Price (EGP)"` | ✅ |
+| 3 | `profile.js:14,149` | `alt="Profile"` hardcoded — changed to `alt=""` (decorative) | ✅ |
+| 4 | `auctioneer-analytics.js:64` | Fee table uses `new Date().toLocaleDateString()` → `formatDate()` | ✅ |
+| 5 | `auctioneer-analytics.js:69` | Recent auctions `endTime` same fix → `formatDate()` | ✅ |
+| 6 | `auctioneer-analytics.js:69` | Status raw `a.status` string → `tStatus(a.status, "auction")` | ✅ |
+| 7 | `subscriptions.js` | Local `formatCurrency()` removed, uses shared `formatPrice()` from utils | ✅ |
+
+**Previously noted (unfiled in audit, less critical):**
+- `wallet.js:txnLabel()` — Deposit, Credit, Release, Hold, Debit, Transfer types show raw type string (no mapped label)
+- `admin.js` plan modals — various hardcoded English labels for admin-only UI

@@ -1,0 +1,11 @@
+/* ============================================================
+   SAYIAD — Design System
+   Entry point — imports all partials
+   ============================================================ */
+
+@import '_variables.css';
+@import '_base.css';
+@import '_animations.css';
+@import '_layout.css';
+@import '_components.css';
+@import '_rtl.css';

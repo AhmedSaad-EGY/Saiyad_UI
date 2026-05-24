@@ -1,0 +1,62 @@
+/* ============================================================
+   RTL OVERRIDES
+   ============================================================ */
+
+[dir="rtl"] .dropdown-menu {
+  right: auto;
+  left: 0;
+}
+
+[dir="rtl"] .detail-meta {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .product-card-meta {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .search-bar {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .bid-input-group {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .section-header {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] th,
+[dir="rtl"] td {
+  text-align: right;
+}
+
+[dir="rtl"] .dashboard-sidebar a,
+[dir="rtl"] .dash-link {
+  border-left: none;
+  border-right: 3px solid transparent;
+}
+
+[dir="rtl"] .dashboard-sidebar a:hover,
+[dir="rtl"] .dash-link:hover,
+[dir="rtl"] .dashboard-sidebar a.active,
+[dir="rtl"] .dash-link.active {
+  border-left: none;
+  border-right-color: var(--primary);
+}
+
+[dir="rtl"] .dropdown-item {
+  border-left: none;
+  border-right: 3px solid transparent;
+}
+
+[dir="rtl"] .dropdown-item:hover {
+  border-left: none;
+  border-right-color: var(--primary);
+}
+
+[data-theme="dark"] .footer {
+  border-top-color: var(--border);
+}
+

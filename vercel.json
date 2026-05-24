@@ -1,8 +1,14 @@
 {
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
   "rewrites": [
     {
       "source": "/api/:path*",
       "destination": "https://sayiad.runasp.net/api/:path*"
+    },
+    {
+      "source": "/hubs/:path*",
+      "destination": "https://sayiad.runasp.net/hubs/:path*"
     },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
