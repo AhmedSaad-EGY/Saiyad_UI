@@ -103,7 +103,16 @@ export default async function renderWallet(container) {
     <div class="section-header"><h2><i class="fas fa-wallet"></i> ${t("wallet.title")}</h2></div>
     <div x-data="walletPage">
       <template x-if="loading">
-        <div><i class="fas fa-spinner spinner"></i> ${t("common.loading")}</div>
+        <div class="skeleton-shimmer" style="padding:20px 0">
+          <div class="skeleton skeleton-title" style="width:20%"></div>
+          <div class="skeleton skeleton-text" style="width:40%;height:48px"></div>
+          <div class="skeleton skeleton-text" style="width:60%"></div>
+          <div style="margin-top:32px">
+            <div class="skeleton skeleton-title" style="width:25%"></div>
+            <div class="skeleton skeleton-text"></div>
+            <div class="skeleton skeleton-text"></div>
+          </div>
+        </div>
       </template>
       <template x-if="!loading && wallet">
         <div>

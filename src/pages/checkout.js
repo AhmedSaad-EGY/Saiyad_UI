@@ -144,7 +144,13 @@ export default async function renderCheckout(container) {
   container.innerHTML = `
     <div x-data="checkoutPage">
       <template x-if="loading">
-        <div><i class="fas fa-spinner spinner"></i> ${t('common.loading')}</div>
+        <div class="skeleton-shimmer" style="padding:20px 0">
+          <div class="skeleton skeleton-title" style="width:30%"></div>
+          <div class="skeleton skeleton-text"></div>
+          <div class="skeleton skeleton-text" style="width:60%"></div>
+          <div class="skeleton skeleton-text"></div>
+          <div class="skeleton skeleton-text" style="width:40%"></div>
+        </div>
       </template>
       <template x-if="!loading && items.length === 0">
         <div>

@@ -20,7 +20,7 @@ UX gaps that produce visible friction for every user. **~6 hrs total.**
 ## Phase 2 — "Missing Pieces" (P1)
 Individual pages with missing states or incomplete flows. **~8 hrs total.**
 
-- [ ] **Convert "Loading..." text to skeleton loaders** — checkout, wallet, subscriptions, shipping, order-detail, profile, seller-profile (1 hr, 7 pages)
+- [x] **Convert "Loading..." text to skeleton loaders** — checkout, wallet, subscriptions, shipping, order-detail, profile, seller-profile (1 hr, 7 pages) *(profile.js: progressive render by design — shell renders instantly, stats fill in via Alpine — good as-is)*
 - [ ] **Empty states for subscriptions** (no plans = blank grid) and **wallet transactions** (just muted `<p>`) (30 min, `subscriptions.js`, `wallet.js`)
 - [ ] **Retry buttons on skeleton error** — home products/auctions, products list, auction detail (30 min, `home.js`, `products.js`, `auction-detail.js`)
 - [ ] **Smooth skeleton-to-content transition** — replace abrupt `innerHTML` swaps with opacity fade (1 hr, `dom.js` + affected pages)
