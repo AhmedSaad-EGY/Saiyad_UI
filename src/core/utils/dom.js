@@ -224,3 +224,21 @@ export function observeAnimations(root = document) {
     els.forEach((el) => el.classList.add("visible"));
   }
 }
+
+export function manageFocus(container, announcement) {
+  if (!container) return;
+  const focusable = container.querySelector(
+    'a, button, input, select, textarea, [tabindex]:not([tabindex="-1"])'
+  );
+  if (focusable) {
+    focusable.focus({ preventScroll: true });
+  } else {
+    container.setAttribute("tabindex", "-1");
+    container.focus({ preventScroll: true });
+    container.removeAttribute("tabindex");
+  }
+  if (announcement) {
+    const live = document.getElementById("ariaLive");
+    if (live) live.textContent = announcement;
+  }
+}

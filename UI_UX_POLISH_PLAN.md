@@ -13,7 +13,7 @@ UX gaps that produce visible friction for every user. **~6 hrs total.**
 - [x] **Checkout address form lacks per-field validation** — user doesn't know which field failed (30 min, `checkout.js`)
 - [x] **Login/Checkout only show single generic error** instead of field-level messages (1 hr, `login.js`, `checkout.js`)
 - [x] **Global error boundary** — unhandled exceptions produce blank page (1.5 hr, `app.js` + `errors.js`)
-- [ ] **Focus management after dynamic content** — screen reader thrown to top on every page load (1 hr, new utility + all pages)
+- [x] **Focus management after dynamic content** — screen reader thrown to top on every page load (1 hr, new utility + all pages)
 
 ---
 

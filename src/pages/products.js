@@ -1,6 +1,6 @@
 import { t } from '../core/i18n/index.js';
 import { api } from '../core/api/client.js';
-import { showLoading, renderEmptyState, escapeHtml, observeAnimations } from '../core/utils/dom.js';
+import { showLoading, renderEmptyState, escapeHtml, observeAnimations, manageFocus } from '../core/utils/dom.js';
 import { renderProductCards, debounce } from '../core/utils/ui.js';
 
 export default async function renderProducts(_container, _fullPath, params) {
@@ -96,9 +96,11 @@ export default async function renderProducts(_container, _fullPath, params) {
       let items = data.items || data.data || [];
       if (!items.length) {
         renderEmptyState(list, { icon: 'fa-box-open', title: t('products.noProducts'), desc: t('common.clearFilters'), actionText: t('common.clearFilters'), actionHref: '#/products' });
+        manageFocus(list);
       } else {
         renderProductCards(list, items);
         observeAnimations();
+        manageFocus(list);
       }
 
       const total = data.totalCount || data.total || items.length;
