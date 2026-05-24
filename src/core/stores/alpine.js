@@ -1,7 +1,7 @@
 import Alpine from 'alpinejs';
 import { getUser, isAuthenticated, getRoleFromToken } from '../auth/index.js';
 import { api } from '../api/client.js';
-import { bus } from '../events/bus.js';
+import { bus, on } from '../events/bus.js';
 import { t } from '../i18n/index.js';
 import { formatPrice, formatDate } from '../utils/format.js';
 import { showToast } from '../utils/ui.js';
@@ -58,7 +58,7 @@ Alpine.store('wallet', {
   available: 0,
   loading: false,
   init() {
-    bus.on('wallet:updated', () => this.refresh());
+    on('wallet:updated', () => this.refresh());
   },
   async refresh() {
     this.loading = true;
@@ -79,7 +79,7 @@ Alpine.store('wallet', {
 Alpine.store('notif', {
   count: 0,
   init() {
-    bus.on('notif:updated', ({ count }) => { this.count = count; });
+    on('notif:updated', ({ count }) => { this.count = count; });
   },
   async refresh() {
     try {

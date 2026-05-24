@@ -1,5 +1,5 @@
 import { showToast } from '../../core/utils/ui.js';
-import { bus } from '../../core/events/bus.js';
+import { bus, on } from '../../core/events/bus.js';
 
 export function normalizeApiError(err) {
   if (!err) return { message: 'Unknown error', status: 0 };
@@ -42,7 +42,7 @@ export function handleApiError(err) {
 }
 
 export function setupGlobalErrorHandlers() {
-  bus.on('api:error', ({ err }) => handleApiError(err));
+  on('api:error', ({ err }) => handleApiError(err));
 
   window.addEventListener('unhandledrejection', (e) => {
     if (isNetworkError(e.reason) || e.reason?.message?.includes('Session expired')) return;
