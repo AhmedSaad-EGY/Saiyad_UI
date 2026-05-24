@@ -2,7 +2,7 @@ import { t, getCurrentLang } from '../core/i18n/index.js';
 import { api } from '../core/api/client.js';
 import { isAuthenticated, getUser, hasAnyRole, requireAuth, updateCartBadge } from '../core/auth/index.js';
 import { router } from '../core/router/index.js';
-import { showError, showLoading, escapeHtml, progressiveImg, observeAnimations } from '../core/utils/dom.js';
+import { showError, showLoading, escapeHtml, progressiveImg, observeAnimations, fadeInContent } from '../core/utils/dom.js';
 import { formatPrice, formatDate, statusClass, tStatus, tCondition, renderStars } from '../core/utils/format.js';
 import { renderProductCards, openLightbox, trackRecentlyViewed, showToast } from '../core/utils/ui.js';
 
@@ -146,6 +146,8 @@ export default async function renderProductDetail(container, route, params) {
       </div>
     `;
 
+    fadeInContent(container);
+
     // Similar products
     (async () => {
       try {
@@ -214,10 +216,27 @@ export default async function renderProductDetail(container, route, params) {
       .getElementById("addToWishlistBtn")
       .addEventListener("click", async () => {
         if (!(await requireAuth())) return;
+        const prevWishlisted = isWishlisted;
+        isWishlisted = !isWishlisted;
+        const wBtn = document.getElementById("addToWishlistBtn");
+        if (wBtn) {
+          wBtn.className = `btn ${isWishlisted ? 'btn-danger' : 'btn-outline'} btn-lg`;
+          wBtn.setAttribute("aria-pressed", String(isWishlisted));
+          wBtn.title = isWishlisted
+            ? t('product.removeFromWishlist') || 'Remove from wishlist'
+            : t('product.wishlist');
+          wBtn.innerHTML = `<i class="${isWishlisted ? 'fas' : 'far'} fa-heart"></i>
+            ${isWishlisted ? (t('product.removeFromWishlist') || 'Wishlisted') : t("product.wishlist")}`;
+        }
         try {
           await api.post("/wishlist/toggle", { productId: p.id });
-          isWishlisted = !isWishlisted;
-          const wBtn = document.getElementById("addToWishlistBtn");
+          showToast(
+            isWishlisted ? t("product.addedToWishlist") || t("product.wishlistUpdated")
+                       : t("product.removedFromWishlist") || t("product.wishlistUpdated"),
+            "success"
+          );
+        } catch (e) {
+          isWishlisted = prevWishlisted;
           if (wBtn) {
             wBtn.className = `btn ${isWishlisted ? 'btn-danger' : 'btn-outline'} btn-lg`;
             wBtn.setAttribute("aria-pressed", String(isWishlisted));
@@ -227,12 +246,6 @@ export default async function renderProductDetail(container, route, params) {
             wBtn.innerHTML = `<i class="${isWishlisted ? 'fas' : 'far'} fa-heart"></i>
               ${isWishlisted ? (t('product.removeFromWishlist') || 'Wishlisted') : t("product.wishlist")}`;
           }
-          showToast(
-            isWishlisted ? t("product.addedToWishlist") || t("product.wishlistUpdated")
-                       : t("product.removedFromWishlist") || t("product.wishlistUpdated"),
-            "success"
-          );
-        } catch (e) {
           showToast(e.message, "error");
         }
       });

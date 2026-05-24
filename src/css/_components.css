@@ -1839,6 +1839,108 @@ tr:last-child td {
   accent-color: var(--primary);
 }
 
+/* Filter bottom sheet (mobile) */
+.filter-toggle-btn {
+  display: none;
+}
+
+.search-toggle-btn {
+  display: none;
+}
+
+.desktop-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: stretch;
+}
+
+.filter-sheet-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: var(--overlay);
+  z-index: 2000;
+  align-items: flex-end;
+  justify-content: center;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.filter-sheet-overlay.show {
+  display: flex;
+}
+
+.filter-sheet {
+  background: var(--card-bg);
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  width: 100%;
+  max-width: 600px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 -8px 32px oklch(0 0 0 / 0.15);
+  animation: slideUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  color: var(--text);
+}
+
+.filter-sheet-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px 0;
+}
+
+.filter-sheet-header h3 {
+  font-size: var(--text-lg);
+  font-weight: 700;
+}
+
+.filter-sheet-body {
+  padding: 16px 24px 24px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.filter-sheet-body .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.filter-sheet-body .form-group label {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.filter-sheet-footer {
+  display: flex;
+  gap: 12px;
+  padding: 16px 24px 24px;
+  border-top: 1px solid var(--border);
+}
+
+.filter-sheet-footer .btn {
+  flex: 1;
+}
+
+@media (max-width: 767px) {
+  .desktop-filters {
+    display: none;
+  }
+
+  .filter-toggle-btn {
+    display: inline-flex;
+  }
+
+  .search-toggle-btn {
+    display: inline-flex;
+  }
+}
+
 /* ============================================================
    BID HISTORY
    ============================================================ */
@@ -2021,6 +2123,119 @@ tr:last-child td {
 .dash-mobile-tabs {
   display: none;
   margin-bottom: 16px;
+}
+
+/* Desktop: bottom bar hidden */
+.dash-bottom-bar {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .dashboard-sidebar {
+    display: none;
+  }
+
+  .dash-mobile-tabs {
+    display: none;
+  }
+
+  .dash-bottom-bar {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 999;
+    background: var(--card-bg);
+    border-top: 1px solid var(--border);
+    padding: 4px 0 env(safe-area-inset-bottom, 4px);
+    justify-content: space-around;
+    align-items: stretch;
+    box-shadow: 0 -4px 20px oklch(0 0 0 / 0.1);
+  }
+
+  .dash-bottom-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 6px 8px 4px;
+    text-decoration: none;
+    color: var(--text-muted);
+    font-size: 0.6rem;
+    font-weight: 500;
+    transition: color var(--duration-fast) var(--ease-out);
+    flex: 1;
+    min-width: 0;
+    border-radius: var(--radius);
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .dash-bottom-link i {
+    font-size: 1.1rem;
+    transition: transform var(--duration-fast) var(--ease-out);
+  }
+
+  .dash-bottom-link span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    line-height: 1.1;
+  }
+
+  .dash-bottom-link.active {
+    color: var(--primary);
+  }
+
+  .dash-bottom-link.active i {
+    transform: scale(1.15);
+  }
+
+  .dash-bottom-link:hover {
+    color: var(--primary);
+  }
+
+  body.has-bottom-bar #app {
+    padding-bottom: calc(60px + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+/* Mobile full-screen search overlay */
+.search-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 3000;
+  background: var(--card-bg);
+  flex-direction: column;
+  padding: 20px 24px;
+  animation: slideDown 0.2s ease;
+}
+
+.search-overlay.open {
+  display: flex;
+}
+
+.search-overlay-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.search-overlay-header input {
+  flex: 1;
+  font-size: 1.1rem;
+  padding: 14px 16px;
+  border: 2px solid var(--primary);
+  border-radius: var(--radius);
+  background: var(--body-bg);
+  color: var(--text);
+}
+
+.search-overlay-header .btn {
+  flex-shrink: 0;
 }
 
 /* ============================================================
@@ -4017,6 +4232,45 @@ tr.bid-highlight {
     align-self: center;
   }
 
+  .cart-table tbody tr {
+    touch-action: pan-y;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cart-swipe-delete {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 80px;
+    background: var(--danger);
+    color: #fff;
+    font-size: 1.2rem;
+    transform: translateX(100%);
+    transition: transform 0.2s ease;
+    border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+    cursor: pointer;
+  }
+
+  .cart-swipe-delete.revealed {
+    transform: translateX(0);
+  }
+
+  .cart-swipe-content {
+    position: relative;
+    z-index: 1;
+    background: var(--card-bg);
+    transition: transform 0.2s ease;
+  }
+
+  .cart-swipe-content.swiping {
+    transition: none;
+  }
+
   .cart-footer {
     display: none;
   }
@@ -4111,6 +4365,43 @@ tr.bid-highlight {
     min-width: unset !important;
     width: 100%;
   }
+}
+
+/* Pull-to-refresh indicator */
+.ptr-indicator {
+  position: fixed;
+  top: -60px;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 16px;
+  background: var(--card-bg);
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  border-bottom: 1px solid var(--border);
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  pointer-events: none;
+}
+
+.ptr-indicator.ptr-active {
+  top: 0;
+}
+
+.ptr-indicator.ptr-ready .ptr-text::after {
+  content: ' \2191';
+}
+
+.ptr-indicator.ptr-refreshing .ptr-spinner i {
+  animation: spin 0.8s linear infinite;
+}
+
+.ptr-indicator.ptr-refreshing .ptr-text {
+  content: 'Refreshing...';
 }
 
 /* End-of-file marker */

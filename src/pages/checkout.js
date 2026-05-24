@@ -5,6 +5,7 @@ import { navigate } from '../core/router/index.js';
 import { escapeHtml } from '../core/utils/dom.js';
 import { showFieldError, clearFieldError, clearAllFieldErrors } from '../core/utils/validation.js';
 import { formatPrice } from '../core/utils/format.js';
+import { triggerConfetti } from '../core/utils/ui.js';
 import Alpine from 'alpinejs';
 
 Alpine.data('checkoutPage', () => ({
@@ -129,6 +130,7 @@ Alpine.data('checkoutPage', () => ({
         await api.post(`/payments/${payment.id}/confirm`);
       }
       document.dispatchEvent(new CustomEvent('cart-updated'));
+      triggerConfetti();
       navigate('order-detail?id=' + order.id);
     } catch (err) {
       this.alert = `<div class="alert alert-error">${escapeHtml(err.message || t('cart.orderError'))}</div>`;

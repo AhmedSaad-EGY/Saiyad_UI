@@ -54,16 +54,30 @@ export async function router(force = false) {
     app.style.transition = "";
     app.innerHTML = `
       <div class="not-found-page animate-on-scroll">
-        <div class="not-found-fish"><i class="fas fa-fish"></i></div>
+        <div class="not-found-fish"><i class="fas fa-fish" style="font-size:4rem;color:var(--text-muted);opacity:0.5"></i></div>
         <h1>404</h1>
         <h2>${t("common.pageNotFound")}</h2>
         <p>${t("common.pageNotFoundDesc")}</p>
-        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:24px">
+        <div class="search-bar" style="margin:20px auto;max-width:380px;justify-content:center">
+          <input type="text" id="notFoundSearch" class="form-input" placeholder="${t('products.search')}" style="max-width:240px">
+          <button class="btn btn-primary" id="notFoundSearchBtn"><i class="fas fa-search"></i> ${t('common.search')}</button>
+        </div>
+        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:8px">
           <a href="#/" class="btn btn-primary btn-lg"><i class="fas fa-home"></i> ${t("common.goHome")}</a>
           <a href="#/products" class="btn btn-outline btn-lg"><i class="fas fa-store"></i> ${t("nav.products")}</a>
+          <a href="#/auctions" class="btn btn-outline btn-lg"><i class="fas fa-gavel"></i> ${t("nav.auctions")}</a>
         </div>
       </div>`;
     observeAnimations();
+    setTimeout(() => {
+      const si = document.getElementById('notFoundSearch');
+      const sb = document.getElementById('notFoundSearchBtn');
+      if (si && sb) {
+        const go = () => { const q = si.value.trim(); if (q) window.location.hash = '#/products?search=' + encodeURIComponent(q); };
+        sb.addEventListener('click', go);
+        si.addEventListener('keydown', e => { if (e.key === 'Enter') go(); });
+      }
+    }, 0);
     return;
   }
 
@@ -87,8 +101,8 @@ export async function router(force = false) {
   if (btt) btt.classList.remove("visible");
 
   app.style.opacity = "0";
-  app.style.transform = "translateY(8px)";
-  app.style.transition = "opacity 0.15s ease, transform 0.15s ease";
+  app.style.transform = "scale(0.97) translateY(10px)";
+  app.style.transition = "opacity 0.25s ease, transform 0.25s ease";
 
   showLoading(app, "page");
   window.scrollTo({ top: 0, behavior: "smooth" });
@@ -119,6 +133,7 @@ export async function router(force = false) {
     if (live) live.textContent = `Navigated to ${document.title}`;
 
     requestAnimationFrame(() => {
+      app.style.transition = "opacity 0.35s ease, transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1)";
       app.style.opacity = "1";
       app.style.transform = "translateY(0)";
     });
@@ -127,8 +142,8 @@ export async function router(force = false) {
       app.style.transition = "";
       app.style.opacity = "";
       app.style.transform = "";
-    }, 250);
-  }, 150);
+    }, 400);
+  }, 200);
 }
 
 window.addEventListener("hashchange", () => router());

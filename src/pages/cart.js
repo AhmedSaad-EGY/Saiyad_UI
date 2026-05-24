@@ -28,6 +28,7 @@ Alpine.data('cartPage', () => ({
       this.error = e.message || t('common.error');
     } finally {
       this.loading = false;
+      this.$nextTick(() => this.initSwipe());
     }
   },
 
@@ -42,20 +43,38 @@ Alpine.data('cartPage', () => ({
   async removeItem(productId) {
     const ok = await showConfirm(t('cart.removeItemTitle'), t('cart.removeItemConfirm'), { type: 'danger', confirmText: t('common.remove') });
     if (!ok) return;
+    const prevItems = [...this.items];
+    this.items = this.items.filter(i => i.productId !== productId);
+    this.empty = this.items.length === 0;
+    this.computeTotal();
+    updateCartBadge();
     try {
       await api.delete(`/cart/items/${productId}`);
-      await this.refresh();
-      updateCartBadge();
+      this.refresh();
     } catch (e) {
+      this.items = prevItems;
+      this.empty = this.items.length === 0;
+      this.computeTotal();
+      updateCartBadge();
       showToast(e.message, 'error');
     }
   },
 
   async updateQty(productId, qty) {
+    const prevItems = this.items.map(i => ({ ...i }));
+    const item = this.items.find(i => i.productId === productId);
+    if (!item) return;
+    const prevQty = item.quantity;
+    item.quantity = parseInt(qty) || 1;
+    this.computeTotal();
     try {
       await api.put(`/cart/items/${productId}`, { quantity: parseInt(qty) || 1 });
-      await this.refresh();
+      this.refresh();
     } catch (e) {
+      const restored = prevItems.find(i => i.productId === productId);
+      if (restored) restored.quantity = prevQty;
+      this.items = prevItems;
+      this.computeTotal();
       showToast(e.message, 'error');
     }
   },
@@ -63,12 +82,20 @@ Alpine.data('cartPage', () => ({
   async clearCart() {
     const ok = await showConfirm(t('cart.clear'), t('cart.clearConfirm'), { type: 'danger' });
     if (!ok) return;
+    const prevItems = [...this.items];
+    this.items = [];
+    this.empty = true;
+    this.total = 0;
+    updateCartBadge();
     try {
       await api.delete('/cart');
-      await this.refresh();
-      updateCartBadge();
       showToast(t('cart.cleared'), 'success');
+      this.refresh();
     } catch (e) {
+      this.items = prevItems;
+      this.empty = this.items.length === 0;
+      this.computeTotal();
+      updateCartBadge();
       showToast(e.message, 'error');
     }
   },
@@ -81,6 +108,85 @@ Alpine.data('cartPage', () => ({
       this.computeTotal();
     } catch { /* ignore */ }
   },
+
+  initSwipe() {
+    const isMobile = window.innerWidth < 768;
+    const table = document.querySelector('.cart-table');
+    if (!isMobile || !table) return;
+
+    let startX = 0, currentRow = null, content = null, deleteEl = null, isSwiping = false;
+
+    table.addEventListener('touchstart', (e) => {
+      const row = e.target.closest('.cart-table tbody tr');
+      if (!row) return;
+      content = row.querySelector('.cart-swipe-content') || (() => {
+        const c = document.createElement('div');
+        c.className = 'cart-swipe-content';
+        while (row.firstChild) c.appendChild(row.firstChild);
+        row.appendChild(c);
+        const d = document.createElement('div');
+        d.className = 'cart-swipe-delete';
+        d.innerHTML = '<i class="fas fa-trash-alt"></i>';
+        d.addEventListener('click', (ev) => {
+          ev.stopPropagation();
+          const productId = row.__alpineItemId || row.querySelector('[x-data]')?.__x?.$data?.item?.productId;
+          if (productId) this.removeItem(productId);
+        });
+        row.appendChild(d);
+        row.style.position = 'relative';
+        row.style.overflow = 'hidden';
+        return c;
+      })();
+      deleteEl = row.querySelector('.cart-swipe-delete');
+      startX = e.touches[0].clientX;
+      currentRow = row;
+      isSwiping = false;
+    }, { passive: true });
+
+    table.addEventListener('touchmove', (e) => {
+      if (!currentRow || !content) return;
+      const dx = e.touches[0].clientX - startX;
+      if (Math.abs(dx) > 5) isSwiping = true;
+      if (!isSwiping) return;
+      if (dx > 0) { content.style.transform = 'translateX(0)'; return; }
+      const translateX = Math.max(dx, -90);
+      content.style.transform = `translateX(${translateX}px)`;
+      content.classList.add('swiping');
+    }, { passive: true });
+
+    table.addEventListener('touchend', () => {
+      if (!currentRow || !content || !deleteEl) { reset(); return; }
+      const transform = content.style.transform;
+      const translateX = transform ? parseFloat(transform.replace('translateX(', '')) : 0;
+      if (translateX < -60) {
+        deleteEl.classList.add('revealed');
+        const productId = currentRow.getAttribute('x-data') ? null : null;
+        if (translateX < -120) {
+          const alpineRow = currentRow.querySelector('[x-data]');
+          let pid = null;
+          if (alpineRow) {
+            const data = alpineRow.__x?.$data;
+            if (data?.item) pid = data.item.productId;
+          }
+          if (!pid) {
+            const link = currentRow.querySelector('a[href*="product-detail"]');
+            if (link) {
+              const m = link.getAttribute('href').match(/id=(\d+)/);
+              if (m) pid = parseInt(m[1]);
+            }
+          }
+          if (pid) this.removeItem(pid);
+        }
+        content.style.transform = `translateX(-80px)`;
+      } else {
+        content.style.transform = 'translateX(0)';
+      }
+      content.classList.remove('swiping');
+      reset();
+    }, { passive: true });
+
+    function reset() { startX = 0; currentRow = null; content = null; deleteEl = null; isSwiping = false; }
+  }
 }));
 
 export default async function renderCart(container) {

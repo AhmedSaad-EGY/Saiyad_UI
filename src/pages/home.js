@@ -1,7 +1,7 @@
 import { t } from '../core/i18n/index.js';
 import { api } from '../core/api/client.js';
 import { isAuthenticated, getUser, hasAnyRole, hasRole } from '../core/auth/index.js';
-import { escapeHtml, progressiveImg, activateProgressiveImages, renderEmptyState, observeAnimations } from '../core/utils/dom.js';
+import { escapeHtml, progressiveImg, activateProgressiveImages, renderEmptyState, observeAnimations, fadeInContent, initPullToRefresh } from '../core/utils/dom.js';
 import { formatPrice, statusClass, tStatus } from '../core/utils/format.js';
 import { renderProductCards, renderRecentlyViewed } from '../core/utils/ui.js';
 
@@ -82,8 +82,9 @@ export default async function renderHome(container) {
   injectSkeletonCards("homeProducts", 4);
   injectSkeletonCards("homeAuctions", 4);
 
-  try {
-    // Role-based quick links
+  async function loadData() {
+    try {
+      // Role-based quick links
     const rql = document.getElementById("roleQuickLinks");
     if (rql && isAuthenticated()) {
       const user = getUser();
@@ -108,10 +109,12 @@ export default async function renderHome(container) {
       document.getElementById("homeProducts"),
       products.items || products.data || [],
     );
+    fadeInContent(document.getElementById("homeProducts"));
     renderAuctionCards(
       document.getElementById("homeAuctions"),
       auctions.items || auctions.data || [],
     );
+    fadeInContent(document.getElementById("homeAuctions"));
     renderRecentlyViewed(document.getElementById("recentlyViewed"));
     observeAnimations();
   } catch (e) {
@@ -121,6 +124,8 @@ export default async function renderHome(container) {
         icon: "fa-box-open",
         title: t("home.loadError"),
         desc: escapeHtml(e.message),
+        actionText: t("common.retry"),
+        actionFn: () => loadData(),
       });
     const ha = document.getElementById("homeAuctions");
     if (ha && !ha.children.length)
@@ -128,8 +133,14 @@ export default async function renderHome(container) {
         icon: "fa-gavel",
         title: t("home.loadError"),
         desc: escapeHtml(e.message),
+        actionText: t("common.retry"),
+        actionFn: () => loadData(),
       });
   }
+  }
+
+  loadData();
+  initPullToRefresh({ onRefresh: loadData });
 }
 
 export function renderAuctionCards(container, auctions) {

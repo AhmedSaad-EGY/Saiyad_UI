@@ -45,8 +45,17 @@ export default async function renderDashboard(container, route, params) {
         </select>
       </div>
       <div class="dashboard-content" id="dashContent"></div>
+      <div class="dash-bottom-bar">
+        ${tabs.map(tabItem => `<a href="#/dashboard${tabItem.id === "overview" ? "" : `?tab=${tabItem.id}`}" class="dash-bottom-link ${tab === tabItem.id ? "active" : ""}" data-tab="${tabItem.id}" title="${tabItem.label}"><i class="fas ${tabItem.icon}"></i><span>${tabItem.label}</span></a>`).join("")}
+      </div>
     </div>
   `;
+
+  registerRouteCleanup(() => {
+    document.body.classList.remove('has-bottom-bar');
+    document.body.classList.remove('has-floating-bar');
+  });
+  if (window.innerWidth < 768) document.body.classList.add('has-bottom-bar');
 
   $$(".dash-link").forEach((a) => {
     a.addEventListener("click", (e) => {

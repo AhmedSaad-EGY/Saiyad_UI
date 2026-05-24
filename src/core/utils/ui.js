@@ -53,8 +53,21 @@ export function showToast(msg, type = "info") {
   iconEl.style.cssText = "font-size:1.1rem;flex-shrink:0";
   const textEl = document.createElement("span");
   textEl.textContent = msg;
+  const closeBtn = document.createElement("button");
+  closeBtn.innerHTML = "&times;";
+  closeBtn.setAttribute("aria-label", "Close");
+  closeBtn.style.cssText = "background:none;border:none;color:inherit;font-size:1.3rem;cursor:pointer;padding:0 0 0 8px;line-height:1;opacity:0.8;flex-shrink:0";
+  closeBtn.addEventListener("click", () => closeToast(toast));
   toast.appendChild(iconEl);
   toast.appendChild(textEl);
+  toast.appendChild(closeBtn);
+
+  function closeToast(t) {
+    t.style.transition = "all 0.2s ease";
+    t.style.opacity = "0";
+    t.style.transform = "translateX(20px)";
+    setTimeout(() => t.remove(), 250);
+  }
 
   while (container.children.length >= 3) {
     const first = container.firstElementChild;
@@ -66,12 +79,7 @@ export function showToast(msg, type = "info") {
   container.appendChild(toast);
   const live = document.getElementById("ariaLive");
   if (live) live.textContent = msg;
-  setTimeout(() => {
-    toast.style.transition = "all 0.3s ease";
-    toast.style.opacity = "0";
-    toast.style.transform = "translateX(30px)";
-    setTimeout(() => toast.remove(), 300);
-  }, 3500);
+  setTimeout(() => closeToast(toast), 3500);
 }
 
 export function showConfirm(title, message, options = {}) {

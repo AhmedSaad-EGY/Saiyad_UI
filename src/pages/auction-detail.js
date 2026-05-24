@@ -1,10 +1,10 @@
 import { t, getCurrentLang } from '../core/i18n/index.js';
 import { api } from '../core/api/client.js';
-import { requireAuth } from '../core/auth/index.js';
+import { requireAuth, getUser } from '../core/auth/index.js';
 import { router, registerRouteCleanup } from '../core/router/index.js';
-import { showError, showLoading, escapeHtml, $$, observeAnimations } from '../core/utils/dom.js';
+import { showError, showLoading, renderEmptyState, escapeHtml, $$, observeAnimations, fadeInContent } from '../core/utils/dom.js';
 import { formatPrice, formatDate, statusClass, tStatus } from '../core/utils/format.js';
-import { trackRecentlyViewed, showToast } from '../core/utils/ui.js';
+import { trackRecentlyViewed, showToast, triggerConfetti } from '../core/utils/ui.js';
 import { joinAuctionGroup, leaveAuctionGroup } from '../core/realtime/index.js';
 
 export default async function renderAuctionDetail(container, route, params) {
@@ -113,6 +113,12 @@ export default async function renderAuctionDetail(container, route, params) {
         </div>
       `;
       observeAnimations();
+      fadeInContent(container);
+
+      const user = getUser();
+      if (user && a.winnerUserId && (user.id === a.winnerUserId || user.userId === a.winnerUserId)) {
+        triggerConfetti();
+      }
 
       if (isActive) {
         // Bid slider ↔ input sync
@@ -237,6 +243,13 @@ export default async function renderAuctionDetail(container, route, params) {
 
     render(a);
   } catch (e) {
-    showError(container, e.message);
+    const id = params.id;
+    renderEmptyState(container, {
+      icon: "fa-gavel",
+      title: t("common.loadFailed"),
+      desc: escapeHtml(e.message),
+      actionText: t("common.retry"),
+      actionFn: () => router(),
+    });
   }
 }

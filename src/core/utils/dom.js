@@ -225,6 +225,62 @@ export function observeAnimations(root = document) {
   }
 }
 
+export function fadeInContent(el) {
+  if (!el) return;
+  el.classList.add('content-fade');
+  el.addEventListener('animationend', () => el.classList.remove('content-fade'), { once: true });
+}
+
+export function initPullToRefresh({ onRefresh, threshold = 80, indicatorId = 'ptr-indicator' } = {}) {
+  if (!('ontouchstart' in window)) return;
+  const existing = document.getElementById(indicatorId);
+  if (existing) existing.remove();
+
+  const indicator = document.createElement('div');
+  indicator.id = indicatorId;
+  indicator.className = 'ptr-indicator';
+  indicator.innerHTML = '<div class="ptr-spinner"><i class="fas fa-spinner"></i></div><div class="ptr-text">Pull to refresh</div>';
+  document.body.prepend(indicator);
+
+  let startY = 0, pulling = false, moved = false;
+
+  document.addEventListener('touchstart', (e) => {
+    if (window.scrollY > 0) return;
+    startY = e.touches[0].clientY;
+    pulling = true;
+    moved = false;
+  }, { passive: true });
+
+  document.addEventListener('touchmove', (e) => {
+    if (!pulling) return;
+    const dy = e.touches[0].clientY - startY;
+    if (dy <= 0) { indicator.classList.remove('ptr-active', 'ptr-ready'); indicator.style.transform = ''; return; }
+    moved = true;
+    const pull = Math.min(dy * 0.5, threshold * 1.2);
+    indicator.style.transform = `translateY(${pull}px)`;
+    indicator.classList.toggle('ptr-ready', dy >= threshold);
+    indicator.classList.add('ptr-active');
+  }, { passive: true });
+
+  document.addEventListener('touchend', async () => {
+    if (!pulling || !moved) { pulling = false; return; }
+    const ready = indicator.classList.contains('ptr-ready');
+    const dy = parseFloat(indicator.style.transform?.replace('translateY(', '') || '0');
+    indicator.style.transform = ready ? `translateY(${threshold}px)` : '';
+    indicator.classList.remove('ptr-active', 'ptr-ready');
+    if (ready) {
+      indicator.classList.add('ptr-refreshing');
+      indicator.querySelector('.ptr-text').textContent = 'Refreshing...';
+      try { await onRefresh(); } catch {}
+      indicator.classList.remove('ptr-refreshing');
+      indicator.querySelector('.ptr-text').textContent = 'Pull to refresh';
+    }
+    indicator.style.transform = '';
+    pulling = false;
+    moved = false;
+  }, { passive: true });
+}
+
 export function manageFocus(container, announcement) {
   if (!container) return;
   const focusable = container.querySelector(
