@@ -35,9 +35,9 @@ export default async function renderSellerProfile(container) {
     // Load seller's public product listings
     try {
       const sellerProducts = await api.get("/products", {
-        sellerId: userId,
-        pageSize: 8,
-        page: 1,
+        SellerId: userId,
+        PageSize: 8,
+        Page: 1,
       });
       const items = sellerProducts.items || sellerProducts.data || [];
       if (items.length) {

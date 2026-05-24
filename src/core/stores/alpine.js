@@ -82,7 +82,7 @@ Alpine.store('notif', {
   },
   async refresh() {
     try {
-      const data = await api.get('/notifications/unread/count').catch(() => null);
+      const data = await api.get('/notifications/unread-count').catch(() => null);
       if (data !== null) this.count = data.count ?? data ?? 0;
     } catch {
       // silently fail

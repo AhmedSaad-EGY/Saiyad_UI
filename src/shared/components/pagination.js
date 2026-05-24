@@ -23,3 +23,24 @@ Alpine.data('pagination', ({ page, totalPages, onPageChange } = {}) => ({
     onPageChange?.(n);
   },
 }));
+
+/**
+ * Generate HTML for an Alpine-powered pagination bar.
+ * Usage: place inside an Alpine component that has `page` and `totalPages` state and a `goToPage(n)` method.
+ */
+export function alpinePaginationHtml() {
+  return `
+    <div class="flex items-center gap-2" style="justify-content:center;margin-top:24px"
+         x-data="pagination({ page, totalPages, onPageChange: goToPage })">
+      <template x-for="p in pages" :key="p">
+        <span>
+          <button x-show="p !== '...'"
+                  x-text="p"
+                  :class="'btn btn-sm ' + (p === currentPage ? 'btn-primary' : 'btn-ghost')"
+                  @click="goTo(p)"></button>
+          <span x-show="p === '...'" class="px-1" style="color:var(--text-muted)">&hellip;</span>
+        </span>
+      </template>
+    </div>
+  `;
+}

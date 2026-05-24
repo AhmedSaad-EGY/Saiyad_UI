@@ -108,10 +108,10 @@ export async function router(force = false) {
   window.scrollTo({ top: 0, behavior: "smooth" });
 
   // Set aria-current="page" on nav links
-  const cleanPath = path.split('?')[0];
+  const cleanPath = route.split('?')[0];
   document.querySelectorAll('.nav-link').forEach(link => {
     const href = link.getAttribute('href');
-    const isMatch = href === `#${cleanPath}` || (cleanPath === '' && href === '#/');
+    const isMatch = href === `#/${cleanPath}` || (cleanPath === '' && href === '#/');
     link.setAttribute('aria-current', isMatch ? 'page' : 'false');
   });
 

@@ -281,6 +281,18 @@ export function initPullToRefresh({ onRefresh, threshold = 80, indicatorId = 'pt
   }, { passive: true });
 }
 
+export function initInfiniteScroll({ sentinelId, onLoadMore, threshold = 300, enabled = true } = {}) {
+  if (!enabled || typeof IntersectionObserver === 'undefined') return;
+  const sentinel = document.getElementById(sentinelId);
+  if (!sentinel) return;
+  const observer = new IntersectionObserver((entries) => {
+    if (entries[0].isIntersecting) onLoadMore();
+  }, { rootMargin: `${threshold}px` });
+  observer.observe(sentinel);
+  const cleanup = () => observer.disconnect();
+  return cleanup;
+}
+
 export function manageFocus(container, announcement) {
   if (!container) return;
   const focusable = container.querySelector(

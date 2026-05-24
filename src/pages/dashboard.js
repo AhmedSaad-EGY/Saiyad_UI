@@ -1,3 +1,4 @@
+import Alpine from 'alpinejs';
 import { t } from '../core/i18n/index.js';
 import { api } from '../core/api/client.js';
 import { requireAuth, getUser, hasAnyRole, hasRole, updateNavbar, updateCartBadge, updateNotifBadge } from '../core/auth/index.js';
@@ -11,42 +12,111 @@ import renderAuctionRequests from './auction-requests.js';
 import renderAuctionRequestsReview from './auction-requests-review.js';
 import renderAuctioneerAnalytics from './auctioneer-analytics.js';
 
+Alpine.data('dashboardPage', () => ({
+  activeTab: 'overview',
+  loadedTabs: new Set(),
+
+  init() {
+    const params = new URLSearchParams(location.hash.split('?')[1] || '');
+    this.activeTab = params.get('tab') || 'overview';
+    this.$nextTick(() => this.ensureTabLoaded(this.activeTab));
+    if (window.innerWidth < 768) document.body.classList.add('has-bottom-bar');
+  },
+
+  switchTab(tabId) {
+    if (tabId === this.activeTab) return;
+    this.activeTab = tabId;
+    const qp = new URLSearchParams(location.hash.split('?')[1] || '');
+    if (tabId === 'overview') qp.delete('tab');
+    else qp.set('tab', tabId);
+    const qs = qp.toString();
+    history.replaceState(null, '', qs ? `#/dashboard?${qs}` : '#/dashboard');
+    this.ensureTabLoaded(tabId);
+  },
+
+  ensureTabLoaded(tabId) {
+    if (this.loadedTabs.has(tabId)) return;
+    this.loadedTabs.add(tabId);
+    const content = document.getElementById('dashTab_' + tabId);
+    if (!content) return;
+    const user = getUser();
+    const params = new URLSearchParams(location.hash.split('?')[1] || '');
+    const route = { path: '/dashboard' };
+
+    const skeletonType = tabId === 'orders' ? 'table' : tabId === 'products' || tabId === 'profile' || tabId === 'password' ? 'form' : 'page';
+    showLoading(content, skeletonType);
+
+    switch (tabId) {
+      case 'orders': renderOrders(content); break;
+      case 'products': renderMyProducts(content); break;
+      case 'auctions': renderDashAuctions(content); break;
+      case 'auction-requests': if (typeof renderAuctionRequests === 'function') renderAuctionRequests(content, route, params); break;
+      case 'auction-requests-review': if (typeof renderAuctionRequestsReview === 'function') renderAuctionRequestsReview(content, route, params); break;
+      case 'auctioneer-analytics': if (typeof renderAuctioneerAnalytics === 'function') renderAuctioneerAnalytics(content, route, params); break;
+      case 'wishlist': renderWishlist(content); break;
+      case 'notifications': renderNotifications(content); break;
+      case 'profile': renderProfile(content, user); break;
+      case 'password': renderChangePassword(content); break;
+      default: renderOverview(content, user); break;
+    }
+  },
+}));
+
 export default async function renderDashboard(container, route, params) {
   if (!(await requireAuth())) return;
 
-  const tab = params.tab || "overview";
   const user = getUser();
+  const tab = params.tab || 'overview';
 
   const isECommerceRole = hasAnyRole(ROLES.CUSTOMER, ROLES.FISHERMAN, ROLES.BAIT_SELLER);
   const isSellerRole = hasAnyRole(...(SELLER_ROLES));
 
   const tabs = [
-    { id: "overview", icon: "fa-tachometer-alt", label: t("dash.overview") },
-    ...(isECommerceRole ? [{ id: "orders", icon: "fa-box", label: t("dash.orders") }] : []),
-    ...(isSellerRole ? [{ id: "products", icon: "fa-tag", label: t("dash.products") }] : []),
-    ...(hasRole("Auctioneer") ? [{ id: "auctions", icon: "fa-gavel", label: t("dash.auctions") }] : []),
-    ...(hasAnyRole("Fisherman") ? [{ id: "auction-requests", icon: "fa-file-export", label: t("auctionRequests.title") }] : []),
-    ...(hasAnyRole("Auctioneer", "Admin") ? [{ id: "auction-requests-review", icon: "fa-clipboard-list", label: t("auctionRequestsReview.title") }] : []),
-    ...(hasAnyRole("Auctioneer", "Admin") ? [{ id: "auctioneer-analytics", icon: "fa-chart-bar", label: t("analytics.title") }] : []),
-    ...(isECommerceRole ? [{ id: "wishlist", icon: "fa-heart", label: t("dash.wishlist") }] : []),
-    { id: "notifications", icon: "fa-bell", label: t("dash.notifications") },
-    { id: "profile", icon: "fa-user", label: t("dash.profile") },
-    { id: "password", icon: "fa-key", label: t("dash.changePassword") },
+    { id: 'overview', icon: 'fa-tachometer-alt', label: t('dash.overview') },
+    ...(isECommerceRole ? [{ id: 'orders', icon: 'fa-box', label: t('dash.orders') }] : []),
+    ...(isSellerRole ? [{ id: 'products', icon: 'fa-tag', label: t('dash.products') }] : []),
+    ...(hasRole('Auctioneer') ? [{ id: 'auctions', icon: 'fa-gavel', label: t('dash.auctions') }] : []),
+    ...(hasAnyRole('Fisherman') ? [{ id: 'auction-requests', icon: 'fa-file-export', label: t('auctionRequests.title') }] : []),
+    ...(hasAnyRole('Auctioneer', 'Admin') ? [{ id: 'auction-requests-review', icon: 'fa-clipboard-list', label: t('auctionRequestsReview.title') }] : []),
+    ...(hasAnyRole('Auctioneer', 'Admin') ? [{ id: 'auctioneer-analytics', icon: 'fa-chart-bar', label: t('analytics.title') }] : []),
+    ...(isECommerceRole ? [{ id: 'wishlist', icon: 'fa-heart', label: t('dash.wishlist') }] : []),
+    { id: 'notifications', icon: 'fa-bell', label: t('dash.notifications') },
+    { id: 'profile', icon: 'fa-user', label: t('dash.profile') },
+    { id: 'password', icon: 'fa-key', label: t('dash.changePassword') },
   ];
 
   container.innerHTML = `
-    <div class="dashboard-layout">
+    <div x-data="dashboardPage" class="dashboard-layout" x-init="init()">
       <div class="dashboard-sidebar">
-        ${tabs.map(tabItem => `<a href="#/dashboard${tabItem.id === "overview" ? "" : `?tab=${tabItem.id}`}" class="dash-link ${tab === tabItem.id ? "active" : ""}" data-tab="${tabItem.id}"><i class="fas ${tabItem.icon}"></i> ${tabItem.label}</a>`).join("")}
+        ${tabs.map(tabItem => `
+          <a href="#/dashboard${tabItem.id === 'overview' ? '' : '?tab=' + tabItem.id}"
+             class="dash-link"
+             :class="{ active: activeTab === '${tabItem.id}' }"
+             @click.prevent="switchTab('${tabItem.id}')">
+            <i class="fas ${tabItem.icon}"></i> ${tabItem.label}
+          </a>
+        `).join('')}
       </div>
       <div class="dash-mobile-tabs">
-        <select id="dashMobileSelect" class="form-select" aria-label="Dashboard tabs">
-          ${tabs.map(tabItem => `<option value="${tabItem.id}" ${tab === tabItem.id ? "selected" : ""}>${tabItem.label}</option>`).join("")}
+        <select class="form-select" aria-label="Dashboard tabs" x-model="activeTab" @change="switchTab(activeTab)">
+          ${tabs.map(tabItem => `<option value="${tabItem.id}">${tabItem.label}</option>`).join('')}
         </select>
       </div>
-      <div class="dashboard-content" id="dashContent"></div>
+      <div class="dashboard-content">
+        ${tabs.map(tabItem => `
+          <div id="dashTab_${tabItem.id}" x-show="activeTab === '${tabItem.id}'" x-transition:enter="transition-fade" x-transition:enter-start="op-0" x-transition:enter-end="op-100"></div>
+        `).join('')}
+      </div>
       <div class="dash-bottom-bar">
-        ${tabs.map(tabItem => `<a href="#/dashboard${tabItem.id === "overview" ? "" : `?tab=${tabItem.id}`}" class="dash-bottom-link ${tab === tabItem.id ? "active" : ""}" data-tab="${tabItem.id}" title="${tabItem.label}"><i class="fas ${tabItem.icon}"></i><span>${tabItem.label}</span></a>`).join("")}
+        ${tabs.map(tabItem => `
+          <a href="#/dashboard${tabItem.id === 'overview' ? '' : '?tab=' + tabItem.id}"
+             class="dash-bottom-link"
+             :class="{ active: activeTab === '${tabItem.id}' }"
+             @click.prevent="switchTab('${tabItem.id}')"
+             title="${tabItem.label}">
+            <i class="fas ${tabItem.icon}"></i><span>${tabItem.label}</span>
+          </a>
+        `).join('')}
       </div>
     </div>
   `;
@@ -55,61 +125,6 @@ export default async function renderDashboard(container, route, params) {
     document.body.classList.remove('has-bottom-bar');
     document.body.classList.remove('has-floating-bar');
   });
-  if (window.innerWidth < 768) document.body.classList.add('has-bottom-bar');
-
-  $$(".dash-link").forEach((a) => {
-    a.addEventListener("click", (e) => {
-      e.preventDefault();
-      const t = a.dataset.tab;
-      navigate(`dashboard?tab=${t}`);
-    });
-  });
-
-  document.getElementById("dashMobileSelect")?.addEventListener("change", (e) => {
-    navigate(`dashboard?tab=${e.target.value}`);
-  });
-
-  const content = document.getElementById("dashContent");
-
-  // Show skeleton immediately for tab switch
-  const skeletonType = tab === "orders" ? "table" : tab === "products" || tab === "profile" || tab === "password" ? "form" : "page";
-  showLoading(content, skeletonType);
-
-  switch (tab) {
-    case "orders":
-      renderOrders(content);
-      break;
-    case "products":
-      renderMyProducts(content);
-      break;
-    case "auctions":
-      renderAuctions(content);
-      break;
-    case "auction-requests":
-      if (typeof renderAuctionRequests === "function") renderAuctionRequests(content, route, params);
-      break;
-    case "auction-requests-review":
-      if (typeof renderAuctionRequestsReview === "function") renderAuctionRequestsReview(content, route, params);
-      break;
-    case "auctioneer-analytics":
-      if (typeof renderAuctioneerAnalytics === "function") renderAuctioneerAnalytics(content, route, params);
-      break;
-    case "wishlist":
-      renderWishlist(content);
-      break;
-    case "notifications":
-      renderNotifications(content);
-      break;
-    case "profile":
-      renderProfile(content, user);
-      break;
-    case "password":
-      renderChangePassword(content);
-      break;
-    default:
-      renderOverview(content, user);
-      break;
-  }
 }
 
 async function renderOverview(content, user) {
@@ -278,6 +293,7 @@ async function renderOrders(content) {
 }
 
 async function renderMyProducts(content) {
+  const sellerRoles = hasAnyRole(...(SELLER_ROLES));
   let editingProductId = null;
   content.innerHTML = `
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:8px">
@@ -667,7 +683,7 @@ function showAuctionModal(productId, productTitle) {
   });
 }
 
-async function renderAuctions(content) {
+async function renderDashAuctions(content) {
   content.innerHTML = `
     <div class="card" style="text-align:center;padding:32px">
       <h3><i class="fas fa-gavel"></i> ${t("dash.auctions")}</h3>
