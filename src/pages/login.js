@@ -3,6 +3,7 @@ import { api } from '../core/api/client.js';
 import { isAuthenticated, updateNavbar } from '../core/auth/index.js';
 import { navigate } from '../core/router/index.js';
 import { showToast } from '../core/utils/ui.js';
+import { showFieldError, clearFieldError } from '../core/utils/validation.js';
 import Alpine from 'alpinejs';
 
 Alpine.data('loginForm', () => ({
@@ -14,6 +15,7 @@ Alpine.data('loginForm', () => ({
   unverifiedEmail: '',
 
   t,
+  clearFieldError,
 
   togglePw() {
     this.showPassword = !this.showPassword;
@@ -28,13 +30,22 @@ Alpine.data('loginForm', () => ({
     this.error = '';
     this.unverifiedEmail = '';
 
+    const emailEl = document.getElementById('loginEmail');
+    const pwEl = document.getElementById('loginPassword');
+
+    clearFieldError(emailEl);
+    clearFieldError(pwEl);
+
+    let valid = true;
     if (!this.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.email.trim())) {
-      this.error = t('auth.invalidEmail');
-      this.loading = false;
-      return;
+      showFieldError(emailEl, t('auth.invalidEmail'));
+      valid = false;
     }
     if (!this.password || this.password.length < 6) {
-      this.error = t('auth.passwordMinLength');
+      showFieldError(pwEl, t('auth.passwordMinLength'));
+      valid = false;
+    }
+    if (!valid) {
       this.loading = false;
       return;
     }
@@ -97,12 +108,12 @@ export default function renderLogin(container) {
         <form @submit.prevent="submit()" novalidate>
           <div class="form-group">
             <label class="form-label" for="loginEmail">${t('auth.email')}</label>
-            <input type="email" class="form-input" id="loginEmail" name="email" x-model="email" @input="clearError()" placeholder="your@email.com" required autocomplete="email" inputmode="email">
+            <input type="email" class="form-input" id="loginEmail" name="email" x-model="email" @input="clearError(); clearFieldError($el)" placeholder="your@email.com" required autocomplete="email" inputmode="email">
           </div>
           <div class="form-group">
             <label class="form-label" for="loginPassword">${t('auth.password')}</label>
             <div class="password-wrapper">
-              <input :type="showPassword ? 'text' : 'password'" class="form-input" id="loginPassword" name="password" x-model="password" @input="clearError()" placeholder="${t('auth.password')}" required autocomplete="current-password" minlength="6">
+              <input :type="showPassword ? 'text' : 'password'" class="form-input" id="loginPassword" name="password" x-model="password" @input="clearError(); clearFieldError($el)" placeholder="${t('auth.password')}" required autocomplete="current-password" minlength="6">
               <button type="button" class="toggle-password" @click="togglePw()" :aria-label="showPassword ? t('auth.hidePassword') : t('auth.showPassword')"><i :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i></button>
             </div>
             <div style="text-align: right; margin-top: 4px;">
