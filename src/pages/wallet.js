@@ -121,15 +121,15 @@ export default async function renderWallet(container) {
               <div class="wallet-balance-row">
                 <div class="wallet-balance-item">
                   <span class="wallet-label">${t("wallet.balance")}</span>
-                  <span class="wallet-amount" x-text="formatEGP(wallet.balance)"></span>
+                  <span class="wallet-amount" x-text="wallet ? formatEGP(wallet.balance) : ''"></span>
                 </div>
                 <div class="wallet-balance-item">
                   <span class="wallet-label">${t("wallet.held")}</span>
-                  <span class="wallet-amount wallet-held" x-text="formatEGP(wallet.heldBalance)"></span>
+                  <span class="wallet-amount wallet-held" x-text="wallet ? formatEGP(wallet.heldBalance) : ''"></span>
                 </div>
                 <div class="wallet-balance-item">
                   <span class="wallet-label">${t("wallet.available")}</span>
-                  <span class="wallet-amount wallet-available" x-text="formatEGP(wallet.availableBalance)"></span>
+                  <span class="wallet-amount wallet-available" x-text="wallet ? formatEGP(wallet.availableBalance) : ''"></span>
                 </div>
               </div>
               <div class="wallet-deposit-row">

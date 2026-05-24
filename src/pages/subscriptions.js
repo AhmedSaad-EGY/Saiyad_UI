@@ -143,4 +143,5 @@ export default async function renderSubscriptions(container) {
         </div>
       </div>
     </div>`;
+  Alpine.initTree(container);
 }
