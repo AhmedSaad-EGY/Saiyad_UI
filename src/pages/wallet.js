@@ -10,6 +10,7 @@ Alpine.data('walletPage', () => ({
   depositAmount: 0,
   depositMsg: '',
   depositMsgClass: '',
+  depositing: false,
   loading: true,
   escapeHtml,
 
@@ -68,7 +69,8 @@ Alpine.data('walletPage', () => ({
       this.depositMsgClass = "text-danger";
       return;
     }
-    this.depositMsg = t("common.loading");
+    this.depositing = true;
+    this.depositMsg = "";
     this.depositMsgClass = "";
     try {
       const updated = await api.post("/wallet/deposit", { amount });
@@ -80,6 +82,8 @@ Alpine.data('walletPage', () => ({
     } catch (e) {
       this.depositMsg = e.message || t("wallet.depositError");
       this.depositMsgClass = "text-danger";
+    } finally {
+      this.depositing = false;
     }
   },
 
@@ -121,7 +125,7 @@ export default async function renderWallet(container) {
               </div>
               <div class="wallet-deposit-row">
                 <input type="number" x-model="depositAmount" class="form-control" placeholder="${t("wallet.enterAmount")}" min="1" step="0.01" style="max-width:200px">
-                <button class="btn btn-primary" @click.prevent="submitDeposit()"><i class="fas fa-plus"></i> ${t("wallet.deposit")}</button>
+                <button class="btn btn-primary" :disabled="depositing" @click.prevent="submitDeposit()"><i class="fas" :class="depositing ? 'fa-spinner spinner' : 'fa-plus'"></i> ${t("wallet.deposit")}</button>
               </div>
               <div class="wallet-msg" :class="depositMsgClass" x-text="depositMsg" x-show="depositMsg"></div>
             </div>

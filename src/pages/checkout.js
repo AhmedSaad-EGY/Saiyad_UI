@@ -3,7 +3,7 @@ import { api } from '../core/api/client.js';
 import { requireAuth } from '../core/auth/index.js';
 import { navigate } from '../core/router/index.js';
 import { escapeHtml } from '../core/utils/dom.js';
-import { clearFieldError, clearAllFieldErrors } from '../core/utils/validation.js';
+import { showFieldError, clearFieldError, clearAllFieldErrors } from '../core/utils/validation.js';
 import { formatPrice } from '../core/utils/format.js';
 import Alpine from 'alpinejs';
 
@@ -86,17 +86,19 @@ Alpine.data('checkoutPage', () => ({
     } else {
       clearAllFieldErrors(document.getElementById('addressForm'));
       const fields = [
-        { element: document.getElementById('addrFullName'), required: true },
-        { element: document.getElementById('addrPhone'), required: true },
-        { element: document.getElementById('addrAddressLine'), required: true },
-        { element: document.getElementById('addrCity'), required: true },
+        { id: 'addrFullName', el: document.getElementById('addrFullName') },
+        { id: 'addrPhone', el: document.getElementById('addrPhone') },
+        { id: 'addrAddressLine', el: document.getElementById('addrAddressLine') },
+        { id: 'addrCity', el: document.getElementById('addrCity') },
       ];
-      if (!fields.every((f) => {
-        if (f.required && !document.getElementById(f.element?.id || '').value.trim()) {
-          return false;
+      let valid = true;
+      for (const f of fields) {
+        if (!f.el.value.trim()) {
+          showFieldError(f.el, t('validation.required'));
+          valid = false;
         }
-        return true;
-      })) {
+      }
+      if (!valid) {
         this.placing = false;
         return;
       }

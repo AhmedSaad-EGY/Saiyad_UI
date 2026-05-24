@@ -191,6 +191,9 @@ export default async function renderProductDetail(container, route, params) {
         .getElementById("addToCartBtn")
         .addEventListener("click", async () => {
           if (!(await requireAuth())) return;
+          const btn = document.getElementById("addToCartBtn");
+          btn.disabled = true;
+          btn.innerHTML = `<i class="fas fa-spinner spinner"></i> ${t("common.loading")}`;
           try {
             await api.post("/cart/items", {
               productId: p.id,
@@ -200,6 +203,9 @@ export default async function renderProductDetail(container, route, params) {
             updateCartBadge();
           } catch (e) {
             showToast(e.message, "error");
+          } finally {
+            btn.disabled = false;
+            btn.innerHTML = `<i class="fas fa-shopping-cart"></i> ${t("product.addToCart")}`;
           }
         });
     }
