@@ -107,6 +107,14 @@ export async function router(force = false) {
   showLoading(app, "page");
   window.scrollTo({ top: 0, behavior: "smooth" });
 
+  // Set aria-current="page" on nav links
+  const cleanPath = path.split('?')[0];
+  document.querySelectorAll('.nav-link').forEach(link => {
+    const href = link.getAttribute('href');
+    const isMatch = href === `#${cleanPath}` || (cleanPath === '' && href === '#/');
+    link.setAttribute('aria-current', isMatch ? 'page' : 'false');
+  });
+
   if (_navTimer) clearTimeout(_navTimer);
   _navTimer = setTimeout(async () => {
     _navTimer = null;

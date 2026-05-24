@@ -43,10 +43,12 @@ Alpine.data('cartPage', () => ({
   async removeItem(productId) {
     const ok = await showConfirm(t('cart.removeItemTitle'), t('cart.removeItemConfirm'), { type: 'danger', confirmText: t('common.remove') });
     if (!ok) return;
+    const prevTotal = this.total;
     const prevItems = [...this.items];
     this.items = this.items.filter(i => i.productId !== productId);
     this.empty = this.items.length === 0;
     this.computeTotal();
+    animateCartTotal(prevTotal, this.total);
     updateCartBadge();
     try {
       await api.delete(`/cart/items/${productId}`);
@@ -61,12 +63,14 @@ Alpine.data('cartPage', () => ({
   },
 
   async updateQty(productId, qty) {
+    const prevTotal = this.total;
     const prevItems = this.items.map(i => ({ ...i }));
     const item = this.items.find(i => i.productId === productId);
     if (!item) return;
     const prevQty = item.quantity;
     item.quantity = parseInt(qty) || 1;
     this.computeTotal();
+    animateCartTotal(prevTotal, this.total);
     try {
       await api.put(`/cart/items/${productId}`, { quantity: parseInt(qty) || 1 });
       this.refresh();
@@ -82,10 +86,12 @@ Alpine.data('cartPage', () => ({
   async clearCart() {
     const ok = await showConfirm(t('cart.clear'), t('cart.clearConfirm'), { type: 'danger' });
     if (!ok) return;
+    const prevTotal = this.total;
     const prevItems = [...this.items];
     this.items = [];
     this.empty = true;
     this.total = 0;
+    animateCartTotal(prevTotal, 0);
     updateCartBadge();
     try {
       await api.delete('/cart');
@@ -200,7 +206,7 @@ export default async function renderCart(container) {
       <template x-if="loading">
         <div><i class="fas fa-spinner spinner"></i> ${t('common.loading')}</div>
       </template>
-      <template x-if="!loading && empty">
+      <div x-show="!loading && empty" x-transition:enter="transition-fade" x-transition:enter-start="op-0" x-transition:enter-end="op-100">
         <div>
           <div class="section-header"><h2><i class="fas fa-shopping-cart"></i> ${t('cart.title')}</h2></div>
           <div class="empty-state">
@@ -210,8 +216,8 @@ export default async function renderCart(container) {
             <a href="#/products" class="btn btn-primary"><i class="fas fa-store"></i> ${t('cart.browseProducts')}</a>
           </div>
         </div>
-      </template>
-      <template x-if="!loading && error">
+      </div>
+      <div x-show="!loading && error" x-transition:enter="transition-fade" x-transition:enter-start="op-0" x-transition:enter-end="op-100">
         <div>
           <div class="section-header"><h2><i class="fas fa-shopping-cart"></i> ${t('cart.title')}</h2></div>
           <div class="empty-state">
@@ -220,8 +226,8 @@ export default async function renderCart(container) {
             <button class="btn btn-primary" @click="init()">${t('common.retry')}</button>
           </div>
         </div>
-      </template>
-      <template x-if="!loading && !empty && !error">
+      </div>
+      <div x-show="!loading && !empty && !error" x-transition:enter="transition-fade" x-transition:enter-start="op-0" x-transition:enter-end="op-100">
         <div>
           <div class="section-header">
             <h2><i class="fas fa-shopping-cart"></i> ${t('cart.title')}</h2>
@@ -229,13 +235,14 @@ export default async function renderCart(container) {
           </div>
           <div class="cart-table-wrapper">
             <table class="cart-table">
+              <caption style="caption-side:bottom;margin-top:8px;font-size:0.78rem;color:var(--text-muted)">${t('cart.title')}</caption>
               <thead>
                 <tr>
-                  <th>${t('cart.product')}</th>
-                  <th>${t('cart.price')}</th>
-                  <th>${t('cart.quantity')}</th>
-                  <th>${t('cart.subtotal')}</th>
-                  <th></th>
+                  <th scope="col">${t('cart.product')}</th>
+                  <th scope="col">${t('cart.price')}</th>
+                  <th scope="col">${t('cart.quantity')}</th>
+                  <th scope="col">${t('cart.subtotal')}</th>
+                  <th scope="col"></th>
                 </tr>
               </thead>
               <tbody>
@@ -276,14 +283,27 @@ export default async function renderCart(container) {
             </table>
           </div>
           <div class="cart-footer">
-            <div class="cart-total">${t('cart.total')}: <span class="cart-total-amount" x-text="formatPrice(total)"></span></div>
+            <div class="cart-total">${t('cart.total')}: <span class="cart-total-amount" id="cartTotalDisplay" x-text="formatPrice(total)"></span></div>
             <a href="#/checkout" class="btn btn-primary btn-lg"><i class="fas fa-credit-card"></i> ${t('cart.checkout')}</a>
           </div>
           <div class="cart-floating-bar" id="cartFloatingBar" aria-hidden="true">
-            <div class="cart-total">${t('cart.total')}: <span class="cart-total-amount" x-text="formatPrice(total)"></span></div>
+            <div class="cart-total">${t('cart.total')}: <span class="cart-total-amount" id="cartTotalFloating" x-text="formatPrice(total)"></span></div>
             <a href="#/checkout" class="btn btn-primary"><i class="fas fa-credit-card"></i> ${t('cart.checkout')}</a>
           </div>
         </div>
-      </template>
+      </div>
     </div>`;
+}
+
+// Expose for cart total animation
+export function animateCartTotal(prev, current) {
+  const el = document.getElementById('cartTotalDisplay');
+  if (!el) return;
+  const diff = current - prev;
+  el.style.transform = 'scale(1.15)';
+  el.style.color = diff > 0 ? 'var(--danger)' : 'var(--success)';
+  setTimeout(() => {
+    el.style.transform = 'scale(1)';
+    el.style.color = '';
+  }, 400);
 }

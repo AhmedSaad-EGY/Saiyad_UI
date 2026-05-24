@@ -81,12 +81,13 @@ export default async function renderAdmin(container) {
       panel.innerHTML = `
         <div class="table-wrapper">
           <table>
+            <caption style="caption-side:bottom;margin-top:8px;font-size:0.78rem;color:var(--text-muted)">${t("admin.users")}</caption>
             <thead><tr>
-              <th>${t("auth.fullName")}</th>
-              <th>${t("auth.email")}</th>
-              <th>${t("auth.role")}</th>
-              <th>${t("product.status")}</th>
-              <th></th>
+              <th scope="col">${t("auth.fullName")}</th>
+              <th scope="col">${t("auth.email")}</th>
+              <th scope="col">${t("auth.role")}</th>
+              <th scope="col">${t("product.status")}</th>
+              <th scope="col"></th>
             </tr></thead>
             <tbody>
               ${users.map(u => `
@@ -154,7 +155,8 @@ export default async function renderAdmin(container) {
       const reports = data.items || data.data || data || [];
       content.innerHTML = `
         <div class="table-wrapper"><table>
-          <thead><tr><th>${t("admin.id")}</th><th>${t("cart.product")}</th><th>${t("admin.reportReason")}</th><th>${t("admin.reportStatus")}</th><th></th></tr></thead>
+          <caption style="caption-side:bottom;margin-top:8px;font-size:0.78rem;color:var(--text-muted)">${t("admin.reports")}</caption>
+          <thead><tr><th scope="col">${t("admin.id")}</th><th scope="col">${t("cart.product")}</th><th scope="col">${t("admin.reportReason")}</th><th scope="col">${t("admin.reportStatus")}</th><th scope="col"></th></tr></thead>
           <tbody>${reports
             .map(
               (r) => `
@@ -213,13 +215,14 @@ export default async function renderAdmin(container) {
       panel.innerHTML = `
         <div class="table-wrapper">
           <table>
+            <caption style="caption-side:bottom;margin-top:8px;font-size:0.78rem;color:var(--text-muted)">${t("admin.products")}</caption>
             <thead><tr>
-              <th>${t("product.title")}</th>
-              <th>${t("product.seller")}</th>
-              <th>${t("product.category")}</th>
-              <th>${t("cart.price")}</th>
-              <th>${t("product.status")}</th>
-              <th></th>
+              <th scope="col">${t("product.title")}</th>
+              <th scope="col">${t("product.seller")}</th>
+              <th scope="col">${t("product.category")}</th>
+              <th scope="col">${t("cart.price")}</th>
+              <th scope="col">${t("product.status")}</th>
+              <th scope="col"></th>
             </tr></thead>
             <tbody>
               ${products.map((p) => `
@@ -304,13 +307,14 @@ export default async function renderAdmin(container) {
       panel.innerHTML = `
         <div class="table-wrapper">
           <table>
+            <caption style="caption-side:bottom;margin-top:8px;font-size:0.78rem;color:var(--text-muted)">${t("admin.orders")}</caption>
             <thead><tr>
-              <th>#</th>
-              <th>${t("order.buyer")}</th>
-              <th>${t("cart.total")}</th>
-              <th>${t("product.status")}</th>
-              <th>${t("dash.date")}</th>
-              <th></th>
+              <th scope="col">#</th>
+              <th scope="col">${t("order.buyer")}</th>
+              <th scope="col">${t("cart.total")}</th>
+              <th scope="col">${t("product.status")}</th>
+              <th scope="col">${t("dash.date")}</th>
+              <th scope="col"></th>
             </tr></thead>
             <tbody>
               ${orders.map(o => `
@@ -368,7 +372,8 @@ export default async function renderAdmin(container) {
           </form>
         </div>
         <div class="table-wrapper"><table>
-          <thead><tr><th>${t("admin.id")}</th><th>${t("admin.name")}</th><th>${t("admin.categoryDesc")}</th><th></th></tr></thead>
+          <caption style="caption-side:bottom;margin-top:8px;font-size:0.78rem;color:var(--text-muted)">${t("admin.categories")}</caption>
+          <thead><tr><th scope="col">${t("admin.id")}</th><th scope="col">${t("admin.name")}</th><th scope="col">${t("admin.categoryDesc")}</th><th scope="col"></th></tr></thead>
           <tbody>${cats
             .map(
               (c) => `
@@ -475,13 +480,14 @@ export default async function renderAdmin(container) {
         <h3 style="margin-bottom:12px">${t("admin.feeIncome")}</h3>
         <div class="table-wrapper">
           <table>
+            <caption style="caption-side:bottom;margin-top:8px;font-size:0.78rem;color:var(--text-muted)">${t("admin.feeIncome")}</caption>
             <thead><tr>
-              <th>${t("admin.id")}</th>
-              <th>${t("wallet.type")}</th>
-              <th>${t("wallet.amount")}</th>
-              <th>Reference</th>
-              <th>${t("wallet.description")}</th>
-              <th>${t("dash.date")}</th>
+              <th scope="col">${t("admin.id")}</th>
+              <th scope="col">${t("wallet.type")}</th>
+              <th scope="col">${t("wallet.amount")}</th>
+              <th scope="col">Reference</th>
+              <th scope="col">${t("wallet.description")}</th>
+              <th scope="col">${t("dash.date")}</th>
             </tr></thead>
             <tbody>
               ${feeTxns.length ? feeTxns.map(t => `
@@ -515,10 +521,11 @@ export default async function renderAdmin(container) {
           <button class="btn btn-primary" id="addPlanBtn"><i class="fas fa-plus"></i> ${t("admin.addPlan") || "Add Plan"}</button>
         </div>
         <div class="table-responsive"><table>
+          <caption style="caption-side:bottom;margin-top:8px;font-size:0.78rem;color:var(--text-muted)">${t("admin.plans")}</caption>
           <thead><tr>
-            <th>${t("common.name") || "Name"}</th><th>${t("common.tier") || "Tier"}</th><th>Price</th>
-            <th>Auctions</th><th>Bids</th><th>Requests</th>
-            <th>${t("common.status") || "Status"}</th><th>${t("common.actions") || "Actions"}</th>
+            <th scope="col">${t("common.name") || "Name"}</th><th scope="col">${t("common.tier") || "Tier"}</th><th scope="col">Price</th>
+            <th scope="col">Auctions</th><th scope="col">Bids</th><th scope="col">Requests</th>
+            <th scope="col">${t("common.status") || "Status"}</th><th scope="col">${t("common.actions") || "Actions"}</th>
           </tr></thead>
           <tbody>${(plans || []).map(p => `
             <tr>

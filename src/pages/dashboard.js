@@ -206,7 +206,8 @@ async function renderOrders(content) {
       list.innerHTML = `
         <div class="table-wrapper animate-on-scroll">
           <table>
-            <thead><tr><th>${t("dash.orderNum")}</th><th>${t("cart.total")}</th><th>${t("product.status")}</th><th>${t("dash.date")}</th><th></th></tr></thead>
+            <caption style="caption-side:bottom;margin-top:8px;font-size:0.78rem;color:var(--text-muted)">${t("dash.orders")}</caption>
+            <thead><tr><th scope="col">${t("dash.orderNum")}</th><th scope="col">${t("cart.total")}</th><th scope="col">${t("product.status")}</th><th scope="col">${t("dash.date")}</th><th scope="col"></th></tr></thead>
             <tbody>${orders
               .map(
                 (o) => `
@@ -473,9 +474,9 @@ async function renderMyProducts(content) {
       return;
     }
     list.innerHTML = `
-      <div class="table-wrapper animate-on-scroll">
-        <table>
-          <thead><tr><th>${t("cart.product")}</th><th>${t("cart.price")}</th><th>${t("product.status")}</th><th>${t("product.stock")}</th><th></th></tr></thead>
+      <div class="table-wrapper animate-on-scroll">          <table>
+            <caption style="caption-side:bottom;margin-top:8px;font-size:0.78rem;color:var(--text-muted)">${t("dash.products")}</caption>
+            <thead><tr><th scope="col">${t("cart.product")}</th><th scope="col">${t("cart.price")}</th><th scope="col">${t("product.status")}</th><th scope="col">${t("product.stock")}</th><th scope="col"></th></tr></thead>
           <tbody>${products
             .map(
               (p) => `
@@ -692,9 +693,9 @@ async function renderWishlist(content) {
       return;
     }
     document.getElementById("wishlistItems").innerHTML = `
-      <div class="table-wrapper animate-on-scroll">
-        <table>
-          <thead><tr><th>${t("cart.product")}</th><th>${t("cart.price")}</th><th></th></tr></thead>
+      <div class="table-wrapper animate-on-scroll">          <table>
+            <caption style="caption-side:bottom;margin-top:8px;font-size:0.78rem;color:var(--text-muted)">${t("dash.wishlist")}</caption>
+            <thead><tr><th scope="col">${t("cart.product")}</th><th scope="col">${t("cart.price")}</th><th scope="col"></th></tr></thead>
           <tbody>${items
             .map(
               (w) => `

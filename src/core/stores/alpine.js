@@ -7,7 +7,6 @@ import { formatPrice, formatDate } from '../utils/format.js';
 import { showToast } from '../utils/ui.js';
 import { escapeHtml } from '../utils/dom.js';
 import '../../shared/components/modal.js';
-import '../../shared/components/toast.js';
 import '../../shared/components/pagination.js';
 import { registerAlpineComponents } from '../../shared/components/index.js';
 

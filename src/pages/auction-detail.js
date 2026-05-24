@@ -103,7 +103,7 @@ export default async function renderAuctionDetail(container, route, params) {
 
             <div style="margin-top:24px">
               <h3>${t('auction.bidHistory')} (${bids.length})</h3>
-              <div class="bid-list" id="bidList">
+              <div class="bid-list" id="bidList" aria-live="polite" aria-atomic="true" aria-relevant="additions text">
                 ${bids.length ? bids.sort((a,b) => new Date(b.createdAt || b.created_at) - new Date(a.createdAt || a.created_at)).map(b => `
                   <div class="bid-item"><span><strong>${escapeHtml(b.userName || `User #${b.userId}`)}</strong> <small>${formatDate(b.createdAt || b.created_at)}</small></span><span style="font-weight:700;color:var(--success)">${formatPrice(b.amount)} ${b.isAutoBid ? '<i class="fas fa-robot" title="Auto bid"></i>' : ''}</span></div>
                 `).join('') : `<div class="empty-state"><i class="fas fa-gavel"></i><h3>${t('auction.noBids')}</h3></div>`}
@@ -230,7 +230,27 @@ export default async function renderAuctionDetail(container, route, params) {
                 bidDisplay.style.animation = 'priceFlash 0.5s var(--ease-bounce)';
                 showToast(t('auction.newBid'), 'info');
               }
-              bidDisplay.innerHTML = newText;
+              // Count-up animation
+              const oldValue = parseFloat(oldText.replace(/[^0-9.]/g, '')) || 0;
+              const newValue = parseFloat(newText.replace(/[^0-9.]/g, '')) || 0;
+              if (newValue > oldValue) {
+                const startVal = oldValue;
+                const diff = newValue - startVal;
+                const duration = 600;
+                const startTime = performance.now();
+                function tick(now) {
+                  const elapsed = now - startTime;
+                  const progress = Math.min(elapsed / duration, 1);
+                  const eased = 1 - Math.pow(1 - progress, 3);
+                  const current = startVal + diff * eased;
+                  bidDisplay.textContent = `${t('auction.currentBid')}: ${formatPrice(current)}`;
+                  if (progress < 1) requestAnimationFrame(tick);
+                  else bidDisplay.textContent = newText;
+                }
+                requestAnimationFrame(tick);
+              } else {
+                bidDisplay.textContent = newText;
+              }
             }
             const countEl = document.getElementById('bidCountDisplay');
             if (countEl) countEl.textContent = (fresh.bids || []).length;

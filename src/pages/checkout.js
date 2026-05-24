@@ -154,7 +154,7 @@ export default async function renderCheckout(container) {
           <div class="skeleton skeleton-text" style="width:40%"></div>
         </div>
       </template>
-      <template x-if="!loading && items.length === 0">
+      <div x-show="!loading && items.length === 0" x-transition:enter="transition-fade" x-transition:enter-start="op-0" x-transition:enter-end="op-100">
         <div>
           <div class="section-header"><h2><i class="fas fa-credit-card"></i> ${t('cart.checkout')}</h2></div>
           <div class="empty-state">
@@ -165,7 +165,8 @@ export default async function renderCheckout(container) {
           </div>
         </div>
       </template>
-      <template x-if="!loading && items.length > 0">
+      </div>
+      <div x-show="!loading && items.length > 0" x-transition:enter="transition-fade" x-transition:enter-start="op-0" x-transition:enter-end="op-100">
         <div>
           <div class="section-header"><h2><i class="fas fa-credit-card"></i> ${t('cart.checkout')}</h2></div>
           <div class="detail-page">
@@ -252,6 +253,6 @@ export default async function renderCheckout(container) {
             </div>
           </div>
         </div>
-      </template>
+      </div>
     </div>`;
 }

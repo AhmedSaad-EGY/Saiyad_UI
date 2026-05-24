@@ -73,7 +73,7 @@ export default async function renderSubscriptions(container) {
           <div class="skeleton-card"><div class="skeleton-card-body"><div class="skeleton skeleton-title"></div><div class="skeleton skeleton-text" style="width:40%"></div><div class="skeleton skeleton-text" style="height:30px;width:50%"></div><div class="skeleton skeleton-text short"></div><div class="skeleton skeleton-text short"></div></div></div>
         </div>
       </template>
-      <template x-if="!loading">
+      <div x-show="!loading" x-transition:enter="transition-fade" x-transition:enter-start="op-0" x-transition:enter-end="op-100">
         <div>
           <div class="card" style="padding:20px;margin-bottom:24px;background:var(--primary-gradient, linear-gradient(135deg,var(--primary),var(--primary-light)));color:var(--text-inverse);border:none">
             <h3 style="margin:0 0 6px" x-text="roleHeading"></h3>
@@ -133,14 +133,14 @@ export default async function renderSubscriptions(container) {
               </div>
             </template>
           </div>
-          <template x-if="!loading && plans.length === 0">
+          <div x-show="!loading && plans.length === 0">
             <div class="empty-state" style="margin-top:24px">
               <div class="empty-state-visual"><i class="fas fa-crown" style="font-size:3rem;color:var(--text-muted)"></i></div>
               <h3>${t("subscriptions.noPlans") || "No plans available"}</h3>
               <p style="color:var(--text-muted)">${t("subscriptions.noPlansDesc") || "Subscription plans are not available at this time."}</p>
             </div>
-          </template>
+          </div>
         </div>
-      </template>
+      </div>
     </div>`;
 }

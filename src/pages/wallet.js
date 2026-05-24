@@ -114,7 +114,7 @@ export default async function renderWallet(container) {
           </div>
         </div>
       </template>
-      <template x-if="!loading && wallet">
+      <div x-show="!loading && wallet" x-transition:enter="transition-fade" x-transition:enter-start="op-0" x-transition:enter-end="op-100">
         <div>
           <div class="wallet-container">
             <div class="wallet-card glass-card animate-on-scroll">
@@ -142,7 +142,8 @@ export default async function renderWallet(container) {
             <template x-if="currentPage && currentPage.items && currentPage.items.length > 0">
               <div class="wallet-txn-table animate-on-scroll">
                 <table>
-                  <thead><tr><th>${t("wallet.date")}</th><th>${t("wallet.type")}</th><th>${t("wallet.description")}</th><th>${t("wallet.amount")}</th></tr></thead>
+                  <caption style="caption-side:bottom;margin-top:8px;font-size:0.78rem;color:var(--text-muted)">${t("wallet.transactions")}</caption>
+                  <thead><tr><th scope="col">${t("wallet.date")}</th><th scope="col">${t("wallet.type")}</th><th scope="col">${t("wallet.description")}</th><th scope="col">${t("wallet.amount")}</th></tr></thead>
                   <tbody>
                     <template x-for="txn in currentPage.items" :key="txn.id">
                       <tr>
@@ -170,8 +171,9 @@ export default async function renderWallet(container) {
           </div>
         </div>
       </template>
-      <template x-if="!loading && !wallet">
+      </div>
+      <div x-show="!loading && !wallet" x-transition:enter="transition-fade" x-transition:enter-start="op-0" x-transition:enter-end="op-100">
         <div class="alert alert-danger"><i class="fas fa-exclamation-triangle"></i> ${t("wallet.loadError")}</div>
-      </template>
+      </div>
     </div>`;
 }
