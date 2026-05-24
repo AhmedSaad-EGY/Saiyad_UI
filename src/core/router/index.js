@@ -1,6 +1,7 @@
 import { getUser, updateNavbar } from '../auth/index.js';
 import { t } from '../i18n/index.js';
 import { showLoading, observeAnimations } from '../utils/dom.js';
+import { showErrorFallback } from '../../shared/helpers/errors.js';
 import { routeGuards, routes, routeTitleKeys } from '../../shared/constants/routes.js';
 
 let currentRouteKey = null;
@@ -102,7 +103,7 @@ export async function router(force = false) {
       const pageModule = await dynamicImport();
       await pageModule.default(app, fullPath, params);
     } catch (err) {
-      app.innerHTML = `<div class="alert alert-error" role="alert">Failed to load page: ${err.message}</div>`;
+      showErrorFallback(app, err.message);
       return;
     }
     updateNavbar();
