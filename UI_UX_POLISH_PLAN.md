@@ -9,7 +9,7 @@ UX gaps that produce visible friction for every user. **~6 hrs total.**
 
 - [x] **Wallet deposit button not disabled during submission** — double-click risk (15 min, `wallet.js`)
 - [x] **Add to Cart (product detail) not disabled during API call** (15 min, `product-detail.js`)
-- [ ] **No offline detection banner** — user sees dead UI with no explanation (1 hr, `app.js`)
+- [x] **No offline detection banner** — user sees dead UI with no explanation (1 hr, `app.js`)
 - [x] **Checkout address form lacks per-field validation** — user doesn't know which field failed (30 min, `checkout.js`)
 - [ ] **Login/Checkout only show single generic error** instead of field-level messages (1 hr, `login.js`, `checkout.js`)
 - [x] **Global error boundary** — unhandled exceptions produce blank page (1.5 hr, `app.js` + `errors.js`)

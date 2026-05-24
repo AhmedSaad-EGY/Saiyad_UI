@@ -14,6 +14,10 @@ injectedStyles.textContent = `
     from { transform: translateX(80px) scale(0.9); opacity: 0; }
     to { transform: translateX(0) scale(1); opacity: 1; }
   }
+  @keyframes slideDown {
+    from { transform: translateY(-100%); }
+    to { transform: translateY(0); }
+  }
   .empty-state-visual {
     transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
     display: inline-block;
@@ -376,6 +380,68 @@ document.addEventListener("mousedown", () => {
 });
 
 setupGlobalErrorHandlers();
+
+// Offline detection banner
+(function initOfflineBanner() {
+  let banner = null;
+  let onlineBanner = null;
+
+  function createBanner(online) {
+    const el = document.createElement('div');
+    el.setAttribute('role', 'alert');
+    if (online) {
+      el.id = 'onlineBanner';
+      el.style.cssText = [
+        'position:fixed', 'top:0', 'left:0', 'right:0', 'z-index:100000',
+        'background:var(--success,#16a34a)', 'color:#fff',
+        'text-align:center', 'padding:10px 16px',
+        'font-size:0.875rem', 'font-weight:600',
+        'animation:slideDown 0.3s ease both',
+        'display:flex', 'align-items:center', 'justify-content:center', 'gap:8px',
+      ].join(';');
+      el.innerHTML = `<i class="fas fa-wifi"></i> ${t('common.backOnline') || 'Back online!'}`;
+      setTimeout(() => { el.style.animation = 'slideUp 0.3s ease reverse both'; setTimeout(() => el.remove(), 300); }, 2500);
+      return el;
+    }
+    el.id = 'offlineBanner';
+    el.style.cssText = [
+      'position:fixed', 'top:0', 'left:0', 'right:0', 'z-index:100000',
+      'background:var(--danger,#dc2626)', 'color:#fff',
+      'text-align:center', 'padding:10px 16px',
+      'font-size:0.875rem', 'font-weight:500',
+      'animation:slideDown 0.3s ease both',
+      'display:flex', 'align-items:center', 'justify-content:center', 'gap:8px',
+    ].join(';');
+    const close = document.createElement('button');
+    close.innerHTML = '&times;';
+    close.setAttribute('aria-label', 'Dismiss');
+    close.style.cssText = 'background:none;border:none;color:#fff;font-size:1.2rem;cursor:pointer;padding:0 4px;line-height:1;opacity:0.8;margin-left:auto';
+    close.addEventListener('click', () => { el.remove(); banner = null; });
+    el.innerHTML = `<i class="fas fa-plug"></i> <span>${t('common.offline') || 'You are offline. Some features may be unavailable.'}</span>`;
+    el.appendChild(close);
+    return el;
+  }
+
+  function showOffline() {
+    if (document.getElementById('offlineBanner')) return;
+    if (document.getElementById('onlineBanner')) document.getElementById('onlineBanner').remove();
+    banner = createBanner(false);
+    document.body.prepend(banner);
+  }
+
+  function showOnline() {
+    if (document.getElementById('offlineBanner')) document.getElementById('offlineBanner').remove();
+    banner = null;
+    if (document.getElementById('onlineBanner')) return;
+    const el = createBanner(true);
+    document.body.prepend(el);
+  }
+
+  window.addEventListener('offline', showOffline);
+  window.addEventListener('online', showOnline);
+
+  if (!navigator.onLine) showOffline();
+})();
 
 // Onboarding tour
 (function showOnboarding() {
