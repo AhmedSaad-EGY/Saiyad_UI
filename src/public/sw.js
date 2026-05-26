@@ -1,4 +1,4 @@
-const CACHE = "sayiad-v11";
+const CACHE = "sayiad-v12";
 
 self.addEventListener("install", (event) => {
   self.skipWaiting();

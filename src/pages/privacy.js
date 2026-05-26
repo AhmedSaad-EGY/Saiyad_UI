@@ -7,13 +7,13 @@ export default async function renderPrivacy(container) {
   container.innerHTML = `
     <div class="legal-page">
       <div class="legal-hero animate-on-scroll">
-        <div class="legal-hero-icon">
+        <div class="legal-hero-icon" aria-hidden="true">
           <i class="fas fa-user-shield"></i>
         </div>
         <h1>${t('auth.privacyPolicy')}</h1>
         <p class="legal-hero-sub">${isAr
-          ? 'آخر تحديث: مايو 2026'
-          : 'Last updated: May 2026'}</p>
+          ? 'آخر تحديث: ٢٣ مايو ٢٠٢٦'
+          : 'Last updated: May 23, 2026'}</p>
       </div>
 
       <div class="legal-toc card animate-on-scroll stagger-1">

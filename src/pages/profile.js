@@ -103,7 +103,7 @@ export default async function renderUserProfile(container) {
       <div class="profile-quick-links card animate-on-scroll stagger-2">
         <h3>${t('common.quickLinks')}</h3>
         <div class="profile-links-grid">
-          ${user?.role !== 'Admin' && user?.role !== 'Auctioneer' ? `
+          ${user?.role !== 'Admin' ? `
             <a href="#/dashboard?tab=orders" class="profile-link-card"><i class="fas fa-shopping-bag"></i><span>${t('dash.orders')}</span></a>
             <a href="#/dashboard?tab=wishlist" class="profile-link-card"><i class="fas fa-heart"></i><span>${t('dash.wishlist')}</span></a>
             <a href="#/shipping" class="profile-link-card"><i class="fas fa-map-marker-alt"></i><span>${t('dash.addresses')}</span></a>

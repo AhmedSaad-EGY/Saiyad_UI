@@ -7,14 +7,15 @@ export const ROLES = Object.freeze({
 });
 
 export const SELLER_ROLES = [ROLES.FISHERMAN, ROLES.BAIT_SELLER];
+export const ECOMMERCE_ROLES = [ROLES.CUSTOMER, ROLES.FISHERMAN, ROLES.BAIT_SELLER, ROLES.AUCTIONEER];
 
 export const routeGuards = {
   'admin': (user) => !!user && user.role === ROLES.ADMIN,
-  'cart': (user) => !!user && (user.role === ROLES.CUSTOMER || user.role === ROLES.FISHERMAN || user.role === ROLES.BAIT_SELLER),
-  'checkout': (user) => !!user && (user.role === ROLES.CUSTOMER || user.role === ROLES.FISHERMAN || user.role === ROLES.BAIT_SELLER),
+  'cart': (user) => !!user && ECOMMERCE_ROLES.includes(user.role),
+  'checkout': (user) => !!user && ECOMMERCE_ROLES.includes(user.role),
   'dashboard': (user) => !!user,
-  'shipping': (user) => !!user && (user.role === ROLES.CUSTOMER || user.role === ROLES.FISHERMAN || user.role === ROLES.BAIT_SELLER),
-  'order-detail': (user) => !!user && (user.role === ROLES.CUSTOMER || user.role === ROLES.FISHERMAN || user.role === ROLES.BAIT_SELLER),
+  'shipping': (user) => !!user && ECOMMERCE_ROLES.includes(user.role),
+  'order-detail': (user) => !!user && ECOMMERCE_ROLES.includes(user.role),
   'profile': (user) => !!user,
   'auction-requests': (user) => !!user && user.role === ROLES.FISHERMAN,
   'auction-requests-review': (user) => !!user && (user.role === ROLES.AUCTIONEER || user.role === ROLES.ADMIN),

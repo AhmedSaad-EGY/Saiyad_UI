@@ -1,6 +1,6 @@
 import { t } from '../core/i18n/index.js';
 import { api } from '../core/api/client.js';
-import { requireAuth } from '../core/auth/index.js';
+import { requireAuth, getUser } from '../core/auth/index.js';
 import { escapeHtml, observeAnimations } from '../core/utils/dom.js';
 import Alpine from 'alpinejs';
 
@@ -13,6 +13,11 @@ Alpine.data('walletPage', () => ({
   depositing: false,
   loading: true,
   escapeHtml,
+
+  get isAdmin() {
+    const user = getUser();
+    return user && user.role === 'Admin';
+  },
 
   async init() {
     try {
@@ -132,9 +137,12 @@ export default async function renderWallet(container) {
                   <span class="wallet-amount wallet-available" x-text="wallet ? formatEGP(wallet.availableBalance) : ''"></span>
                 </div>
               </div>
-              <div class="wallet-deposit-row">
+              <div class="wallet-deposit-row" x-show="!isAdmin">
                 <input type="number" x-model="depositAmount" class="form-control" placeholder="${t("wallet.enterAmount")}" min="1" step="0.01" style="max-width:200px">
                 <button class="btn btn-primary" :disabled="depositing" @click.prevent="submitDeposit()"><i class="fas" :class="depositing ? 'fa-spinner spinner' : 'fa-plus'"></i> ${t("wallet.deposit")}</button>
+              </div>
+              <div class="wallet-readonly-notice" x-show="isAdmin" style="padding:12px 0;opacity:0.8">
+                <i class="fas fa-info-circle"></i> ${t("wallet.readOnly")}
               </div>
               <div class="wallet-msg" :class="depositMsgClass" x-text="depositMsg" x-show="depositMsg"></div>
             </div>

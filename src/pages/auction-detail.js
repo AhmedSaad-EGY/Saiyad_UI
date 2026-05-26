@@ -30,6 +30,7 @@ export default async function renderAuctionDetail(container, route, params) {
     });
 
     function render(a) {
+          const user = getUser();
           const now = new Date();
           const remaining = Math.max(0, Math.floor((end - now) / 1000));
           const urgent = remaining > 0 && remaining <= 3600;
@@ -39,6 +40,47 @@ export default async function renderAuctionDetail(container, route, params) {
           const secs = remaining % 60;
 
       const title = a.productTitle || 'Auction Item';
+
+      // Role-based bid section
+      let bidSection = '';
+      if (isActive) {
+        if (user?.role === 'Customer') {
+          bidSection = `
+              <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:16px">
+                <div style="flex:1;min-width:200px">
+                  <div class="bid-input-group">
+                    <input type="number" class="form-input" id="bidAmount" step="0.01" placeholder="${t('auction.placeBid')}" />
+                    <button class="btn btn-primary" id="placeBidBtn"><i class="fas fa-gavel"></i> ${t('auction.placeBid')}</button>
+                  </div>
+                  <div class="bid-slider-wrap">
+                    <input type="range" class="bid-slider" id="bidSlider" min="0" max="1000" step="0.01" value="0" aria-label="Bid amount slider">
+                    <div class="bid-slider-labels"><span id="sliderMin"></span><span id="sliderMax"></span></div>
+                  </div>
+                  <div style="display:flex;gap:6px;margin-top:6px">
+                    <button class="btn btn-outline btn-sm quick-bid" data-add="${a.minimumIncrement}">+${formatPrice(a.minimumIncrement)}</button>
+                    <button class="btn btn-outline btn-sm quick-bid" data-pct="5">+5%</button>
+                    <button class="btn btn-outline btn-sm quick-bid" data-pct="10">+10%</button>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:8px;margin-top:8px">
+                    <label for="autoBidToggle" style="display:flex;align-items:center;gap:6px;font-size:var(--text-sm);cursor:pointer">
+                      <input type="checkbox" id="autoBidToggle"> <i class="fas fa-robot" aria-hidden="true"></i> ${t("auction.autoBid")}
+                    </label>
+                    <div id="autoBidMaxWrap" class="hidden" style="flex:1">
+                      <input type="number" class="form-input" id="autoBidMax" step="0.01" min="0" placeholder="Max bid amount" style="padding:6px 10px;font-size:var(--text-sm)">
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div id="bidAlert"></div>
+          `;
+        } else {
+          bidSection = `
+            <div class="alert alert-info" style="margin-top:16px">
+              <i class="fas fa-info-circle"></i> ${user ? t('auction.bidCustomerOnly') || 'Only customers can place bids.' : `<a href="#/login" style="color:inherit;text-decoration:underline">${t('auction.loginToBid') || 'Login as a customer to place bids.'}</a>`}
+            </div>
+          `;
+        }
+      }
 
       container.innerHTML = `
         <nav class="breadcrumb" aria-label="Breadcrumb"><a href="#/">${t("nav.home")}</a> <i class="fas fa-chevron-${getCurrentLang() === "ar" ? "left" : "right"}" aria-hidden="true"></i> <a href="#/auctions">${t("nav.auctions")}</a> <i class="fas fa-chevron-${getCurrentLang() === "ar" ? "left" : "right"}" aria-hidden="true"></i> <span>${escapeHtml(title)}</span></nav>
@@ -72,34 +114,7 @@ export default async function renderAuctionDetail(container, route, params) {
             </div>
             ${a.winnerUserId ? `<div class="alert alert-success"><i class="fas fa-trophy"></i> ${t('auction.winner')}: ${escapeHtml(a.winnerName || `User #${a.winnerUserId}`)}</div>` : ''}
 
-            ${isActive ? `
-              <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:16px">
-                <div style="flex:1;min-width:200px">
-                  <div class="bid-input-group">
-                    <input type="number" class="form-input" id="bidAmount" step="0.01" placeholder="${t('auction.placeBid')}" />
-                    <button class="btn btn-primary" id="placeBidBtn"><i class="fas fa-gavel"></i> ${t('auction.placeBid')}</button>
-                  </div>
-                  <div class="bid-slider-wrap">
-                    <input type="range" class="bid-slider" id="bidSlider" min="0" max="1000" step="0.01" value="0" aria-label="Bid amount slider">
-                    <div class="bid-slider-labels"><span id="sliderMin"></span><span id="sliderMax"></span></div>
-                  </div>
-                  <div style="display:flex;gap:6px;margin-top:6px">
-                    <button class="btn btn-outline btn-sm quick-bid" data-add="${a.minimumIncrement}">+${formatPrice(a.minimumIncrement)}</button>
-                    <button class="btn btn-outline btn-sm quick-bid" data-pct="5">+5%</button>
-                    <button class="btn btn-outline btn-sm quick-bid" data-pct="10">+10%</button>
-                  </div>
-                  <div style="display:flex;align-items:center;gap:8px;margin-top:8px">
-                    <label for="autoBidToggle" style="display:flex;align-items:center;gap:6px;font-size:var(--text-sm);cursor:pointer">
-                      <input type="checkbox" id="autoBidToggle"> <i class="fas fa-robot" aria-hidden="true"></i> ${t("auction.autoBid")}
-                    </label>
-                    <div id="autoBidMaxWrap" class="hidden" style="flex:1">
-                      <input type="number" class="form-input" id="autoBidMax" step="0.01" min="0" placeholder="Max bid amount" style="padding:6px 10px;font-size:var(--text-sm)">
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div id="bidAlert"></div>
-            ` : ''}
+            ${bidSection}
 
             <div style="margin-top:24px">
               <h3>${t('auction.bidHistory')} (${bids.length})</h3>
@@ -115,48 +130,87 @@ export default async function renderAuctionDetail(container, route, params) {
       observeAnimations();
       fadeInContent(container);
 
-      const user = getUser();
       if (user && a.winnerUserId && (user.id === a.winnerUserId || user.userId === a.winnerUserId)) {
         triggerConfetti();
       }
 
       if (isActive) {
-        // Bid slider ↔ input sync
-        const bidInput = document.getElementById('bidAmount');
-        const bidSlider = document.getElementById('bidSlider');
-        const sliderMin = document.getElementById('sliderMin');
-        const sliderMax = document.getElementById('sliderMax');
-        const minBid = a.currentHighestBid ? a.currentHighestBid + a.minimumIncrement : a.startingPrice;
-        const maxBid = a.reservePrice && a.reservePrice > minBid ? a.reservePrice * 1.5 : minBid * 5;
-        if (bidSlider) {
-          bidSlider.min = minBid;
-          bidSlider.max = maxBid;
-          bidSlider.value = minBid;
-          bidInput.placeholder = `${t('auction.placeBid')} (${formatPrice(minBid)})`;
-          if (sliderMin) sliderMin.textContent = formatPrice(minBid);
-          if (sliderMax) sliderMax.textContent = formatPrice(maxBid);
-          bidSlider.addEventListener('input', () => { bidInput.value = parseFloat(bidSlider.value).toFixed(2); });
-          bidInput.addEventListener('input', () => {
-            const v = parseFloat(bidInput.value);
-            if (!isNaN(v) && v >= minBid && v <= maxBid) bidSlider.value = v;
+        const isCustomer = user?.role === 'Customer';
+
+        if (isCustomer) {
+          // Bid slider ↔ input sync
+          const bidInput = document.getElementById('bidAmount');
+          const bidSlider = document.getElementById('bidSlider');
+          const sliderMin = document.getElementById('sliderMin');
+          const sliderMax = document.getElementById('sliderMax');
+          const minBid = a.currentHighestBid ? a.currentHighestBid + a.minimumIncrement : a.startingPrice;
+          const maxBid = a.reservePrice && a.reservePrice > minBid ? a.reservePrice * 1.5 : minBid * 5;
+          if (bidSlider) {
+            bidSlider.min = minBid;
+            bidSlider.max = maxBid;
+            bidSlider.value = minBid;
+            bidInput.placeholder = `${t('auction.placeBid')} (${formatPrice(minBid)})`;
+            if (sliderMin) sliderMin.textContent = formatPrice(minBid);
+            if (sliderMax) sliderMax.textContent = formatPrice(maxBid);
+            bidSlider.addEventListener('input', () => { bidInput.value = parseFloat(bidSlider.value).toFixed(2); });
+            bidInput.addEventListener('input', () => {
+              const v = parseFloat(bidInput.value);
+              if (!isNaN(v) && v >= minBid && v <= maxBid) bidSlider.value = v;
+            });
+          }
+
+          // Quick-bid buttons
+          $$('.quick-bid').forEach((btn) => {
+            btn.addEventListener('click', () => {
+              const add = parseFloat(btn.dataset.add);
+              if (add) {
+                bidInput.value = (minBid + add).toFixed(2);
+              } else {
+                const pct = parseFloat(btn.dataset.pct) / 100;
+                bidInput.value = (minBid * (1 + pct)).toFixed(2);
+              }
+              const v = parseFloat(bidInput.value);
+              if (!isNaN(v) && v >= minBid && v <= maxBid) bidSlider.value = v;
+            });
+          });
+
+          document.getElementById('autoBidToggle')?.addEventListener('change', (e) => {
+            document.getElementById('autoBidMaxWrap')?.classList.toggle('hidden', !e.target.checked);
+          });
+
+          document.getElementById('placeBidBtn').addEventListener('click', async () => {
+            if (!await requireAuth()) return;
+            const amount = parseFloat(document.getElementById('bidAmount').value);
+            if (!amount || amount <= 0) { document.getElementById('bidAlert').innerHTML = `<div class="alert alert-error">${t('auction.invalidBid')}</div>`; return; }
+            const btn = document.getElementById('placeBidBtn');
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fas fa-spinner spinner"></i> ${t('auction.placingBid')}`;
+            document.getElementById('bidAlert').innerHTML = '';
+            try {
+              const body = { amount };
+              if (document.getElementById('autoBidToggle')?.checked) {
+                const maxBid = parseFloat(document.getElementById('autoBidMax')?.value);
+                if (!maxBid || maxBid <= amount) {
+                  document.getElementById('bidAlert').innerHTML = `<div class="alert alert-error">${t("auction.autoBidMaxRequired")}</div>`;
+                  btn.disabled = false;
+                  btn.innerHTML = `<i class="fas fa-gavel"></i> ${t('auction.placeBid')}`;
+                  return;
+                }
+                body.maxAutoBidAmount = maxBid;
+              }
+              await api.post(`/auctions/${id}/bids`, body);
+              document.getElementById('bidAlert').innerHTML = `<div class="alert alert-success">${t('auction.bidPlaced')}</div>`;
+              setTimeout(() => router(), 1000);
+            } catch (e) {
+              document.getElementById('bidAlert').innerHTML = `<div class="alert alert-error">${escapeHtml(e.message)}</div>`;
+            } finally {
+              btn.disabled = false;
+              btn.innerHTML = `<i class="fas fa-gavel"></i> ${t('auction.placeBid')}`;
+            }
           });
         }
 
-        // Quick-bid buttons
-        $$('.quick-bid').forEach((btn) => {
-          btn.addEventListener('click', () => {
-            const add = parseFloat(btn.dataset.add);
-            if (add) {
-              bidInput.value = (minBid + add).toFixed(2);
-            } else {
-              const pct = parseFloat(btn.dataset.pct) / 100;
-              bidInput.value = (minBid * (1 + pct)).toFixed(2);
-            }
-            const v = parseFloat(bidInput.value);
-            if (!isNaN(v) && v >= minBid && v <= maxBid) bidSlider.value = v;
-          });
-        });
-
+        // Countdown timer — always runs for all roles
         const timer = setInterval(() => {
           const diff = Math.max(0, Math.floor((end - new Date()) / 1000));
           if (diff <= 0) {
@@ -178,42 +232,7 @@ export default async function renderAuctionDetail(container, route, params) {
         }, 1000);
         _timers.push(timer);
 
-        document.getElementById('autoBidToggle')?.addEventListener('change', (e) => {
-          document.getElementById('autoBidMaxWrap')?.classList.toggle('hidden', !e.target.checked);
-        });
-
-        document.getElementById('placeBidBtn').addEventListener('click', async () => {
-          if (!await requireAuth()) return;
-          const amount = parseFloat(document.getElementById('bidAmount').value);
-          if (!amount || amount <= 0) { document.getElementById('bidAlert').innerHTML = `<div class="alert alert-error">${t('auction.invalidBid')}</div>`; return; }
-          const btn = document.getElementById('placeBidBtn');
-          btn.disabled = true;
-          btn.innerHTML = `<i class="fas fa-spinner spinner"></i> ${t('auction.placingBid')}`;
-          document.getElementById('bidAlert').innerHTML = '';
-          try {
-            const body = { amount };
-            if (document.getElementById('autoBidToggle')?.checked) {
-              const maxBid = parseFloat(document.getElementById('autoBidMax')?.value);
-              if (!maxBid || maxBid <= amount) {
-                document.getElementById('bidAlert').innerHTML = `<div class="alert alert-error">${t("auction.autoBidMaxRequired")}</div>`;
-                btn.disabled = false;
-                btn.innerHTML = `<i class="fas fa-gavel"></i> ${t('auction.placeBid')}`;
-                return;
-              }
-              body.maxAutoBidAmount = maxBid;
-            }
-            await api.post(`/auctions/${id}/bids`, body);
-            document.getElementById('bidAlert').innerHTML = `<div class="alert alert-success">${t('auction.bidPlaced')}</div>`;
-            setTimeout(() => router(), 1000);
-          } catch (e) {
-            document.getElementById('bidAlert').innerHTML = `<div class="alert alert-error">${escapeHtml(e.message)}</div>`;
-          } finally {
-            btn.disabled = false;
-            btn.innerHTML = `<i class="fas fa-gavel"></i> ${t('auction.placeBid')}`;
-          }
-        });
-
-        // Auto-refresh bid data every 10s
+        // Auto-refresh bid data every 10s — always runs for all roles
         const refreshTimer = setInterval(async () => {
           try {
             const freshData = await api.get(`/auctions/${id}`);

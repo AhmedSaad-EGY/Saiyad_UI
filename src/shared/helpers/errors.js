@@ -36,8 +36,8 @@ export function handleApiError(err) {
   const { message, status } = normalizeApiError(err);
 
   if (isNetworkError(err) || isAuthError(err)) return;
-  if (isForbidden(err)) { showToast('Access denied', 'error'); return; }
-  if (isServerError(err)) { showToast('Server error. Please try again.', 'error'); return; }
+  if (isForbidden(err)) { showToast(t('common.error'), 'error'); return; }
+  if (isServerError(err)) { showToast(t('common.somethingWentWrong'), 'error'); return; }
 
   showToast(message, 'error');
 }

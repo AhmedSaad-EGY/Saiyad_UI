@@ -199,6 +199,8 @@ export const translations = {
     "auction.newBid": "New bid placed!",
     "auction.startAuction": "Start Auction",
     "auction.startNew": "Start New Auction",
+    "auction.bidCustomerOnly": "Only customers can place bids.",
+    "auction.loginToBid": "Login as a customer to place bids.",
     "auction.autoBid": "Auto bid",
     "auction.autoBidMaxRequired": "Enter a max auto-bid amount higher than your bid.",
     "auction.statusActive": "Active",
@@ -579,6 +581,7 @@ export const translations = {
     "wallet.subPayment": "Subscription",
     "wallet.auctionPayment": "Auction Payment",
     "wallet.auctionPayout": "Auction Payout",
+    "wallet.readOnly": "Wallet is in read-only mode",
 
     // Subscriptions
     "subscriptions.title": "Subscription Plans",
@@ -828,6 +831,8 @@ export const translations = {
     "auction.newBid": "تم تقديم مزايدة جديدة!",
     "auction.startAuction": "بدء مزاد",
     "auction.startNew": "بدء مزاد جديد",
+    "auction.bidCustomerOnly": "يمكن للعملاء فقط تقديم عروض.",
+    "auction.loginToBid": "سجل الدخول كعميل لتقديم عروض.",
     "auction.autoBid": "مزايدة تلقائية",
     "auction.autoBidMaxRequired": "أدخل حد مزايدة تلقائية أعلى من مزايدتك.",
     "auction.statusActive": "نشط",
@@ -1208,6 +1213,7 @@ export const translations = {
     "wallet.subPayment": "اشتراك",
     "wallet.auctionPayment": "دفعة مزاد",
     "wallet.auctionPayout": "دفعة البائع",
+    "wallet.readOnly": "المحفظة في وضع القراءة فقط",
 
     // Subscriptions
     "subscriptions.title": "خطط الاشتراك",

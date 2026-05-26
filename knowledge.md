@@ -24,7 +24,11 @@ Backend API: `https://sayiad.runasp.net/api`
 - **Pages (25 route handlers):** `src/pages/` — lazy-loaded via dynamic `import()`
 - **Shared:** `src/shared/` — constants (roles, route manifest), helpers (errors), components (Alpine modal, toast, pagination)
 - **Styles:** `src/css/` — 7 partials imported by `style.css` (variables, base, layout, components, animations, rtl)
-- **Router:** Hash-based (`#/path`), 25 routes, role-gated guards, dynamic imports
+- **Router:** Hash-based (`#/path`), 25 routes, role-gated guards (`ECOMMERCE_ROLES`, `SELLER_ROLES` constants in `src/shared/constants/routes.js`), dynamic imports
+- **Roles (5):** `Admin`, `Customer`, `Fisherman`, `BaitSeller`, `Auctioneer` — defined in `ROLES` enum
+- **Role constants:** `SELLER_ROLES = [Fisherman, BaitSeller]`, `ECOMMERCE_ROLES = [Customer, Fisherman, BaitSeller, Auctioneer]`
+- **Route guards:** Only `Customer` can place bids on auctions. Admin is excluded from all e-commerce (cart, checkout, orders, shipping, wishlist). Wallet route open to all authenticated roles (Admin sees read-only).
+- **Wallet:** Deposit is available to all authenticated roles **except** Admin. Withdraw is Admin-only (not yet implemented in UI).
 - **State:** Alpine stores (`src/core/stores/alpine.js`) for auth, cart, UI; localStorage for tokens, language, theme
 - **Real-time:** SignalR (`src/core/realtime/index.js`) for auction bids — joins `auction-{id}` groups
 - **i18n:** `src/core/i18n/index.js` — ~470 keys per language (EN/AR), `t()` function, RTL dir switching
@@ -45,7 +49,7 @@ Backend API: `https://sayiad.runasp.net/api`
 
 - **Alpine functions in templates:** Module-level functions called in Alpine directives (`x-text`, `@click`, etc.) must be exposed in the component's `data()` return object (e.g., `t`, `formatPrice` must be returned)
 - **No test runner** — manual testing only; must check all 25 routes after changes
-- **Service worker:** Cache version `sayiad-v11` in `sw.js` — increment on deploy; **do NOT** precache Vite hashed chunks
+- **Service worker:** Cache version `sayiad-v12` in `sw.js` — increment on deploy; **do NOT** precache Vite hashed chunks
 - **`showToast` lives in** `src/core/utils/ui.js` (not app.js) — it was moved to break a circular dep
 - **Circular deps:** `api/client.js` emits `auth:session-expired` event instead of importing auth/router directly
 - **SignalR** uses CDN script in `index.html` (not npm package) — the global `signalR` object is available

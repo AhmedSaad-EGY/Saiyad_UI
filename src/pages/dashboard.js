@@ -7,7 +7,7 @@ import { $$, showLoading, renderEmptyState, escapeHtml, observeAnimations } from
 import { validateForm, getPasswordStrength, clearFieldError } from '../core/utils/validation.js';
 import { formatPrice, formatDate, statusClass, tStatus } from '../core/utils/format.js';
 import { showConfirm, showToast } from '../core/utils/ui.js';
-import { ROLES, SELLER_ROLES } from '../shared/constants/routes.js';
+import { ROLES, SELLER_ROLES, ECOMMERCE_ROLES } from '../shared/constants/routes.js';
 import renderAuctionRequests from './auction-requests.js';
 import renderAuctionRequestsReview from './auction-requests-review.js';
 import renderAuctioneerAnalytics from './auctioneer-analytics.js';
@@ -68,7 +68,7 @@ export default async function renderDashboard(container, route, params) {
   const user = getUser();
   const tab = params.tab || 'overview';
 
-  const isECommerceRole = hasAnyRole(ROLES.CUSTOMER, ROLES.FISHERMAN, ROLES.BAIT_SELLER);
+  const isECommerceRole = hasAnyRole(...(ECOMMERCE_ROLES));
   const isSellerRole = hasAnyRole(...(SELLER_ROLES));
 
   const tabs = [
