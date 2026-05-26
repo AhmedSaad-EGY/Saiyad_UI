@@ -4,10 +4,11 @@ import { api } from '../core/api/client.js';
 import { requireAuth, getUser, hasAnyRole, hasRole, updateNavbar, updateCartBadge, updateNotifBadge } from '../core/auth/index.js';
 import { navigate, registerRouteCleanup } from '../core/router/index.js';
 import { $$, showLoading, renderEmptyState, escapeHtml, observeAnimations } from '../core/utils/dom.js';
+import { manualPaginationHtml, wirePagination } from '../shared/components/pagination.js';
 import { validateForm, getPasswordStrength, clearFieldError } from '../core/utils/validation.js';
 import { formatPrice, formatDate, statusClass, tStatus } from '../core/utils/format.js';
 import { showConfirm, showToast } from '../core/utils/ui.js';
-import { ROLES, SELLER_ROLES, ECOMMERCE_ROLES, MODERATOR_ROLES } from '../shared/constants/routes.js';
+import { ROLES, SELLER_ROLES, ECOMMERCE_ROLES, MODERATOR_ROLES } from '../shared/constants/roles.js';
 import renderAuctionRequests from './auction-requests.js';
 import renderAuctionRequestsReview from './auction-requests-review.js';
 import renderAuctioneerAnalytics from './auctioneer-analytics.js';
@@ -75,8 +76,8 @@ export default async function renderDashboard(container, route, params) {
     { id: 'overview', icon: 'fa-tachometer-alt', label: t('dash.overview') },
     ...(isECommerceRole ? [{ id: 'orders', icon: 'fa-box', label: t('dash.orders') }] : []),
     ...(isSellerRole ? [{ id: 'products', icon: 'fa-tag', label: t('dash.products') }] : []),
-    ...(hasRole('Auctioneer') ? [{ id: 'auctions', icon: 'fa-gavel', label: t('dash.auctions') }] : []),
-    ...(hasAnyRole('Fisherman') ? [{ id: 'auction-requests', icon: 'fa-file-export', label: t('auctionRequests.title') }] : []),
+    ...(hasRole(ROLES.AUCTIONEER) ? [{ id: 'auctions', icon: 'fa-gavel', label: t('dash.auctions') }] : []),
+    ...(hasAnyRole(ROLES.FISHERMAN) ? [{ id: 'auction-requests', icon: 'fa-file-export', label: t('auctionRequests.title') }] : []),
     ...(hasAnyRole(...(MODERATOR_ROLES)) ? [{ id: 'auction-requests-review', icon: 'fa-clipboard-list', label: t('auctionRequestsReview.title') }] : []),
     ...(hasAnyRole(...(MODERATOR_ROLES)) ? [{ id: 'auctioneer-analytics', icon: 'fa-chart-bar', label: t('analytics.title') }] : []),
     ...(isECommerceRole ? [{ id: 'wishlist', icon: 'fa-heart', label: t('dash.wishlist') }] : []),
@@ -241,24 +242,9 @@ async function renderOrders(content) {
               .join("")}</tbody>
           </table>
         </div>
-        <div style="display:flex;justify-content:center;align-items:center;gap:8px;margin-top:20px">
-          <button class="btn btn-sm btn-ghost" id="ordersPrev" ${page <= 1 ? "disabled" : ""}><i class="fas fa-chevron-${document.documentElement.dir === "rtl" ? "right" : "left"}"></i></button>
-          <span style="font-size:0.88rem;color:var(--text-muted)">${t("common.page")} ${page} / ${pages}</span>
-          <button class="btn btn-sm btn-ghost" id="ordersNext" ${page >= pages ? "disabled" : ""}><i class="fas fa-chevron-${document.documentElement.dir === "rtl" ? "left" : "right"}"></i></button>
-        </div>
+        ${manualPaginationHtml({ page, totalPages: pages, prefix: 'dashOrders' })}
       `;
-      document.getElementById("ordersPrev")?.addEventListener("click", () => {
-        if (page > 1) {
-          page--;
-          loadOrders();
-        }
-      });
-      document.getElementById("ordersNext")?.addEventListener("click", () => {
-        if (page < pages) {
-          page++;
-          loadOrders();
-        }
-      });
+      wirePagination({ container: list, prefix: 'dashOrders', onPrev() { if (page > 1) { page--; loadOrders(); } }, onNext() { if (page < pages) { page++; loadOrders(); } } });
       observeAnimations();
 
       list.querySelectorAll(".cancel-order-btn").forEach((btn) => {

@@ -1,7 +1,7 @@
 import { t } from '../core/i18n/index.js';
 import { api } from '../core/api/client.js';
 import { getUser, requireAuth, hasAnyRole } from '../core/auth/index.js';
-import { SELLER_ROLES } from '../shared/constants/routes.js';
+import { SELLER_ROLES } from '../shared/constants/roles.js';
 import { showLoading, escapeHtml, observeAnimations } from '../core/utils/dom.js';
 import { renderStars } from '../core/utils/format.js';
 import { renderProductCards, showToast } from '../core/utils/ui.js';

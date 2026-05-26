@@ -1,14 +1,6 @@
-export const ROLES = Object.freeze({
-  ADMIN: 'Admin',
-  CUSTOMER: 'Customer',
-  FISHERMAN: 'Fisherman',
-  BAIT_SELLER: 'BaitSeller',
-  AUCTIONEER: 'Auctioneer',
-});
+import { ROLES, SELLER_ROLES, ECOMMERCE_ROLES, MODERATOR_ROLES } from './roles.js';
 
-export const SELLER_ROLES = [ROLES.FISHERMAN, ROLES.BAIT_SELLER];
-export const ECOMMERCE_ROLES = [ROLES.CUSTOMER, ROLES.FISHERMAN, ROLES.BAIT_SELLER, ROLES.AUCTIONEER];
-export const MODERATOR_ROLES = [ROLES.AUCTIONEER, ROLES.ADMIN];
+export { ROLES, SELLER_ROLES, ECOMMERCE_ROLES, MODERATOR_ROLES };
 
 export const routeGuards = {
   'admin': (user) => !!user && user.role === ROLES.ADMIN,

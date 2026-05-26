@@ -1,7 +1,7 @@
 import { t } from '../core/i18n/index.js';
 import { api } from '../core/api/client.js';
 import { isAuthenticated, getUser } from '../core/auth/index.js';
-import { SELLER_ROLES } from '../shared/constants/routes.js';
+import { SELLER_ROLES } from '../shared/constants/roles.js';
 import { navigate } from '../core/router/index.js';
 import { escapeHtml, observeAnimations } from '../core/utils/dom.js';
 import { showToast } from '../core/utils/ui.js';
@@ -46,7 +46,7 @@ Alpine.data('profilePage', () => ({
       localStorage.setItem('user', JSON.stringify(updated));
       const avatar = document.getElementById('profileAvatar');
       if (avatar) {
-        avatar.innerHTML = '<span class="avatar-overlay"><i class="fas fa-camera"></i></span><img src="' + imageUrl + '" alt="">';
+        avatar.innerHTML = '<span class="avatar-overlay"><i class="fas fa-camera"></i></span><img src="' + imageUrl + '" alt="" loading="lazy">';
       }
       showToast(t('profile.photoUpdated'), 'success');
     } catch (err) {
@@ -68,7 +68,7 @@ export default async function renderUserProfile(container) {
       <div class="profile-hero card animate-on-scroll">
         <div class="profile-avatar" id="profileAvatar" @click="triggerUpload()" title="Click to upload photo">
           <span class="avatar-overlay"><i class="fas fa-camera"></i></span>
-          ${user?.profileImageUrl ? `<img src="${user.profileImageUrl}" alt="">` : '<i class="fas fa-user"></i>'}
+          ${user?.profileImageUrl ? `<img src="${user.profileImageUrl}" alt="" loading="lazy">` : '<i class="fas fa-user"></i>'}
         </div>
         <input type="file" id="profileAvatarInput" accept="image/jpeg,image/png,image/webp" @change="handleFile($event)" style="display:none">
         <div class="profile-hero-info">

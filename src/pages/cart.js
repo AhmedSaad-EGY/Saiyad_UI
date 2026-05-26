@@ -1,11 +1,13 @@
 import { t } from '../core/i18n/index.js';
 import { api } from '../core/api/client.js';
 import { requireAuth, updateCartBadge } from '../core/auth/index.js';
-import { navigate } from '../core/router/index.js';
-import { registerRouteCleanup } from '../core/router/index.js';
+import { navigate, registerRouteCleanup } from '../core/router/index.js';
 import { formatPrice } from '../core/utils/format.js';
 import { showConfirm, showToast } from '../core/utils/ui.js';
+import { createSwipeReveal } from '../core/utils/swipe.js';
 import Alpine from 'alpinejs';
+
+let _cartSwipeCleanup = null;
 
 Alpine.data('cartPage', () => ({
   items: [],
@@ -119,85 +121,75 @@ Alpine.data('cartPage', () => ({
     const table = document.querySelector('.cart-table');
     if (!isMobile || !table) return;
 
-    let startX = 0, currentRow = null, content = null, deleteEl = null, isSwiping = false;
+    const tbody = table.querySelector('tbody');
+    if (!tbody) return;
 
-    table.addEventListener('touchstart', (e) => {
-      const row = e.target.closest('.cart-table tbody tr');
-      if (!row) return;
-      content = row.querySelector('.cart-swipe-content') || (() => {
-        const c = document.createElement('div');
-        c.className = 'cart-swipe-content';
-        while (row.firstChild) c.appendChild(row.firstChild);
-        row.appendChild(c);
-        const d = document.createElement('div');
-        d.className = 'cart-swipe-delete';
-        d.innerHTML = '<i class="fas fa-trash-alt"></i>';
-        d.addEventListener('click', (ev) => {
-          ev.stopPropagation();
-          const productId = row.__alpineItemId || row.querySelector('[x-data]')?.__x?.$data?.item?.productId;
-          if (productId) this.removeItem(productId);
-        });
-        row.appendChild(d);
-        row.style.position = 'relative';
-        row.style.overflow = 'hidden';
-        return c;
-      })();
-      deleteEl = row.querySelector('.cart-swipe-delete');
-      startX = e.touches[0].clientX;
-      currentRow = row;
-      isSwiping = false;
-    }, { passive: true });
+    // Clean up previous instance if any
+    if (this._swipeReveal) {
+      this._swipeReveal.destroy();
+      this._swipeReveal = null;
+    }
 
-    table.addEventListener('touchmove', (e) => {
-      if (!currentRow || !content) return;
-      const dx = e.touches[0].clientX - startX;
-      if (Math.abs(dx) > 5) isSwiping = true;
-      if (!isSwiping) return;
-      if (dx > 0) { content.style.transform = 'translateX(0)'; return; }
-      const translateX = Math.max(dx, -90);
-      content.style.transform = `translateX(${translateX}px)`;
-      content.classList.add('swiping');
-    }, { passive: true });
+    const component = this;
 
-    table.addEventListener('touchend', () => {
-      if (!currentRow || !content || !deleteEl) { reset(); return; }
-      const transform = content.style.transform;
-      const translateX = transform ? parseFloat(transform.replace('translateX(', '')) : 0;
-      if (translateX < -60) {
-        deleteEl.classList.add('revealed');
-        const productId = currentRow.getAttribute('x-data') ? null : null;
-        if (translateX < -120) {
-          const alpineRow = currentRow.querySelector('[x-data]');
-          let pid = null;
-          if (alpineRow) {
-            const data = alpineRow.__x?.$data;
-            if (data?.item) pid = data.item.productId;
-          }
-          if (!pid) {
-            const link = currentRow.querySelector('a[href*="product-detail"]');
-            if (link) {
-              const m = link.getAttribute('href').match(/id=(\d+)/);
-              if (m) pid = parseInt(m[1]);
-            }
-          }
-          if (pid) this.removeItem(pid);
+    this._swipeReveal = createSwipeReveal({
+      container: tbody,
+      itemSelector: 'tr',
+      revealWidth: 80,
+      autoActivate: 150,
+      getActionEl(row) {
+        let deleteEl = row.querySelector('.cart-swipe-delete');
+        if (!deleteEl) {
+          deleteEl = document.createElement('div');
+          deleteEl.className = 'cart-swipe-delete';
+          deleteEl.innerHTML = '<i class="fas fa-trash-alt"></i>';
+          row.appendChild(deleteEl);
+          row.style.position = 'relative';
+          row.style.overflow = 'hidden';
         }
-        content.style.transform = `translateX(-80px)`;
-      } else {
-        content.style.transform = 'translateX(0)';
-      }
-      content.classList.remove('swiping');
-      reset();
-    }, { passive: true });
+        return deleteEl;
+      },
+      onAction(row) {
+        // Get productId from Alpine x-for scope
+        const alpineScope = row.__x?.$data || row.closest('[x-data]')?.__x?.$data;
+        let pid = null;
+        if (alpineScope?.item?.productId) {
+          pid = alpineScope.item.productId;
+        } else if (alpineScope?.items) {
+          // Fallback: scan items by row index
+          const idx = Array.from(row.parentNode.children).indexOf(row);
+          pid = alpineScope.items[idx]?.productId;
+        } else {
+          // Last resort: parse from the product link href
+          const link = row.querySelector('a[href*="product-detail"]');
+          if (link) {
+            const m = link.getAttribute('href').match(/id=(\d+)/);
+            if (m) pid = parseInt(m[1]);
+          }
+        }
+        if (pid) component.removeItem(pid);
+      },
+    });
 
-    function reset() { startX = 0; currentRow = null; content = null; deleteEl = null; isSwiping = false; }
+    _cartSwipeCleanup = () => {
+      if (component._swipeReveal) {
+        component._swipeReveal.destroy();
+        component._swipeReveal = null;
+      }
+    };
   }
 }));
 
 export default async function renderCart(container) {
   if (!(await requireAuth())) return;
 
-  registerRouteCleanup(() => document.body.classList.remove('has-floating-bar'));
+  registerRouteCleanup(() => {
+    document.body.classList.remove('has-floating-bar');
+    if (_cartSwipeCleanup) {
+      _cartSwipeCleanup();
+      _cartSwipeCleanup = null;
+    }
+  });
   document.body.classList.add('has-floating-bar');
 
   container.innerHTML = `

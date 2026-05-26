@@ -4,6 +4,7 @@ import { isAuthenticated, updateNavbar } from '../core/auth/index.js';
 import { navigate } from '../core/router/index.js';
 import { showToast } from '../core/utils/ui.js';
 import { showFieldError, clearFieldError } from '../core/utils/validation.js';
+import { ensureCsrfToken } from '../core/utils/csrf.js';
 import Alpine from 'alpinejs';
 
 Alpine.data('loginForm', () => ({
@@ -57,6 +58,7 @@ Alpine.data('loginForm', () => ({
       localStorage.setItem('accessToken', data.token);
       localStorage.setItem('refreshToken', data.refreshToken);
       localStorage.setItem('user', JSON.stringify(data.user));
+      ensureCsrfToken();
       updateNavbar();
       navigate('');
     } catch (err) {

@@ -1,7 +1,7 @@
 import { t, getCurrentLang } from '../core/i18n/index.js';
 import { api } from '../core/api/client.js';
 import { isAuthenticated, getUser, hasAnyRole, requireAuth, updateCartBadge } from '../core/auth/index.js';
-import { SELLER_ROLES } from '../shared/constants/routes.js';
+import { SELLER_ROLES } from '../shared/constants/roles.js';
 import { router } from '../core/router/index.js';
 import { showError, showLoading, escapeHtml, progressiveImg, observeAnimations, fadeInContent } from '../core/utils/dom.js';
 import { formatPrice, formatDate, statusClass, tStatus, tCondition, renderStars } from '../core/utils/format.js';

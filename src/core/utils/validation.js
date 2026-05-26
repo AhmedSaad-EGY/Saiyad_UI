@@ -1,5 +1,7 @@
 import { t } from '../i18n/index.js';
 
+let _errorCounter = 0;
+
 export function showFieldError(el, msg) {
   el.classList.add("error");
   el.closest(".form-group")?.classList.add("has-error");
@@ -7,6 +9,9 @@ export function showFieldError(el, msg) {
   if (!err) {
     err = document.createElement("div");
     err.className = "form-error";
+    const errId = `fe-${++_errorCounter}`;
+    err.id = errId;
+    el.setAttribute("aria-describedby", errId);
     el.parentNode.appendChild(err);
   }
   err.textContent = msg;
@@ -14,6 +19,7 @@ export function showFieldError(el, msg) {
 
 export function clearFieldError(el) {
   el.classList.remove("error");
+  el.removeAttribute("aria-describedby");
   el.closest(".form-group")?.classList.remove("has-error");
   const err = el.parentNode.querySelector(".form-error");
   if (err) err.remove();

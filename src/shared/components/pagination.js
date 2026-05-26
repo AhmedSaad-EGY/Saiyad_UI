@@ -1,3 +1,4 @@
+import { t } from '../../core/i18n/index.js';
 import Alpine from 'alpinejs';
 
 Alpine.data('pagination', ({ page, totalPages, onPageChange } = {}) => ({
@@ -43,4 +44,37 @@ export function alpinePaginationHtml() {
       </template>
     </div>
   `;
+}
+
+/**
+ * Generate HTML for a manual (non-Alpine) pagination bar with prev/next buttons.
+ * @param {{ page: number, totalPages: number, prefix?: string }} opts
+ * @returns {string} HTML string
+ */
+export function manualPaginationHtml({ page, totalPages, prefix = 'pag' }) {
+  const isRtl = document.documentElement.dir === 'rtl';
+  const leftChevron = isRtl ? 'fa-chevron-right' : 'fa-chevron-left';
+  const rightChevron = isRtl ? 'fa-chevron-left' : 'fa-chevron-right';
+
+  return `
+    <div class="pagination-bar" style="display:flex;justify-content:center;align-items:center;gap:8px;margin-top:16px">
+      <button class="btn btn-sm btn-ghost" id="${prefix}PrevBtn" ${page <= 1 ? 'disabled' : ''}>
+        <i class="fas ${leftChevron}"></i>
+      </button>
+      <span style="font-size:0.88rem;color:var(--text-muted)">
+        ${t("common.page") || 'Page'} ${page} / ${Math.max(totalPages, 1)}
+      </span>
+      <button class="btn btn-sm btn-ghost" id="${prefix}NextBtn" ${page >= totalPages ? 'disabled' : ''}>
+        <i class="fas ${rightChevron}"></i>
+      </button>
+    </div>`;
+}
+
+/**
+ * Wire up prev/next event listeners for a manual pagination bar.
+ * @param {{ container: HTMLElement, prefix?: string, onPrev: () => void, onNext: () => void }} opts
+ */
+export function wirePagination({ container, prefix = 'pag', onPrev, onNext }) {
+  container.querySelector(`#${prefix}PrevBtn`)?.addEventListener('click', onPrev);
+  container.querySelector(`#${prefix}NextBtn`)?.addEventListener('click', onNext);
 }

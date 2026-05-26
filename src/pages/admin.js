@@ -1,13 +1,15 @@
 import { t } from '../core/i18n/index.js';
 import { api } from '../core/api/client.js';
 import { getUser, hasAnyRole } from '../core/auth/index.js';
+import { ROLES } from '../shared/constants/roles.js';
 import { showLoading, showError, renderEmptyState, escapeHtml } from '../core/utils/dom.js';
+import { manualPaginationHtml, wirePagination } from '../shared/components/pagination.js';
 import { formatPrice, formatDate, statusClass, tStatus } from '../core/utils/format.js';
 import { showConfirm, showToast } from '../core/utils/ui.js';
 
 export default async function renderAdmin(container) {
   const user = getUser();
-  if (!user || !hasAnyRole("Admin")) {
+  if (!user || !hasAnyRole(ROLES.ADMIN)) {
     container.innerHTML = `<div class="empty-state"><i class="fas fa-shield-alt"></i><h3>${t("admin.noAccess")}</h3></div>`;
     return;
   }
@@ -78,6 +80,14 @@ export default async function renderAdmin(container) {
       const total = data.totalCount || data.total || users.length;
       const pages = Math.ceil(total / _usersPageSize);
 
+      if (!users.length) {
+        renderEmptyState(panel, {
+          icon: "fa-users",
+          title: t("admin.noUsers") || "No users found",
+        });
+        return;
+      }
+
       panel.innerHTML = `
         <div class="table-wrapper">
           <table>
@@ -110,26 +120,9 @@ export default async function renderAdmin(container) {
             </tbody>
           </table>
         </div>
-        <div style="display:flex;justify-content:center;align-items:center;gap:8px;margin-top:16px">
-          <button class="btn btn-sm btn-ghost" id="usersPrevBtn"
-            ${_usersPage <= 1 ? "disabled" : ""}>
-            <i class="fas fa-chevron-left"></i>
-          </button>
-          <span style="font-size:0.88rem;color:var(--text-muted)">
-            ${t("common.page") || "Page"} ${_usersPage} / ${pages || 1}
-          </span>
-          <button class="btn btn-sm btn-ghost" id="usersNextBtn"
-            ${_usersPage >= pages ? "disabled" : ""}>
-            <i class="fas fa-chevron-right"></i>
-          </button>
-        </div>`;
+        ${manualPaginationHtml({ page: _usersPage, totalPages: pages, prefix: 'users' })}`;
 
-      panel.querySelector("#usersPrevBtn")?.addEventListener("click", () => {
-        if (_usersPage > 1) { _usersPage--; loadUsers(); }
-      });
-      panel.querySelector("#usersNextBtn")?.addEventListener("click", () => {
-        if (_usersPage < pages) { _usersPage++; loadUsers(); }
-      });
+      wirePagination({ container: panel, prefix: 'users', onPrev() { if (_usersPage > 1) { _usersPage--; loadUsers(); } }, onNext() { if (_usersPage < pages) { _usersPage++; loadUsers(); } } });
 
       panel.querySelectorAll(".toggle-user-btn").forEach(btn => {
         btn.addEventListener("click", async () => {
@@ -153,6 +146,14 @@ export default async function renderAdmin(container) {
     try {
       const data = await api.get("/reports");
       const reports = data.items || data.data || data || [];
+      if (!reports.length) {
+        renderEmptyState(content, {
+          icon: "fa-flag",
+          title: t("admin.noReports") || "No reports found",
+        });
+        return;
+      }
+
       content.innerHTML = `
         <div class="table-wrapper"><table>
           <caption style="caption-side:bottom;margin-top:8px;font-size:0.78rem;color:var(--text-muted)">${t("admin.reports")}</caption>
@@ -247,24 +248,9 @@ export default async function renderAdmin(container) {
             </tbody>
           </table>
         </div>
-        <div style="display:flex;justify-content:center;align-items:center;gap:8px;margin-top:16px">
-          <button class="btn btn-sm btn-ghost" id="productsPrevBtn" ${_productsPage <= 1 ? "disabled" : ""}>
-            <i class="fas fa-chevron-left"></i>
-          </button>
-          <span style="font-size:0.88rem;color:var(--text-muted)">
-            ${t("common.page")} ${_productsPage} / ${pages || 1}
-          </span>
-          <button class="btn btn-sm btn-ghost" id="productsNextBtn" ${_productsPage >= pages ? "disabled" : ""}>
-            <i class="fas fa-chevron-right"></i>
-          </button>
-        </div>`;
+        ${manualPaginationHtml({ page: _productsPage, totalPages: pages, prefix: 'admProducts' })}`;
 
-      panel.querySelector("#productsPrevBtn")?.addEventListener("click", () => {
-        if (_productsPage > 1) { _productsPage--; loadAdminProducts(); }
-      });
-      panel.querySelector("#productsNextBtn")?.addEventListener("click", () => {
-        if (_productsPage < pages) { _productsPage++; loadAdminProducts(); }
-      });
+      wirePagination({ container: panel, prefix: 'admProducts', onPrev() { if (_productsPage > 1) { _productsPage--; loadAdminProducts(); } }, onNext() { if (_productsPage < pages) { _productsPage++; loadAdminProducts(); } } });
       panel.querySelectorAll(".save-product-status").forEach((btn) => {
         btn.addEventListener("click", async () => {
           const select = panel.querySelector(`.product-status-select[data-product-id="${btn.dataset.productId}"]`);
@@ -304,6 +290,14 @@ export default async function renderAdmin(container) {
       const total = data.totalCount || data.total || orders.length;
       const pages = Math.ceil(total / _ordersPageSize);
 
+      if (!orders.length) {
+        renderEmptyState(panel, {
+          icon: "fa-box",
+          title: t("dash.noOrders") || "No orders found",
+        });
+        return;
+      }
+
       panel.innerHTML = `
         <div class="table-wrapper">
           <table>
@@ -332,26 +326,9 @@ export default async function renderAdmin(container) {
             </tbody>
           </table>
         </div>
-        <div style="display:flex;justify-content:center;align-items:center;gap:8px;margin-top:16px">
-          <button class="btn btn-sm btn-ghost" id="adminOrdersPrevBtn"
-            ${_ordersPage <= 1 ? "disabled" : ""}>
-            <i class="fas fa-chevron-left"></i>
-          </button>
-          <span style="font-size:0.88rem;color:var(--text-muted)">
-            ${t("common.page") || "Page"} ${_ordersPage} / ${pages || 1}
-          </span>
-          <button class="btn btn-sm btn-ghost" id="adminOrdersNextBtn"
-            ${_ordersPage >= pages ? "disabled" : ""}>
-            <i class="fas fa-chevron-right"></i>
-          </button>
-        </div>`;
+        ${manualPaginationHtml({ page: _ordersPage, totalPages: pages, prefix: 'admOrders' })}`;
 
-      panel.querySelector("#adminOrdersPrevBtn")?.addEventListener("click", () => {
-        if (_ordersPage > 1) { _ordersPage--; loadAdminOrders(); }
-      });
-      panel.querySelector("#adminOrdersNextBtn")?.addEventListener("click", () => {
-        if (_ordersPage < pages) { _ordersPage++; loadAdminOrders(); }
-      });
+      wirePagination({ container: panel, prefix: 'admOrders', onPrev() { if (_ordersPage > 1) { _ordersPage--; loadAdminOrders(); } }, onNext() { if (_ordersPage < pages) { _ordersPage++; loadAdminOrders(); } } });
     } catch (e) {
       panel.innerHTML = `<div class="alert alert-error">${escapeHtml(e.message)}</div>`;
     }
@@ -362,6 +339,41 @@ export default async function renderAdmin(container) {
     try {
       const data = await api.get("/categories");
       const cats = data.items || data.data || data || [];
+
+      if (!cats.length) {
+        content.innerHTML = `
+          <div style="margin-bottom:16px"><button class="btn btn-primary btn-sm" id="showAddCat"><i class="fas fa-plus"></i> ${t("admin.addCategory")}</button></div>
+          <div id="addCatForm" class="hidden card card-sm" style="max-width:400px;margin-bottom:16px">
+            <form id="catForm" novalidate>
+              <div class="form-group"><label class="form-label">${t("admin.categoryName")}</label><input type="text" class="form-input" id="catName" required></div>
+              <div class="form-group"><label class="form-label">${t("admin.categoryDesc")}</label><input type="text" class="form-input" id="catDesc"></div>
+              <button type="submit" class="btn btn-primary btn-sm">${t("admin.addCategory")}</button>
+            </form>
+          </div>
+          <div class="empty-state" style="margin-top:8px">
+            <div class="empty-state-visual"><i class="fas fa-tags" style="font-size:2.5rem;color:var(--text-muted)"></i></div>
+            <h3>${t("admin.noCategories") || "No categories found"}</h3>
+            <p style="color:var(--text-muted)">${t("admin.createFirstCategory") || "Create your first category to organize products."}</p>
+          </div>`;
+        document.getElementById("showAddCat")?.addEventListener("click", () =>
+          document.getElementById("addCatForm").classList.toggle("hidden")
+        );
+        document.getElementById("catForm")?.addEventListener("submit", async (e) => {
+          e.preventDefault();
+          try {
+            await api.post("/categories", {
+              name: document.getElementById("catName").value.trim(),
+              description: document.getElementById("catDesc").value.trim(),
+            });
+            showToast(t("admin.categoryAdded"), "success");
+            loadCategories();
+          } catch (err) {
+            showToast(err.message, "error");
+          }
+        });
+        return;
+      }
+
       content.innerHTML = `
         <div style="margin-bottom:16px"><button class="btn btn-primary btn-sm" id="showAddCat"><i class="fas fa-plus"></i> ${t("admin.addCategory")}</button></div>
         <div id="addCatForm" class="hidden card card-sm" style="max-width:400px;margin-bottom:16px">
@@ -429,6 +441,9 @@ export default async function renderAdmin(container) {
   function showFormModal(title, html, onSave) {
     const overlay = document.createElement("div");
     overlay.className = "modal-overlay show";
+    overlay.setAttribute("role", "dialog");
+    overlay.setAttribute("aria-modal", "true");
+    overlay.setAttribute("aria-label", escapeHtml(title));
     overlay.innerHTML = `
       <div class="modal" onclick="event.stopPropagation()" style="max-width:500px">
         <div class="modal-header"><h3>${escapeHtml(title)}</h3></div>
@@ -499,7 +514,12 @@ export default async function renderAdmin(container) {
                   <td>${escapeHtml(t.description || "-")}</td>
                   <td>${formatDate(t.createdAt)}</td>
                 </tr>
-              `              ).join("") : `<tr><td colspan="6" style="text-align:center;color:var(--text-muted)">No fee transactions yet</td></tr>`}
+              `              ).join("") : `<tr><td colspan="6" style="text-align:center;padding:32px;color:var(--text-muted)">
+                <div class="empty-state-inline">
+                  <i class="fas fa-chart-line" style="font-size:2rem;margin-bottom:8px;opacity:0.5"></i>
+                  <p style="margin:0">${t("admin.noFees") || "No fee transactions yet"}</p>
+                </div>
+              </td></tr>`}
             </tbody>
           </table>
         </div>`;
@@ -515,6 +535,14 @@ export default async function renderAdmin(container) {
 
     try {
       const plans = await api.get("/subscriptionplans");
+
+      if (!plans || !plans.length) {
+        renderEmptyState(panel, {
+          icon: "fa-crown",
+          title: t("subscriptions.noPlans") || "No plans found",
+        });
+        return;
+      }
 
       panel.innerHTML = `
         <div style="margin-bottom:16px">
@@ -557,14 +585,14 @@ export default async function renderAdmin(container) {
             { key: "sortOrder", label: "Sort Order", value: String(p.sortOrder), type: "number" },
             { key: "isActive", label: "Active", value: String(p.isActive), type: "checkbox" },
           ];
-          let formHtml = fields.map(f =>
+          const formHtml = fields.map(f =>
             f.type === "checkbox"
               ? '<label style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><input type="checkbox" id="ef-' + f.key + '" ' + (f.value === "true" ? "checked" : "") + '> ' + f.label + '</label>'
               : '<div style="margin-bottom:8px"><label style="display:block;font-size:0.85rem;margin-bottom:2px">' + f.label + '</label><input type="' + f.type + '" id="ef-' + f.key + '" class="form-control" value="' + escapeHtml(f.value) + '"></div>'
           ).join("");
 
           showFormModal("Edit Plan", formHtml, async function() {
-            let body = {};
+            const body = {};
             fields.forEach(function(f) {
               if (f.key === "isActive") body[f.key] = document.getElementById("ef-" + f.key).checked;
               else if (f.type === "number") body[f.key] = parseFloat(document.getElementById("ef-" + f.key).value) || 0;

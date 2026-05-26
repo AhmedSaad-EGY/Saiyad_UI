@@ -1,6 +1,7 @@
 import { showToast } from '../../core/utils/ui.js';
 import { bus, on } from '../../core/events/bus.js';
 import { t } from '../../core/i18n/index.js';
+import { escapeHtml } from '../../core/utils/dom.js';
 
 export function normalizeApiError(err) {
   if (!err) return { message: 'Unknown error', status: 0 };
@@ -49,7 +50,7 @@ export function showErrorFallback(container, message) {
         <i class="fas fa-fish"></i>
       </div>
       <h2 style="margin-bottom:8px;font-size:1.5rem">${t('common.somethingWentWrong') || 'Something went wrong'}</h2>
-      <p style="color:var(--text-muted);max-width:400px;margin-bottom:24px">${message || (t('common.errorFallbackDesc') || 'An unexpected error occurred. Please try refreshing the page.')}</p>
+      <p style="color:var(--text-muted);max-width:400px;margin-bottom:24px">${escapeHtml(message || t('common.errorFallbackDesc') || 'An unexpected error occurred. Please try refreshing the page.')}</p>
       <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center">
         <button class="btn btn-primary btn-lg" data-action="refresh"><i class="fas fa-sync-alt"></i> ${t('common.refresh') || 'Refresh'}</button>
         <a href="#/" class="btn btn-outline btn-lg"><i class="fas fa-home"></i> ${t('common.goHome') || 'Home'}</a>

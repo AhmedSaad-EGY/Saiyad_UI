@@ -1,9 +1,9 @@
 import { setLanguage, getCurrentLang, t } from './i18n/index.js';
-import { showToast, showConfirm } from './utils/ui.js';
+import { showToast, showConfirm, openQuickView } from './utils/ui.js';
 import { api } from './api/client.js';
 import { getUser, logout, requireAuth } from './auth/index.js';
-import { router } from './router/index.js';
-import { openQuickView } from './utils/ui.js';
+import { router, goBack } from './router/index.js';
+import { createSwipeGesture } from './utils/swipe.js';
 import { setupGlobalErrorHandlers } from '../shared/helpers/errors.js';
 
 // Inject minimal required global styles
@@ -378,12 +378,76 @@ document.addEventListener("mousedown", () => {
   document.body.classList.remove("keyboard-nav");
 });
 
+// Swipe-back navigation (mobile edge swipe)
+(function initSwipeBack() {
+  if (!('ontouchstart' in window)) return;
+
+  let indicator = null;
+  let removeTimer = null;
+
+  function showIndicator(progress) {
+    if (!indicator) {
+      indicator = document.createElement('div');
+      indicator.id = 'swipeBackIndicator';
+      indicator.setAttribute('role', 'status');
+      indicator.setAttribute('aria-live', 'polite');
+      indicator.innerHTML = '<i class="fas fa-arrow-left" aria-hidden="true"></i><span>' + (t('common.back') || 'Back') + '</span>';
+      document.body.appendChild(indicator);
+    }
+    const clampedProgress = Math.min(progress, 1);
+    indicator.style.opacity = clampedProgress;
+    const translate = Math.min(progress * 40, 30);
+    indicator.style.transform = `translateX(${translate}px)`;
+  }
+
+  function hideIndicator() {
+    if (indicator) {
+      indicator.style.transition = 'opacity 0.15s ease, transform 0.15s ease';
+      indicator.style.opacity = '0';
+      indicator.style.transform = 'translateX(0)';
+      clearTimeout(removeTimer);
+      removeTimer = setTimeout(() => {
+        if (indicator) { indicator.remove(); indicator = null; }
+      }, 200);
+    }
+  }
+
+  const edgeSwipe = createSwipeGesture({
+    el: document.documentElement,
+    edgeOnly: true,
+    edgeWidth: 35,
+    threshold: 10,
+    onSwipeMove({ distance }) {
+      const isRtl = document.dir === 'rtl';
+      // Right swipe in LTR, left swipe in RTL
+      const valid = isRtl ? distance < 0 : distance > 0;
+      if (!valid) { hideIndicator(); return; }
+      const absDist = Math.abs(distance);
+      showIndicator(absDist / 100);
+    },
+    onSwipeEnd({ distance }) {
+      hideIndicator();
+      const isRtl = document.dir === 'rtl';
+      const valid = isRtl ? distance < 0 : distance > 0;
+      if (!valid) return;
+      if (Math.abs(distance) >= 80) {
+        goBack();
+      }
+    },
+  });
+
+  // Cleanup on page unload
+  window.addEventListener('beforeunload', () => {
+    edgeSwipe.destroy();
+    if (indicator) { indicator.remove(); indicator = null; }
+  });
+})();
+
 setupGlobalErrorHandlers();
 
 // Offline detection banner
 (function initOfflineBanner() {
   let banner = null;
-  let onlineBanner = null;
 
   function createBanner(online) {
     const el = document.createElement('div');

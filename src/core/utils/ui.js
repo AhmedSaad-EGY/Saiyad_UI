@@ -10,6 +10,9 @@ export function showToast(msg, type = "info") {
       const c = document.createElement("div");
       c.className = "toast-container";
       const isRtl = document.documentElement.dir === "rtl";
+      c.setAttribute("role", "status");
+      c.setAttribute("aria-live", "polite");
+      c.setAttribute("aria-atomic", "false");
       c.style.cssText = `position:fixed;bottom:20px;${isRtl ? "left" : "right"}:20px;z-index:9999;display:flex;flex-direction:column;gap:10px;pointer-events:none`;
       document.body.appendChild(c);
       return c;
@@ -245,7 +248,7 @@ export function openQuickView(product) {
   overlay.innerHTML = `
     <div class="modal" onclick="event.stopPropagation()">
       <div style="display:flex;gap:20px;flex-wrap:wrap">
-        ${image ? `<img src="${image}" alt="${escapeHtml(title)}" style="width:180px;height:180px;object-fit:cover;border-radius:var(--radius-md);flex-shrink:0">` : ""}
+        ${image ? `<img src="${escapeHtml(image)}" alt="${escapeHtml(title)}" loading="lazy" style="width:180px;height:180px;object-fit:cover;border-radius:var(--radius-md);flex-shrink:0">` : ""}
         <div style="flex:1;min-width:200px">
           <h3>${escapeHtml(title)}</h3>
           <div style="font-size:1.4rem;font-weight:700;color:var(--primary);margin:8px 0">${price}</div>
@@ -302,7 +305,7 @@ export function openLightbox(images, startIndex = 0) {
     lb.innerHTML = `
       <button class="lightbox-close" aria-label="Close"><i class="fas fa-times"></i></button>
       ${total > 1 ? `<button class="lightbox-nav lightbox-prev" aria-label="Previous"><i class="fas fa-chevron-${getCurrentLang() === "ar" ? "right" : "left"}"></i></button>` : ""}
-      <img class="lightbox-img" src="${images[current]}" alt="">
+      <img class="lightbox-img" src="${escapeHtml(images[current])}" alt="">
       ${total > 1 ? `<button class="lightbox-nav lightbox-next" aria-label="Next"><i class="fas fa-chevron-${getCurrentLang() === "ar" ? "left" : "right"}"></i></button>` : ""}
       ${total > 1 ? `<div class="lightbox-counter">${current + 1} / ${total}</div>` : ""}`;
 

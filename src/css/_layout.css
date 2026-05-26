@@ -830,6 +830,13 @@ input[type="date"].form-input::-webkit-datetime-edit-year-field:focus {
   text-decoration: none;
 }
 
+@media (hover: none) and (pointer: coarse) {
+  .footer-social-link {
+    width: 44px;
+    height: 44px;
+  }
+}
+
 .footer-social-link:hover {
   background: var(--primary);
   border-color: var(--primary);

@@ -1,6 +1,7 @@
 import { api } from '../api/client.js';
 import { on, emit } from '../events/bus.js';
 import { extractClaim } from '../../shared/helpers/index.js';
+import { clearCsrfToken } from '../utils/csrf.js';
 
 export function getUser() {
   try {
@@ -165,6 +166,7 @@ export async function logout() {
   localStorage.removeItem("accessToken");
   localStorage.removeItem("refreshToken");
   localStorage.removeItem("user");
+  clearCsrfToken();
   updateNavbar();
   emit('auth:logged-out');
 }

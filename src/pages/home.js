@@ -2,8 +2,8 @@ import Alpine from 'alpinejs';
 import { t } from '../core/i18n/index.js';
 import { api } from '../core/api/client.js';
 import { isAuthenticated, getUser, hasAnyRole, hasRole } from '../core/auth/index.js';
-import { SELLER_ROLES } from '../shared/constants/routes.js';
-import { escapeHtml, observeAnimations, initPullToRefresh } from '../core/utils/dom.js';
+import { ROLES, SELLER_ROLES } from '../shared/constants/roles.js';
+import { escapeHtml, renderEmptyState, progressiveImg, observeAnimations, initPullToRefresh, activateProgressiveImages } from '../core/utils/dom.js';
 import { formatPrice, statusClass, tStatus } from '../core/utils/format.js';
 import { renderRecentlyViewed } from '../core/utils/ui.js';
 
@@ -32,7 +32,7 @@ Alpine.data('homePage', () => ({
         if (hasAnyRole(...(SELLER_ROLES))) {
           links.push({ href: '#/dashboard?tab=products', icon: 'fa-tag', label: t('nav.myProducts') });
         }
-        if (hasRole('Admin')) {
+        if (hasRole(ROLES.ADMIN)) {
           links.push({ href: '#/admin', icon: 'fa-shield-alt', label: t('admin.title') });
         }
         this.roleLinks = links;

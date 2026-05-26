@@ -3,6 +3,7 @@ import { api } from '../core/api/client.js';
 import { isAuthenticated, updateNavbar } from '../core/auth/index.js';
 import { navigate, registerRouteCleanup } from '../core/router/index.js';
 import { escapeHtml, showLoading } from '../core/utils/dom.js';
+import { ensureCsrfToken } from '../core/utils/csrf.js';
 import { getPasswordStrength, calculateAge, clearAllFieldErrors, validateForm } from '../core/utils/validation.js';
 import { showToast } from '../core/utils/ui.js';
 import Alpine from 'alpinejs';
@@ -220,6 +221,7 @@ function showVerificationOverlay(email, password) {
     localStorage.setItem('accessToken', data.token);
     localStorage.setItem('refreshToken', data.refreshToken);
     localStorage.setItem('user', JSON.stringify(data.user));
+    ensureCsrfToken();
     updateNavbar();
     return data;
   };

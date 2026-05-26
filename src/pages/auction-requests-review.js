@@ -1,7 +1,7 @@
 import { t } from '../core/i18n/index.js';
 import { api } from '../core/api/client.js';
 import { requireAuth, hasAnyRole } from '../core/auth/index.js';
-import { MODERATOR_ROLES } from '../shared/constants/routes.js';
+import { MODERATOR_ROLES } from '../shared/constants/roles.js';
 import { escapeHtml } from '../core/utils/dom.js';
 import { statusClass } from '../core/utils/format.js';
 import { showToast } from '../core/utils/ui.js';
@@ -58,6 +58,9 @@ export default async function renderAuctionRequestsReview(container) {
     const modal = document.createElement("div");
     modal.id = "approveModal";
     modal.className = "modal-overlay";
+    modal.setAttribute("role", "dialog");
+    modal.setAttribute("aria-modal", "true");
+    modal.setAttribute("aria-label", t("auctionRequestsReview.approve"));
     modal.innerHTML = `
       <div class="modal-content" style="max-width:480px">
         <h3><i class="fas fa-check-circle"></i> ${t("auctionRequestsReview.approve")}</h3>
@@ -114,6 +117,9 @@ export default async function renderAuctionRequestsReview(container) {
     const modal = document.createElement("div");
     modal.id = "rejectModal";
     modal.className = "modal-overlay";
+    modal.setAttribute("role", "dialog");
+    modal.setAttribute("aria-modal", "true");
+    modal.setAttribute("aria-label", t("auctionRequestsReview.reject"));
     modal.innerHTML = `
       <div class="modal-content" style="max-width:420px">
         <h3>${t("auctionRequestsReview.reject")}</h3>

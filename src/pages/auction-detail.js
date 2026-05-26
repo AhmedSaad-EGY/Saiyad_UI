@@ -1,294 +1,570 @@
+import Alpine from 'alpinejs';
 import { t, getCurrentLang } from '../core/i18n/index.js';
 import { api } from '../core/api/client.js';
 import { requireAuth, getUser } from '../core/auth/index.js';
-import { router, registerRouteCleanup } from '../core/router/index.js';
-import { showError, showLoading, renderEmptyState, escapeHtml, $$, observeAnimations, fadeInContent } from '../core/utils/dom.js';
+import { registerRouteCleanup, navigate } from '../core/router/index.js';
 import { formatPrice, formatDate, statusClass, tStatus } from '../core/utils/format.js';
-import { trackRecentlyViewed, showToast, triggerConfetti } from '../core/utils/ui.js';
+import { escapeHtml, observeAnimations } from '../core/utils/dom.js';
+import { triggerConfetti, trackRecentlyViewed } from '../core/utils/ui.js';
+import { createScopedBus } from '../core/events/bus.js';
 import { joinAuctionGroup, leaveAuctionGroup } from '../core/realtime/index.js';
 
-export default async function renderAuctionDetail(container, route, params) {
-  const id = params.id;
-  if (!id) { showError(container, 'Auction ID is required.'); return; }
+Alpine.data('auctionDetailPage', () => ({
+  // --- Reactive state ---
+  auction: null,
+  bids: [],
+  endTime: null,
+  isActive: true,
+  loading: true,
+  error: null,
 
-  showLoading(container, 'detail');
+  // Countdown
+  remaining: 0,
+  urgent: false,
+  ended: false,
 
-  try {
-    const detail = await api.get(`/auctions/${id}`);
-    const a = detail.auction || detail;
-    const bids = detail.bids || [];
-    let end = new Date(a.endTime);
-    let isActive = a.status === 'Active';
+  // Bid display (count-up animation)
+  currentBidValue: 0,
+  bidCount: 0,
 
-        trackRecentlyViewed(a.id, a.productTitle || 'Auction Item', a.productImageUrl, a.currentHighestBid || a.startingPrice, "auction");
-    joinAuctionGroup(parseInt(id));
+  // Bid form
+  bidAmount: '',
+  minBid: 0,
+  maxBid: 1000,
+  autoBidEnabled: false,
+  autoBidMax: '',
+  bidAlert: '',
+  bidAlertType: '',
+  placingBid: false,
 
-    const _timers = [];
-    registerRouteCleanup(() => {
-      leaveAuctionGroup(parseInt(id));
-      _timers.forEach(t => clearInterval(t));
-    });
+  // Price flash trigger (timestamp toggles animation)
+  flashBid: 0,
 
-    function render(a) {
-          const user = getUser();
-          const now = new Date();
-          const remaining = Math.max(0, Math.floor((end - now) / 1000));
-          const urgent = remaining > 0 && remaining <= 3600;
-          const days = Math.floor(remaining / 86400);
-          const hours = Math.floor((remaining % 86400) / 3600);
-          const mins = Math.floor((remaining % 3600) / 60);
-          const secs = remaining % 60;
+  // Winner
+  winnerName: '',
 
-      const title = a.productTitle || 'Auction Item';
+  // Internal (not reactive for template, but stored for cleanup)
+  _auctionId: null,
+  _bus: null,
+  _user: null,
+  _countdownInterval: null,
+  _refreshInterval: null,
 
-      // Role-based bid section
-      let bidSection = '';
-      if (isActive) {
-        if (user?.role === 'Customer') {
-          bidSection = `
-              <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:16px">
-                <div style="flex:1;min-width:200px">
-                  <div class="bid-input-group">
-                    <input type="number" class="form-input" id="bidAmount" step="0.01" placeholder="${t('auction.placeBid')}" />
-                    <button class="btn btn-primary" id="placeBidBtn"><i class="fas fa-gavel"></i> ${t('auction.placeBid')}</button>
+
+  // --- Lifecycle ---
+  async init() {
+    this._auctionId = new URLSearchParams(location.hash.split('?')[1] || '').get('id');
+    if (!this._auctionId) {
+      this.error = 'Auction ID is required.';
+      this.loading = false;
+      return;
+    }
+
+    this._user = getUser();
+    this._bus = createScopedBus();
+
+    try {
+      const detail = await api.get(`/auctions/${this._auctionId}`);
+      const a = detail.auction || detail;
+      this.auction = a;
+      this.bids = (detail.bids || []).sort((a, b) => new Date(b.createdAt || b.created_at) - new Date(a.createdAt || a.created_at));
+      this.endTime = new Date(a.endTime);
+      this.isActive = a.status === 'Active';
+      this.currentBidValue = a.currentHighestBid || a.startingPrice;
+      this.bidCount = this.bids.length;
+      this.loading = false;
+
+      if (this.isActive) {
+        const minBidVal = a.currentHighestBid
+          ? a.currentHighestBid + a.minimumIncrement
+          : a.startingPrice;
+        const maxBidVal = a.reservePrice && a.reservePrice > minBidVal
+          ? a.reservePrice * 1.5
+          : minBidVal * 5;
+        this.minBid = minBidVal;
+        this.maxBid = maxBidVal;
+        this.bidAmount = minBidVal.toFixed(2);
+      }
+
+      // Track recently viewed
+      trackRecentlyViewed(
+        a.id,
+        a.productTitle || 'Auction Item',
+        a.productImageUrl,
+        a.currentHighestBid || a.startingPrice,
+        "auction",
+      );
+
+      // Join SignalR group
+      joinAuctionGroup(parseInt(this._auctionId));
+
+      // Winner confetti on initial load
+      if (this._user && a.winnerUserId &&
+          (this._user.id === a.winnerUserId || this._user.userId === a.winnerUserId)) {
+        this.$nextTick(() => setTimeout(triggerConfetti, 300));
+      }
+
+      // Start timers if active
+      if (this.isActive) {
+        this.startCountdown();
+        this.startAutoRefresh();
+      }
+
+      // Listen for SignalR events via bus
+      this._bus.on('realtime:bid-placed', ({ bid }) => {
+        const baId = bid.auctionId || bid.auction_id;
+        if (baId && parseInt(baId) !== parseInt(this._auctionId)) return;
+        this.onBidPlaced(bid);
+      });
+
+      this._bus.on('realtime:auction-ended', ({ auction: endedAuction }) => {
+        const eaId = endedAuction.id || endedAuction.auctionId;
+        if (eaId && parseInt(eaId) !== parseInt(this._auctionId)) return;
+        this.onAuctionEnded(endedAuction);
+      });
+
+    } catch (e) {
+      this.error = e.message || t('common.loadFailed');
+      this.loading = false;
+    }
+
+    registerRouteCleanup(() => this.cleanup());
+    this.$nextTick(() => observeAnimations());
+  },
+
+  // --- Countdown ---
+  startCountdown() {
+    this._countdownInterval = setInterval(() => {
+      const diff = Math.max(0, Math.floor((this.endTime - new Date()) / 1000));
+      if (diff <= 0) {
+        clearInterval(this._countdownInterval);
+        this._countdownInterval = null;
+        this.ended = true;
+        this.isActive = false;
+        return;
+      }
+      this.remaining = diff;
+      this.urgent = diff <= 3600;
+    }, 1000);
+  },
+
+  startAutoRefresh() {
+    this._refreshInterval = setInterval(async () => {
+      try {
+        const freshData = await api.get(`/auctions/${this._auctionId}`);
+        const fresh = freshData.auction || freshData;
+        this.endTime = new Date(fresh.endTime);
+        this.isActive = fresh.status === 'Active';
+
+        const newVal = fresh.currentHighestBid || fresh.startingPrice;
+        if (newVal > this.currentBidValue) {
+          this.animateBidCountUp(this.currentBidValue, newVal);
+        } else {
+          this.currentBidValue = newVal;
+        }
+
+        if (fresh.bids) this.bidCount = fresh.bids.length;
+
+        if (!this.isActive) {
+          if (this._refreshInterval) clearInterval(this._refreshInterval);
+          if (this._countdownInterval) clearInterval(this._countdownInterval);
+          this._refreshInterval = null;
+          this._countdownInterval = null;
+        }
+      } catch { /* silently fail */ }
+    }, 10000);
+  },
+
+  animateBidCountUp(start, end) {
+    const duration = 600;
+    const startTime = performance.now();
+    const tick = (now) => {
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      this.currentBidValue = start + (end - start) * eased;
+      if (progress < 1) requestAnimationFrame(tick);
+      else this.currentBidValue = end;
+    };
+    requestAnimationFrame(tick);
+  },
+
+  // --- SignalR event handlers ---
+  onBidPlaced(bid) {
+    const newVal = parseFloat(bid.amount || bid.currentHighestBid);
+    if (newVal && newVal > this.currentBidValue) {
+      this.animateBidCountUp(this.currentBidValue, newVal);
+    }
+    // Trigger price flash animation (reset first to restart CSS animation)
+    this.flashBid = 0;
+    this.$nextTick(() => { this.flashBid = Date.now(); });
+
+    const bidEntry = {
+      userName: bid.userName || bid.bidderName || bid.fullName || (bid.bidderId ? `User #${bid.bidderId}` : 'User'),
+      createdAt: bid.createdAt || bid.created_at || new Date().toISOString(),
+      amount: newVal || 0,
+      isAutoBid: bid.isAutoBid || false,
+    };
+    this.bids = [bidEntry, ...this.bids].sort((a, b) => new Date(b.createdAt || b.created_at) - new Date(a.createdAt || a.created_at));
+    this.bidCount = this.bids.length;
+  },
+
+  onAuctionEnded(endedAuction) {
+    this.ended = true;
+    this.isActive = false;
+    this.winnerName = endedAuction.winnerName || '';
+
+    if (this._user && endedAuction.winnerUserId &&
+        (this._user.id === endedAuction.winnerUserId || this._user.userId === endedAuction.winnerUserId)) {
+      this.$nextTick(() => triggerConfetti());
+    }
+  },
+
+  // --- Bid actions ---
+  async placeBid() {
+    if (!await requireAuth()) return;
+    const amount = parseFloat(this.bidAmount);
+    if (!amount || amount <= 0) {
+      this.bidAlert = t('auction.invalidBid');
+      this.bidAlertType = 'error';
+      return;
+    }
+
+    this.placingBid = true;
+    this.bidAlert = '';
+    this.bidAlertType = '';
+
+    try {
+      const body = { amount };
+      if (this.autoBidEnabled) {
+        const maxBid = parseFloat(this.autoBidMax);
+        if (!maxBid || maxBid <= amount) {
+          this.bidAlert = t("auction.autoBidMaxRequired");
+          this.bidAlertType = 'error';
+          this.placingBid = false;
+          return;
+        }
+        body.maxAutoBidAmount = maxBid;
+      }
+      await api.post(`/auctions/${this._auctionId}/bids`, body);
+      this.bidAlert = t('auction.bidPlaced');
+      this.bidAlertType = 'success';
+      setTimeout(() => this.refreshAuction(), 1000);
+    } catch (e) {
+      this.bidAlert = escapeHtml(e.message);
+      this.bidAlertType = 'error';
+    } finally {
+      this.placingBid = false;
+    }
+  },
+
+  async refreshAuction() {
+    try {
+      const detail = await api.get(`/auctions/${this._auctionId}`);
+      const a = detail.auction || detail;
+      this.auction = a;
+      this.bids = (detail.bids || []).sort((a, b) => new Date(b.createdAt || b.created_at) - new Date(a.createdAt || a.created_at));
+      this.currentBidValue = a.currentHighestBid || a.startingPrice;
+      this.bidCount = this.bids.length;
+      this.bidAlert = '';
+      this.bidAlertType = '';
+    } catch { /* ignore */ }
+  },
+
+  quickBidAdd() {
+    this.bidAmount = (this.minBid + this.auction.minimumIncrement).toFixed(2);
+  },
+
+  quickBidPct(pct) {
+    this.bidAmount = (this.minBid * (1 + pct / 100)).toFixed(2);
+  },
+
+  // --- Template helpers ---
+  countdown() {
+    if (this.ended || !this.isActive) return null;
+    const days = Math.floor(this.remaining / 86400);
+    const hours = Math.floor((this.remaining % 86400) / 3600);
+    const mins = Math.floor((this.remaining % 3600) / 60);
+    const secs = this.remaining % 60;
+    return {
+      days,
+      hours: String(hours).padStart(2, '0'),
+      mins: String(mins).padStart(2, '0'),
+      secs: String(secs).padStart(2, '0'),
+      urgent: this.urgent,
+      showDays: days > 0,
+    };
+  },
+
+  formatPrice(n) { return formatPrice(n); },
+  formatDate(d) { return formatDate(d); },
+  statusClass(s) { return statusClass(s); },
+  tStatus(s) { return tStatus(s, 'auction'); },
+  t(key) { return t(key); },
+  getCurrentLang() { return getCurrentLang(); },
+  isCustomer() { return this._user?.role === 'Customer'; },
+  isLoggedIn() { return !!this._user; },
+  retry() { navigate(''); },
+
+  // --- Cleanup ---
+  cleanup() {
+    leaveAuctionGroup(parseInt(this._auctionId));
+    if (this._bus) this._bus.cleanup();
+    if (this._countdownInterval) {
+      clearInterval(this._countdownInterval);
+      this._countdownInterval = null;
+    }
+    if (this._refreshInterval) {
+      clearInterval(this._refreshInterval);
+      this._refreshInterval = null;
+    }
+  },
+}));
+
+// --- Page render function ---
+export default async function renderAuctionDetail(container, _route, params) {
+  container.innerHTML = `
+    <div x-data="auctionDetailPage" x-init="init()">
+      <!-- Loading skeleton -->
+      <div x-show="loading" class="skeleton-detail skeleton-shimmer" role="status" aria-label="${t('common.loading')}">
+        <div class="skeleton skeleton-image" style="height:380px"></div>
+        <div style="padding:24px 0">
+          <div class="skeleton skeleton-title" style="width:60%"></div>
+          <div class="skeleton skeleton-text" style="width:20%;height:32px"></div>
+          <div class="skeleton skeleton-text"></div>
+          <div class="skeleton skeleton-text"></div>
+          <div class="skeleton skeleton-text short"></div>
+        </div>
+      </div>
+
+      <!-- Error state -->
+      <div x-show="!loading && error" class="empty-state">
+        <div class="empty-state-visual"><i class="fas fa-gavel" style="font-size:3.5rem;color:var(--text-muted)"></i></div>
+        <h3 x-text="t('common.loadFailed')"></h3>
+        <p x-text="error"></p>
+        <button class="btn btn-primary" @click="retry()" style="margin-top:16px">${t('common.retry')}</button>
+      </div>
+
+      <!-- Content -->
+      <div x-show="!loading && !error && auction">
+        <!-- Breadcrumb -->
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+          <a href="#/">${t("nav.home")}</a>
+          <i class="fas fa-chevron-${getCurrentLang() === "ar" ? "left" : "right"}" aria-hidden="true"></i>
+          <a href="#/auctions">${t("nav.auctions")}</a>
+          <i class="fas fa-chevron-${getCurrentLang() === "ar" ? "left" : "right"}" aria-hidden="true"></i>
+          <span x-text="auction.productTitle || 'Auction Item'"></span>
+        </nav>
+
+        <div class="detail-page">
+          <!-- Image -->
+          <div>
+            <div class="detail-image">
+              <template x-if="auction.productImageUrl">
+                <img :src="auction.productImageUrl" :alt="auction.productTitle || 'Auction Item'" loading="lazy" style="width:100%;height:100%;object-fit:cover">
+              </template>
+              <template x-if="!auction.productImageUrl">
+                <i class="fas fa-gavel"></i>
+              </template>
+            </div>
+          </div>
+
+          <!-- Info -->
+          <div class="detail-info" style="animation:slideUp 0.4s cubic-bezier(0.34,1.56,0.64,1)">
+            <h1 x-text="auction.productTitle || 'Auction Item'"></h1>
+
+            <!-- Current bid with price flash -->
+            <div class="current-bid"
+                 :style="flashBid ? 'animation:priceFlash 0.6s var(--ease-bounce)' : ''"
+                 @animationend="flashBid = 0">
+              <span x-text="t('auction.currentBid') + ': ' + formatPrice(currentBidValue)"></span>
+            </div>
+
+            <!-- Status + countdown -->
+            <div style="margin:12px 0">
+              <span class="status" :class="statusClass(auction.status)" x-text="tStatus(auction.status)"></span>
+
+              <!-- Active countdown -->
+              <div x-show="!ended && isActive" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+                <template x-if="countdown()">
+                  <div style="display:flex;gap:8px;flex-wrap:wrap">
+                    <template x-if="countdown().showDays">
+                      <div class="countdown-unit">
+                        <span class="countdown-num" x-text="countdown().days"></span>
+                        <span class="countdown-lbl">${t('common.days')}</span>
+                      </div>
+                    </template>
+                    <div class="countdown-unit" :class="countdown().urgent ? 'urgent' : ''">
+                      <span class="countdown-num" x-text="countdown().hours"></span>
+                      <span class="countdown-lbl">${t('common.hours')}</span>
+                    </div>
+                    <div class="countdown-unit" :class="countdown().urgent ? 'urgent' : ''">
+                      <span class="countdown-num" x-text="countdown().mins"></span>
+                      <span class="countdown-lbl">${t('common.minutes')}</span>
+                    </div>
+                    <div class="countdown-unit" :class="countdown().urgent ? 'urgent' : ''">
+                      <span class="countdown-num" x-text="countdown().secs"></span>
+                      <span class="countdown-lbl">${t('common.seconds')}</span>
+                    </div>
+                    <template x-if="countdown().urgent">
+                      <span class="ending-soon-badge">${t('auction.endingSoon')}</span>
+                    </template>
                   </div>
-                  <div class="bid-slider-wrap">
-                    <input type="range" class="bid-slider" id="bidSlider" min="0" max="1000" step="0.01" value="0" aria-label="Bid amount slider">
-                    <div class="bid-slider-labels"><span id="sliderMin"></span><span id="sliderMax"></span></div>
-                  </div>
-                  <div style="display:flex;gap:6px;margin-top:6px">
-                    <button class="btn btn-outline btn-sm quick-bid" data-add="${a.minimumIncrement}">+${formatPrice(a.minimumIncrement)}</button>
-                    <button class="btn btn-outline btn-sm quick-bid" data-pct="5">+5%</button>
-                    <button class="btn btn-outline btn-sm quick-bid" data-pct="10">+10%</button>
-                  </div>
-                  <div style="display:flex;align-items:center;gap:8px;margin-top:8px">
-                    <label for="autoBidToggle" style="display:flex;align-items:center;gap:6px;font-size:var(--text-sm);cursor:pointer">
-                      <input type="checkbox" id="autoBidToggle"> <i class="fas fa-robot" aria-hidden="true"></i> ${t("auction.autoBid")}
-                    </label>
-                    <div id="autoBidMaxWrap" class="hidden" style="flex:1">
-                      <input type="number" class="form-input" id="autoBidMax" step="0.01" min="0" placeholder="Max bid amount" style="padding:6px 10px;font-size:var(--text-sm)">
+                </template>
+              </div>
+
+              <!-- Ended display -->
+              <div x-show="ended || (!isActive && !ended)" style="margin-top:8px">
+                <span style="color:var(--danger);font-weight:600">
+                  <i class="fas fa-times-circle"></i> ${t('auction.ended')}
+                </span>
+              </div>
+            </div>
+
+            <!-- Meta info -->
+            <div class="detail-meta">
+              <div class="detail-meta-item">
+                <strong x-text="t('auction.startingPrice') + ':'"></strong>
+                <span x-text="formatPrice(auction.startingPrice)"></span>
+              </div>
+              <div class="detail-meta-item">
+                <strong x-text="t('auction.reservePrice') + ':'"></strong>
+                <span x-text="auction.reservePrice ? formatPrice(auction.reservePrice) : t('common.N/A')"></span>
+              </div>
+              <div class="detail-meta-item">
+                <strong x-text="t('auction.minIncrement') + ':'"></strong>
+                <span x-text="formatPrice(auction.minimumIncrement)"></span>
+              </div>
+              <div class="detail-meta-item">
+                <strong x-text="t('auction.totalBids') + ':'"></strong>
+                <span x-text="bidCount"></span>
+              </div>
+              <div class="detail-meta-item">
+                <strong x-text="t('auction.start') + ':'"></strong>
+                <span x-text="formatDate(auction.startTime)"></span>
+              </div>
+              <div class="detail-meta-item">
+                <strong x-text="t('auction.end') + ':'"></strong>
+                <span x-text="formatDate(auction.endTime)"></span>
+              </div>
+            </div>
+
+            <!-- Winner announcement -->
+            <template x-if="auction.winnerUserId">
+              <div class="alert alert-success">
+                <i class="fas fa-trophy"></i>
+                <span x-text="t('auction.winner') + ': ' + (auction.winnerName || 'User #' + auction.winnerUserId)"></span>
+              </div>
+            </template>
+
+            <!-- Bid section (customer only, active auction) -->
+            <template x-if="isActive && isCustomer()">
+              <div>
+                <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:16px">
+                  <div style="flex:1;min-width:200px">
+                    <!-- Bid input + button -->
+                    <div class="bid-input-group">
+                      <input type="number" class="form-input" x-model="bidAmount" step="0.01"
+                             :placeholder="t('auction.placeBid') + ' (' + formatPrice(minBid) + ')'" />
+                      <button class="btn btn-primary" @click="placeBid()" :disabled="placingBid">
+                        <i class="fas fa-gavel" x-show="!placingBid"></i>
+                        <i class="fas fa-spinner spinner" x-show="placingBid" aria-hidden="true"></i>
+                        <span x-show="!placingBid" x-text="t('auction.placeBid')"></span>
+                        <span x-show="placingBid">${t('auction.placingBid')}</span>
+                      </button>
+                    </div>
+
+                    <!-- Bid slider -->
+                    <div class="bid-slider-wrap">
+                      <input type="range" class="bid-slider" x-model="bidAmount"
+                             :min="minBid" :max="maxBid" step="0.01"
+                             aria-label="${t('auction.placeBid')}" />
+                      <div class="bid-slider-labels">
+                        <span x-text="formatPrice(minBid)"></span>
+                        <span x-text="formatPrice(maxBid)"></span>
+                      </div>
+                    </div>
+
+                    <!-- Quick-bid buttons -->
+                    <div style="display:flex;gap:6px;margin-top:6px">
+                      <button class="btn btn-outline btn-sm" @click="quickBidAdd()">
+                        +<span x-text="formatPrice(auction.minimumIncrement)"></span>
+                      </button>
+                      <button class="btn btn-outline btn-sm" @click="quickBidPct(5)">+5%</button>
+                      <button class="btn btn-outline btn-sm" @click="quickBidPct(10)">+10%</button>
+                    </div>
+
+                    <!-- Auto-bid toggle -->
+                    <div style="display:flex;align-items:center;gap:8px;margin-top:8px">
+                      <label style="display:flex;align-items:center;gap:6px;font-size:var(--text-sm);cursor:pointer">
+                        <input type="checkbox" x-model="autoBidEnabled" :aria-label="t('auction.autoBid')" />
+                        <i class="fas fa-robot" aria-hidden="true"></i>
+                        <span x-text="t('auction.autoBid')"></span>
+                      </label>
+                      <div x-show="autoBidEnabled" style="flex:1">
+                        <input type="number" class="form-input" x-model="autoBidMax" step="0.01" min="0"
+                               :placeholder="t('auction.autoBidMaxPlaceholder') || 'Max bid amount'"
+                               style="padding:6px 10px;font-size:var(--text-sm)" />
+                      </div>
                     </div>
                   </div>
                 </div>
+
+                <!-- Bid alert -->
+                <div x-show="bidAlert" style="margin-top:8px">
+                  <div :class="'alert alert-' + bidAlertType" x-html="bidAlert"></div>
+                </div>
               </div>
-              <div id="bidAlert"></div>
-          `;
-        } else {
-          bidSection = `
-            <div class="alert alert-info" style="margin-top:16px">
-              <i class="fas fa-info-circle"></i> ${user ? t('auction.bidCustomerOnly') || 'Only customers can place bids.' : `<a href="#/login" style="color:inherit;text-decoration:underline">${t('auction.loginToBid') || 'Login as a customer to place bids.'}</a>`}
-            </div>
-          `;
-        }
-      }
+            </template>
 
-      container.innerHTML = `
-        <nav class="breadcrumb" aria-label="Breadcrumb"><a href="#/">${t("nav.home")}</a> <i class="fas fa-chevron-${getCurrentLang() === "ar" ? "left" : "right"}" aria-hidden="true"></i> <a href="#/auctions">${t("nav.auctions")}</a> <i class="fas fa-chevron-${getCurrentLang() === "ar" ? "left" : "right"}" aria-hidden="true"></i> <span>${escapeHtml(title)}</span></nav>
-        <div class="detail-page">
-          <div>
-            <div class="detail-image">
-              ${a.productImageUrl ? `<img src="${a.productImageUrl}" alt="${escapeHtml(title)}" style="width:100%;height:100%;object-fit:cover">` : '<i class="fas fa-gavel"></i>'}
-            </div>
-          </div>
-          <div class="detail-info" style="animation:slideUp 0.4s cubic-bezier(0.34,1.56,0.64,1)">
-            <h1>${escapeHtml(title)}</h1>
-            <div class="current-bid" id="currentBidDisplay" data-auction-id="${a.id}">${t('auction.currentBid')}: ${formatPrice(a.currentHighestBid || a.startingPrice)}</div>
-            <div style="margin:12px 0">
-              <span class="status ${statusClass(a.status)}">${tStatus(a.status, "auction")}</span>
-              ${remaining > 0 ? `
-              <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px" id="countdownContainer">
-                ${days > 0 ? `<div class="countdown-unit"><span class="countdown-num">${days}</span><span class="countdown-lbl">${t('common.days')}</span></div>` : ''}
-                <div class="countdown-unit ${urgent ? 'urgent' : ''}"><span class="countdown-num" id="cd-hours">${String(hours).padStart(2,'0')}</span><span class="countdown-lbl">${t('common.hours')}</span></div>
-                <div class="countdown-unit ${urgent ? 'urgent' : ''}"><span class="countdown-num" id="cd-mins">${String(mins).padStart(2,'0')}</span><span class="countdown-lbl">${t('common.minutes')}</span></div>
-                <div class="countdown-unit ${urgent ? 'urgent' : ''}"><span class="countdown-num" id="cd-secs">${String(secs).padStart(2,'0')}</span><span class="countdown-lbl">${t('common.seconds')}</span></div>
-                ${urgent ? `<span class="ending-soon-badge">${t('auction.endingSoon')}</span>` : ''}
-              </div>` : `<span style="color:var(--danger);font-weight:600"><i class="fas fa-times-circle"></i> ${t('auction.ended')}</span>`}
-            </div>
-            <div class="detail-meta">
-              <div class="detail-meta-item"><strong>${t('auction.startingPrice')}:</strong> ${formatPrice(a.startingPrice)}</div>
-              <div class="detail-meta-item"><strong>${t('auction.reservePrice')}:</strong> ${a.reservePrice ? formatPrice(a.reservePrice) : t('common.N/A')}</div>
-              <div class="detail-meta-item"><strong>${t('auction.minIncrement')}:</strong> ${formatPrice(a.minimumIncrement)}</div>
-              <div class="detail-meta-item"><strong>${t('auction.totalBids')}:</strong> <span id="bidCountDisplay">${bids.length}</span></div>
-              <div class="detail-meta-item"><strong>${t('auction.start')}:</strong> ${formatDate(a.startTime)}</div>
-              <div class="detail-meta-item"><strong>${t('auction.end')}:</strong> ${formatDate(a.endTime)}</div>
-            </div>
-            ${a.winnerUserId ? `<div class="alert alert-success"><i class="fas fa-trophy"></i> ${t('auction.winner')}: ${escapeHtml(a.winnerName || `User #${a.winnerUserId}`)}</div>` : ''}
+            <!-- Non-customer message (active auction) -->
+            <template x-if="isActive && !isCustomer()">
+              <div class="alert alert-info" style="margin-top:16px">
+                <i class="fas fa-info-circle"></i>
+                <template x-if="isLoggedIn()">
+                  <span x-text="t('auction.bidCustomerOnly') || 'Only customers can place bids.'"></span>
+                </template>
+                <template x-if="!isLoggedIn()">
+                  <a href="#/login" style="color:inherit;text-decoration:underline">
+                    <span x-text="t('auction.loginToBid') || 'Login as a customer to place bids.'"></span>
+                  </a>
+                </template>
+              </div>
+            </template>
 
-            ${bidSection}
-
+            <!-- Bid history -->
             <div style="margin-top:24px">
-              <h3>${t('auction.bidHistory')} (${bids.length})</h3>
-              <div class="bid-list" id="bidList" aria-live="polite" aria-atomic="true" aria-relevant="additions text">
-                ${bids.length ? bids.sort((a,b) => new Date(b.createdAt || b.created_at) - new Date(a.createdAt || a.created_at)).map(b => `
-                  <div class="bid-item"><span><strong>${escapeHtml(b.userName || `User #${b.userId}`)}</strong> <small>${formatDate(b.createdAt || b.created_at)}</small></span><span style="font-weight:700;color:var(--success)">${formatPrice(b.amount)} ${b.isAutoBid ? `<i class="fas fa-robot" title="${t('auction.autoBid')}"></i>` : ''}</span></div>
-                `).join('') : `<div class="empty-state"><i class="fas fa-gavel"></i><h3>${t('auction.noBids')}</h3></div>`}
+              <h3><span x-text="t('auction.bidHistory') + ' (' + bidCount + ')'"></span></h3>
+              <div class="bid-list" aria-live="polite" aria-atomic="true" aria-relevant="additions text">
+                <template x-if="bids.length">
+                  <div>
+                    <template x-for="(b, i) in bids" :key="b.createdAt + '-' + i">
+                      <div class="bid-item" :style="i === 0 && !loading ? 'background:var(--success-bg);transition:background 1s ease' : ''">
+                        <span>
+                          <strong x-text="b.userName"></strong>
+                          <small x-text="formatDate(b.createdAt)"></small>
+                        </span>
+                        <span style="font-weight:700;color:var(--success)">
+                          <span x-text="formatPrice(b.amount)"></span>
+                          <template x-if="b.isAutoBid">
+                            <i class="fas fa-robot" :title="t('auction.autoBid')"></i>
+                          </template>
+                        </span>
+                      </div>
+                    </template>
+                  </div>
+                </template>
+                <template x-if="!bids.length">
+                  <div class="empty-state">
+                    <i class="fas fa-gavel"></i>
+                    <h3 x-text="t('auction.noBids')"></h3>
+                  </div>
+                </template>
               </div>
             </div>
           </div>
         </div>
-      `;
-      observeAnimations();
-      fadeInContent(container);
-
-      if (user && a.winnerUserId && (user.id === a.winnerUserId || user.userId === a.winnerUserId)) {
-        triggerConfetti();
-      }
-
-      if (isActive) {
-        const isCustomer = user?.role === 'Customer';
-
-        if (isCustomer) {
-          // Bid slider ↔ input sync
-          const bidInput = document.getElementById('bidAmount');
-          const bidSlider = document.getElementById('bidSlider');
-          const sliderMin = document.getElementById('sliderMin');
-          const sliderMax = document.getElementById('sliderMax');
-          const minBid = a.currentHighestBid ? a.currentHighestBid + a.minimumIncrement : a.startingPrice;
-          const maxBid = a.reservePrice && a.reservePrice > minBid ? a.reservePrice * 1.5 : minBid * 5;
-          if (bidSlider) {
-            bidSlider.min = minBid;
-            bidSlider.max = maxBid;
-            bidSlider.value = minBid;
-            bidInput.placeholder = `${t('auction.placeBid')} (${formatPrice(minBid)})`;
-            if (sliderMin) sliderMin.textContent = formatPrice(minBid);
-            if (sliderMax) sliderMax.textContent = formatPrice(maxBid);
-            bidSlider.addEventListener('input', () => { bidInput.value = parseFloat(bidSlider.value).toFixed(2); });
-            bidInput.addEventListener('input', () => {
-              const v = parseFloat(bidInput.value);
-              if (!isNaN(v) && v >= minBid && v <= maxBid) bidSlider.value = v;
-            });
-          }
-
-          // Quick-bid buttons
-          $$('.quick-bid').forEach((btn) => {
-            btn.addEventListener('click', () => {
-              const add = parseFloat(btn.dataset.add);
-              if (add) {
-                bidInput.value = (minBid + add).toFixed(2);
-              } else {
-                const pct = parseFloat(btn.dataset.pct) / 100;
-                bidInput.value = (minBid * (1 + pct)).toFixed(2);
-              }
-              const v = parseFloat(bidInput.value);
-              if (!isNaN(v) && v >= minBid && v <= maxBid) bidSlider.value = v;
-            });
-          });
-
-          document.getElementById('autoBidToggle')?.addEventListener('change', (e) => {
-            document.getElementById('autoBidMaxWrap')?.classList.toggle('hidden', !e.target.checked);
-          });
-
-          document.getElementById('placeBidBtn').addEventListener('click', async () => {
-            if (!await requireAuth()) return;
-            const amount = parseFloat(document.getElementById('bidAmount').value);
-            if (!amount || amount <= 0) { document.getElementById('bidAlert').innerHTML = `<div class="alert alert-error">${t('auction.invalidBid')}</div>`; return; }
-            const btn = document.getElementById('placeBidBtn');
-            btn.disabled = true;
-            btn.innerHTML = `<i class="fas fa-spinner spinner"></i> ${t('auction.placingBid')}`;
-            document.getElementById('bidAlert').innerHTML = '';
-            try {
-              const body = { amount };
-              if (document.getElementById('autoBidToggle')?.checked) {
-                const maxBid = parseFloat(document.getElementById('autoBidMax')?.value);
-                if (!maxBid || maxBid <= amount) {
-                  document.getElementById('bidAlert').innerHTML = `<div class="alert alert-error">${t("auction.autoBidMaxRequired")}</div>`;
-                  btn.disabled = false;
-                  btn.innerHTML = `<i class="fas fa-gavel"></i> ${t('auction.placeBid')}`;
-                  return;
-                }
-                body.maxAutoBidAmount = maxBid;
-              }
-              await api.post(`/auctions/${id}/bids`, body);
-              document.getElementById('bidAlert').innerHTML = `<div class="alert alert-success">${t('auction.bidPlaced')}</div>`;
-              setTimeout(() => router(), 1000);
-            } catch (e) {
-              document.getElementById('bidAlert').innerHTML = `<div class="alert alert-error">${escapeHtml(e.message)}</div>`;
-            } finally {
-              btn.disabled = false;
-              btn.innerHTML = `<i class="fas fa-gavel"></i> ${t('auction.placeBid')}`;
-            }
-          });
-        }
-
-        // Countdown timer — always runs for all roles
-        const timer = setInterval(() => {
-          const diff = Math.max(0, Math.floor((end - new Date()) / 1000));
-          if (diff <= 0) {
-            clearInterval(timer);
-            isActive = false;
-            const container = document.getElementById('countdownContainer');
-            if (container) container.innerHTML = `<span style="color:var(--danger);font-weight:600"><i class="fas fa-times-circle"></i> ${t('auction.ended')}</span>`;
-            return;
-          }
-          const h = Math.floor((diff % 86400) / 3600);
-          const m = Math.floor((diff % 3600) / 60);
-          const s = diff % 60;
-          const hEl = document.getElementById('cd-hours');
-          const mEl = document.getElementById('cd-mins');
-          const sEl = document.getElementById('cd-secs');
-          if (hEl) hEl.textContent = String(h).padStart(2, '0');
-          if (mEl) mEl.textContent = String(m).padStart(2, '0');
-          if (sEl) sEl.textContent = String(s).padStart(2, '0');
-        }, 1000);
-        _timers.push(timer);
-
-        // Auto-refresh bid data every 10s — always runs for all roles
-        const refreshTimer = setInterval(async () => {
-          try {
-            const freshData = await api.get(`/auctions/${id}`);
-            const fresh = freshData.auction || freshData;
-            end = new Date(fresh.endTime);
-            isActive = fresh.status === 'Active';
-            const bidDisplay = document.getElementById('currentBidDisplay');
-            if (bidDisplay) {
-              const oldText = bidDisplay.textContent;
-              const newText = `${t('auction.currentBid')}: ${formatPrice(fresh.currentHighestBid || fresh.startingPrice)}`;
-              if (oldText !== newText) {
-                bidDisplay.style.animation = 'none';
-                bidDisplay.offsetHeight;
-                bidDisplay.style.animation = 'priceFlash 0.5s var(--ease-bounce)';
-                showToast(t('auction.newBid'), 'info');
-              }
-              // Count-up animation
-              const oldValue = parseFloat(oldText.replace(/[^0-9.]/g, '')) || 0;
-              const newValue = parseFloat(newText.replace(/[^0-9.]/g, '')) || 0;
-              if (newValue > oldValue) {
-                const startVal = oldValue;
-                const diff = newValue - startVal;
-                const duration = 600;
-                const startTime = performance.now();
-                function tick(now) {
-                  const elapsed = now - startTime;
-                  const progress = Math.min(elapsed / duration, 1);
-                  const eased = 1 - Math.pow(1 - progress, 3);
-                  const current = startVal + diff * eased;
-                  bidDisplay.textContent = `${t('auction.currentBid')}: ${formatPrice(current)}`;
-                  if (progress < 1) requestAnimationFrame(tick);
-                  else bidDisplay.textContent = newText;
-                }
-                requestAnimationFrame(tick);
-              } else {
-                bidDisplay.textContent = newText;
-              }
-            }
-            const countEl = document.getElementById('bidCountDisplay');
-            if (countEl) countEl.textContent = (fresh.bids || []).length;
-            if (!isActive) { clearInterval(refreshTimer); clearInterval(timer); router(); }
-          } catch {}
-        }, 10000);
-        _timers.push(refreshTimer);
-      }
-    }
-
-    render(a);
-  } catch (e) {
-    const id = params.id;
-    renderEmptyState(container, {
-      icon: "fa-gavel",
-      title: t("common.loadFailed"),
-      desc: escapeHtml(e.message),
-      actionText: t("common.retry"),
-      actionFn: () => router(),
-    });
-  }
+      </div>
+    </div>
+  `;
 }

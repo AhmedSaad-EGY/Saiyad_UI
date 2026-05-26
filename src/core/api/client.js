@@ -1,5 +1,8 @@
 import { APP_CONFIG } from './config.js';
 import { emit } from '../events/bus.js';
+import { getCsrfToken } from '../utils/csrf.js';
+
+const _pendingRequests = new Map();
 
 let _cachedAccessToken = localStorage.getItem('accessToken') || null;
 
@@ -24,7 +27,7 @@ async function parseResponse(res) {
   const text = await res.text();
   if (!text) return null;
   const contentType = res.headers.get("content-type") || "";
-  if (contentType.includes("application/json") || /^[\[{]/.test(text.trim())) {
+  if (contentType.includes("application/json") || /^[[{]/.test(text.trim())) {
     try {
       return JSON.parse(text);
     } catch {
@@ -35,10 +38,17 @@ async function parseResponse(res) {
   return res.ok ? text : { message: text };
 }
 
+function getCsrfHeader(method) {
+  if (!['POST', 'PUT', 'PATCH', 'DELETE'].includes(method)) return {};
+  const csrfToken = getCsrfToken();
+  return csrfToken ? { 'X-CSRF-Token': csrfToken } : {};
+}
+
 async function request(endpoint, options = {}) {
   const token = getAccessToken();
-  const headers = { "Content-Type": "application/json", ...options.headers };
-  if (token) headers["Authorization"] = `Bearer ${token}`;
+  const method = options.method || 'GET';
+  const headers = { 'Content-Type': 'application/json', ...getCsrfHeader(method), ...options.headers };
+  if (token) headers['Authorization'] = `Bearer ${token}`;
   const { signal, ...fetchOptions } = options;
 
   let res;
@@ -83,6 +93,31 @@ async function request(endpoint, options = {}) {
   return data;
 }
 
+/**
+ * Wraps request() with deduplication: concurrent identical requests
+ * share the same pending promise to reduce duplicate network calls.
+ * Only GET requests are deduplicated (mutations are never safe to dedup).
+ */
+async function requestWithDedup(endpoint, options = {}) {
+  const method = options.method || 'GET';
+  const dedupKey = `${method}:${endpoint}`;
+
+  if (method === 'GET' && !options._retry) {
+    if (_pendingRequests.has(dedupKey)) {
+      return _pendingRequests.get(dedupKey);
+    }
+    const promise = request(endpoint, options).finally(() => {
+      if (_pendingRequests.get(dedupKey) === promise) {
+        _pendingRequests.delete(dedupKey);
+      }
+    });
+    _pendingRequests.set(dedupKey, promise);
+    return promise;
+  }
+
+  return request(endpoint, options);
+}
+
 function buildQuery(params) {
   const q = Object.entries(params)
     .filter(([_, v]) => v !== undefined && v !== null && v !== "")
@@ -91,45 +126,57 @@ function buildQuery(params) {
   return q ? `?${q}` : "";
 }
 
+async function doUpload(url, formData) {
+  const token = getAccessToken();
+  const headers = { ...getCsrfHeader('POST') };
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+  let res;
+  try {
+    res = await fetch(`${APP_CONFIG.apiBaseUrl}${url}`, {
+      method: "POST",
+      headers,
+      body: formData,
+    });
+  } catch {
+    throw new Error("Network error. Please check your connection.");
+  }
+  const data = await parseResponse(res);
+  if (!res.ok) {
+    const msg =
+      data?.message ||
+      data?.title ||
+      data?.detail ||
+      `Upload failed (${res.status})`;
+    const err = new Error(msg);
+    err.status = res.status;
+    err.data = data;
+    throw err;
+  }
+  return data;
+}
+
 export const api = {
-  get: (url, params) => request(url + buildQuery(params || {})),
+  get: (url, params) => requestWithDedup(url + buildQuery(params || {})),
   post: (url, body) =>
-    request(url, { method: "POST", body: JSON.stringify(body) }),
+    requestWithDedup(url, { method: "POST", body: JSON.stringify(body) }),
   put: (url, body) =>
-    request(url, { method: "PUT", body: JSON.stringify(body) }),
+    requestWithDedup(url, { method: "PUT", body: JSON.stringify(body) }),
   patch: (url, body) =>
-    request(url, { method: "PATCH", body: JSON.stringify(body) }),
-  delete: (url) => request(url, { method: "DELETE" }),
-  abort: () => {
-    return new AbortController();
-  },
-  upload: async (url, formData) => {
-    const token = getAccessToken();
-    const headers = {};
-    if (token) headers["Authorization"] = `Bearer ${token}`;
-    let res;
-    try {
-      res = await fetch(`${APP_CONFIG.apiBaseUrl}${url}`, {
-        method: "POST",
-        headers,
-        body: formData,
-      });
-    } catch {
-      throw new Error("Network error. Please check your connection.");
+    requestWithDedup(url, { method: "PATCH", body: JSON.stringify(body) }),
+  delete: (url) => requestWithDedup(url, { method: "DELETE" }),
+  abort: () => new AbortController(),
+  upload: (url, formData) => {
+    const dedupKey = `UPLOAD:${url}`;
+    if (_pendingRequests.has(dedupKey)) {
+      return _pendingRequests.get(dedupKey);
     }
-    const data = await parseResponse(res);
-    if (!res.ok) {
-      const msg =
-        data?.message ||
-        data?.title ||
-        data?.detail ||
-        `Upload failed (${res.status})`;
-      const err = new Error(msg);
-      err.status = res.status;
-      err.data = data;
-      throw err;
-    }
-    return data;
+    const promise = doUpload(url, formData).finally(() => {
+      if (_pendingRequests.get(dedupKey) === promise) {
+        _pendingRequests.delete(dedupKey);
+      }
+    });
+    _pendingRequests.set(dedupKey, promise);
+    return promise;
   },
 };
 

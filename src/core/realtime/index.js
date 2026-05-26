@@ -1,10 +1,8 @@
 import { APP_CONFIG } from '../api/config.js';
-import { formatPrice, formatDate } from '../utils/format.js';
-import { escapeHtml } from '../utils/dom.js';
-import { showToast, triggerConfetti } from '../utils/ui.js';
+import { showToast } from '../utils/ui.js';
 import { t } from '../i18n/index.js';
 import { getUser } from '../auth/index.js';
-import { on } from '../events/bus.js';
+import { on, emit } from '../events/bus.js';
 
 let _connection = null;
 let _connectionPromise = null;
@@ -23,40 +21,11 @@ function getConnection() {
     .build();
 
   _connection.on("BidPlaced", (bid) => {
-    const bidDisplay = document.getElementById("currentBidDisplay");
-    if (bidDisplay) {
-      const price = formatPrice(bid.amount || bid.currentHighestBid);
-      bidDisplay.textContent = `${t("auction.currentBid")}: ${price}`;
-      bidDisplay.style.animation = "none";
-      bidDisplay.offsetHeight;
-      bidDisplay.style.animation = "priceFlash 0.6s var(--ease-bounce)";
-    }
-    const bidList = document.getElementById("bidList");
-    if (bidList) {
-      bidList.querySelector(".empty-state")?.remove();
-      const row = document.createElement("div");
-      row.className = "bid-item";
-      row.style.background = "var(--success-bg)";
-      row.style.transition = "background 1s ease";
-      const bidder =
-        bid.userName ||
-        bid.bidderName ||
-        bid.fullName ||
-        (bid.bidderId ? `User #${bid.bidderId}` : "User");
-      row.innerHTML = `
-        <span><strong>${escapeHtml(bidder)}</strong> <small>${formatDate(bid.createdAt || new Date().toISOString())}</small></span>
-        <span style="font-weight:700;color:var(--success)">${formatPrice(bid.amount || bid.currentHighestBid)} ${bid.isAutoBid ? `<i class="fas fa-robot" title="${t('auction.autoBid')}"></i>` : ""}</span>
-      `;
-      bidList.prepend(row);
-      setTimeout(() => { row.style.background = ""; }, 2000);
-    }
-    const bidCount = document.getElementById("bidCountDisplay");
-    if (bidCount) {
-      const nextCount = Number(bid.bidCount) || Number(bidCount.textContent || 0) + 1;
-      bidCount.textContent = nextCount;
-    }
+    emit('realtime:bid-placed', { bid });
+
     const userId = getUser()?.id;
-    if (userId && bid.bidderId && bid.bidderId !== parseInt(userId)) {
+    const bidderId = bid.bidderId || bid.userId;
+    if (userId && bidderId && bidderId !== parseInt(userId)) {
       showToast(t("auction.outbid"), "warning");
     } else {
       showToast(t("auction.newBid"), "info");
@@ -64,13 +33,7 @@ function getConnection() {
   });
 
   _connection.on("AuctionEnded", (auction) => {
-    const container = document.getElementById("countdownContainer");
-    if (container) {
-      container.innerHTML = `<div class="animate-on-scroll visible" style="color:var(--success);font-weight:700;font-size:var(--text-lg)">
-        <i class="fas fa-crown"></i> ${t("auction.ended")}
-      </div>`;
-      triggerConfetti();
-    }
+    emit('realtime:auction-ended', { auction });
     showToast(t("auction.ended"), "success");
   });
 

@@ -1,7 +1,7 @@
 import { t } from '../core/i18n/index.js';
 import { api } from '../core/api/client.js';
 import { requireAuth, hasAnyRole } from '../core/auth/index.js';
-import { MODERATOR_ROLES } from '../shared/constants/routes.js';
+import { MODERATOR_ROLES } from '../shared/constants/roles.js';
 import { escapeHtml } from '../core/utils/dom.js';
 import { formatPrice, formatDate, statusClass, tStatus } from '../core/utils/format.js';
 

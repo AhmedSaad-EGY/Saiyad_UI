@@ -7,6 +7,9 @@ import { routeGuards, routes, routeTitleKeys } from '../../shared/constants/rout
 let currentRouteKey = null;
 let currentParams = {};
 let _routeCleanups = [];
+const _routeHistory = [];
+const MAX_HISTORY = 50;
+let _initialLoad = true;
 
 export function registerRouteCleanup(fn) {
   _routeCleanups.push(fn);
@@ -21,6 +24,28 @@ let _navTimer = null;
 
 export function navigate(path) {
   window.location.hash = `#/${path}`;
+}
+
+export function pushRouteHistory(route) {
+  if (_initialLoad) {
+    _initialLoad = false;
+    _routeHistory.push(route || '');
+    return;
+  }
+  const last = _routeHistory[_routeHistory.length - 1];
+  if (last === route) return;
+  _routeHistory.push(route || '');
+  if (_routeHistory.length > MAX_HISTORY) _routeHistory.shift();
+}
+
+export function goBack() {
+  if (_routeHistory.length < 2) {
+    navigate('');
+    return;
+  }
+  _routeHistory.pop(); // remove current
+  const prev = _routeHistory.pop(); // get previous
+  navigate(prev != null ? prev : '');
 }
 
 function getRoute() {
@@ -96,6 +121,7 @@ export async function router(force = false) {
     return;
   currentRouteKey = routeKey;
   currentParams = { ...params };
+  pushRouteHistory(route);
 
   const btt = document.getElementById("backToTop");
   if (btt) btt.classList.remove("visible");

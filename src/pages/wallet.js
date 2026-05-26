@@ -14,6 +14,16 @@ Alpine.data('walletPage', () => ({
   loading: true,
   escapeHtml,
 
+  get depositError() {
+    if (this.depositAmount === '' || this.depositAmount == null) return '';
+    const amt = parseFloat(this.depositAmount);
+    if (isNaN(amt) || amt <= 0) return t('wallet.invalidAmount');
+    if (amt > 100000) return t('wallet.amountTooLarge');
+    const dec = this.depositAmount.toString().split('.')[1];
+    if (dec && dec.length > 2) return t('wallet.invalidDecimal');
+    return '';
+  },
+
   get isAdmin() {
     const user = getUser();
     return user && user.role === 'Admin';
@@ -68,12 +78,12 @@ Alpine.data('walletPage', () => ({
   },
 
   async submitDeposit() {
-    const amount = parseFloat(this.depositAmount);
-    if (!amount || amount <= 0) {
-      this.depositMsg = t("wallet.invalidAmount");
+    if (this.depositError) {
+      this.depositMsg = this.depositError;
       this.depositMsgClass = "text-danger";
       return;
     }
+    const amount = parseFloat(this.depositAmount);
     this.depositing = true;
     this.depositMsg = "";
     this.depositMsgClass = "";
@@ -138,8 +148,13 @@ export default async function renderWallet(container) {
                 </div>
               </div>
               <div class="wallet-deposit-row" x-show="!isAdmin">
-                <input type="number" x-model="depositAmount" class="form-control" placeholder="${t("wallet.enterAmount")}" min="1" step="0.01" style="max-width:200px">
-                <button class="btn btn-primary" :disabled="depositing" @click.prevent="submitDeposit()"><i class="fas" :class="depositing ? 'fa-spinner spinner' : 'fa-plus'"></i> ${t("wallet.deposit")}</button>
+                <div style="display:flex;flex-direction:column;gap:4px">
+                  <div style="display:flex;gap:8px;align-items:center">
+                    <input type="number" x-model="depositAmount" class="form-control" :class="depositError ? 'is-invalid' : ''" placeholder="${t("wallet.enterAmount")}" min="1" step="0.01" style="max-width:200px">
+                    <button class="btn btn-primary" :disabled="depositing || !!depositError" @click.prevent="submitDeposit()"><i class="fas" :class="depositing ? 'fa-spinner spinner' : 'fa-plus'"></i> ${t("wallet.deposit")}</button>
+                  </div>
+                  <span x-show="depositError" x-text="depositError" style="font-size:0.8rem;color:var(--danger, #dc3545);margin-top:2px"></span>
+                </div>
               </div>
               <div class="wallet-readonly-notice" x-show="isAdmin" style="padding:12px 0;opacity:0.8">
                 <i class="fas fa-info-circle"></i> ${t("wallet.readOnly")}
