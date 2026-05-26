@@ -7,7 +7,7 @@ import { $$, showLoading, renderEmptyState, escapeHtml, observeAnimations } from
 import { validateForm, getPasswordStrength, clearFieldError } from '../core/utils/validation.js';
 import { formatPrice, formatDate, statusClass, tStatus } from '../core/utils/format.js';
 import { showConfirm, showToast } from '../core/utils/ui.js';
-import { ROLES, SELLER_ROLES, ECOMMERCE_ROLES } from '../shared/constants/routes.js';
+import { ROLES, SELLER_ROLES, ECOMMERCE_ROLES, MODERATOR_ROLES } from '../shared/constants/routes.js';
 import renderAuctionRequests from './auction-requests.js';
 import renderAuctionRequestsReview from './auction-requests-review.js';
 import renderAuctioneerAnalytics from './auctioneer-analytics.js';
@@ -77,8 +77,8 @@ export default async function renderDashboard(container, route, params) {
     ...(isSellerRole ? [{ id: 'products', icon: 'fa-tag', label: t('dash.products') }] : []),
     ...(hasRole('Auctioneer') ? [{ id: 'auctions', icon: 'fa-gavel', label: t('dash.auctions') }] : []),
     ...(hasAnyRole('Fisherman') ? [{ id: 'auction-requests', icon: 'fa-file-export', label: t('auctionRequests.title') }] : []),
-    ...(hasAnyRole('Auctioneer', 'Admin') ? [{ id: 'auction-requests-review', icon: 'fa-clipboard-list', label: t('auctionRequestsReview.title') }] : []),
-    ...(hasAnyRole('Auctioneer', 'Admin') ? [{ id: 'auctioneer-analytics', icon: 'fa-chart-bar', label: t('analytics.title') }] : []),
+    ...(hasAnyRole(...(MODERATOR_ROLES)) ? [{ id: 'auction-requests-review', icon: 'fa-clipboard-list', label: t('auctionRequestsReview.title') }] : []),
+    ...(hasAnyRole(...(MODERATOR_ROLES)) ? [{ id: 'auctioneer-analytics', icon: 'fa-chart-bar', label: t('analytics.title') }] : []),
     ...(isECommerceRole ? [{ id: 'wishlist', icon: 'fa-heart', label: t('dash.wishlist') }] : []),
     { id: 'notifications', icon: 'fa-bell', label: t('dash.notifications') },
     { id: 'profile', icon: 'fa-user', label: t('dash.profile') },

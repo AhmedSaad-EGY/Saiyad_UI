@@ -1,6 +1,7 @@
 import { t } from '../core/i18n/index.js';
 import { api } from '../core/api/client.js';
 import { isAuthenticated, getUser } from '../core/auth/index.js';
+import { SELLER_ROLES } from '../shared/constants/routes.js';
 import { navigate } from '../core/router/index.js';
 import { escapeHtml, observeAnimations } from '../core/utils/dom.js';
 import { showToast } from '../core/utils/ui.js';
@@ -109,7 +110,7 @@ export default async function renderUserProfile(container) {
             <a href="#/shipping" class="profile-link-card"><i class="fas fa-map-marker-alt"></i><span>${t('dash.addresses')}</span></a>
           ` : ''}
           <a href="#/dashboard?tab=notifications" class="profile-link-card"><i class="fas fa-bell"></i><span>${t('dash.notifications')}</span></a>
-          ${user?.role === 'Fisherman' || user?.role === 'BaitSeller' ? `
+          ${SELLER_ROLES.includes(user?.role) ? `
             <a href="#/dashboard?tab=products" class="profile-link-card"><i class="fas fa-store"></i><span>${t('dash.myProducts')}</span></a>
             <a href="#/dashboard?tab=overview" class="profile-link-card"><i class="fas fa-chart-line"></i><span>${t('dash.sellerDashboard')}</span></a>
           ` : ''}

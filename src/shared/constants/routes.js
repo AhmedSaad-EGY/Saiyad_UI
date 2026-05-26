@@ -8,6 +8,7 @@ export const ROLES = Object.freeze({
 
 export const SELLER_ROLES = [ROLES.FISHERMAN, ROLES.BAIT_SELLER];
 export const ECOMMERCE_ROLES = [ROLES.CUSTOMER, ROLES.FISHERMAN, ROLES.BAIT_SELLER, ROLES.AUCTIONEER];
+export const MODERATOR_ROLES = [ROLES.AUCTIONEER, ROLES.ADMIN];
 
 export const routeGuards = {
   'admin': (user) => !!user && user.role === ROLES.ADMIN,
@@ -18,9 +19,9 @@ export const routeGuards = {
   'order-detail': (user) => !!user && ECOMMERCE_ROLES.includes(user.role),
   'profile': (user) => !!user,
   'auction-requests': (user) => !!user && user.role === ROLES.FISHERMAN,
-  'auction-requests-review': (user) => !!user && (user.role === ROLES.AUCTIONEER || user.role === ROLES.ADMIN),
-  'auctioneer-analytics': (user) => !!user && (user.role === ROLES.AUCTIONEER || user.role === ROLES.ADMIN),
-  'subscriptions': (user) => !!user && (user.role === ROLES.CUSTOMER || user.role === ROLES.FISHERMAN || user.role === ROLES.BAIT_SELLER || user.role === ROLES.AUCTIONEER),
+  'auction-requests-review': (user) => !!user && MODERATOR_ROLES.includes(user.role),
+  'auctioneer-analytics': (user) => !!user && MODERATOR_ROLES.includes(user.role),
+  'subscriptions': (user) => !!user && ECOMMERCE_ROLES.includes(user.role),
   'wallet': (user) => !!user,
 };
 

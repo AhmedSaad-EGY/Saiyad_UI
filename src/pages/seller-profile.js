@@ -1,6 +1,7 @@
 import { t } from '../core/i18n/index.js';
 import { api } from '../core/api/client.js';
 import { getUser, requireAuth, hasAnyRole } from '../core/auth/index.js';
+import { SELLER_ROLES } from '../shared/constants/routes.js';
 import { showLoading, escapeHtml, observeAnimations } from '../core/utils/dom.js';
 import { renderStars } from '../core/utils/format.js';
 import { renderProductCards, showToast } from '../core/utils/ui.js';
@@ -64,7 +65,7 @@ export default async function renderSellerProfile(container) {
   }
 
   if (!await requireAuth()) return;
-  if (!hasAnyRole(...(window.SELLER_ROLES || ['Fisherman', 'BaitSeller']))) {
+  if (!hasAnyRole(...(SELLER_ROLES))) {
     container.innerHTML = `<div class="empty-state"><i class="fas fa-store"></i><h3>${t('seller.noProfile')}</h3></div>`;
     return;
   }

@@ -1,6 +1,7 @@
 import { t, getCurrentLang } from '../core/i18n/index.js';
 import { api } from '../core/api/client.js';
 import { isAuthenticated, getUser, hasAnyRole, requireAuth, updateCartBadge } from '../core/auth/index.js';
+import { SELLER_ROLES } from '../shared/constants/routes.js';
 import { router } from '../core/router/index.js';
 import { showError, showLoading, escapeHtml, progressiveImg, observeAnimations, fadeInContent } from '../core/utils/dom.js';
 import { formatPrice, formatDate, statusClass, tStatus, tCondition, renderStars } from '../core/utils/format.js';
@@ -89,7 +90,7 @@ export default async function renderProductDetail(container, route, params) {
               <i class="${isWishlisted ? 'fas' : 'far'} fa-heart"></i>
               ${isWishlisted ? (t('product.removeFromWishlist') || 'Wishlisted') : t("product.wishlist")}
             </button>
-            ${p.isAuctioned && p.auctionId ? `<a href="#/auction-detail?id=${p.auctionId}" class="btn btn-success btn-lg"><i class="fas fa-gavel"></i> ${t("product.viewAuction")}</a>` : !p.isAuctioned && getUser()?.id === p.sellerId && hasAnyRole("Fisherman", "BaitSeller") ? `<button class="btn btn-primary btn-lg" id="startAuctionBtn"><i class="fas fa-gavel"></i> ${t("auction.startAuction")}</button>` : ""}
+            ${p.isAuctioned && p.auctionId ? `<a href="#/auction-detail?id=${p.auctionId}" class="btn btn-success btn-lg"><i class="fas fa-gavel"></i> ${t("product.viewAuction")}</a>` : !p.isAuctioned && getUser()?.id === p.sellerId && hasAnyRole(...(SELLER_ROLES)) ? `<button class="btn btn-primary btn-lg" id="startAuctionBtn"><i class="fas fa-gavel"></i> ${t("auction.startAuction")}</button>` : ""}
             ${p.sellerId ? `<a href="#/seller-profile?userId=${p.sellerId}" class="btn btn-outline btn-lg"><i class="fas fa-envelope"></i> ${t("product.contactSeller")}</a>` : ""}
           </div>
           ${p.sellerId ? `<div style="margin-top:24px;padding-top:16px;border-top:1px solid var(--border)"><strong>${t("product.seller")}:</strong> <a href="#/seller-profile?userId=${p.sellerId}" style="color:var(--primary)">${escapeHtml(p.sellerName || t("common.N/A"))}</a></div>` : ""}
