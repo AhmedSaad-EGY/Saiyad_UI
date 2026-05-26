@@ -97,10 +97,10 @@ export default async function renderAuctionDetail(container, route, params) {
               <span class="status ${statusClass(a.status)}">${tStatus(a.status, "auction")}</span>
               ${remaining > 0 ? `
               <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px" id="countdownContainer">
-                ${days > 0 ? `<div class="countdown-unit"><span class="countdown-num">${days}</span><span class="countdown-lbl">days</span></div>` : ''}
-                <div class="countdown-unit ${urgent ? 'urgent' : ''}"><span class="countdown-num" id="cd-hours">${String(hours).padStart(2,'0')}</span><span class="countdown-lbl">hrs</span></div>
-                <div class="countdown-unit ${urgent ? 'urgent' : ''}"><span class="countdown-num" id="cd-mins">${String(mins).padStart(2,'0')}</span><span class="countdown-lbl">min</span></div>
-                <div class="countdown-unit ${urgent ? 'urgent' : ''}"><span class="countdown-num" id="cd-secs">${String(secs).padStart(2,'0')}</span><span class="countdown-lbl">sec</span></div>
+                ${days > 0 ? `<div class="countdown-unit"><span class="countdown-num">${days}</span><span class="countdown-lbl">${t('common.days')}</span></div>` : ''}
+                <div class="countdown-unit ${urgent ? 'urgent' : ''}"><span class="countdown-num" id="cd-hours">${String(hours).padStart(2,'0')}</span><span class="countdown-lbl">${t('common.hours')}</span></div>
+                <div class="countdown-unit ${urgent ? 'urgent' : ''}"><span class="countdown-num" id="cd-mins">${String(mins).padStart(2,'0')}</span><span class="countdown-lbl">${t('common.minutes')}</span></div>
+                <div class="countdown-unit ${urgent ? 'urgent' : ''}"><span class="countdown-num" id="cd-secs">${String(secs).padStart(2,'0')}</span><span class="countdown-lbl">${t('common.seconds')}</span></div>
                 ${urgent ? `<span class="ending-soon-badge">${t('auction.endingSoon')}</span>` : ''}
               </div>` : `<span style="color:var(--danger);font-weight:600"><i class="fas fa-times-circle"></i> ${t('auction.ended')}</span>`}
             </div>
@@ -120,7 +120,7 @@ export default async function renderAuctionDetail(container, route, params) {
               <h3>${t('auction.bidHistory')} (${bids.length})</h3>
               <div class="bid-list" id="bidList" aria-live="polite" aria-atomic="true" aria-relevant="additions text">
                 ${bids.length ? bids.sort((a,b) => new Date(b.createdAt || b.created_at) - new Date(a.createdAt || a.created_at)).map(b => `
-                  <div class="bid-item"><span><strong>${escapeHtml(b.userName || `User #${b.userId}`)}</strong> <small>${formatDate(b.createdAt || b.created_at)}</small></span><span style="font-weight:700;color:var(--success)">${formatPrice(b.amount)} ${b.isAutoBid ? '<i class="fas fa-robot" title="Auto bid"></i>' : ''}</span></div>
+                  <div class="bid-item"><span><strong>${escapeHtml(b.userName || `User #${b.userId}`)}</strong> <small>${formatDate(b.createdAt || b.created_at)}</small></span><span style="font-weight:700;color:var(--success)">${formatPrice(b.amount)} ${b.isAutoBid ? `<i class="fas fa-robot" title="${t('auction.autoBid')}"></i>` : ''}</span></div>
                 `).join('') : `<div class="empty-state"><i class="fas fa-gavel"></i><h3>${t('auction.noBids')}</h3></div>`}
               </div>
             </div>

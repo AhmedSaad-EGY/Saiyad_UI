@@ -29,6 +29,9 @@
 | **SignalR Hub** | https://sayiad.runasp.net/hubs/auction |
 | **Vercel Dashboard** | https://vercel.com/saiyad-eg/ |
 | **Git Repo** | (main branch) |
+| **GitHub Repo Frontend** | https://github.com/AhmedSaad-EGY/Saiyad_UI |
+| **GitHub Repo Backend** | https://github.com/AhmedSaad-EGY/Saiyad |
+
 
 ---
 
@@ -156,11 +159,14 @@ MODERATOR_ROLES = [Auctioneer, Admin]                  # Review + Analytics
   - ✅ `joinAuctionGroup` — deduplicates (early return if already joined), single `onreconnected` handler iterates ALL joined groups
   - ✅ `leaveAuctionGroup` — returns early if group not in `_joinedGroups`
   - ✅ `stopSignalR` — clears `_joinedGroups` and resets `_onreconnectedHandler`
-- [ ] **Fix 4: Add i18n keys** — `common.days`, `common.hours`, `common.minutes`, `common.seconds`
-  - `src/pages/auction-detail.js:100-104` — Replace hardcoded "days"/"hrs"/"min"/"sec"
-  - `src/core/realtime/index.js:46` — Replace hardcoded "Auto bid" title
-- [ ] **Fix 5: Remove !important from app.js**
-  - `src/core/app.js:37` — Move navbar transition rule to CSS, remove `!important`
+- [x] **Fix 4: Add i18n keys** — `common.days`, `common.hours`, `common.minutes`, `common.seconds`
+  - ✅ `src/core/i18n/index.js` — Added `common.days/hours/minutes/seconds` in EN + AR (أيام/ساعات/دقائق/ثوان)
+  - ✅ `src/pages/auction-detail.js` — Replaced hardcoded "days"/"hrs"/"min"/"sec" with `${t('common.days/hours/minutes/seconds')}`
+  - ✅ `src/pages/auction-detail.js` — Also fixed hardcoded `title="Auto bid"` in bid history section (caught by review)
+  - ✅ `src/core/realtime/index.js` — Replaced hardcoded `title="Auto bid"` with `title="${t('auction.autoBid')}"`
+- [x] **Fix 5: Remove !important from app.js**
+  - ✅ `src/core/app.js` — Removed `.navbar { transition: ... !important; }` from injected style block
+  - ✅ `src/css/_layout.css` — Added `backdrop-filter` to existing navbar transition (was missing)
 
 ### Phase 2 — 🟡 WARNING (Bad practices + perf)
 
@@ -232,6 +238,8 @@ MODERATOR_ROLES = [Auctioneer, Admin]                  # Review + Analytics
 - [x] **May 26**: **Phase 1 Fix 1** — Remove inline JS (index.html: onclick + void(0), app.js: globals, errors.js: onclick) | Build: ✅ | Review: ✅
 - [x] **May 26**: **Phase 1 Fix 2** — EventBus scoped subscription tracking (`createScopedBus()` helper in bus.js) | Build: ✅ | Review: ✅
 - [x] **May 26**: **Phase 1 Fix 3** — SignalR group tracking + deduplication (`_joinedGroups` Set, single `onreconnected` handler, guarded `leaveAuctionGroup`, stop cleanup) | Build: ✅ | Review: ✅
+- [x] **May 26**: **Phase 1 Fix 4** — i18n keys for countdown labels (`common.days/hours/minutes/seconds` EN/AR, replaced hardcoded labels in auction-detail.js + realtime/index.js) | Build: ✅ | Review: ✅
+- [x] **May 26**: **Phase 1 Fix 5** — Remove `!important` from navbar transition (moved from injected JS block to `_layout.css`, added missing `backdrop-filter`) | Build: ✅ | Review: ✅
 
 ---
 
@@ -242,6 +250,7 @@ MODERATOR_ROLES = [Auctioneer, Admin]                  # Review + Analytics
 | **Consistency** | ⚠️ Mixed | Single pattern (Alpine preferred) |
 | **Error Handling** | 🟡 Partial | All async ops wrapped |
 | **Memory Leaks** | 🟡 Partial | Core listeners scoped; page-level utility (`createScopedBus()`) available
+| **CSS Hygiene** | ✅ Good | No `!important` on navbar, variables consistent
 | **Security** | 🟡 Decent | CSP compliant, no inline JS |
 | **Accessibility** | 🟡 Partial | WCAG AA compliant |
 | **Performance** | 🟡 Good | Lazy images, debounced API |
@@ -256,9 +265,10 @@ MODERATOR_ROLES = [Auctioneer, Admin]                  # Review + Analytics
 |-------|--------|-------|
 | `t is not a function` on login | 🟡 Old deployment | Resolves after redeploy |
 | `Unknown error` alerts | 🟡 Old deployment | Cause: old JS bundle |
-| Arabic countdown labels missing | 🔴 Pending fix | Fix 4 in Phase 1 |
+| Arabic countdown labels missing | ✅ Fixed | common.days/hours/minutes/seconds keys added + t() calls in countdown |
 | SignalR group not leaving on nav | ✅ Fixed | _joinedGroups Set + guarded leave + stop cleanup |
 | EventBus memory leak | ✅ Fixed | Added `createScopedBus()` utility; existing core listeners are global-only (no page-level leak)
+| Navbar transition `!important` breaking cascade | ✅ Fixed | Moved to `_layout.css`, `backdrop-filter` added
 
 ---
 

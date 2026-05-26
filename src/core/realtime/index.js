@@ -45,7 +45,7 @@ function getConnection() {
         (bid.bidderId ? `User #${bid.bidderId}` : "User");
       row.innerHTML = `
         <span><strong>${escapeHtml(bidder)}</strong> <small>${formatDate(bid.createdAt || new Date().toISOString())}</small></span>
-        <span style="font-weight:700;color:var(--success)">${formatPrice(bid.amount || bid.currentHighestBid)} ${bid.isAutoBid ? '<i class="fas fa-robot" title="Auto bid"></i>' : ""}</span>
+        <span style="font-weight:700;color:var(--success)">${formatPrice(bid.amount || bid.currentHighestBid)} ${bid.isAutoBid ? `<i class="fas fa-robot" title="${t('auction.autoBid')}"></i>` : ""}</span>
       `;
       bidList.prepend(row);
       setTimeout(() => { row.style.background = ""; }, 2000);

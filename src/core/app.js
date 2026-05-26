@@ -33,9 +33,7 @@ injectedStyles.textContent = `
   .empty-state:hover .empty-state-visual svg, .empty-state:hover .empty-state-visual i, .empty-state:hover .empty-state-visual img {
     filter: drop-shadow(0 15px 30px var(--primary-shadow, rgba(14, 165, 233, 0.3)));
   }
-  .navbar {
-    transition: background-color 0.4s ease, backdrop-filter 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease !important;
-  }
+
   @media (max-width: 480px) {
     .toast-container {
       right: 12px !important;
