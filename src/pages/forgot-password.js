@@ -19,8 +19,6 @@ Alpine.data('forgotPwPage', () => ({
   resendSeconds: 0,
   countdownInterval: null,
 
-  t,
-
   get resendLabel() {
     const base = t('auth.resendCode');
     return this.resendSeconds > 0 ? `${base} (${this.resendSeconds}s)` : base;
@@ -187,7 +185,7 @@ export default function renderForgotPassword(container) {
               </div>
               <button type="submit" class="btn btn-primary btn-block btn-lg" :disabled="loading">
                 <i class="fas fa-spinner spinner" x-show="loading" x-cloak></i>
-                <span x-text="loading ? t('auth.sendingResetLink') : t('auth.sendResetLink')"></span>
+                <span x-text="loading ? $t('auth.sendingResetLink') : $t('auth.sendResetLink')"></span>
               </button>
             </form>
           </template>
@@ -203,7 +201,7 @@ export default function renderForgotPassword(container) {
               </div>
               <button type="submit" class="btn btn-primary btn-block btn-lg" :disabled="loading">
                 <i class="fas fa-spinner spinner" x-show="loading" x-cloak></i>
-                <span x-text="loading ? (t('auth.verifying') || 'Verifying...') : t('auth.verifyCode')"></span>
+                <span x-text="loading ? ($t('auth.verifying') || 'Verifying...') : $t('auth.verifyCode')"></span>
               </button>
               <div style="margin-top:12px">
                 <button type="button" class="btn btn-ghost btn-block" @click="handleResend()" :disabled="resendSeconds > 0" x-text="resendLabel"></button>
@@ -228,7 +226,7 @@ export default function renderForgotPassword(container) {
               </div>
               <button type="submit" class="btn btn-primary btn-block btn-lg" :disabled="loading">
                 <i class="fas fa-spinner spinner" x-show="loading" x-cloak></i>
-                <span x-text="loading ? t('auth.updatingPassword') : t('auth.resetPassword')"></span>
+                <span x-text="loading ? $t('auth.updatingPassword') : $t('auth.resetPassword')"></span>
               </button>
               <div style="margin-top:12px">
                 <button type="button" class="btn btn-ghost btn-block" @click="backToCode()"><i class="fas fa-arrow-left"></i> ${t('common.back')}</button>

@@ -17,8 +17,6 @@ Alpine.data('resetPwForm', () => ({
   strengthCls: 'strength-empty',
   strengthLabel: '',
 
-  t,
-
   computeStrength() {
     if (!this.password) {
       this.strengthCls = 'strength-empty';
@@ -113,7 +111,7 @@ export default function renderResetPassword(container) {
             </div>
             <button type="submit" class="btn btn-primary btn-block btn-lg" :disabled="loading">
               <i class="fas fa-spinner spinner" x-show="loading" x-cloak></i>
-              <span x-text="loading ? t('auth.updatingPassword') : t('auth.resetPassword')"></span>
+              <span x-text="loading ? $t('auth.updatingPassword') : $t('auth.resetPassword')"></span>
             </button>
           </form>
         </div>

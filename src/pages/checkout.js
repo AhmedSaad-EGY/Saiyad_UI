@@ -25,7 +25,6 @@ Alpine.data('checkoutPage', () => ({
   addrCity: '',
   addrPost: '',
 
-  t,
   formatPrice,
   clearFieldError,
 
@@ -247,7 +246,7 @@ export default async function renderCheckout(container) {
               <div x-html="alert" x-show="alert" x-cloak></div>
               <button class="btn btn-primary btn-block btn-lg" @click="placeOrder()" :disabled="placing">
                 <i class="fas fa-spinner spinner" x-show="placing" x-cloak></i>
-                <span x-text="placing ? t('cart.placingOrder') : t('cart.placeOrder')"></span>
+                <span x-text="placing ? $t('cart.placingOrder') : $t('cart.placeOrder')"></span>
               </button>
               <a href="#/cart" class="btn btn-outline btn-block" style="margin-top:8px"><i class="fas fa-arrow-left"></i> ${t('cart.backToCart')}</a>
             </div>

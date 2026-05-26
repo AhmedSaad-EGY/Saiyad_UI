@@ -14,7 +14,6 @@ Alpine.data('cartPage', () => ({
   empty: false,
   error: '',
 
-  t,
   formatPrice,
 
   async init() {
@@ -273,7 +272,7 @@ export default async function renderCart(container) {
                     </td>
                     <td class="cart-subtotal-cell" x-text="formatPrice((item.unitPrice || item.price || 0) * (item.quantity || 1))"></td>
                     <td class="cart-remove-cell">
-                      <button class="btn btn-ghost btn-icon remove-item text-danger" @click="removeItem(item.productId)" :aria-label="t('common.remove')">
+                      <button class="btn btn-ghost btn-icon remove-item text-danger" @click="removeItem(item.productId)" :aria-label="$t('common.remove')">
                         <i class="fas fa-times"></i>
                       </button>
                     </td>

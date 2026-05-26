@@ -8,6 +8,8 @@ import { on } from '../events/bus.js';
 
 let _connection = null;
 let _connectionPromise = null;
+const _joinedGroups = new Set();
+let _onreconnectedHandler = null;
 
 const signalR = window.signalR;
 
@@ -84,23 +86,35 @@ export function startIfNeeded() {
 }
 
 export function joinAuctionGroup(auctionId) {
+  if (_joinedGroups.has(auctionId)) return;
+
+  _joinedGroups.add(auctionId);
+
   startIfNeeded().then(() => {
     const conn = getConnection();
     if (conn.state === signalR.HubConnectionState.Connected) {
       conn.invoke("JoinAuctionGroup", auctionId).catch(() => {});
-    } else {
-      conn.onreconnected(() => {
-        conn.invoke("JoinAuctionGroup", auctionId).catch(() => {});
-      });
+    } else if (!_onreconnectedHandler) {
+      _onreconnectedHandler = async () => {
+        for (const id of _joinedGroups) {
+          try {
+            await conn.invoke("JoinAuctionGroup", id);
+          } catch {}
+        }
+      };
+      conn.onreconnected = _onreconnectedHandler;
     }
   });
 }
 
 export function leaveAuctionGroup(auctionId) {
+  if (!_joinedGroups.has(auctionId)) return;
+
+  _joinedGroups.delete(auctionId);
+
   if (!_connection) return;
-  const conn = getConnection();
-  if (conn.state === signalR.HubConnectionState.Connected) {
-    conn.invoke("LeaveAuctionGroup", auctionId).catch(() => {});
+  if (_connection.state === signalR.HubConnectionState.Connected) {
+    _connection.invoke("LeaveAuctionGroup", auctionId).catch(() => {});
   }
 }
 
@@ -109,6 +123,8 @@ export function stopSignalR() {
     _connection.stop().catch(() => {});
     _connection = null;
     _connectionPromise = null;
+    _joinedGroups.clear();
+    _onreconnectedHandler = null;
   }
 }
 

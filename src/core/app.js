@@ -131,9 +131,6 @@ function closeDrawer() {
   btn?.focus();
 }
 
-// Expose globally for inline onclick in index.html
-window.closeDrawer = closeDrawer;
-window.openDrawer = openDrawer;
 
 document.getElementById("hamburger")?.addEventListener("click", () => {
   const drawer = document.getElementById("navDrawer");

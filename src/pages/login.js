@@ -14,7 +14,6 @@ Alpine.data('loginForm', () => ({
   showPassword: false,
   unverifiedEmail: '',
 
-  t,
   clearFieldError,
 
   togglePw() {
@@ -114,7 +113,7 @@ export default function renderLogin(container) {
             <label class="form-label" for="loginPassword">${t('auth.password')}</label>
             <div class="password-wrapper">
               <input :type="showPassword ? 'text' : 'password'" class="form-input" id="loginPassword" name="password" x-model="password" @input="clearError(); clearFieldError($el)" placeholder="${t('auth.password')}" required autocomplete="current-password" minlength="6">
-              <button type="button" class="toggle-password" @click="togglePw()" :aria-label="showPassword ? t('auth.hidePassword') : t('auth.showPassword')"><i :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i></button>
+              <button type="button" class="toggle-password" @click="togglePw()" :aria-label="showPassword ? $t('auth.hidePassword') : $t('auth.showPassword')"><i :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i></button>
             </div>
             <div style="text-align: right; margin-top: 4px;">
               <a href="#/forgot-password" style="font-size: var(--text-xs); color: var(--primary); text-decoration: none;">${t('auth.forgotPassword')}</a>
@@ -122,7 +121,7 @@ export default function renderLogin(container) {
           </div>
           <button type="submit" class="btn btn-primary btn-block btn-lg" :disabled="loading">
             <i class="fas fa-spinner spinner" x-show="loading" x-cloak></i>
-            <span x-text="loading ? t('auth.signingIn') : t('auth.signIn')"></span>
+            <span x-text="loading ? $t('auth.signingIn') : $t('auth.signIn')"></span>
           </button>
         </form>
         <div class="auth-footer">${t('auth.noAccount')} <a href="#/register">${t('auth.register')}</a></div>

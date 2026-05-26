@@ -51,7 +51,7 @@ export function showErrorFallback(container, message) {
       <h2 style="margin-bottom:8px;font-size:1.5rem">${t('common.somethingWentWrong') || 'Something went wrong'}</h2>
       <p style="color:var(--text-muted);max-width:400px;margin-bottom:24px">${message || (t('common.errorFallbackDesc') || 'An unexpected error occurred. Please try refreshing the page.')}</p>
       <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center">
-        <button class="btn btn-primary btn-lg" onclick="window.location.reload()"><i class="fas fa-sync-alt"></i> ${t('common.refresh') || 'Refresh'}</button>
+        <button class="btn btn-primary btn-lg" data-action="refresh"><i class="fas fa-sync-alt"></i> ${t('common.refresh') || 'Refresh'}</button>
         <a href="#/" class="btn btn-outline btn-lg"><i class="fas fa-home"></i> ${t('common.goHome') || 'Home'}</a>
       </div>
       <style>
@@ -62,6 +62,10 @@ export function showErrorFallback(container, message) {
         }
       </style>
     </div>`;
+
+  container.querySelector('[data-action="refresh"]')?.addEventListener('click', () => {
+    window.location.reload();
+  });
 }
 
 export function setupGlobalErrorHandlers() {

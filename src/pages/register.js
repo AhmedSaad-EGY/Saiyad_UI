@@ -24,8 +24,6 @@ Alpine.data('registerForm', () => ({
   strengthLabel: '',
   licenseNumber: '',
 
-  t,
-
   get needsLicense() { return this.role === 'Fisherman'; },
 
   computeAge() {
@@ -133,7 +131,7 @@ export default function renderRegister(container) {
             <label class="form-label" for="regPassword">${t('auth.password')}</label>
             <div class="password-wrapper">
               <input :type="showPassword ? 'text' : 'password'" class="form-input" id="regPassword" name="password" x-model="password" @input="computeStrength()" placeholder="${t('auth.password')}" required autocomplete="new-password" minlength="8">
-              <button type="button" class="toggle-password" @click="togglePw()" :aria-label="showPassword ? t('auth.hidePassword') : t('auth.showPassword')"><i :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i></button>
+              <button type="button" class="toggle-password" @click="togglePw()" :aria-label="showPassword ? $t('auth.hidePassword') : $t('auth.showPassword')"><i :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i></button>
             </div>
             <div class="password-strength"><div class="password-strength-bar" :class="'password-strength-bar ' + strengthCls"></div></div>
             <div class="password-strength-text" x-text="strengthLabel"></div>
