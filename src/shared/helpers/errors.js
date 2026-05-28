@@ -46,7 +46,7 @@ export function handleApiError(err) {
 export function showErrorFallback(container, message) {
   container.innerHTML = `
     <div class="d-flex flex-column align-items-center justify-content-center text-center py-5 px-3 min-vh-50">
-      <div class="mb-3 text-muted" style="font-size:3.5rem;animation:fishSwim 2s ease-in-out infinite">
+      <div class="mb-3 text-muted" style="font-size:3.5rem;animation:fishSwimSmall 2s ease-in-out infinite">
         <i class="fas fa-fish"></i>
       </div>
       <h2 class="mb-2" style="font-size:1.5rem">${t('common.somethingWentWrong') || 'Something went wrong'}</h2>
@@ -56,7 +56,7 @@ export function showErrorFallback(container, message) {
         <a href="#/" class="btn btn-outline btn-lg"><i class="fas fa-home"></i> ${t('common.goHome') || 'Home'}</a>
       </div>
       <style>
-        @keyframes fishSwim {
+        @keyframes fishSwimSmall {
           0%, 100% { transform: translateX(0) rotate(0deg); }
           25% { transform: translateX(10px) rotate(5deg); }
           75% { transform: translateX(-10px) rotate(-5deg); }
