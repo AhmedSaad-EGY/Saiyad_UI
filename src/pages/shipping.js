@@ -111,7 +111,25 @@ export default async function renderShipping(container) {
             <div class="form-group"><label class="form-label">${t('shipping.city')}</label><input type="text" class="form-input form-control" x-model="form.city" required></div>
             <div class="form-group"><label class="form-label">${t('shipping.addressLine')}</label><input type="text" class="form-input form-control" x-model="form.addressLine" required></div>
             <div class="form-group"><label class="form-label">${t('shipping.postalCode')}</label><input type="text" class="form-input form-control" x-model="form.postalCode"></div>
-            <div class="d-flex gap-2">
+            
+            <!-- Live Location Map Preview -->
+            <div class="form-group" x-show="form.city.trim()" x-transition x-cloak style="margin-top: 16px;">
+              <label class="form-label text-primary"><i class="fas fa-map-marked-alt"></i> ${t('shipping.locationPreview') || 'Location Preview'}</label>
+              <div style="height: 180px; width: 100%; border-radius: 8px; overflow: hidden; border: 1px solid var(--border);">
+                <iframe 
+                  width="100%" 
+                  height="100%" 
+                  frameborder="0" 
+                  scrolling="no" 
+                  marginheight="0" 
+                  marginwidth="0" 
+                  :src="'https://maps.google.com/maps?q=' + encodeURIComponent(form.city + ' ' + form.addressLine) + '&t=&z=14&ie=UTF8&iwloc=&output=embed'"
+                  style="border: none;">
+                </iframe>
+              </div>
+            </div>
+
+            <div class="d-flex gap-2" style="margin-top: 20px;">
               <button type="submit" class="btn btn-primary" :disabled="saving">
                 <i class="fas" :class="saving ? 'fa-spinner spinner' : 'fa-save'"></i> <span x-text="saving ? '${t('shipping.saving')}' : '${t('shipping.save')}'"></span>
               </button>

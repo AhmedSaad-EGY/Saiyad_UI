@@ -16,12 +16,84 @@ import renderAuctioneerAnalytics from './auctioneer-analytics.js';
 Alpine.data('dashboardPage', () => ({
   activeTab: 'overview',
   loadedTabs: new Set(),
+  tourStep: 0,
+  showTour: false,
 
   init() {
     const params = new URLSearchParams(location.hash.split('?')[1] || '');
     this.activeTab = params.get('tab') || 'overview';
-    this.$nextTick(() => this.ensureTabLoaded(this.activeTab));
+    this.$nextTick(() => {
+      this.ensureTabLoaded(this.activeTab);
+      this.checkFirstVisitTour();
+    });
     if (window.innerWidth < 768) document.body.classList.add('has-bottom-bar');
+  },
+
+  checkFirstVisitTour() {
+    if (!localStorage.getItem('sayiad_tour_completed')) {
+      setTimeout(() => {
+        this.showTour = true;
+        this.tourStep = 0;
+        this.highlightTourStep();
+      }, 1500);
+    }
+  },
+
+  highlightTourStep() {
+    document.querySelectorAll('.tour-highlight').forEach(el => el.classList.remove('tour-highlight'));
+    const steps = this.getTourSteps();
+    const currentStep = steps[this.tourStep];
+    if (!currentStep) return;
+    const targetEl = document.querySelector(currentStep.target);
+    if (targetEl) {
+      targetEl.classList.add('tour-highlight');
+      targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  },
+
+  getTourSteps() {
+    const isMobile = window.innerWidth < 768;
+    return [
+      {
+        target: isMobile ? '.dash-mobile-tabs' : '.dashboard-sidebar',
+        title: t('tour.navTitle') || 'Dashboard Navigation',
+        desc: t('tour.navDesc') || 'Navigate seamlessly between your overview, products, order tracking, and profile.'
+      },
+      {
+        target: '#dashOrders',
+        title: t('tour.ordersTitle') || 'Track Orders',
+        desc: t('tour.ordersDesc') || 'Monitor your transactions, purchase records, and shipping updates dynamically.'
+      },
+      {
+        target: '#dashProducts',
+        title: t('tour.productsTitle') || 'Manage Listings',
+        desc: t('tour.productsDesc') || 'Fisherman and sellers can easily publish or update listed catch and auction items here.'
+      }
+    ];
+  },
+
+  nextTourStep() {
+    const steps = this.getTourSteps();
+    if (this.tourStep < steps.length - 1) {
+      this.tourStep++;
+      this.highlightTourStep();
+    } else {
+      this.endTour();
+    }
+  },
+
+  prevTourStep() {
+    if (this.tourStep > 0) {
+      this.tourStep--;
+      this.highlightTourStep();
+    }
+  },
+
+  endTour() {
+    this.showTour = false;
+    document.querySelectorAll('.tour-highlight').forEach(el => el.classList.remove('tour-highlight'));
+    localStorage.setItem('sayiad_tour_completed', 'true');
+    showToast(t('tour.welcomeToSayiad') || 'Ready to use Sayiad! Enjoy your experience.', 'success');
   },
 
   switchTab(tabId) {
@@ -84,6 +156,40 @@ export default async function renderDashboard(container, route, params) {
   ];
 
   container.innerHTML = `
+    <style>
+      .tour-backdrop {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.45);
+        backdrop-filter: blur(5px);
+        z-index: 99999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .tour-modal {
+        max-width: 420px;
+        width: 90%;
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        padding: 24px;
+        transform: scale(1);
+        transition: all 0.3s ease;
+      }
+      .tour-highlight {
+        position: relative;
+        z-index: 99998 !important;
+        box-shadow: 0 0 0 6px var(--primary), 0 8px 30px rgba(0,0,0,0.45) !important;
+        transform: scale(1.02);
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        background: var(--card-bg) !important;
+      }
+    </style>
     <div x-data="dashboardPage" x-init="init()">
       <div class="row g-3">
         <div class="col-md-3">
@@ -121,6 +227,31 @@ export default async function renderDashboard(container, route, params) {
             <i class="fas ${tabItem.icon}"></i><span>${tabItem.label}</span>
           </a>
         `).join('')}
+      </div>
+
+      <!-- Onboarding Tour Overlay -->
+      <div x-show="showTour" class="tour-backdrop" x-cloak x-transition>
+        <div class="tour-modal animate-on-scroll">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4 class="m-0 text-primary" style="display:flex;align-items:center;gap:8px">
+              <i class="fas fa-compass"></i>
+              <span x-text="getTourSteps()[tourStep].title"></span>
+            </h4>
+            <button class="btn btn-close" style="font-size:1.5rem;background:transparent;border:none;color:var(--text-muted);cursor:pointer" @click="endTour()">&times;</button>
+          </div>
+          <div class="tour-body">
+            <p class="text-muted" style="line-height:1.6" x-text="getTourSteps()[tourStep].desc"></p>
+            <div class="d-flex justify-content-between align-items-center mt-4">
+              <span class="text-muted" style="font-size:0.85rem">
+                ${t('common.step') || 'Step'} <span x-text="tourStep + 1"></span> of <span x-text="getTourSteps().length"></span>
+              </span>
+              <div class="d-flex gap-2">
+                <button class="btn btn-outline btn-sm" @click="prevTourStep()" :disabled="tourStep === 0">${t('common.back') || 'Back'}</button>
+                <button class="btn btn-primary btn-sm" @click="nextTourStep()" x-text="tourStep === getTourSteps().length - 1 ? '${t('common.finish') || 'Finish'}' : '${t('common.next') || 'Next'}'"></button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   `;

@@ -14,11 +14,36 @@ Alpine.data('homePage', () => ({
   auctions: [],
   roleLinks: [],
   isAuth: false,
+  heroContentStyle: 'transform: perspective(1000px) rotateX(0deg) rotateY(0deg) translate3d(0, 0, 0)',
 
   async init() {
     this.isAuth = isAuthenticated();
     await this.loadData();
     initPullToRefresh({ onRefresh: () => this.loadData() });
+  },
+
+  handleHeroMouseMove(e) {
+    const hero = e.currentTarget;
+    const rect = hero.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    
+    // Smooth 3D tilt calculation (max 8 degrees)
+    const rotateX = ((centerY - y) / centerY) * 8;
+    const rotateY = ((x - centerX) / centerX) * 8;
+    
+    // Smooth parallax shifting
+    const transX = ((x - centerX) / centerX) * 12;
+    const transY = ((y - centerY) / centerY) * 12;
+    
+    this.heroContentStyle = `transform: perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translate3d(${transX}px, ${transY}px, 15px); transition: transform 0.05s ease-out;`;
+  },
+
+  handleHeroMouseLeave() {
+    this.heroContentStyle = 'transform: perspective(1000px) rotateX(0deg) rotateY(0deg) translate3d(0, 0, 0); transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);';
   },
 
   async loadData() {
@@ -98,9 +123,20 @@ Alpine.data('homePage', () => ({
 
 export default async function renderHome(container) {
   container.innerHTML = `
+    <style>
+      .hero {
+        position: relative;
+        overflow: hidden;
+        perspective: 1000px;
+      }
+      .hero-content {
+        transform-style: preserve-3d;
+        backface-visibility: hidden;
+      }
+    </style>
     <div x-data="homePage" x-init="init()">
-      <section class="hero">
-        <div class="hero-content">
+      <section class="hero" @mousemove="handleHeroMouseMove($event)" @mouseleave="handleHeroMouseLeave()">
+        <div class="hero-content" :style="heroContentStyle">
           <h1>${t('home.welcome')}</h1>
           <p>${t('home.subtitle')}</p>
           <div class="hero-actions">
