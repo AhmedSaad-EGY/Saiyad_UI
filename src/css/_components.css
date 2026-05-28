@@ -830,11 +830,7 @@
 /* ============================================================
    PRODUCT / AUCTION CARDS
    ============================================================ */
-.product-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
-  overflow: visible;
-}
+/* .product-grid migrated to Bootstrap .row + row-cols-* classes */
 
 .product-card {
   background: var(--card-bg);
@@ -2650,7 +2646,6 @@ tr:last-child td {
 .profile-links-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-  gap: var(--space-3);
   margin-top: var(--space-4);
 }
 
@@ -3290,9 +3285,6 @@ tr:last-child td {
     outline-offset: 2px;
   }
 
-  /* Bootstrap row handles mobile stacking */
-  .dashboard-layout {
-  }
 
   .table-wrapper {
     overflow-x: auto;
@@ -3354,10 +3346,6 @@ tr:last-child td {
 
 /* 640px */
 @media (max-width: 640px) {
-  .checkout-grid {
-    grid-template-columns: 1fr;
-  }
-
   .cart-item {
     flex-direction: column;
     gap: var(--space-3);
@@ -3414,11 +3402,7 @@ tr:last-child td {
     font-size: var(--text-sm);
   }
 
-  .product-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    padding: var(--space-1);
-    margin: -2px;
-  }
+  /* .product-grid responsive overrides removed — handled by Bootstrap row-cols classes */
 
   .footer-grid {
     grid-template-columns: 1fr;
@@ -3435,9 +3419,7 @@ tr:last-child td {
 
 /* 360px */
 @media (max-width: 360px) {
-  .product-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
+  /* .product-grid responsive overrides removed — handled by Bootstrap row-cols classes */
 
   .nav-drawer {
     width: 88vw;

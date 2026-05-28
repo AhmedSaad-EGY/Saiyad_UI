@@ -102,49 +102,6 @@
   --bs-btn-focus-box-shadow: var(--shadow-glow);
   --bs-btn-active-box-shadow: inset 0 3px 5px oklch(0 0 0 / 0.125);
 
-  /* ─── Inputs ───────────────────────────────────────────── */
-  --bs-input-bg: var(--input-bg);
-  --bs-input-color: var(--text);
-  --bs-input-border-color: var(--border);
-  --bs-input-focus-border-color: var(--border-focus);
-  --bs-input-focus-box-shadow: var(--shadow-glow);
-  --bs-input-placeholder-color: var(--text-muted);
-  --bs-input-disabled-bg: var(--body-bg);
-
-  /* ─── Alerts ───────────────────────────────────────────── */
-  --bs-alert-bg: transparent;
-  --bs-alert-border-radius: var(--radius);
-
-  /* ─── Badges ───────────────────────────────────────────── */
-  --bs-badge-font-weight: var(--weight-medium);
-  --bs-badge-border-radius: var(--radius-sm);
-  --bs-badge-padding-x: 0.5em;
-  --bs-badge-padding-y: 0.25em;
-
-  /* ─── Tooltips / Popovers ──────────────────────────────── */
-  --bs-tooltip-bg: var(--text);
-  --bs-tooltip-color: var(--text-inverse);
-  --bs-popover-bg: var(--card-bg);
-  --bs-popover-border-color: var(--border);
-  --bs-popover-box-shadow: var(--shadow-lg);
-
-  /* ─── Modals ───────────────────────────────────────────── */
-  --bs-modal-bg: var(--card-bg);
-  --bs-modal-border-color: var(--border);
-  --bs-modal-box-shadow: var(--shadow-lg);
-  --bs-modal-header-border-color: var(--border);
-  --bs-modal-footer-border-color: var(--border);
-  --bs-modal-backdrop-bg: oklch(0 0 0 / 0.5);
-
-  /* ─── Dropdowns ────────────────────────────────────────── */
-  --bs-dropdown-bg: var(--card-bg);
-  --bs-dropdown-border-color: var(--border);
-  --bs-dropdown-box-shadow: var(--shadow-md);
-  --bs-dropdown-link-color: var(--text);
-  --bs-dropdown-link-hover-color: var(--primary);
-  --bs-dropdown-link-hover-bg: var(--primary-ghost);
-  --bs-dropdown-link-active-color: var(--text-inverse);
-  --bs-dropdown-link-active-bg: var(--primary);
 }
 
 /* ─── Dark Mode ────────────────────────────────────────────── */
@@ -162,18 +119,12 @@
   --bs-body-color: var(--text);
   --bs-border-color: var(--border);
   --bs-card-bg: var(--card-bg);
-  --bs-input-bg: var(--input-bg);
   --bs-link-color: var(--primary);
   --bs-link-hover-color: var(--primary-dark);
   --bs-heading-color: var(--text);
   --bs-navbar-color: var(--text-secondary);
   --bs-navbar-hover-color: var(--primary);
   --bs-navbar-active-color: var(--primary);
-  --bs-dropdown-bg: var(--card-bg);
-  --bs-dropdown-link-color: var(--text);
-  --bs-dropdown-link-hover-bg: var(--primary-ghost);
-  --bs-modal-bg: var(--card-bg);
-  --bs-popover-bg: var(--card-bg);
 }
 
 /* ─── Seller Gold Theme ─────────────────────────────────────── */
@@ -187,9 +138,6 @@
   --bs-navbar-hover-color: var(--primary);
   --bs-navbar-active-color: var(--primary);
   --bs-navbar-brand-color: var(--primary);
-  --bs-dropdown-link-hover-color: var(--primary);
-  --bs-dropdown-link-hover-bg: var(--primary-ghost);
-  --bs-dropdown-link-active-bg: var(--primary);
 }
 
 /* ─── Card hover ──────────────────────────────────────────── */

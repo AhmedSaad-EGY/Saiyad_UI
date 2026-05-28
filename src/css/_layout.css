@@ -461,9 +461,7 @@ input[type="date"].form-input::-webkit-datetime-edit-year-field:focus {
     margin: 28px auto;
   }
 
-  .product-grid {
-    grid-template-columns: repeat(auto-fill, minmax(min(220px, 100%), 1fr));
-  }
+  /* .product-grid responsive overrides removed — handled by Bootstrap row-cols classes */
 
   .main-content {
     padding: calc(60px + 24px) var(--space-4) var(--space-10);

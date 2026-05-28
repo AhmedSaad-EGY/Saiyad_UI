@@ -3,7 +3,7 @@ import { api } from '../core/api/client.js';
 import { isAuthenticated, getUser, hasAnyRole, requireAuth, updateCartBadge } from '../core/auth/index.js';
 import { SELLER_ROLES } from '../shared/constants/roles.js';
 import { router } from '../core/router/index.js';
-import { showError, showLoading, escapeHtml, progressiveImg, observeAnimations, fadeInContent } from '../core/utils/dom.js';
+import { showError, showLoading, escapeHtml, progressiveImg, observeAnimations, fadeInContent, animate } from '../core/utils/dom.js';
 import { formatPrice, formatDate, statusClass, tStatus, tCondition, renderStars } from '../core/utils/format.js';
 import { renderProductCards, openLightbox, trackRecentlyViewed, showToast } from '../core/utils/ui.js';
 
@@ -154,7 +154,7 @@ export default async function renderProductDetail(container, route, params) {
         if (items.length) {
           const section = document.createElement("div");
           section.style.marginTop = "40px";
-          section.innerHTML = `<div class="section-header"><h2><i class="fas fa-layer-group"></i> ${t("products.similar")}</h2></div><div class="product-grid gap-4" id="similarGrid"></div>`;
+          section.innerHTML = `<div class="section-header"><h2><i class="fas fa-layer-group"></i> ${t("products.similar")}</h2></div><div class="row row-cols-2 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4" id="similarGrid"></div>`;
           container.appendChild(section);
           const grid = document.getElementById("similarGrid");
           renderProductCards(
@@ -398,7 +398,8 @@ export default async function renderProductDetail(container, route, params) {
           if (reviewsList) {
             const newReview = document.createElement("div");
             newReview.className = "notif-item";
-            newReview.style.animation = "slideUp 0.3s ease";
+            newReview.style.animation = "";
+            animate(newReview, 'fadeInUp', { duration: '0.3s' });
             newReview.innerHTML = `
               <div style="flex:1">
                 <strong>${escapeHtml(user?.fullName || "You")}</strong>

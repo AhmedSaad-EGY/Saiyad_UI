@@ -1,5 +1,6 @@
 import { setLanguage, getCurrentLang, t } from './i18n/index.js';
 import { showToast, showConfirm, openQuickView } from './utils/ui.js';
+import { animate } from './utils/dom.js';
 import { api } from './api/client.js';
 import { getUser, logout, requireAuth } from './auth/index.js';
 import { router, goBack } from './router/index.js';
@@ -10,10 +11,6 @@ import { setupGlobalErrorHandlers } from '../shared/helpers/errors.js';
 const injectedStyles = document.createElement("style");
 injectedStyles.textContent = `
   .toast-container { pointer-events: none; }
-  @keyframes bannerSlideDown {
-    from { transform: translateY(-100%); }
-    to { transform: translateY(0); }
-  }
   .empty-state-visual {
     transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
     display: inline-block;
@@ -453,13 +450,14 @@ setupGlobalErrorHandlers();
       el.style.cssText = [
         'position:fixed', 'top:0', 'left:0', 'right:0', 'z-index:100000',
         'background:var(--success,#16a34a)', 'color:#fff',
-        'text-align:center', 'padding:10px 16px',
-        'font-size:0.875rem', 'font-weight:600',
-        'animation:bannerSlideDown 0.3s ease both',
+        'text-align:center', 'padding:10px 16px',        'font-size:0.875rem', 'font-weight:600',
         'display:flex', 'align-items:center', 'justify-content:center', 'gap:8px',
       ].join(';');
       el.innerHTML = `<i class="fas fa-wifi"></i> ${t('common.backOnline') || 'Back online!'}`;
-      setTimeout(() => { el.style.animation = 'slideUp 0.3s ease reverse both'; setTimeout(() => el.remove(), 300); }, 2500);
+      setTimeout(() => {
+        el.addEventListener('animationend', () => el.remove(), { once: true });
+        animate(el, 'slideOutUp', { duration: '0.3s' });
+      }, 2500);
       return el;
     }
     el.id = 'offlineBanner';
@@ -467,7 +465,7 @@ setupGlobalErrorHandlers();
       'position:fixed', 'top:0', 'left:0', 'right:0', 'z-index:100000',
       'background:var(--danger,#dc2626)', 'color:#fff',
       'text-align:center', 'padding:10px 16px',
-      'font-size:0.875rem', 'font-weight:500','animation:bannerSlideDown 0.3s ease both',
+      'font-size:0.875rem', 'font-weight:500',
         'display:flex', 'align-items:center', 'justify-content:center', 'gap:8px',
       ].join(';');
     const close = document.createElement('button');
@@ -485,6 +483,7 @@ setupGlobalErrorHandlers();
     if (document.getElementById('onlineBanner')) document.getElementById('onlineBanner').remove();
     banner = createBanner(false);
     document.body.prepend(banner);
+    animate(banner, 'slideInDown', { duration: '0.3s' });
   }
 
   function showOnline() {
@@ -493,6 +492,7 @@ setupGlobalErrorHandlers();
     if (document.getElementById('onlineBanner')) return;
     const el = createBanner(true);
     document.body.prepend(el);
+    animate(el, 'slideInDown', { duration: '0.3s' });
   }
 
   window.addEventListener('offline', showOffline);
@@ -603,7 +603,6 @@ function showUpdateBanner(worker) {
     "max-width:420px",
     "width:calc(100vw - 32px)",
     "font-size:14px",
-    "animation:slideUp 0.35s cubic-bezier(0.34,1.56,0.64,1) both",
   ].join(";");
 
   banner.innerHTML = `
@@ -627,6 +626,7 @@ function showUpdateBanner(worker) {
   `;
 
   document.body.appendChild(banner);
+  animate(banner, 'slideInUp', { duration: '0.35s' });
 
   document.getElementById("swUpdateBtn").addEventListener("click", () => {
     banner.remove();
@@ -634,7 +634,7 @@ function showUpdateBanner(worker) {
   });
 
   document.getElementById("swDismissBtn").addEventListener("click", () => {
-    banner.style.animation = "fadeOut 0.2s ease both";
-    setTimeout(() => banner.remove(), 200);
+    banner.addEventListener('animationend', () => banner.remove(), { once: true });
+    animate(banner, 'fadeOut', { duration: '0.2s' });
   });
 }

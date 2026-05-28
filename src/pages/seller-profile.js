@@ -50,7 +50,7 @@ export default async function renderSellerProfile(container) {
           <div class="section-header">
             <h3><i class="fas fa-tag"></i> ${t("seller.listings") || "Products"}</h3>
           </div>
-          <div class="product-grid" id="sellerProductGrid"></div>
+          <div class="row row-cols-2 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4" id="sellerProductGrid"></div>
         `;
         container.appendChild(productsSection);
         renderProductCards(

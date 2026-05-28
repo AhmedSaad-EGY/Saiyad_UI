@@ -114,7 +114,7 @@ export default async function renderUserProfile(container) {
           <h3>${t('common.quickLinks')}</h3>
         </div>
         <div class="card-body">
-        <div class="profile-links-grid">
+        <div class="profile-links-grid gap-3">
           ${user?.role !== 'Admin' ? `
             <a href="#/dashboard?tab=orders" class="profile-link-card"><i class="fas fa-shopping-bag"></i><span>${t('dash.orders')}</span></a>
             <a href="#/dashboard?tab=wishlist" class="profile-link-card"><i class="fas fa-heart"></i><span>${t('dash.wishlist')}</span></a>
