@@ -287,12 +287,14 @@ Alpine.data('auctionDetailPage', () => ({
     const hours = Math.floor((this.remaining % 86400) / 3600);
     const mins = Math.floor((this.remaining % 3600) / 60);
     const secs = this.remaining % 60;
+    const critical = this.remaining > 0 && this.remaining <= 600; // < 10 min
     return {
       days,
       hours: String(hours).padStart(2, '0'),
       mins: String(mins).padStart(2, '0'),
       secs: String(secs).padStart(2, '0'),
       urgent: this.urgent,
+      critical,
       showDays: days > 0,
     };
   },
@@ -394,15 +396,15 @@ export default async function renderAuctionDetail(container, _route, params) {
                         <span class="countdown-lbl">${t('common.days')}</span>
                       </div>
                     </template>
-                    <div class="countdown-unit" :class="countdown().urgent ? 'urgent' : ''">
+                    <div class="countdown-unit" :class="countdown().critical ? 'critical' : countdown().urgent ? 'urgent' : ''">
                       <span class="countdown-num" x-text="countdown().hours"></span>
                       <span class="countdown-lbl">${t('common.hours')}</span>
                     </div>
-                    <div class="countdown-unit" :class="countdown().urgent ? 'urgent' : ''">
+                    <div class="countdown-unit" :class="countdown().critical ? 'critical' : countdown().urgent ? 'urgent' : ''">
                       <span class="countdown-num" x-text="countdown().mins"></span>
                       <span class="countdown-lbl">${t('common.minutes')}</span>
                     </div>
-                    <div class="countdown-unit" :class="countdown().urgent ? 'urgent' : ''">
+                    <div class="countdown-unit" :class="countdown().critical ? 'critical' : countdown().urgent ? 'urgent' : ''">
                       <span class="countdown-num" x-text="countdown().secs"></span>
                       <span class="countdown-lbl">${t('common.seconds')}</span>
                     </div>
@@ -448,6 +450,18 @@ export default async function renderAuctionDetail(container, _route, params) {
                 <span x-text="formatDate(auction.endTime)"></span>
               </div>
             </div>
+
+            <!-- Seller info card -->
+            <template x-if="auction.sellerName || auction.auctioneerName">
+              <a :href="'#/seller-profile?userId=' + (auction.sellerId || auction.auctioneerId || '')" class="seller-info-card" style="text-decoration:none;color:inherit">
+                <div class="seller-avatar" x-text="(auction.sellerName || auction.auctioneerName || '?').charAt(0).toUpperCase()"></div>
+                <div class="seller-info-details">
+                  <div class="seller-info-name" x-text="auction.sellerName || auction.auctioneerName"></div>
+                  <div class="seller-info-meta"><i class="fas fa-store" aria-hidden="true"></i> ${t('common.viewProfile') || 'View Profile'}</div>
+                </div>
+                <i class="fas fa-chevron-${getCurrentLang() === 'ar' ? 'left' : 'right'} text-muted"></i>
+              </a>
+            </template>
 
             <!-- Winner announcement -->
             <template x-if="auction.winnerUserId">
@@ -564,6 +578,20 @@ export default async function renderAuctionDetail(container, _route, params) {
             </div>
           </div>
         </div>
+
+        <!-- Mobile sticky bid bar -->
+        <template x-if="isActive && isCustomer()">
+          <div class="mobile-sticky-bar">
+            <div class="current-bid-mini">
+              <small x-text="t('auction.currentBid')"></small>
+              <span x-text="formatPrice(currentBidValue)"></span>
+            </div>
+            <button class="btn btn-primary" @click="placeBid()" :disabled="placingBid">
+              <i class="fas" :class="placingBid ? 'fa-spinner spinner' : 'fa-gavel'"></i>
+              <span x-text="t('auction.placeBid')"></span>
+            </button>
+          </div>
+        </template>
       </div>
     </div>
   `;

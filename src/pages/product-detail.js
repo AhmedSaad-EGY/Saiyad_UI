@@ -40,28 +40,41 @@ export default async function renderProductDetail(container, route, params) {
       ...(p.images || p.additionalImages || []).map((img) => (typeof img === "string" ? img : img.url || img)),
     ].filter(Boolean);
 
+    // Calculate stock percentage (mock logic based on 100 max)
+    const stockQty = p.stockQuantity ?? 0;
+    const stockLevel = stockQty > 50 ? 'high' : stockQty > 10 ? 'medium' : 'low';
+    const stockPct = Math.min(100, Math.max(0, stockQty));
+
     container.innerHTML = `
-      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="#/">${t("nav.home")}</a> <i class="fas fa-chevron-${getCurrentLang() === "ar" ? "left" : "right"}" aria-hidden="true"></i> <a href="#/products">${t("nav.products")}</a> <i class="fas fa-chevron-${getCurrentLang() === "ar" ? "left" : "right"}" aria-hidden="true"></i> <span>${escapeHtml(p.title)}</span></nav>
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="#/">${t("nav.home")}</a> <i class="fas fa-chevron-${getCurrentLang() === "ar" ? "left" : "right"}" aria-hidden="true"></i> <a href="#/products">${t("nav.products")}</a> <i class="fas fa-chevron-${getCurrentLang() === "ar" ? "left" : "right"}" aria-hidden="true"></i> <span>${escapeHtml(p.categoryName || 'Category')}</span> <i class="fas fa-chevron-${getCurrentLang() === "ar" ? "left" : "right"}" aria-hidden="true"></i> <span>${escapeHtml(p.title)}</span></nav>
       <div class="row g-5">
         <div class="col-lg-6">
-          <div class="detail-image p-0" id="mainImageWrap" style="cursor:pointer;position:relative">
-            ${p.primaryImageUrl ? progressiveImg(p.primaryImageUrl, p.title, "") : '<i class="fas fa-image"></i>'}
+          <div class="detail-image p-0 image-magnifier-wrap" id="mainImageWrap">
+            ${p.primaryImageUrl ? `<img src="${escapeHtml(p.primaryImageUrl)}" id="mainImg" alt="${escapeHtml(p.title)}" style="width:100%;height:100%;object-fit:cover"><div class="magnifier-lens" id="magLens"></div>` : '<i class="fas fa-image"></i>'}
             <div class="rounded-circle d-flex align-items-center justify-content-center" style="position:absolute;bottom:12px;right:12px;background:rgba(0,0,0,0.5);color:#fff;width:36px;height:36px;pointer-events:none"><i class="fas fa-search-plus"></i></div>
           </div>
         </div>
         <div class="col-lg-6">
         <div class="detail-info">
-          <h1>${escapeHtml(p.title)}</h1>
+          <div class="d-flex justify-content-between align-items-start mb-2">
+            <h1 class="mb-0" style="margin-right:12px">${escapeHtml(p.title)}</h1>
+            <button class="btn btn-ghost btn-icon btn-sm mt-1" id="shareBtn" title="${t('common.share') || 'Share'}"><i class="fas fa-share-alt"></i></button>
+          </div>
           <div class="detail-price">${formatPrice(p.price)}</div>
-          <div class="detail-meta">
+          
+          <div class="stock-indicator">
+            <span class="stock-label stock-${stockLevel}">${p.stockQuantity !== null ? p.stockQuantity + ' ' + (t("products.inStock") || 'in stock') : t("common.N/A")}</span>
+            <div class="stock-bar"><div class="stock-bar-fill stock-${stockLevel}" style="width:${stockPct}%"></div></div>
+          </div>
+
+          <div class="detail-meta mt-3">
             <div class="detail-meta-item"><strong>${t("product.condition")}:</strong> ${tCondition(p.condition)}</div>
             <div class="detail-meta-item"><strong>${t("product.location")}:</strong> ${escapeHtml(p.location || t("common.N/A"))}</div>
             <div class="detail-meta-item"><strong>${t("product.category")}:</strong> ${p.categoryName || t("common.N/A")}</div>
-            <div class="detail-meta-item"><strong>${t("product.stock")}:</strong> ${p.stockQuantity ?? t("common.N/A")}</div>
             <div class="detail-meta-item"><strong>${t("product.status")}:</strong> <span class="status ${statusClass(p.status)}">${tStatus(p.status, "product")}</span></div>
           </div>
-          ${p.brand ? `<p class="mb-2"><strong>${t("product.brand")}:</strong> ${escapeHtml(p.brand)}</p>` : ""}
-          <div class="detail-desc">${escapeHtml(p.description || t("product.noDescription"))}</div>
+          ${p.brand ? `<p class="mb-2 mt-2"><strong>${t("product.brand")}:</strong> ${escapeHtml(p.brand)}</p>` : ""}
+          <div class="detail-desc mt-3">${escapeHtml(p.description || t("product.noDescription"))}</div>
           <div class="d-flex gap-3 flex-wrap">
             <div class="d-flex align-items-center gap-2 flex-wrap">
               <div class="qty-btn-group">
@@ -85,13 +98,30 @@ export default async function renderProductDetail(container, route, params) {
             ${p.isAuctioned && p.auctionId ? `<a href="#/auction-detail?id=${p.auctionId}" class="btn btn-success btn-lg"><i class="fas fa-gavel"></i> ${t("product.viewAuction")}</a>` : !p.isAuctioned && getUser()?.id === p.sellerId && hasAnyRole(...(SELLER_ROLES)) ? `<button class="btn btn-primary btn-lg" id="startAuctionBtn"><i class="fas fa-gavel"></i> ${t("auction.startAuction")}</button>` : ""}
             ${p.sellerId ? `<a href="#/seller-profile?userId=${p.sellerId}" class="btn btn-outline btn-lg"><i class="fas fa-envelope"></i> ${t("product.contactSeller")}</a>` : ""}
           </div>
-          ${p.sellerId ? `<div class="mt-4 pt-3" style="border-top:1px solid var(--border)"><strong>${t("product.seller")}:</strong> <a href="#/seller-profile?userId=${p.sellerId}" class="text-primary">${escapeHtml(p.sellerName || t("common.N/A"))}</a></div>` : ""}
+          
+          <!-- Seller info card -->
+          ${p.sellerId ? `
+          <a href="#/seller-profile?userId=${p.sellerId}" class="seller-info-card mt-4" style="text-decoration:none;color:inherit">
+            <div class="seller-avatar">${escapeHtml(p.sellerName || '?').charAt(0).toUpperCase()}</div>
+            <div class="seller-info-details">
+              <div class="seller-info-name">${escapeHtml(p.sellerName || t("common.N/A"))}</div>
+              <div class="seller-info-meta"><i class="fas fa-store"></i> ${t('common.viewProfile') || 'View Profile'}</div>
+            </div>
+            <i class="fas fa-chevron-${getCurrentLang() === 'ar' ? 'left' : 'right'} text-muted"></i>
+          </a>` : ""}
 
           <!-- Reviews section -->
           <div class="mt-4 pt-4" style="border-top:1px solid var(--border)" id="reviewsSection">
             <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
               <h3><i class="fas fa-star text-warning"></i> ${t("review.title")} ${avgRating ? `(${renderStars(avgRating)} ${avgRating.toFixed(1)})` : ""}</h3>
-              ${isAuthenticated() ? `<button class="btn btn-outline btn-sm" id="showReviewForm">${t("review.writeReview")}</button>` : ""}
+              <div class="d-flex gap-2">
+                <select id="reviewSort" class="form-select form-select-sm" style="width:130px;height:34px;font-size:0.85rem">
+                  <option value="newest">${t("products.newest") || 'Newest'}</option>
+                  <option value="highest">${t("products.priceHighLow") ? t("products.priceHighLow").replace('Price', 'Highest') : 'Highest Rated'}</option>
+                  <option value="lowest">${t("products.priceLowHigh") ? t("products.priceLowHigh").replace('Price', 'Lowest') : 'Lowest Rated'}</option>
+                </select>
+                ${isAuthenticated() ? `<button class="btn btn-outline btn-sm" id="showReviewForm">${t("review.writeReview")}</button>` : ""}
+              </div>
             </div>
             ${
               isAuthenticated()
@@ -114,33 +144,120 @@ export default async function renderProductDetail(container, route, params) {
             `
                 : `<p class="text-muted small"><a href="#/login" class="text-primary">${t("auth.login")}</a> ${t("review.title")}</p>`
             }
-            <div id="reviewsList">
-              ${
-                reviews.length
-                  ? reviews
-                      .map(
-                        (r) => `
-                <div class="notif-item">
-                  <div class="flex-fill">
-                    <strong>${escapeHtml(r.userName || "User")}</strong>
-                    <span class="text-warning">${renderStars(r.rating)}</span>
-                    ${r.comment ? `<p class="mt-1" style="color:var(--text-secondary);font-size:0.9rem">${escapeHtml(r.comment)}</p>` : ""}
-                    <small class="text-muted">${formatDate(r.createdAt)}</small>
-                  </div>
-                </div>
-              `,
-                      )
-                      .join("")
-                  : `<p class="text-muted text-center p-4">${t("review.noReviews")}</p>`
-              }
+            <div id="reviewsList"></div>
+            <div id="reviewPagination" class="text-center mt-3 d-none">
+              <button class="btn btn-ghost btn-sm" id="loadMoreReviewsBtn">${t("common.loadMore") || 'Load More'}</button>
             </div>
           </div>
         </div>
+      </div>
+      
+      <!-- Mobile sticky add-to-cart -->
+      <div class="mobile-sticky-bar" id="mobileStickyCart">
+        <div class="current-bid-mini">
+          <small>${t("cart.price")}</small>
+          <span>${formatPrice(p.price)}</span>
+        </div>
+        <button class="btn btn-primary" id="mobileAddToCartBtn" ${!isAvailable ? "disabled" : ""}>
+          <i class="fas fa-shopping-cart"></i> ${t("product.addToCart")}
+        </button>
       </div>
     </div>
     `;
 
     fadeInContent(container);
+
+    // Initial render for reviews
+    const reviewsList = document.getElementById("reviewsList");
+    let currentReviewPage = 1;
+    let sortedReviews = [...reviews];
+    const renderReviews = (reviewsArr, page = 1) => {
+      const pageSize = 5;
+      const paginated = reviewsArr.slice(0, page * pageSize);
+      if (paginated.length === 0) {
+        reviewsList.innerHTML = `<p class="text-muted text-center p-4">${t("review.noReviews")}</p>`;
+      } else {
+        reviewsList.innerHTML = paginated.map(r => `
+          <div class="notif-item">
+            <div class="flex-fill">
+              <strong>${escapeHtml(r.userName || "User")}</strong>
+              <span class="text-warning">${renderStars(r.rating)}</span>
+              ${r.comment ? `<p class="mt-1" style="color:var(--text-secondary);font-size:0.9rem">${escapeHtml(r.comment)}</p>` : ""}
+              <small class="text-muted">${formatDate(r.createdAt)}</small>
+            </div>
+          </div>
+        `).join('');
+      }
+      const loadMoreBtn = document.getElementById("reviewPagination");
+      if (reviewsArr.length > page * pageSize) loadMoreBtn.classList.remove("d-none");
+      else loadMoreBtn.classList.add("d-none");
+    };
+
+    renderReviews(sortedReviews, currentReviewPage);
+
+    // Review Sorting
+    document.getElementById("reviewSort")?.addEventListener("change", (e) => {
+      const val = e.target.value;
+      if (val === 'highest') sortedReviews = [...reviews].sort((a,b) => b.rating - a.rating);
+      else if (val === 'lowest') sortedReviews = [...reviews].sort((a,b) => a.rating - b.rating);
+      else sortedReviews = [...reviews].sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
+      currentReviewPage = 1;
+      renderReviews(sortedReviews, currentReviewPage);
+    });
+
+    document.getElementById("loadMoreReviewsBtn")?.addEventListener("click", () => {
+      currentReviewPage++;
+      renderReviews(sortedReviews, currentReviewPage);
+    });
+
+    // Share Button
+    document.getElementById("shareBtn")?.addEventListener("click", async () => {
+      const shareData = {
+        title: p.title,
+        text: `Check out ${p.title} on Sayiad!`,
+        url: window.location.href,
+      };
+      if (navigator.share) {
+        try { await navigator.share(shareData); } catch (e) { /* ignore */ }
+      } else {
+        navigator.clipboard.writeText(window.location.href);
+        showToast("Link copied to clipboard!", "success");
+      }
+    });
+
+    // Image Magnifier
+    const mainImgWrap = document.getElementById("mainImageWrap");
+    const mainImg = document.getElementById("mainImg");
+    const magLens = document.getElementById("magLens");
+    
+    if (mainImgWrap && mainImg && magLens && allImages.length) {
+      mainImgWrap.addEventListener("mousemove", (e) => {
+        const rect = mainImgWrap.getBoundingClientRect();
+        let x = e.clientX - rect.left;
+        let y = e.clientY - rect.top;
+        
+        // Lens dimensions (160px)
+        const lensW = 160;
+        const lensH = 160;
+        
+        // Prevent lens from going outside the image
+        if (x > rect.width - lensW / 2) { x = rect.width - lensW / 2; }
+        if (x < lensW / 2) { x = lensW / 2; }
+        if (y > rect.height - lensH / 2) { y = rect.height - lensH / 2; }
+        if (y < lensH / 2) { y = lensH / 2; }
+        
+        magLens.style.left = (x - lensW / 2) + "px";
+        magLens.style.top = (y - lensH / 2) + "px";
+        
+        // Set background image and position for zoom effect (2x zoom)
+        const cx = mainImg.offsetWidth / lensW * 2;
+        const cy = mainImg.offsetHeight / lensH * 2;
+        magLens.style.backgroundImage = `url('${escapeHtml(p.primaryImageUrl)}')`;
+        magLens.style.backgroundSize = `${mainImg.offsetWidth * 2}px ${mainImg.offsetHeight * 2}px`;
+        magLens.style.backgroundPosition = `-${(x * 2) - lensW / 2}px -${(y * 2) - lensH / 2}px`;
+      });
+      mainImgWrap.addEventListener("click", () => openLightbox(allImages, 0));
+    }
 
     // Similar products
     (async () => {
@@ -183,27 +300,29 @@ export default async function renderProductDetail(container, route, params) {
         const max = parseInt(qtyInput.max) || 99;
         if (v < max) qtyInput.value = v + 1;
       });
-      document
-        .getElementById("addToCartBtn")
-        .addEventListener("click", async () => {
-          if (!(await requireAuth())) return;
-          const btn = document.getElementById("addToCartBtn");
-          btn.disabled = true;
-          btn.innerHTML = `<i class="fas fa-spinner spinner"></i> ${t("common.loading")}`;
-          try {
-            await api.post("/cart/items", {
-              productId: p.id,
-              quantity: parseInt(document.getElementById("productQty")?.value) || 1
-            });
-            showToast(t("product.addedToCart"), "success");
-            updateCartBadge();
-          } catch (e) {
-            showToast(e.message, "error");
-          } finally {
-            btn.disabled = false;
-            btn.innerHTML = `<i class="fas fa-shopping-cart"></i> ${t("product.addToCart")}`;
-          }
-        });
+      const handleAddToCart = async (btnId) => {
+        if (!(await requireAuth())) return;
+        const btn = document.getElementById(btnId);
+        if (!btn) return;
+        btn.disabled = true;
+        btn.innerHTML = `<i class="fas fa-spinner spinner"></i> ${t("common.loading")}`;
+        try {
+          await api.post("/cart/items", {
+            productId: p.id,
+            quantity: parseInt(document.getElementById("productQty")?.value) || 1
+          });
+          showToast(t("product.addedToCart"), "success");
+          updateCartBadge();
+        } catch (e) {
+          showToast(e.message, "error");
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML = `<i class="fas fa-shopping-cart"></i> ${t("product.addToCart")}`;
+        }
+      };
+
+      document.getElementById("addToCartBtn")?.addEventListener("click", () => handleAddToCart("addToCartBtn"));
+      document.getElementById("mobileAddToCartBtn")?.addEventListener("click", () => handleAddToCart("mobileAddToCartBtn"));
     }
 
     document

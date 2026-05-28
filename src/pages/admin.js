@@ -28,6 +28,20 @@ export default async function renderAdmin(container) {
 
   container.innerHTML = `
     <div class="section-header"><h2><i class="fas fa-shield-alt"></i> ${t("admin.title")}</h2></div>
+    <div class="stats-overview d-flex gap-3 mb-4 flex-wrap animate-on-scroll">
+      <div class="card p-3 flex-grow-1" style="min-width: 200px">
+        <div class="text-muted"><i class="fas fa-users text-primary"></i> ${t("admin.totalUsers") || "Total Users"}</div>
+        <div class="fs-2 fw-bold mt-2">1,245</div>
+      </div>
+      <div class="card p-3 flex-grow-1" style="min-width: 200px">
+        <div class="text-muted"><i class="fas fa-chart-line text-success"></i> ${t("admin.totalRevenue") || "Total Revenue"}</div>
+        <div class="fs-2 fw-bold mt-2">$45,230</div>
+      </div>
+      <div class="card p-3 flex-grow-1" style="min-width: 200px">
+        <div class="text-muted"><i class="fas fa-gavel text-warning"></i> ${t("admin.activeAuctions") || "Active Auctions"}</div>
+        <div class="fs-2 fw-bold mt-2">112</div>
+      </div>
+    </div>
     <div class="tabs nav nav-tabs" id="adminTabs">${tabs.map((t) => `<button class="tab ${t.id === activeTab ? "active" : ""}" data-tab="${t.id}"><i class="fas ${t.icon}"></i> ${t.label}</button>`).join("")}</div>
     <div id="adminContent"></div>`;
 

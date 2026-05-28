@@ -4122,5 +4122,491 @@ tr.bid-highlight {
   -webkit-user-select: none;
 }
 
+/* ============================================================
+   ORDER TIMELINE
+   ============================================================ */
+.order-timeline {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  margin: var(--space-6) 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: step;
+}
+
+.order-timeline::before {
+  content: '';
+  position: absolute;
+  top: 18px;
+  left: 18px;
+  right: 18px;
+  height: 3px;
+  background: var(--border);
+  z-index: 0;
+}
+
+.order-timeline-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  text-align: center;
+}
+
+.order-timeline-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  font-weight: 700;
+  border: 3px solid var(--border);
+  background: var(--body-bg);
+  color: var(--text-muted);
+  transition: all 0.4s var(--ease-out);
+  margin-bottom: var(--space-2);
+}
+
+.order-timeline-step.completed .order-timeline-icon {
+  background: var(--success);
+  border-color: var(--success);
+  color: var(--text-inverse);
+}
+
+.order-timeline-step.active .order-timeline-icon {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: var(--text-inverse);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.order-timeline-label {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  font-weight: 500;
+  max-width: 90px;
+}
+
+.order-timeline-step.completed .order-timeline-label,
+.order-timeline-step.active .order-timeline-label {
+  color: var(--text);
+  font-weight: 600;
+}
+
+/* Vertical timeline for mobile */
+@media (max-width: 576px) {
+  .order-timeline {
+    flex-direction: column;
+    gap: 0;
+    align-items: flex-start;
+    padding-inline-start: 18px;
+  }
+
+  .order-timeline::before {
+    top: 0;
+    bottom: 0;
+    left: 36px;
+    right: auto;
+    width: 3px;
+    height: auto;
+  }
+
+  [dir="rtl"] .order-timeline::before {
+    left: auto;
+    right: 36px;
+  }
+
+  .order-timeline-step {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3) 0;
+  }
+
+  .order-timeline-icon {
+    margin-bottom: 0;
+    flex-shrink: 0;
+  }
+
+  .order-timeline-label {
+    max-width: none;
+    text-align: start;
+  }
+}
+
+/* ============================================================
+   CHECKOUT PROGRESS
+   ============================================================ */
+.checkout-progress {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-8);
+  padding: var(--space-4) 0;
+}
+
+.checkout-progress-step {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.checkout-progress-step.active {
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.checkout-progress-step.completed {
+  color: var(--success);
+}
+
+.checkout-progress-num {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-xs);
+  font-weight: 700;
+  border: 2px solid var(--border);
+  background: var(--body-bg);
+  color: var(--text-muted);
+  transition: all 0.3s var(--ease-out);
+}
+
+.checkout-progress-step.active .checkout-progress-num {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: var(--text-inverse);
+}
+
+.checkout-progress-step.completed .checkout-progress-num {
+  background: var(--success);
+  border-color: var(--success);
+  color: var(--text-inverse);
+}
+
+.checkout-progress-divider {
+  width: 32px;
+  height: 2px;
+  background: var(--border);
+  align-self: center;
+}
+
+.checkout-progress-step.completed + .checkout-progress-divider {
+  background: var(--success);
+}
+
+/* Checkout sticky sidebar */
+.checkout-sidebar {
+  position: sticky;
+  top: 100px;
+  align-self: start;
+}
+
+@media (max-width: 768px) {
+  .checkout-progress-step span:not(.checkout-progress-num) {
+    display: none;
+  }
+  .checkout-sidebar {
+    position: static;
+  }
+}
+
+/* ============================================================
+   MOBILE STICKY BARS (bid bar / add-to-cart bar)
+   ============================================================ */
+.mobile-sticky-bar {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: var(--card-bg);
+  border-top: 1px solid var(--border);
+  padding: var(--space-3) var(--space-4);
+  box-shadow: 0 -4px 20px oklch(0 0 0 / 0.1);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  gap: var(--space-3);
+  align-items: center;
+  animation: slideUp 0.3s var(--ease-out);
+}
+
+@media (max-width: 768px) {
+  .mobile-sticky-bar {
+    display: flex;
+  }
+}
+
+.mobile-sticky-bar .current-bid-mini {
+  flex: 1;
+  font-weight: 700;
+  font-size: var(--text-lg);
+  color: var(--primary);
+}
+
+.mobile-sticky-bar .current-bid-mini small {
+  display: block;
+  font-size: var(--text-xs);
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+/* ============================================================
+   STOCK INDICATOR
+   ============================================================ */
+.stock-indicator {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: var(--space-3) 0;
+  font-size: var(--text-sm);
+}
+
+.stock-bar {
+  flex: 1;
+  height: 6px;
+  border-radius: var(--radius-full);
+  background: var(--border);
+  overflow: hidden;
+  max-width: 120px;
+}
+
+.stock-bar-fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  transition: width 0.6s var(--ease-out);
+}
+
+.stock-bar-fill.stock-high { background: var(--success); }
+.stock-bar-fill.stock-medium { background: var(--warning); }
+.stock-bar-fill.stock-low { background: var(--danger); }
+
+.stock-label {
+  font-weight: 600;
+}
+
+.stock-label.stock-high { color: var(--success); }
+.stock-label.stock-medium { color: var(--warning); }
+.stock-label.stock-low { color: var(--danger); }
+
+/* ============================================================
+   IMAGE MAGNIFIER (hover zoom)
+   ============================================================ */
+.image-magnifier-wrap {
+  position: relative;
+  overflow: hidden;
+  cursor: zoom-in;
+}
+
+.image-magnifier-wrap img {
+  transition: none;
+}
+
+.image-magnifier-wrap:hover img {
+  transform: none;
+}
+
+.magnifier-lens {
+  display: none;
+  position: absolute;
+  width: 160px;
+  height: 160px;
+  border-radius: var(--radius-full);
+  border: 3px solid var(--primary);
+  box-shadow: 0 0 20px oklch(0 0 0 / 0.25);
+  pointer-events: none;
+  background-repeat: no-repeat;
+  z-index: 10;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.image-magnifier-wrap:hover .magnifier-lens {
+  display: block;
+  opacity: 1;
+}
+
+/* ============================================================
+   TRUST BADGES
+   ============================================================ */
+.trust-badges {
+  display: flex;
+  gap: var(--space-4);
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: var(--space-4) 0;
+  padding: var(--space-3) 0;
+  border-top: 1px solid var(--border);
+}
+
+.trust-badge {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.trust-badge i {
+  font-size: 1rem;
+  color: var(--success);
+}
+
+/* ============================================================
+   ADDRESS CARDS (checkout)
+   ============================================================ */
+.address-card {
+  border: 2px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  cursor: pointer;
+  transition: all 0.2s var(--ease-out);
+  background: var(--card-bg);
+}
+
+.address-card:hover {
+  border-color: var(--primary-light);
+  box-shadow: var(--shadow-sm);
+}
+
+.address-card.selected {
+  border-color: var(--primary);
+  background: oklch(from var(--primary) l c h / 0.05);
+  box-shadow: 0 0 0 3px oklch(from var(--primary) l c h / 0.15);
+}
+
+.address-card-check {
+  width: 22px;
+  height: 22px;
+  border-radius: var(--radius-full);
+  border: 2px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s var(--ease-out);
+  flex-shrink: 0;
+}
+
+.address-card.selected .address-card-check {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: var(--text-inverse);
+}
+
+/* ============================================================
+   COUNTDOWN CRITICAL (< 10 min)
+   ============================================================ */
+.countdown-unit.critical {
+  background: var(--danger);
+  border-color: var(--danger);
+  animation: pulse 0.6s infinite;
+}
+
+.countdown-unit.critical .countdown-num {
+  color: var(--text-inverse);
+}
+
+.countdown-unit.critical .countdown-lbl {
+  color: oklch(1 0 0 / 0.85);
+}
+
+/* ============================================================
+   SELLER INFO CARD
+   ============================================================ */
+.seller-info-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border-subtle);
+  margin: var(--space-4) 0;
+  transition: all 0.2s var(--ease-out);
+}
+
+.seller-info-card:hover {
+  border-color: var(--primary-light);
+  box-shadow: var(--shadow-sm);
+}
+
+.seller-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-full);
+  background: var(--primary-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: var(--primary);
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.seller-info-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.seller-info-name {
+  font-weight: 600;
+  color: var(--text);
+  font-size: var(--text-sm);
+}
+
+.seller-info-meta {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+}
+
+/* ============================================================
+   ORDER CONFIRMATION SUCCESS
+   ============================================================ */
+.order-success {
+  text-align: center;
+  padding: var(--space-12) var(--space-6);
+  animation: fadeIn 0.5s var(--ease-out);
+}
+
+.order-success-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: var(--radius-full);
+  background: var(--success-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto var(--space-6);
+  font-size: 2rem;
+  color: var(--success);
+  animation: bounceIn 0.6s var(--ease-bounce);
+}
+
+.order-success h2 {
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  margin-bottom: var(--space-3);
+}
+
+.order-success p {
+  color: var(--text-secondary);
+  max-width: 400px;
+  margin-inline: auto;
+}
+
 /* End-of-file marker */
 /* style.css — total lines maintained */

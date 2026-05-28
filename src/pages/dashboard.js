@@ -214,7 +214,14 @@ async function renderOrders(content) {
 
   async function loadOrders() {
     const list = document.getElementById("ordersList");
-    list.innerHTML = `<div class="loading p-4"><i class="fas fa-spinner spinner"></i><p>${t("common.loading")}</p></div>`;
+    list.innerHTML = `
+      <div class="p-2">
+        <div class="skeleton-text w-100 mb-2" style="height:48px"></div>
+        <div class="skeleton-text w-100 mb-2" style="height:48px"></div>
+        <div class="skeleton-text w-100 mb-2" style="height:48px"></div>
+        <div class="skeleton-text w-100 mb-2" style="height:48px"></div>
+      </div>
+    `;
     try {
       const data = await api.get("/orders", { page, pageSize });
       const orders = data.items || data.data || [];
@@ -320,7 +327,13 @@ async function renderMyProducts(content) {
         </div>
       </form>
     </div>
-    <div id="myProductsList"><i class="fas fa-spinner spinner"></i> ${t("common.loading")}</div>`;
+    <div id="myProductsList">
+      <div class="p-2">
+        <div class="skeleton-text w-100 mb-2" style="height:48px"></div>
+        <div class="skeleton-text w-100 mb-2" style="height:48px"></div>
+        <div class="skeleton-text w-100 mb-2" style="height:48px"></div>
+      </div>
+    </div>`;
 
   document.getElementById("showProductForm").addEventListener("click", () => {
     const form = document.getElementById("productFormContainer");
@@ -851,16 +864,16 @@ function renderProfile(content, user) {
       <div class="card-body">
       <form id="profileForm">
         <div class="form-group">
-          <label class="form-label">${t("auth.fullName")}</label>
-          <input type="text" class="form-input form-control" id="profileName" value="${escapeHtml(user?.fullName || "")}" required>
+          <label class="form-label" for="profileName">${t("auth.fullName")}</label>
+          <input type="text" class="form-input form-control" id="profileName" name="name" value="${escapeHtml(user?.fullName || "")}" required autocomplete="name">
         </div>
         <div class="form-group">
-          <label class="form-label">${t("auth.email")}</label>
-          <input type="email" class="form-input form-control" id="profileEmail" value="${escapeHtml(user?.email || "")}" required>
+          <label class="form-label" for="profileEmail">${t("auth.email")}</label>
+          <input type="email" class="form-input form-control" id="profileEmail" name="email" value="${escapeHtml(user?.email || "")}" required autocomplete="email">
         </div>
         <div class="form-group">
-          <label class="form-label">${t("auth.phone")}</label>
-          <input type="tel" class="form-input form-control" id="profilePhone" value="${escapeHtml(user?.phone || "")}">
+          <label class="form-label" for="profilePhone">${t("auth.phone")}</label>
+          <input type="tel" class="form-input form-control" id="profilePhone" name="phone" value="${escapeHtml(user?.phone || "")}" autocomplete="tel">
         </div>
         <div id="profileAlert"></div>
       <button type="submit" class="btn btn-primary" id="profileSubmit">${t("dash.updateProfile")}</button>

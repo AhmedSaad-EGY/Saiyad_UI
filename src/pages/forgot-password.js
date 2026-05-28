@@ -24,6 +24,10 @@ Alpine.data('forgotPwPage', () => ({
     return this.resendSeconds > 0 ? `${base} (${this.resendSeconds}s)` : base;
   },
 
+  get isValidEmail() {
+    return this.email.trim() && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.email.trim());
+  },
+
   startResendCountdown() {
     if (this.countdownInterval) clearInterval(this.countdownInterval);
     this.resendSeconds = 60;
@@ -186,7 +190,7 @@ export default function renderForgotPassword(container) {
                 <label class="form-label" for="forgotEmail">${t('auth.email')}</label>
                 <input type="email" class="form-input form-control" id="forgotEmail" name="email" x-model="email" placeholder="your@email.com" required autocomplete="email" inputmode="email">
               </div>
-              <button type="submit" class="btn btn-primary w-100 btn-lg" :disabled="loading">
+              <button type="submit" class="btn btn-primary w-100 btn-lg" :disabled="loading || !isValidEmail">
                 <i class="fas fa-spinner spinner" x-show="loading" x-cloak></i>
                 <span x-text="loading ? $t('auth.sendingResetLink') : $t('auth.sendResetLink')"></span>
               </button>

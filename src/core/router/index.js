@@ -128,6 +128,9 @@ export async function router(force = false) {
   // Cleanup previous route resources
   runRouteCleanups();
 
+  // Scroll to top
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
   // Allow re-render when route key is same but params changed
   const paramsChanged =
     JSON.stringify(currentParams) !== JSON.stringify(params);
