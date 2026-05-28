@@ -1210,14 +1210,18 @@ The Sayiad frontend demonstrates **solid foundational architecture** with Alpine
 
 ---
 
-### Finding B: 2 Unused `@keyframes` in `_components.css`
+### Finding B: 2 Unused `@keyframes` Removed from `_components.css`
 **Severity:** 🟢 Cleanup  
-**Action:** Pending removal
+**Action:** ✅ Removed
 
 | Keyframe | Line | Reason Unused |
 |----------|------|---------------|
 | `priceFlash` | 509 | Replaced by Animate.css `bounceIn` via `animate(el, 'bounceIn')` in Phase 2 of Animate.css migration; the `@keyframes` definition was overlooked during cleanup |
 | `shake` | 779 | Zero references in any source file (CSS class, inline style, or JS animation call). Animate.css CDN provides the same keyframe |
+
+Also removed the `.form-input.shake, .form-select.shake, .form-textarea.shake` selector that referenced `shake`.
+
+**Build:** ✅ 0 errors  **Review:** ✅ Clean
 
 **All other 12 keyframes** (urgentPulse, endingSoonPulse, iconBounce, heartBeat, float, drawerItemIn, drawerItemInRtl, confettiFall, dotPulse, luxuryShimmer, navWave, bidHighlight) are actively referenced.
 
@@ -1248,3 +1252,18 @@ The Sayiad frontend demonstrates **solid foundational architecture** with Alpine
 **Action:** No changes needed
 
 All 8 keyframes (`slideUp`, `slideDown`, `scaleIn`, `spin`, `pulse`, `ripple`, `skeleton-loading`, `contentFadeIn`) and all classes (`.animate-on-scroll`, `.skeleton` + 12 variants, `.content-fade`, `.transition-fade`, `.op-0`, `.op-100`) verified in active use via codebase-wide search. The Animate.css migration (Phases 1-4) correctly removed only what was replaced.
+
+---
+
+### Finding E: `_layout.css` — All Clean (No Unused Code)
+**Severity:** 🟢 Verified  
+**Action:** No changes needed
+
+| Keyframe | Line | Status | References |
+|----------|------|--------|------------|
+| `ping` | 709 | ✅ In use | `.notif-bell[data-count]:not([data-count="0"])::after` (line 706) |
+| `fishSwim` | 749 | ✅ In use | `.not-found-fish` (line 746) + duplicated in `errors.js` inline style (intentional fallback) |
+
+All classes verified against source references — every selector group is actively referenced. One minor finding: `.auth-page .card` padding at 480px breakpoint is inert (overridden by Bootstrap `:has()` selector in `_components.css`).
+
+**Minor finding (no action needed):** `.auth-page .card` padding override at `@media (max-width: 480px)` in `_layout.css` has zero effect because all auth cards now use Bootstrap sub-components — the `_components.css` rule `.card:has(.card-header)` sets `padding: 0`, always overriding it.

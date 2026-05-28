@@ -861,4 +861,75 @@ All classes (`.skeleton` + 12 variants, `.animate-on-scroll`, `.content-fade`, `
 
 ---
 
+---
+
+## 25. KEYFRAMES REMOVAL — priceFlash & shake DELETED FROM _components.css
+
+**Date**: May 28, 2026  
+**Action**: Removed 2 unused `@keyframes` definitions from `_components.css` as identified in the keyframe audit (Section 22).
+
+### Removed Keyframes
+
+| Keyframe | Line | Reason | Additional Removal |
+|----------|------|--------|-------------------|
+| `@keyframes priceFlash` | 509 | Replaced by Animate.css `bounceIn` in Phase 2 Animate.css migration — `@keyframes` definition was overlooked during initial cleanup | — |
+| `@keyframes shake` | 779 | Zero references in any source file; Animate.css CDN provides same keyframe | Also removed `.form-input.shake, .form-select.shake, .form-textarea.shake` selector (only reference to `shake` keyframe) |
+
+### Verification
+
+- Searched entire codebase for "priceFlash", "\\.shake" (CSS selector), and "'shake'\|\"shake\"" (JS string) — zero references in source files (only in MD documentation)
+- `npm run build` — ✅ 0 errors
+
+---
+
+## 26. LAYOUT CSS AUDIT — _layout.css VERIFIED CLEAN
+
+**Date**: May 28, 2026  
+**Action**: Audited `_layout.css` for unused keyframes, classes, and custom properties.
+
+### Findings: All Clean
+
+| Keyframe | Line | Status |
+|----------|------|--------|
+| `ping` | 709 | ✅ `.notif-bell[data-count]:not([data-count="0"])::after` |
+| `fishSwim` | 749 | ✅ `.not-found-fish` + duplicated in `errors.js` (intentional fallback) |
+
+All classes (`nav-actions`, `nav-toggles`, `footer-grid`, `footer-logo`, `footer-tagline`, `footer-social`, `footer-social-link`, `footer-heading`, `footer-links`, `footer-link`, `footer-bottom`, `breadcrumb`, `back-to-top`, `not-found-page`, `not-found-fish`) verified against HTML and JS references.
+
+### Minor Finding (No Action Taken)
+
+`.auth-page .card` padding at `@media (max-width: 480px)` is inert — all auth cards migrated to Bootstrap sub-components in Phase 4, and `_components.css` `.card:has(.card-header)` sets `padding: 0`, always overriding this. Too minor to warrant a change.
+
+---
+
+## 27. MDS DOCUMENTATION UPDATE + GIT PUSH
+
+**Date**: May 28, 2026  
+**Action**: Updated all MDs files with layout.css audit + keyframes removal findings, committed, and pushed to GitHub.
+
+### Files Updated
+
+| File | Changes |
+|------|---------|
+| **MASTER-REFERENCE.md** | Added 2 completed tasks (keyframes removal, layout.css audit); updated Immediate (Next) section to remove completed priceFlash/shake item |
+| **AUDIT_REPORT.md** | Finding B updated from "Pending removal" → "✅ Removed" with build verified; added Finding E (_layout.css audit — all clean) |
+| **CHAT_HISTORY.md** | Added sections 25-27 documenting all 3 actions |
+| **knowledge.md** | Added gotchas about layout.css audit and keyframes removal |
+
+### Git Push
+
+2 commits pushed to `origin/main`:
+
+| Commit | Message |
+|--------|---------|
+| `de39db6` | MDs documentation update with layout.css audit + keyframes removal findings |
+| `2ad4c8b` | Fix formatting in MASTER-REFERENCE.md immediate next items |
+
+### Push Verification
+
+- `git push origin main` — ✅ **Success**
+- Remote: `https://github.com/AhmedSaad-EGY/Saiyad_UI.git` → `main` updated
+
+---
+
 *End of chat history record. Update this file at the start of each session by appending new sections.*

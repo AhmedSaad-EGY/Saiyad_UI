@@ -317,6 +317,8 @@ MODERATOR_ROLES = [Auctioneer, Admin]                  # Review + Analytics
 - [x] **May 28**: **Keyframe audit — _components.css** — Found 2 unused keyframes (`priceFlash` — replaced by Animate.css `bounceIn` in Phase 2, `shake` — zero references, Animate.css provides same via CDN); 12 of 14 keyframes in active use | Build: ✅ 0 errors | Review: ✅
 - [x] **May 28**: **Bootstrap overrides audit — _bootstrap-overrides.css** — Found 7 non-existent `--bs-input-*` mappings (inert — Bootstrap 5.3 doesn't define them, sets Sass vars like `$input-bg` not `--bs-input-bg`); 28 valid but unused component vars (modals, tooltips, popovers, dropdowns, badges, alerts — none of these Bootstrap JS components are used in the project) | Build: ✅ 0 errors | Review: ✅
 - [x] **May 28**: **_animations.css full audit** — All 8 keyframes (`slideUp`, `slideDown`, `scaleIn`, `spin`, `pulse`, `ripple`, `skeleton-loading`, `contentFadeIn`) and all classes verified in active use — no stale animations remain | Build: ✅ 0 errors | Review: ✅
+- [x] **May 28**: **Remove 2 stale keyframes** — Removed `@keyframes priceFlash` and `@keyframes shake` (plus `.form-input.shake` selector) from `_components.css`; both were unused, Animate.css provides equivalents via CDN | Build: ✅ 0 errors | Review: ✅
+- [x] **May 28**: **Layout CSS audit — _layout.css** — Audited all keyframes (`ping`, `fishSwim`, `navWave`), classes (`nav-actions`, `nav-toggles`, `footer-*`, etc.), and custom properties. All 100% in use. Minor finding: `.auth-page .card` padding at 480px breakpoint is inert (overridden by Bootstrap `:has()` selector) — pending future cleanup. | Build: ✅ 0 errors | Review: ✅
 
 ---
 
@@ -388,7 +390,7 @@ MODERATOR_ROLES = [Auctioneer, Admin]                  # Review + Analytics
 > 📖 **Full future roadmap → see [`phase-spec.md`](./phase-spec.md#7-future-work-post-roles)**
 
 ### Immediate (Next)
-1. Remove 2 stale `@keyframes` (`priceFlash`, `shake`) and 7 non-existent `--bs-input-*` mappings from `_bootstrap-overrides.css`
+1. Remove 7 non-existent `--bs-input-*` mappings from `_bootstrap-overrides.css`
 2. Identify remaining pages for deeper Bootstrap migration (admin, cart, product-detail, auction-detail)
 
 ### Short-term
