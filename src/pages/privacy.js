@@ -30,8 +30,8 @@ export default async function renderPrivacy(container) {
         </div>
         <h1>${t('auth.privacyPolicy')}</h1>
         <p class="legal-hero-sub">${isAr
-          ? 'آخر تحديث: ٢٣ مايو ٢٠٢٦'
-          : 'Last updated: May 23, 2026'}</p>
+      ? 'آخر تحديث: ٢٣ مايو ٢٠٢٦'
+      : 'Last updated: May 23, 2026'}</p>
       </div>
 
       <div class="legal-toc card animate-on-scroll stagger-1">
@@ -53,8 +53,8 @@ export default async function renderPrivacy(container) {
             <h2>${isAr ? 'جمع المعلومات' : 'Information Collection'}</h2>
           </div>
           <p>${isAr
-            ? 'نقوم بجمع المعلومات التي تقدمها مباشرةً، مثل عند إنشاء حساب أو إدراج منتج أو التواصل معنا. يشمل ذلك اسمك وبريدك الإلكتروني ورقم هاتفك وموقعك.'
-            : 'We collect information you provide directly to us, such as when you create an account, list a product, or communicate with us. This includes your name, email, phone number, and location.'}</p>
+      ? 'نقوم بجمع المعلومات التي تقدمها مباشرةً، مثل عند إنشاء حساب أو إدراج منتج أو التواصل معنا. يشمل ذلك اسمك وبريدك الإلكتروني ورقم هاتفك وموقعك.'
+      : 'We collect information you provide directly to us, such as when you create an account, list a product, or communicate with us. This includes your name, email, phone number, and location.'}</p>
         </section>
 
         <section class="legal-section card animate-on-scroll stagger-3" id="priv-2">
@@ -63,8 +63,8 @@ export default async function renderPrivacy(container) {
             <h2>${isAr ? 'كيفية استخدام المعلومات' : 'How We Use Information'}</h2>
           </div>
           <p>${isAr
-            ? 'نستخدم معلوماتك لتسهيل المعاملات وتحسين خدماتنا وإرسال تحديثات مهمة تتعلق بحسابك أو عطاءاتك.'
-            : 'We use your information to facilitate transactions, improve our services, and send you important updates regarding your account or bids.'}</p>
+      ? 'نستخدم معلوماتك لتسهيل المعاملات وتحسين خدماتنا وإرسال تحديثات مهمة تتعلق بحسابك أو عطاءاتك.'
+      : 'We use your information to facilitate transactions, improve our services, and send you important updates regarding your account or bids.'}</p>
         </section>
 
         <section class="legal-section card animate-on-scroll stagger-4" id="priv-3">
@@ -73,8 +73,8 @@ export default async function renderPrivacy(container) {
             <h2>${isAr ? 'أمان البيانات' : 'Data Security'}</h2>
           </div>
           <p>${isAr
-            ? 'نطبق تدابير أمنية وفق معايير الصناعة لحماية معلوماتك الشخصية. ومع ذلك، لا توجد طريقة نقل عبر الإنترنت آمنة بنسبة 100%.'
-            : 'We implement industry-standard security measures to protect your personal information. However, no method of transmission over the Internet is 100% secure.'}</p>
+      ? 'نطبق تدابير أمنية وفق معايير الصناعة لحماية معلوماتك الشخصية. ومع ذلك، لا توجد طريقة نقل عبر الإنترنت آمنة بنسبة 100%.'
+      : 'We implement industry-standard security measures to protect your personal information. However, no method of transmission over the Internet is 100% secure.'}</p>
         </section>
 
         <section class="legal-section card animate-on-scroll stagger-5" id="priv-4">
@@ -83,8 +83,8 @@ export default async function renderPrivacy(container) {
             <h2>${isAr ? 'مشاركة الطرف الثالث' : 'Third-Party Sharing'}</h2>
           </div>
           <p>${isAr
-            ? 'لا نبيع بياناتك الشخصية. نشارك المعلومات الضرورية فقط لمعالجة المدفوعات أو الامتثال للالتزامات القانونية.'
-            : 'We do not sell your personal data. We only share information necessary to process payments or comply with legal obligations.'}</p>
+      ? 'لا نبيع بياناتك الشخصية. نشارك المعلومات الضرورية فقط لمعالجة المدفوعات أو الامتثال للالتزامات القانونية.'
+      : 'We do not sell your personal data. We only share information necessary to process payments or comply with legal obligations.'}</p>
         </section>
 
         <section class="legal-section card animate-on-scroll stagger-6" id="priv-5">
@@ -93,8 +93,8 @@ export default async function renderPrivacy(container) {
             <h2>${isAr ? 'حقوقك' : 'Your Rights'}</h2>
           </div>
           <p>${isAr
-            ? 'يحق لك الوصول إلى بياناتك وتصحيحها وحذفها في أي وقت. تواصل معنا عبر صفحة الدعم.'
-            : 'You have the right to access, correct, or delete your data at any time. Contact us through the support page.'}</p>
+      ? 'يحق لك الوصول إلى بياناتك وتصحيحها وحذفها في أي وقت. تواصل معنا عبر صفحة الدعم.'
+      : 'You have the right to access, correct, or delete your data at any time. Contact us through the support page.'}</p>
         </section>
 
         <section class="legal-section card animate-on-scroll stagger-7" id="priv-6">
@@ -103,8 +103,8 @@ export default async function renderPrivacy(container) {
             <h2>${isAr ? 'اتصل بنا' : 'Contact Us'}</h2>
           </div>
           <p>${isAr
-            ? 'إذا كانت لديك أسئلة حول سياسة الخصوصية هذه، يُرجى التواصل معنا على'
-            : 'If you have questions about this Privacy Policy, please contact us at'}
+      ? 'إذا كانت لديك أسئلة حول سياسة الخصوصية هذه، يُرجى التواصل معنا على'
+      : 'If you have questions about this Privacy Policy, please contact us at'}
             <a href="mailto:support@sayiad.com" class="text-primary">support@sayiad.com</a>.</p>
         </section>
       </div>
@@ -141,4 +141,4 @@ export default async function renderPrivacy(container) {
 
   document.querySelectorAll(".legal-section").forEach(sec => observer.observe(sec));
 }
-}
+

@@ -9,6 +9,7 @@ Alpine.data('shippingPage', () => ({
   loading: true,
   showForm: false,
   saving: false,
+  editingId: null,
   form: { fullName: '', phone: '', city: '', addressLine: '', postalCode: '' },
 
   async init() {
@@ -28,25 +29,48 @@ Alpine.data('shippingPage', () => ({
     }
   },
 
+  editAddress(address) {
+    this.editingId = address.id;
+    this.form = {
+      fullName: address.fullName,
+      phone: address.phone,
+      city: address.city,
+      addressLine: address.addressLine,
+      postalCode: address.postalCode || ''
+    };
+    this.showForm = true;
+  },
+
   async submitForm() {
     this.saving = true;
+    const payload = {
+      fullName: this.form.fullName.trim(),
+      phone: this.form.phone.trim(),
+      city: this.form.city.trim(),
+      addressLine: this.form.addressLine.trim(),
+      postalCode: this.form.postalCode.trim() || undefined,
+    };
     try {
-      await api.post('/shippingaddresses', {
-        fullName: this.form.fullName.trim(),
-        phone: this.form.phone.trim(),
-        city: this.form.city.trim(),
-        addressLine: this.form.addressLine.trim(),
-        postalCode: this.form.postalCode.trim() || undefined,
-      });
-      showToast(t('shipping.saved'), 'success');
-      this.form = { fullName: '', phone: '', city: '', addressLine: '', postalCode: '' };
-      this.showForm = false;
+      if (this.editingId) {
+        await api.put(`/shippingaddresses/${this.editingId}`, payload);
+        showToast(t('shipping.updated') || 'Address updated successfully', 'success');
+      } else {
+        await api.post('/shippingaddresses', payload);
+        showToast(t('shipping.saved'), 'success');
+      }
+      this.cancelForm();
       await this.loadAddresses();
     } catch (err) {
       showToast(err.message || t('shipping.error'), 'error');
     } finally {
       this.saving = false;
     }
+  },
+
+  cancelForm() {
+    this.form = { fullName: '', phone: '', city: '', addressLine: '', postalCode: '' };
+    this.editingId = null;
+    this.showForm = false;
   },
 
   async deleteAddress(id) {
@@ -78,7 +102,7 @@ export default async function renderShipping(container) {
 
       <div class="card" x-show="showForm" style="max-width:480px;margin-top:16px" x-transition:enter="transition-fade" x-transition:enter-start="op-0" x-transition:enter-end="op-100" x-cloak>
         <div class="card-header">
-          <h3 class="mb-0">${t('shipping.addNew')}</h3>
+          <h3 class="mb-0" x-text="editingId ? '${t('shipping.editAddress') || 'Edit Address'}' : '${t('shipping.addNew')}'"></h3>
         </div>
         <div class="card-body">
           <form @submit.prevent="submitForm" novalidate>
@@ -91,7 +115,7 @@ export default async function renderShipping(container) {
               <button type="submit" class="btn btn-primary" :disabled="saving">
                 <i class="fas" :class="saving ? 'fa-spinner spinner' : 'fa-save'"></i> <span x-text="saving ? '${t('shipping.saving')}' : '${t('shipping.save')}'"></span>
               </button>
-              <button type="button" class="btn btn-ghost" @click="showForm = false">${t('common.cancel') || 'Cancel'}</button>
+              <button type="button" class="btn btn-ghost" @click="cancelForm()">${t('common.cancel') || 'Cancel'}</button>
             </div>
           </form>
         </div>
@@ -120,7 +144,10 @@ export default async function renderShipping(container) {
                   <span style="color:var(--text-secondary);font-size:0.88rem" x-text="a.addressLine + ', ' + a.city + (a.postalCode ? ', ' + a.postalCode : '')"></span><br>
                   <span style="color:var(--text-muted);font-size:0.82rem" x-text="a.phone"></span>
                 </div>
-                <button class="btn btn-danger btn-sm" @click="deleteAddress(a.id)">${t('shipping.delete')}</button>
+                <div class="d-flex gap-2">
+                  <button class="btn btn-outline btn-sm" @click="editAddress(a)"><i class="fas fa-edit"></i> ${t('common.edit') || 'Edit'}</button>
+                  <button class="btn btn-danger btn-sm" @click="deleteAddress(a.id)">${t('shipping.delete')}</button>
+                </div>
               </div>
             </template>
           </div>
