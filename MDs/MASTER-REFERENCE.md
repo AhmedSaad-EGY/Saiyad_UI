@@ -394,7 +394,7 @@ MODERATOR_ROLES = [Auctioneer, Admin]                  # Review + Analytics
 ### Short-term
 3. Standardize Bootstrap usage patterns across all 25 page modules
 4. Replace remaining custom `slideUp` usages with Animate.css — app.js banners (offline/online dismissal), product-detail.js review entries, app.js SW update banner
-5. Fix duplicate `@keyframes slideDown` in app.js (`translateY(-100%)`) that overrides `_animations.css` definition (`translateY(-12px)`) | Build: ✅ | Review: ✅
+5. Fix duplicate `@keyframes slideDown` in app.js (`translateY(-100%)`) that overrides `_animations.css` definition (`translateY(-12px)`)
 
 ---
 
