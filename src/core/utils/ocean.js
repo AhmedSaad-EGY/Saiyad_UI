@@ -25,7 +25,7 @@
       document.body.prepend(canvas);
 
       const ctx = canvas.getContext("2d");
-      let W, H, fish, bubbles, kelp, rafId, theme, time = 0, visibility = true;
+      let W, H, fish, bubbles, kelp, visibility = true;
 
       function isDark() {
         return document.documentElement.getAttribute("data-theme") === "dark";
@@ -58,7 +58,7 @@
         this.freq = 0.3 + Math.random() * 0.4;
       }
 
-      Fish.prototype.draw = function (ctx, t) {
+      Fish.prototype.draw = function (_ctx, t) {
         const wag = Math.sin(t * 2.5 + this.wagPhase) * 0.2;
         const bob = Math.sin(t * this.freq + this.phase) * 0.4;
         const x = this.x;
@@ -66,49 +66,49 @@
         const s = this.size;
         const dir = this.dir;
 
-        ctx.save();
-        ctx.translate(x, y);
-        ctx.scale(dir, 1);
+        _ctx.save();
+        _ctx.translate(x, y);
+        _ctx.scale(dir, 1);
 
-        ctx.fillStyle = "rgba(0,0,0,0.04)";
-        ctx.beginPath();
-        ctx.ellipse(2, s * 0.6, s * 0.5, s * 0.15, 0, 0, 6.28);
-        ctx.fill();
+        _ctx.fillStyle = "rgba(0,0,0,0.04)";
+        _ctx.beginPath();
+        _ctx.ellipse(2, s * 0.6, s * 0.5, s * 0.15, 0, 0, 6.28);
+        _ctx.fill();
 
-        ctx.fillStyle = this.colorBody;
-        ctx.beginPath();
-        ctx.ellipse(0, 0, s * 0.5, s * 0.2, 0, 0, 6.28);
-        ctx.fill();
+        _ctx.fillStyle = this.colorBody;
+        _ctx.beginPath();
+        _ctx.ellipse(0, 0, s * 0.5, s * 0.2, 0, 0, 6.28);
+        _ctx.fill();
 
-        ctx.fillStyle = this.colorFin;
-        ctx.beginPath();
-        ctx.moveTo(-s * 0.45, 0);
-        ctx.lineTo(-s * 0.8, -s * 0.25 + wag * s * 0.3);
-        ctx.lineTo(-s * 0.8, s * 0.25 - wag * s * 0.3);
-        ctx.closePath();
-        ctx.fill();
+        _ctx.fillStyle = this.colorFin;
+        _ctx.beginPath();
+        _ctx.moveTo(-s * 0.45, 0);
+        _ctx.lineTo(-s * 0.8, -s * 0.25 + wag * s * 0.3);
+        _ctx.lineTo(-s * 0.8, s * 0.25 - wag * s * 0.3);
+        _ctx.closePath();
+        _ctx.fill();
 
-        ctx.fillStyle = this.colorFin;
-        ctx.beginPath();
-        ctx.moveTo(s * 0.05, -s * 0.18);
-        ctx.quadraticCurveTo(s * 0.1, -s * 0.45, -s * 0.15, -s * 0.25);
-        ctx.fill();
+        _ctx.fillStyle = this.colorFin;
+        _ctx.beginPath();
+        _ctx.moveTo(s * 0.05, -s * 0.18);
+        _ctx.quadraticCurveTo(s * 0.1, -s * 0.45, -s * 0.15, -s * 0.25);
+        _ctx.fill();
 
-        ctx.beginPath();
-        ctx.moveTo(s * 0.1, s * 0.1);
-        ctx.quadraticCurveTo(s * 0.25, s * 0.3, 0, s * 0.2);
-        ctx.fill();
+        _ctx.beginPath();
+        _ctx.moveTo(s * 0.1, s * 0.1);
+        _ctx.quadraticCurveTo(s * 0.25, s * 0.3, 0, s * 0.2);
+        _ctx.fill();
 
-        ctx.fillStyle = "#111";
-        ctx.beginPath();
-        ctx.arc(s * 0.3, -s * 0.04, s * 0.06, 0, 6.28);
-        ctx.fill();
-        ctx.fillStyle = "#fff";
-        ctx.beginPath();
-        ctx.arc(s * 0.32, -s * 0.06, s * 0.025, 0, 6.28);
-        ctx.fill();
+        _ctx.fillStyle = "#111";
+        _ctx.beginPath();
+        _ctx.arc(s * 0.3, -s * 0.04, s * 0.06, 0, 6.28);
+        _ctx.fill();
+        _ctx.fillStyle = "#fff";
+        _ctx.beginPath();
+        _ctx.arc(s * 0.32, -s * 0.06, s * 0.025, 0, 6.28);
+        _ctx.fill();
 
-        ctx.restore();
+        _ctx.restore();
       };
 
       function initFish() {
@@ -183,9 +183,8 @@
       }
 
       function draw() {
-        if (!visibility) { rafId = requestAnimationFrame(draw); return; }
+        if (!visibility) { requestAnimationFrame(draw); return; }
         const t = performance.now() / 1000;
-        time = t;
         const c = getColors();
 
         const grad = ctx.createLinearGradient(0, 0, 0, H);
@@ -254,7 +253,6 @@
         }
 
         for (const k of kelp) {
-          const segH = k.h / k.segments;
           ctx.strokeStyle = c.kelp;
           ctx.lineWidth = 2.5;
           ctx.lineCap = "round";
@@ -284,7 +282,7 @@
           ctx.fill();
         }
 
-        rafId = requestAnimationFrame(draw);
+        requestAnimationFrame(draw);
       }
 
       document.addEventListener("visibilitychange", () => {
@@ -308,7 +306,7 @@
       );
       resize();
       draw();
-    } catch (e) {
+    } catch {
       /* ocean background failed gracefully */
     }
   }

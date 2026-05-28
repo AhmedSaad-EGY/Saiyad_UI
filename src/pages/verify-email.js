@@ -1,6 +1,6 @@
 import { t } from '../core/i18n/index.js';
 import { api } from '../core/api/client.js';
-import { navigate } from '../core/router/index.js';
+import { navigate, registerRouteCleanup } from '../core/router/index.js';
 import { escapeHtml } from '../core/utils/dom.js';
 
 export default function renderVerifyEmail(container) {
@@ -32,7 +32,8 @@ export default function renderVerifyEmail(container) {
       sessionStorage.removeItem("pendingLoginEmail");
 
       // Redirect to login (auto-login with password removed for security)
-      setTimeout(() => navigate("login"), 2000);
+      const timer = setTimeout(() => navigate("login"), 2000);
+      registerRouteCleanup(() => clearTimeout(timer));
     })
     .catch((err) => {
       container.innerHTML = `

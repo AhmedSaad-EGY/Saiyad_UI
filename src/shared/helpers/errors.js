@@ -1,5 +1,5 @@
 import { showToast } from '../../core/utils/ui.js';
-import { bus, on } from '../../core/events/bus.js';
+import { on } from '../../core/events/bus.js';
 import { t } from '../../core/i18n/index.js';
 import { escapeHtml } from '../../core/utils/dom.js';
 
@@ -11,7 +11,7 @@ export function normalizeApiError(err) {
 
   if (err.data?.errors) {
     const details = Object.values(err.data.errors).flat().join('; ');
-    if (details) message += ': ' + details;
+    if (details) message += `: ${  details}`;
   }
 
   return { message, status, data: err.data };
@@ -34,7 +34,7 @@ export function isServerError(err) {
 }
 
 export function handleApiError(err) {
-  const { message, status } = normalizeApiError(err);
+  const { message } = normalizeApiError(err);
 
   if (isNetworkError(err) || isAuthError(err)) return;
   if (isForbidden(err)) { showToast(t('common.error'), 'error'); return; }

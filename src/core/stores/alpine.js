@@ -1,7 +1,7 @@
 import Alpine from 'alpinejs';
 import { getUser, isAuthenticated, getRoleFromToken } from '../auth/index.js';
 import { api } from '../api/client.js';
-import { bus, on } from '../events/bus.js';
+import { on } from '../events/bus.js';
 import { t } from '../i18n/index.js';
 import { formatPrice, formatDate } from '../utils/format.js';
 import { showToast } from '../utils/ui.js';

@@ -1,5 +1,5 @@
 import { t } from '../core/i18n/index.js';
-import { navigate } from '../core/router/index.js';
+import { navigate, registerRouteCleanup } from '../core/router/index.js';
 import { showLoading } from '../core/utils/dom.js';
 import { getPasswordStrength } from '../core/utils/validation.js';
 import { api } from '../core/api/client.js';
@@ -59,7 +59,8 @@ Alpine.data('resetPwForm', () => ({
         confirmPassword: this.confirmPassword,
       });
       this.success = true;
-      setTimeout(() => navigate('login'), 3000);
+      const timer = setTimeout(() => navigate('login'), 3000);
+      try { registerRouteCleanup(() => clearTimeout(timer)); } catch { }
     } catch (err) {
       this.error = err.message;
     } finally {
@@ -79,7 +80,7 @@ export default function renderResetPassword(container) {
 
   showLoading(container, 'form');
 
-  setTimeout(() => {
+  const renderTimer = setTimeout(() => {
     container.innerHTML = `
       <div x-data="resetPwForm" class="auth-page">
         <div class="card">
@@ -121,4 +122,5 @@ export default function renderResetPassword(container) {
         </div>
       </div>`;
   }, 300);
+  registerRouteCleanup(() => clearTimeout(renderTimer));
 }

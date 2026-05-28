@@ -1,9 +1,9 @@
 import Alpine from 'alpinejs';
 import { t } from '../core/i18n/index.js';
 import { api } from '../core/api/client.js';
-import { isAuthenticated, getUser, hasAnyRole, hasRole } from '../core/auth/index.js';
+import { isAuthenticated, hasAnyRole, hasRole } from '../core/auth/index.js';
 import { ROLES, SELLER_ROLES } from '../shared/constants/roles.js';
-import { escapeHtml, renderEmptyState, progressiveImg, observeAnimations, initPullToRefresh, activateProgressiveImages } from '../core/utils/dom.js';
+import { escapeHtml, observeAnimations, initPullToRefresh } from '../core/utils/dom.js';
 import { formatPrice, statusClass, tStatus } from '../core/utils/format.js';
 import { renderRecentlyViewed } from '../core/utils/ui.js';
 
@@ -67,7 +67,7 @@ Alpine.data('homePage', () => ({
     const hours = Math.floor((remaining % 86400) / 3600);
     const mins = Math.floor((remaining % 3600) / 60);
     const urgent = remaining > 0 && remaining <= 3600;
-    const timeStr = days > 0 ? days + 'd ' + hours + 'h' : hours + 'h ' + mins + 'm';
+    const timeStr = days > 0 ? `${days  }d ${  hours  }h` : `${hours  }h ${  mins  }m`;
     return { timeStr, urgent };
   },
 
@@ -215,49 +215,4 @@ export default async function renderHome(container) {
       <div x-show="!loading" x-html="recentlyViewedHtml()" id="recentlyViewed"></div>
     </div>
   `;
-}
-export function renderAuctionCards(container, auctions) {
-  if (!auctions?.length) {
-    renderEmptyState(container, {
-      icon: "fa-gavel",
-      title: t("home.noAuctions"),
-    });
-    return;
-  }
-  container.innerHTML = auctions
-    .map((a, i) => {
-      const now = new Date();
-      const end = new Date(a.endTime);
-      const remaining = Math.max(0, Math.floor((end - now) / 1000));
-      const days = Math.floor(remaining / 86400);
-      const hours = Math.floor((remaining % 86400) / 3600);
-      const mins = Math.floor((remaining % 3600) / 60);
-      const urgent = remaining > 0 && remaining <= 3600;
-      const timeStr = days > 0 ? `${days}d ${hours}h` : `${hours}h ${mins}m`;
-      const title = a.productTitle || "Auction Item";
-      const price = formatPrice(a.currentHighestBid || a.startingPrice);
-      const label = `${title} - ${price}`;
-      return `
-      <a href="#/auction-detail?id=${a.id}" class="product-card card animate-on-scroll stagger-${Math.min(i + 1, 8)}${urgent ? " auction-urgent" : ""}" aria-label="${escapeHtml(label)}">
-        <div class="product-card-img">
-          ${a.productImageUrl ? progressiveImg(a.productImageUrl, a.productTitle || "Auction", "") : '<i class="fas fa-gavel" aria-hidden="true"></i>'}
-          <button class="btn btn-sm btn-primary quick-view-btn" data-quickview-id="${a.id}" data-quickview-title="${escapeHtml(a.productTitle || "Auction Item")}" data-quickview-price="${a.currentHighestBid || a.startingPrice}" data-quickview-image="${a.productImageUrl || ""}" data-quickview-desc=""><i class="fas fa-eye"></i> Quick View</button>
-        </div>
-        <div class="product-card-body">
-          <div class="product-card-title">${escapeHtml(title)}</div>
-          <div class="current-bid">${price}</div>
-          <div class="product-card-meta">
-            <span><i class="fas fa-hourglass-half" aria-hidden="true"></i> ${timeStr} ${t("common.endsIn")} ${urgent ? `<span class="ending-soon-badge">${t("auction.endingSoon")}</span>` : ""}</span>
-            <span class="status ${statusClass(a.status)}">${tStatus(a.status, "auction")}</span>
-          </div>
-        </div>
-        <div class="product-card-footer">
-          <small>${t("common.start")}: ${formatPrice(a.startingPrice)}</small>
-          <small>${a.bidCount || 0} ${t("common.bids")}</small>
-        </div>
-      </a>
-    `;
-    })
-    .join("");
-  activateProgressiveImages(container);
 }

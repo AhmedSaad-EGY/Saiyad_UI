@@ -2,7 +2,7 @@ import Alpine from 'alpinejs';
 import { t } from '../core/i18n/index.js';
 import { api } from '../core/api/client.js';
 import { requireAuth, getUser, hasAnyRole, hasRole, updateNavbar, updateCartBadge, updateNotifBadge } from '../core/auth/index.js';
-import { navigate, registerRouteCleanup } from '../core/router/index.js';
+import { registerRouteCleanup } from '../core/router/index.js';
 import { $$, showLoading, renderEmptyState, escapeHtml, observeAnimations } from '../core/utils/dom.js';
 import { manualPaginationHtml, wirePagination } from '../shared/components/pagination.js';
 import { validateForm, getPasswordStrength, clearFieldError } from '../core/utils/validation.js';
@@ -38,7 +38,7 @@ Alpine.data('dashboardPage', () => ({
   ensureTabLoaded(tabId) {
     if (this.loadedTabs.has(tabId)) return;
     this.loadedTabs.add(tabId);
-    const content = document.getElementById('dashTab_' + tabId);
+    const content = document.getElementById(`dashTab_${  tabId}`);
     if (!content) return;
     const user = getUser();
     const params = new URLSearchParams(location.hash.split('?')[1] || '');
@@ -66,9 +66,6 @@ Alpine.data('dashboardPage', () => ({
 export default async function renderDashboard(container, route, params) {
   if (!(await requireAuth())) return;
 
-  const user = getUser();
-  const tab = params.tab || 'overview';
-
   const isECommerceRole = hasAnyRole(...(ECOMMERCE_ROLES));
   const isSellerRole = hasAnyRole(...(SELLER_ROLES));
 
@@ -92,7 +89,7 @@ export default async function renderDashboard(container, route, params) {
         <div class="col-md-3">
           <div class="dashboard-sidebar">
             ${tabs.map(tabItem => `
-              <a href="#/dashboard${tabItem.id === 'overview' ? '' : '?tab=' + tabItem.id}"
+              <a href="#/dashboard${tabItem.id === 'overview' ? '' : `?tab=${  tabItem.id}`}"
                  class="dash-link"
                  :class="{ active: activeTab === '${tabItem.id}' }"
                  @click.prevent="switchTab('${tabItem.id}')">
@@ -116,7 +113,7 @@ export default async function renderDashboard(container, route, params) {
       </div>
       <div class="dash-bottom-bar">
         ${tabs.map(tabItem => `
-          <a href="#/dashboard${tabItem.id === 'overview' ? '' : '?tab=' + tabItem.id}"
+          <a href="#/dashboard${tabItem.id === 'overview' ? '' : `?tab=${  tabItem.id}`}"
              class="dash-bottom-link"
              :class="{ active: activeTab === '${tabItem.id}' }"
              @click.prevent="switchTab('${tabItem.id}')"
@@ -629,10 +626,10 @@ function showAuctionModal(productId, productTitle) {
     const select = document.getElementById("auctionProductSelect");
     api.get("/products", { IsAuctioned: false, PageSize: 200 }).then(data => {
       const items = data.items || data.data || [];
-      select.innerHTML = '<option value="">-- ' + (t("common.select") || "Select") + ' --</option>'
-        + items.map(p => '<option value="' + p.id + '">' + escapeHtml(p.title) + ' - ' + formatPrice(p.price) + '</option>').join("");
+      select.innerHTML = `<option value="">-- ${  t("common.select") || "Select"  } --</option>${
+         items.map(p => `<option value="${  p.id  }">${  escapeHtml(p.title)  } - ${  formatPrice(p.price)  }</option>`).join("")}`;
     }).catch(() => {
-      select.innerHTML = '<option value="">' + (t("common.error") || "Error") + '</option>';
+      select.innerHTML = `<option value="">${  t("common.error") || "Error"  }</option>`;
     });
   }
 
@@ -668,7 +665,7 @@ function showAuctionModal(productId, productTitle) {
         reservePrice: parseFloat(document.getElementById("auctionReservePrice").value) || 0,
         minimumIncrement: parseFloat(document.getElementById("auctionMinIncrement").value) || 1,
       });
-      showToast(t("auctions.title") + " started!", "success");
+      showToast(`${t("auctions.title")  } started!`, "success");
       close();
       const content = document.getElementById("dashContent");
       if (content) renderMyProducts(content);
@@ -893,7 +890,7 @@ function renderProfile(content, user) {
         {
           element: nameInput,
           required: true,
-          messages: { required: t("auth.fullName") + " is required." },
+          messages: { required: `${t("auth.fullName")  } is required.` },
         },
         { element: emailInput, required: true, email: true },
         { element: phoneInput, phone: true },
@@ -966,7 +963,7 @@ function renderChangePassword(content) {
       return;
     }
     const result = getPasswordStrength(pw);
-    bar.className = "password-strength-bar " + result.cls;
+    bar.className = `password-strength-bar ${  result.cls}`;
     txt.textContent = result.label;
     txt.style.color = getComputedStyle(bar).backgroundColor;
   });

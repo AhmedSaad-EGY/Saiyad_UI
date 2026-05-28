@@ -1,6 +1,6 @@
 const CACHE = "sayiad-__SW_VERSION__";
 
-self.addEventListener("install", (event) => {
+self.addEventListener("install", () => {
   self.skipWaiting();
 });
 

@@ -1,7 +1,7 @@
 import { t } from '../core/i18n/index.js';
 import { api } from '../core/api/client.js';
 import { requireAuth, getUser } from '../core/auth/index.js';
-import { escapeHtml, showLoading, observeAnimations } from '../core/utils/dom.js';
+import { escapeHtml, observeAnimations } from '../core/utils/dom.js';
 import { formatPrice } from '../core/utils/format.js';
 import { showToast } from '../core/utils/ui.js';
 import { getRoleSubscriptionInfo, getPlanIcon, isPopularPlan } from '../features/subscriptions/helpers.js';
@@ -84,7 +84,7 @@ export default async function renderSubscriptions(container) {
                   ? `<span class="fs-1 fw-bold">${formatPrice(p.price)}</span>`
                   : `<span class="fs-1 fw-bold">${t("subscriptions.free")}</span>`
                 }
-                <span class="text-muted">${p.billingCycle === 'Yearly' ? ' ' + t('subscriptions.perYear') : p.billingCycle === 'Monthly' ? ' ' + t('subscriptions.perMonth') : ''}</span>
+                <span class="text-muted">${p.billingCycle === 'Yearly' ? ` ${  t('subscriptions.perYear')}` : p.billingCycle === 'Monthly' ? ` ${  t('subscriptions.perMonth')}` : ''}</span>
               </div>
               <ul class="list-unstyled mb-3" style="flex:1">
                 ${(p.features || []).map(f => `

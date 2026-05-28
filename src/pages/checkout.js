@@ -130,7 +130,7 @@ Alpine.data('checkoutPage', () => ({
       }
       document.dispatchEvent(new CustomEvent('cart-updated'));
       triggerConfetti();
-      navigate('order-detail?id=' + order.id);
+      navigate(`order-detail?id=${  order.id}`);
     } catch (err) {
       this.alert = `<div class="alert alert-error">${escapeHtml(err.message || t('cart.orderError'))}</div>`;
     } finally {

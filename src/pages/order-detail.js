@@ -1,7 +1,7 @@
 import { t } from '../core/i18n/index.js';
 import { api } from '../core/api/client.js';
 import { requireAuth } from '../core/auth/index.js';
-import { navigate } from '../core/router/index.js';
+import { navigate, registerRouteCleanup } from '../core/router/index.js';
 import { showLoading, escapeHtml } from '../core/utils/dom.js';
 import { formatPrice, formatDate, statusClass, tStatus } from '../core/utils/format.js';
 import { showConfirm } from '../core/utils/ui.js';
@@ -75,7 +75,8 @@ export default async function renderOrderDetail(container) {
           try {
             await api.put(`/orders/${orderId}/cancel`);
             document.getElementById("cancelOrderResult").innerHTML = `<div class="alert alert-success">${t("order.cancelled")}</div>`;
-            setTimeout(() => navigate(`order-detail?id=${orderId}`), 1500);
+            const timer = setTimeout(() => navigate(`order-detail?id=${orderId}`), 1500);
+            registerRouteCleanup(() => clearTimeout(timer));
           } catch (err) {
             document.getElementById("cancelOrderResult").innerHTML = `<div class="alert alert-error">${err.message || t("order.cancelError")}</div>`;
             cancelBtn.disabled = false;

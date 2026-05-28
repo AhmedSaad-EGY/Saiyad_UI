@@ -82,7 +82,7 @@ async function request(endpoint, options = {}) {
       `Request failed (${res.status})`;
     if (data?.errors) {
       const details = Object.values(data.errors).flat().join("; ");
-      if (details) msg += ": " + details;
+      if (details) msg += `: ${  details}`;
     }
     const err = new Error(msg);
     err.status = res.status;

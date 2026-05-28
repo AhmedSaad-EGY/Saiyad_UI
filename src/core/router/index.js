@@ -114,7 +114,7 @@ export async function router(force = false) {
       const si = document.getElementById('notFoundSearch');
       const sb = document.getElementById('notFoundSearchBtn');
       if (si && sb) {
-        const go = () => { const q = si.value.trim(); if (q) window.location.hash = '#/products?search=' + encodeURIComponent(q); };
+        const go = () => { const q = si.value.trim(); if (q) window.location.hash = `#/products?search=${  encodeURIComponent(q)}`; };
         sb.addEventListener('click', go);
         si.addEventListener('keydown', e => { if (e.key === 'Enter') go(); });
       }
@@ -176,7 +176,7 @@ export async function router(force = false) {
     updateNavbar();
 
     const titleKey = routeTitleKeys[routeKey];
-    document.title = (titleKey ? t(titleKey) : "Sayiad") + " — Sayiad";
+    document.title = `${titleKey ? t(titleKey) : "Sayiad"  } — Sayiad`;
 
     app.setAttribute("tabindex", "-1");
     app.focus({ preventScroll: true });

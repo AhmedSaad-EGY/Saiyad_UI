@@ -1,5 +1,5 @@
 import { t, getCurrentLang } from '../i18n/index.js';
-import { formatPrice, renderStars, tStatus, statusClass } from './format.js';
+import { formatPrice, tStatus, statusClass } from './format.js';
 import { escapeHtml, renderEmptyState, observeAnimations, animate } from './dom.js';
 
 export function showToast(msg, type = "info") {
@@ -159,9 +159,9 @@ export function triggerConfetti() {
   for (let i = 0; i < count; i++) {
     const p = document.createElement("div");
     p.className = "confetti-particle";
-    p.style.left = Math.random() * 100 + "vw";
+    p.style.left = `${Math.random() * 100  }vw`;
     p.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-    p.style.animationDuration = Math.random() * 2 + 3 + "s";
+    p.style.animationDuration = `${Math.random() * 2 + 3  }s`;
     p.style.opacity = (Math.random() * 0.5 + 0.5).toString();
     document.body.appendChild(p);
     setTimeout(() => p.remove(), 5000);

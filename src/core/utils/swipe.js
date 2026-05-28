@@ -177,7 +177,6 @@ export function createSwipeReveal({
       if (!s) { row.style.transform = ""; return; }
 
       const isRtl = document.dir === "rtl";
-      const absDist = Math.abs(distance);
       const isLeftSwipe = isRtl ? distance > 0 : distance < 0;
 
       if (!isLeftSwipe) {

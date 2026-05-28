@@ -595,19 +595,19 @@ export default async function renderAdmin(container) {
           ];
           const formHtml = fields.map(f =>
             f.type === "checkbox"
-              ? '<label class="d-flex align-items-center gap-2 mb-2"><input type="checkbox" id="ef-' + f.key + '" ' + (f.value === "true" ? "checked" : "") + '> ' + f.label + '</label>'
-              : '<div class="mb-2"><label class="d-block small mb-0">' + f.label + '</label><input type="' + f.type + '" id="ef-' + f.key + '" class="form-control" value="' + escapeHtml(f.value) + '"></div>'
+              ? `<label class="d-flex align-items-center gap-2 mb-2"><input type="checkbox" id="ef-${  f.key  }" ${  f.value === "true" ? "checked" : ""  }> ${  f.label  }</label>`
+              : `<div class="mb-2"><label class="d-block small mb-0">${  f.label  }</label><input type="${  f.type  }" id="ef-${  f.key  }" class="form-control" value="${  escapeHtml(f.value)  }"></div>`
           ).join("");
 
           showFormModal("Edit Plan", formHtml, async function() {
             const body = {};
             fields.forEach(function(f) {
-              if (f.key === "isActive") body[f.key] = document.getElementById("ef-" + f.key).checked;
-              else if (f.type === "number") body[f.key] = parseFloat(document.getElementById("ef-" + f.key).value) || 0;
-              else body[f.key] = document.getElementById("ef-" + f.key).value;
+              if (f.key === "isActive") body[f.key] = document.getElementById(`ef-${  f.key}`).checked;
+              else if (f.type === "number") body[f.key] = parseFloat(document.getElementById(`ef-${  f.key}`).value) || 0;
+              else body[f.key] = document.getElementById(`ef-${  f.key}`).value;
             });
             try {
-              await api.put("/subscriptionplans/" + p.id, body);
+              await api.put(`/subscriptionplans/${  p.id}`, body);
               showToast("Plan updated", "success");
               loadPlans();
             } catch (err) { showToast(err.message, "error"); }
@@ -617,10 +617,10 @@ export default async function renderAdmin(container) {
 
       panel.querySelectorAll(".delete-plan-btn").forEach(btn => {
         btn.addEventListener("click", async function() {
-          const ok = await showConfirm("Delete plan?", "Delete \"" + btn.dataset.name + "\"? This cannot be undone.", { type: "danger", confirmText: "Delete" });
+          const ok = await showConfirm("Delete plan?", `Delete "${  btn.dataset.name  }"? This cannot be undone.`, { type: "danger", confirmText: "Delete" });
           if (!ok) return;
           try {
-            await api.delete("/subscriptionplans/" + btn.dataset.id);
+            await api.delete(`/subscriptionplans/${  btn.dataset.id}`);
             showToast("Plan deleted", "success");
             loadPlans();
           } catch (err) { showToast(err.message, "error"); }
@@ -628,16 +628,16 @@ export default async function renderAdmin(container) {
       });
 
       document.getElementById("addPlanBtn")?.addEventListener("click", function() {
-        const tierOptions = ["Free", "Basic", "Pro", "Enterprise"].map(function(t) { return '<option value="' + t + '">' + t + '</option>'; }).join("");
+        const tierOptions = ["Free", "Basic", "Pro", "Enterprise"].map(function(t) { return `<option value="${  t  }">${  t  }</option>`; }).join("");
         const formHtml =
-          '<div class="mb-2"><label>Tier</label><select id="af-tier" class="form-control">' + tierOptions + '</select></div>' +
-          '<div class="mb-2"><label>Name</label><input id="af-name" class="form-control"></div>' +
-          '<div class="mb-2"><label>Description</label><input id="af-desc" class="form-control"></div>' +
-          '<div class="mb-2"><label>Price (EGP)</label><input id="af-price" class="form-control" type="number" value="0"></div>' +
-          '<div class="mb-2"><label>Max Auctions/Month</label><input id="af-auctions" class="form-control" type="number" value="3"></div>' +
-          '<div class="mb-2"><label>Max Bids/Month</label><input id="af-bids" class="form-control" type="number" value="3"></div>' +
-          '<div class="mb-2"><label>Max Requests/Month</label><input id="af-requests" class="form-control" type="number" value="3"></div>' +
-          '<div class="mb-2"><label>Sort Order</label><input id="af-sort" class="form-control" type="number" value="1"></div>';
+          `<div class="mb-2"><label>Tier</label><select id="af-tier" class="form-control">${  tierOptions  }</select></div>` +
+          `<div class="mb-2"><label>Name</label><input id="af-name" class="form-control"></div>` +
+          `<div class="mb-2"><label>Description</label><input id="af-desc" class="form-control"></div>` +
+          `<div class="mb-2"><label>Price (EGP)</label><input id="af-price" class="form-control" type="number" value="0"></div>` +
+          `<div class="mb-2"><label>Max Auctions/Month</label><input id="af-auctions" class="form-control" type="number" value="3"></div>` +
+          `<div class="mb-2"><label>Max Bids/Month</label><input id="af-bids" class="form-control" type="number" value="3"></div>` +
+          `<div class="mb-2"><label>Max Requests/Month</label><input id="af-requests" class="form-control" type="number" value="3"></div>` +
+          `<div class="mb-2"><label>Sort Order</label><input id="af-sort" class="form-control" type="number" value="1"></div>`;
 
         showFormModal("Add Subscription Plan", formHtml, async function() {
           try {

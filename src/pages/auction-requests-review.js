@@ -31,7 +31,7 @@ export default async function renderAuctionRequestsReview(container) {
         content.innerHTML = `<div class="empty-state"><i class="fas fa-gavel"></i><h3>${t("auctionRequestsReview.noPending")}</h3><p>${t("auctionRequestsReview.noPendingDesc")}</p></div>`;
         return;
       }
-      content.innerHTML = `<div class="table-responsive"><table class="table"><thead><tr><th>${t("auctionRequests.productTitle")}</th><th>${t("auctionRequestsReview.fisherman")}</th><th>${t("auctionRequests.fishType")}</th><th>${t("auctionRequests.quantityKg")}</th><th>${t("auctionRequests.estimatedValue")}</th><th>${t("auctionRequests.status")}</th><th>${t("auctionRequests.createdAt")}</th><th>${t("auctionRequestsReview.actions")}</th></tr></thead><tbody>${items.map(r => `<tr><td>${escapeHtml(r.productTitle)}</td><td>${escapeHtml(r.fishermanName || '-')}</td><td>${escapeHtml(r.fishType)}</td><td>${r.quantityKg}</td><td>${r.estimatedValue}</td><td><span class="${statusClass(r.status)}">${t('auctionRequests.' + r.status.toLowerCase())}</span></td><td>${new Date(r.createdAt).toLocaleDateString()}</td><td><button class="btn btn-sm btn-success" data-action="approve" data-id="${r.id}"><i class="fas fa-check"></i> ${t("auctionRequestsReview.approve")}</button> <button class="btn btn-sm btn-danger" data-action="reject" data-id="${r.id}"><i class="fas fa-times"></i> ${t("auctionRequestsReview.reject")}</button></td></tr>`).join("")}</tbody></table></div>`;
+      content.innerHTML = `<div class="table-responsive"><table class="table"><thead><tr><th>${t("auctionRequests.productTitle")}</th><th>${t("auctionRequestsReview.fisherman")}</th><th>${t("auctionRequests.fishType")}</th><th>${t("auctionRequests.quantityKg")}</th><th>${t("auctionRequests.estimatedValue")}</th><th>${t("auctionRequests.status")}</th><th>${t("auctionRequests.createdAt")}</th><th>${t("auctionRequestsReview.actions")}</th></tr></thead><tbody>${items.map(r => `<tr><td>${escapeHtml(r.productTitle)}</td><td>${escapeHtml(r.fishermanName || '-')}</td><td>${escapeHtml(r.fishType)}</td><td>${r.quantityKg}</td><td>${r.estimatedValue}</td><td><span class="${statusClass(r.status)}">${t(`auctionRequests.${  r.status.toLowerCase()}`)}</span></td><td>${new Date(r.createdAt).toLocaleDateString()}</td><td><button class="btn btn-sm btn-success" data-action="approve" data-id="${r.id}"><i class="fas fa-check"></i> ${t("auctionRequestsReview.approve")}</button> <button class="btn btn-sm btn-danger" data-action="reject" data-id="${r.id}"><i class="fas fa-times"></i> ${t("auctionRequestsReview.reject")}</button></td></tr>`).join("")}</tbody></table></div>`;
       attachActions();
     } catch (err) {
       content.innerHTML = `<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><h3>${t("common.error")}</h3><p>${escapeHtml(err.message)}</p></div>`;
@@ -53,7 +53,7 @@ export default async function renderAuctionRequestsReview(container) {
 
     const now = new Date();
     const defaultEnd = new Date(now.getTime() + 7 * 86400000);
-    const fmt = (d) => d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0') + 'T' + String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+    const fmt = (d) => `${d.getFullYear()  }-${  String(d.getMonth()+1).padStart(2,'0')  }-${  String(d.getDate()).padStart(2,'0')  }T${  String(d.getHours()).padStart(2,'0')  }:${  String(d.getMinutes()).padStart(2,'0')}`;
 
     const modal = document.createElement("div");
     modal.id = "approveModal";

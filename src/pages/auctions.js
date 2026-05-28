@@ -121,7 +121,7 @@ Alpine.data('auctionsPage', () => ({
     const hours = Math.floor((remaining % 86400) / 3600);
     const mins = Math.floor((remaining % 3600) / 60);
     const urgent = remaining > 0 && remaining <= 3600;
-    const timeStr = days > 0 ? days + 'd ' + hours + 'h' : hours + 'h ' + mins + 'm';
+    const timeStr = days > 0 ? `${days  }d ${  hours  }h` : `${hours  }h ${  mins  }m`;
     return { timeStr, urgent };
   },
 }));

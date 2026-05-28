@@ -32,7 +32,6 @@ export default async function renderProductDetail(container, route, params) {
     let isWishlisted = Array.isArray(wishlistItems) &&
       wishlistItems.some(w => w.productId === p.id || w.id === p.id);
     const avgRating = ratingData?.averageRating;
-    const reviewCount = ratingData?.reviewCount || 0;
     const reviews =
       reviewsData?.items || reviewsData?.data || reviewsData || [];
 
@@ -302,7 +301,7 @@ export default async function renderProductDetail(container, route, params) {
             reservePrice: parseFloat(document.getElementById("auctionReservePrice").value) || 0,
             minimumIncrement: parseFloat(document.getElementById("auctionMinIncrement").value) || 1,
           });
-          showToast(t("auctions.title") + " started!", "success");
+          showToast(`${t("auctions.title")  } started!`, "success");
           close();
           router(); // Re-render page to show "View Auction" button
         } catch (err) {

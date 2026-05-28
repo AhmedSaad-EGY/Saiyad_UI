@@ -73,7 +73,7 @@ export default async function renderAuctioneerAnalytics(container) {
           <i class="fas fa-percentage fs-3 text-primary"></i>
           <div class="fs-2 fw-bold">${formatPrice(totalFees)}</div>
           <div class="text-muted small">${t("analytics.totalFees")}</div>
-          <small class="text-muted">${wallet ? formatPrice(wallet.availableBalance) + " " + t("analytics.availableInWallet") : ""}</small>
+          <small class="text-muted">${wallet ? `${formatPrice(wallet.availableBalance)  } ${  t("analytics.availableInWallet")}` : ""}</small>
           </div>
         </div>
       </div>

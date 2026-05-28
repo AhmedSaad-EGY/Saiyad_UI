@@ -43,7 +43,7 @@ Alpine.data('walletPage', () => ({
 
   formatEGP(n) {
     try { return new Intl.NumberFormat("en-EG", { style: "currency", currency: "EGP" }).format(n); }
-    catch { return "EGP " + Number(n || 0).toFixed(2); }
+    catch { return `EGP ${  Number(n || 0).toFixed(2)}`; }
   },
 
   formatDate(d) {
@@ -104,7 +104,7 @@ Alpine.data('walletPage', () => ({
 
   async loadTransactions(page) {
     try {
-      this.currentPage = await api.get("/wallet/transactions?page=" + page + "&pageSize=20");
+      this.currentPage = await api.get(`/wallet/transactions?page=${  page  }&pageSize=20`);
     } catch {
       this.currentPage = { items: [], totalPages: 0, page: 1 };
     }

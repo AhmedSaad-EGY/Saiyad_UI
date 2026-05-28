@@ -56,7 +56,7 @@ Alpine.data('registerForm', () => ({
     document.getElementById('registerAlert').innerHTML = '';
 
     const fields = [
-      { element: document.getElementById('regName'), required: true, messages: { required: t('auth.fullName') + ' is required.' } },
+      { element: document.getElementById('regName'), required: true, messages: { required: `${t('auth.fullName')  } is required.` } },
       { element: document.getElementById('regEmail'), required: true, email: true, messages: { required: t('auth.invalidEmail') } },
       { element: document.getElementById('regPhone'), required: true, phone: true, messages: { required: t('auth.fieldRequired') } },
       { element: document.getElementById('regBirthdate'), required: true, minAge: 18, messages: { required: t('auth.fieldRequired') } },

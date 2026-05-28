@@ -1,6 +1,6 @@
 import { t } from '../core/i18n/index.js';
 import { api } from '../core/api/client.js';
-import { getUser, requireAuth, hasAnyRole } from '../core/auth/index.js';
+import { requireAuth, hasAnyRole } from '../core/auth/index.js';
 import { SELLER_ROLES } from '../shared/constants/roles.js';
 import { showLoading, escapeHtml, observeAnimations } from '../core/utils/dom.js';
 import { renderStars } from '../core/utils/format.js';
@@ -9,8 +9,6 @@ import { renderProductCards, showToast } from '../core/utils/ui.js';
 export default async function renderSellerProfile(container) {
   const params = new URLSearchParams(location.hash.split('?')[1] || '');
   const userId = params.get('userId');
-  const user = getUser();
-
   if (userId) {
     showLoading(container);
     try {

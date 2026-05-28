@@ -10,7 +10,6 @@ import { setupGlobalErrorHandlers } from '../shared/helpers/errors.js';
 // Inject minimal required global styles
 const injectedStyles = document.createElement("style");
 injectedStyles.textContent = `
-  .toast-container { pointer-events: none; }
   .empty-state-visual {
     transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
     display: inline-block;
@@ -25,18 +24,6 @@ injectedStyles.textContent = `
   }
   .empty-state:hover .empty-state-visual svg, .empty-state:hover .empty-state-visual i, .empty-state:hover .empty-state-visual img {
     filter: drop-shadow(0 15px 30px var(--primary-shadow, rgba(14, 165, 233, 0.3)));
-  }
-
-  @media (max-width: 480px) {
-    .toast-container {
-      right: 12px !important;
-      left: 12px !important;
-      bottom: 12px !important;
-    }
-    .toast-container > div {
-      min-width: 0 !important;
-      width: 100% !important;
-    }
   }
 `;
 document.head.appendChild(injectedStyles);
@@ -125,7 +112,6 @@ function closeDrawer() {
 
 document.getElementById("hamburger")?.addEventListener("click", () => {
   const drawer = document.getElementById("navDrawer");
-  const btn = document.getElementById("hamburger");
   if (drawer?.classList.contains("open")) {
     closeDrawer();
   } else {
@@ -384,7 +370,7 @@ document.addEventListener("mousedown", () => {
       indicator.id = 'swipeBackIndicator';
       indicator.setAttribute('role', 'status');
       indicator.setAttribute('aria-live', 'polite');
-      indicator.innerHTML = '<i class="fas fa-arrow-left" aria-hidden="true"></i><span>' + (t('common.back') || 'Back') + '</span>';
+      indicator.innerHTML = `<i class="fas fa-arrow-left" aria-hidden="true"></i><span>${  t('common.back') || 'Back'  }</span>`;
       document.body.appendChild(indicator);
     }
     const clampedProgress = Math.min(progress, 1);

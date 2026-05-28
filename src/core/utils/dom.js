@@ -89,8 +89,8 @@ export function renderEmptyState(
     actionClass = "btn btn-primary",
   } = {},
 ) {
-  const btnId = "es_btn_" + Math.random().toString(36).slice(2, 8);
-  const wrapId = "es_wrap_" + Math.random().toString(36).slice(2, 8);
+  const btnId = `es_btn_${  Math.random().toString(36).slice(2, 8)}`;
+  const wrapId = `es_wrap_${  Math.random().toString(36).slice(2, 8)}`;
   const cta = actionHref
     ? `<a href="${actionHref}" class="${actionClass} mt-3">${actionText}</a>`
     : actionFn
@@ -158,7 +158,7 @@ export function escapeHtml(str) {
 export function progressiveImg(src, alt = "", className = "") {
   if (!src)
     return `<div class="${className} d-flex align-items-center justify-content-center text-muted" style="background:var(--body-bg);font-size:2rem"><i class="fas fa-image"></i></div>`;
-  const id = "pi_" + Math.random().toString(36).slice(2, 8);
+  const id = `pi_${  Math.random().toString(36).slice(2, 8)}`;
   return `
     <div class="${className} progressive-wrap" style="position:relative;overflow:hidden;background:var(--body-bg)">
       <div id="${id}-placeholder" style="position:absolute;inset:0;background:var(--border);filter:blur(30px);transform:scale(1.2);opacity:1;transition:opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1)"></div>
@@ -169,7 +169,7 @@ export function progressiveImg(src, alt = "", className = "") {
 export function activateProgressiveImages(root = document) {
   root.querySelectorAll('img[data-pi-id]').forEach(img => {
     const id = img.dataset.piId;
-    const placeholder = document.getElementById(id + '-placeholder');
+    const placeholder = document.getElementById(`${id  }-placeholder`);
     if (!placeholder) return;
     if (img.complete && img.naturalWidth > 0) {
       placeholder.style.opacity = '0';
@@ -255,7 +255,7 @@ function getStaggerDelay(el) {
   const match = el.className.match(/stagger-(\d+)/);
   if (match) {
     const index = parseInt(match[1], 10);
-    return index * 50 + "ms";
+    return `${index * 50  }ms`;
   }
   return null;
 }
@@ -300,7 +300,7 @@ export function initPullToRefresh({ onRefresh, threshold = 80, indicatorId = 'pt
   document.addEventListener('touchend', async () => {
     if (!pulling || !moved) { pulling = false; return; }
     const ready = indicator.classList.contains('ptr-ready');
-    const dy = parseFloat(indicator.style.transform?.replace('translateY(', '') || '0');
+    const _dy = parseFloat(indicator.style.transform?.replace('translateY(', '') || '0');
     indicator.style.transform = ready ? `translateY(${threshold}px)` : '';
     indicator.classList.remove('ptr-active', 'ptr-ready');
     if (ready) {
@@ -361,7 +361,7 @@ export function manageFocus(container, announcement) {
 export function animate(el, animation, opts = {}) {
   if (!el) return;
   const prefix = 'animate__';
-  el.classList.add(prefix + 'animated', prefix + animation);
+  el.classList.add(`${prefix  }animated`, prefix + animation);
 
   if (opts.duration) el.style.setProperty('--animate-duration', opts.duration);
   if (opts.delay) el.style.setProperty('--animate-delay', opts.delay);
@@ -369,7 +369,7 @@ export function animate(el, animation, opts = {}) {
 
   if (!opts.keep) {
     el.addEventListener('animationend', () => {
-      el.classList.remove(prefix + 'animated', prefix + animation);
+      el.classList.remove(`${prefix  }animated`, prefix + animation);
       el.style.removeProperty('--animate-duration');
       el.style.removeProperty('--animate-delay');
       el.style.removeProperty('--animate-repeat');
