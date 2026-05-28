@@ -235,7 +235,7 @@ async function renderOrders(content) {
       list.innerHTML = `
         <div class="table-wrapper animate-on-scroll">
           <table class="table">
-            <caption class="mt-2 text-muted" style="caption-side:bottom;font-size:0.78rem">${t("dash.orders")}</caption>
+            <caption class="mt-2 text-muted small" style="caption-side:bottom">${t("dash.orders")}</caption>
             <thead><tr><th scope="col">${t("dash.orderNum")}</th><th scope="col">${t("cart.total")}</th><th scope="col">${t("product.status")}</th><th scope="col">${t("dash.date")}</th><th scope="col"></th></tr></thead>
             <tbody>${orders
               .map(
@@ -489,7 +489,7 @@ async function renderMyProducts(content) {
     }
     list.innerHTML = `
       <div class="table-wrapper animate-on-scroll">          <table class="table">
-            <caption class="mt-2 text-muted" style="caption-side:bottom;font-size:0.78rem">${t("dash.products")}</caption>
+            <caption class="mt-2 text-muted small" style="caption-side:bottom">${t("dash.products")}</caption>
             <thead><tr><th scope="col">${t("cart.product")}</th><th scope="col">${t("cart.price")}</th><th scope="col">${t("product.status")}</th><th scope="col">${t("product.stock")}</th><th scope="col"></th></tr></thead>
           <tbody>${products
             .map(
@@ -708,7 +708,7 @@ async function renderWishlist(content) {
     }
     document.getElementById("wishlistItems").innerHTML = `
       <div class="table-wrapper animate-on-scroll">          <table class="table">
-            <caption class="mt-2 text-muted" style="caption-side:bottom;font-size:0.78rem">${t("dash.wishlist")}</caption>
+            <caption class="mt-2 text-muted small" style="caption-side:bottom">${t("dash.wishlist")}</caption>
             <thead><tr><th scope="col">${t("cart.product")}</th><th scope="col">${t("cart.price")}</th><th scope="col"></th></tr></thead>
           <tbody>${items
             .map(

@@ -31,8 +31,8 @@ export default async function renderOrderDetail(container) {
           <div><strong>${t('order.total')}:</strong> ${formatPrice(order.totalPrice)}</div>
         </div>
         ${order.status === "Pending" || order.status === "Confirmed" ? `
-          <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border)">
-            <button class="btn btn-outline" id="cancelOrderBtn" style="color:var(--danger);border-color:var(--danger)"><i class="fas fa-times"></i> ${t('order.cancel')}</button>
+          <div class="mt-3 pt-3" style="border-top:1px solid var(--border)">
+            <button class="btn btn-outline-danger" id="cancelOrderBtn"><i class="fas fa-times"></i> ${t('order.cancel')}</button>
           </div>
         ` : ""}
         </div>
@@ -48,11 +48,11 @@ export default async function renderOrderDetail(container) {
             <tbody>
               ${(order.items || []).map(item => `
                 <tr>
-                  <td><a href="#/product-detail?id=${item.productId}" style="color:var(--text);text-decoration:none;font-weight:500">${escapeHtml(item.productTitle || 'Product')}</a></td>
-                  <td>${item.sellerName ? `<a href="#/seller-profile?userId=${item.sellerId}" style="color:var(--primary)">${escapeHtml(item.sellerName)}</a>` : '-'}</td>
+                  <td><a href="#/product-detail?id=${item.productId}" class="text-reset text-decoration-none fw-medium">${escapeHtml(item.productTitle || 'Product')}</a></td>
+                  <td>${item.sellerName ? `<a href="#/seller-profile?userId=${item.sellerId}" class="text-primary">${escapeHtml(item.sellerName)}</a>` : '-'}</td>
                   <td>${item.quantity}</td>
                   <td>${formatPrice(item.unitPrice)}</td>
-                  <td style="font-weight:600">${formatPrice(item.subtotal)}</td>
+                  <td class="fw-semibold">${formatPrice(item.subtotal)}</td>
                 </tr>
               `).join('')}
             </tbody>
@@ -84,6 +84,6 @@ export default async function renderOrderDetail(container) {
         });
       }
   } catch {
-    container.innerHTML = `<div class="empty-state"><i class="fas fa-file-invoice"></i><h3>${t('order.notFound')}</h3><a href="#/dashboard?tab=orders" class="btn btn-primary" style="margin-top:16px">${t('order.backToOrders')}</a></div>`;
+    container.innerHTML = `<div class="empty-state"><i class="fas fa-file-invoice"></i><h3>${t('order.notFound')}</h3><a href="#/dashboard?tab=orders" class="btn btn-primary mt-3">${t('order.backToOrders')}</a></div>`;
   }
 }

@@ -158,7 +158,7 @@ export default async function renderAuctions(_container, _fullPath, params) {
 
       <!-- Error -->
       <div x-show="!loading && error" class="empty-state">
-        <div class="empty-state-visual"><i class="fas fa-exclamation-triangle" style="font-size:3.5rem;color:var(--text-muted)"></i></div>
+        <div class="empty-state-visual"><i class="fas fa-exclamation-triangle text-muted" style="font-size:3.5rem"></i></div>
         <h3>${t("auctions.loadError")}</h3>
         <p x-text="error"></p>
         <button class="btn btn-primary mt-3" @click="reload()">${t('common.retry')}</button>
@@ -194,7 +194,7 @@ export default async function renderAuctions(_container, _fullPath, params) {
 
       <!-- Empty -->
       <div x-show="!loading && !error && !auctions.length" class="empty-state">
-        <div class="empty-state-visual"><i class="fa-gavel" style="font-size:3.5rem;color:var(--text-muted)"></i></div>
+        <div class="empty-state-visual"><i class="fa-gavel text-muted" style="font-size:3.5rem"></i></div>
         <h3>${t("home.noAuctions")}</h3>
         <p>${t("auctions.noAuctionsDesc")}</p>
         <button class="btn btn-primary mt-3" @click="resetFilters()">${t('common.clearFilters')}</button>
@@ -202,11 +202,11 @@ export default async function renderAuctions(_container, _fullPath, params) {
 
       <!-- Pagination -->
       <div x-show="!loading && auctions.length" x-data="pagination({ page, totalPages, onPageChange: goToPage })">
-        <div class="d-flex align-items-center gap-2 mt-4" style="justify-content:center">
+        <div class="d-flex align-items-center justify-content-center gap-2 mt-4">
           <template x-for="p in pages" :key="p">
             <span>
               <button x-show="p !== '...'" x-text="p" :class="'btn btn-sm ' + (p === currentPage ? 'btn-primary' : 'btn-ghost')" @click="goTo(p)"></button>
-              <span x-show="p === '...'" class="px-1" style="color:var(--text-muted)">&hellip;</span>
+              <span x-show="p === '...'" class="px-1 text-muted">&hellip;</span>
             </span>
           </template>
         </div>

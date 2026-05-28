@@ -606,19 +606,19 @@ function showUpdateBanner(worker) {
   ].join(";");
 
   banner.innerHTML = `
-    <i class="fas fa-arrow-up-circle" style="color:var(--primary,#1D6ECC);font-size:1.3rem;flex-shrink:0"></i>
+    <i class="fas fa-arrow-up-circle text-primary flex-shrink-0" style="font-size:1.3rem"></i>
     <span style="flex:1;font-weight:500">
       A new version is available.
     </span>
     <button id="swUpdateBtn"
-      style="background:var(--primary,#1D6ECC);color:#fff;border:none;
-             border-radius:var(--border-radius-md,8px);padding:7px 16px;
-             font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;
-             font-family:inherit">
+      class="border-0 text-white fw-semibold text-nowrap"
+      style="background:var(--primary,#1D6ECC);border-radius:var(--border-radius-md,8px);padding:7px 16px;
+             font-size:13px;cursor:pointer;font-family:inherit">
       Refresh
     </button>
     <button id="swDismissBtn" aria-label="Dismiss"
-      style="background:transparent;border:none;cursor:pointer;
+      class="border-0"
+      style="background:transparent;cursor:pointer;
              color:var(--color-text-secondary,#888);font-size:18px;line-height:1;
              padding:0 2px">
       ×

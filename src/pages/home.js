@@ -120,7 +120,7 @@ export default async function renderHome(container) {
       <!-- Role quick links -->
       <div x-show="roleLinks.length" class="section-header animate-on-scroll">
         <h2><i class="fas fa-user"></i> ${t('common.quickLinks')}</h2>
-        <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <div class="d-flex gap-2 flex-wrap">
           <template x-for="link in roleLinks" :key="link.label">
             <a :href="link.href" class="btn btn-outline btn-sm"><i :class="'fas ' + link.icon"></i> <span x-text="link.label"></span></a>
           </template>
@@ -145,7 +145,7 @@ export default async function renderHome(container) {
 
       <!-- Product error -->
       <div x-show="!loading && error" class="empty-state">
-        <div class="empty-state-visual"><i class="fas fa-exclamation-triangle" style="font-size:3.5rem;color:var(--text-muted)"></i></div>
+        <div class="empty-state-visual"><i class="fas fa-exclamation-triangle text-muted" style="font-size:3.5rem"></i></div>
         <h3>${t('home.loadError')}</h3>
         <p x-text="error"></p>
         <button class="btn btn-primary mt-3" @click="loadData()">${t('common.retry')}</button>
@@ -202,12 +202,12 @@ export default async function renderHome(container) {
 
       <!-- Empty states -->
       <div x-show="!loading && !error && !products.length" class="empty-state">
-        <div class="empty-state-visual"><i class="fas fa-box-open" style="font-size:3.5rem;color:var(--text-muted)"></i></div>
+        <div class="empty-state-visual"><i class="fas fa-box-open text-muted" style="font-size:3.5rem"></i></div>
         <h3>${t('home.noProducts')}</h3>
       </div>
 
       <div x-show="!loading && !error && !auctions.length" class="empty-state">
-        <div class="empty-state-visual"><i class="fas fa-gavel" style="font-size:3.5rem;color:var(--text-muted)"></i></div>
+        <div class="empty-state-visual"><i class="fas fa-gavel text-muted" style="font-size:3.5rem"></i></div>
         <h3>${t('home.noAuctions')}</h3>
       </div>
 

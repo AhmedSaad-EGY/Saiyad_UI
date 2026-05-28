@@ -340,7 +340,7 @@ export default async function renderAuctionDetail(container, _route, params) {
 
       <!-- Error state -->
       <div x-show="!loading && error" class="empty-state">
-        <div class="empty-state-visual"><i class="fas fa-gavel" style="font-size:3.5rem;color:var(--text-muted)"></i></div>
+        <div class="empty-state-visual"><i class="fas fa-gavel text-muted" style="font-size:3.5rem"></i></div>
         <h3 x-text="t('common.loadFailed')"></h3>
         <p x-text="error"></p>
         <button class="btn btn-primary mt-3" @click="retry()">${t('common.retry')}</button>
@@ -415,7 +415,7 @@ export default async function renderAuctionDetail(container, _route, params) {
 
               <!-- Ended display -->
               <div x-show="ended || (!isActive && !ended)" class="mt-2">
-                <span style="color:var(--danger);font-weight:600">
+                <span class="text-danger fw-semibold">
                   <i class="fas fa-times-circle"></i> ${t('auction.ended')}
                 </span>
               </div>
@@ -544,7 +544,7 @@ export default async function renderAuctionDetail(container, _route, params) {
                           <strong x-text="b.userName"></strong>
                           <small x-text="formatDate(b.createdAt)"></small>
                         </span>
-                        <span style="font-weight:700;color:var(--success)">
+                        <span class="fw-bold text-success">
                           <span x-text="formatPrice(b.amount)"></span>
                           <template x-if="b.isAutoBid">
                             <i class="fas fa-robot" :title="t('auction.autoBid')"></i>

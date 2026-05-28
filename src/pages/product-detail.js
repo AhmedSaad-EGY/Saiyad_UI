@@ -45,9 +45,9 @@ export default async function renderProductDetail(container, route, params) {
       <nav class="breadcrumb" aria-label="Breadcrumb"><a href="#/">${t("nav.home")}</a> <i class="fas fa-chevron-${getCurrentLang() === "ar" ? "left" : "right"}" aria-hidden="true"></i> <a href="#/products">${t("nav.products")}</a> <i class="fas fa-chevron-${getCurrentLang() === "ar" ? "left" : "right"}" aria-hidden="true"></i> <span>${escapeHtml(p.title)}</span></nav>
       <div class="row g-5">
         <div class="col-lg-6">
-          <div class="detail-image" id="mainImageWrap" style="cursor:pointer;padding:0;position:relative">
+          <div class="detail-image p-0" id="mainImageWrap" style="cursor:pointer;position:relative">
             ${p.primaryImageUrl ? progressiveImg(p.primaryImageUrl, p.title, "") : '<i class="fas fa-image"></i>'}
-            <div style="position:absolute;bottom:12px;right:12px;background:rgba(0,0,0,0.5);color:#fff;border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;pointer-events:none"><i class="fas fa-search-plus" style="font-size:1rem"></i></div>
+            <div class="rounded-circle d-flex align-items-center justify-content-center" style="position:absolute;bottom:12px;right:12px;background:rgba(0,0,0,0.5);color:#fff;width:36px;height:36px;pointer-events:none"><i class="fas fa-search-plus"></i></div>
           </div>
         </div>
         <div class="col-lg-6">
@@ -61,7 +61,7 @@ export default async function renderProductDetail(container, route, params) {
             <div class="detail-meta-item"><strong>${t("product.stock")}:</strong> ${p.stockQuantity ?? t("common.N/A")}</div>
             <div class="detail-meta-item"><strong>${t("product.status")}:</strong> <span class="status ${statusClass(p.status)}">${tStatus(p.status, "product")}</span></div>
           </div>
-          ${p.brand ? `<p style="margin-bottom:8px"><strong>${t("product.brand")}:</strong> ${escapeHtml(p.brand)}</p>` : ""}
+          ${p.brand ? `<p class="mb-2"><strong>${t("product.brand")}:</strong> ${escapeHtml(p.brand)}</p>` : ""}
           <div class="detail-desc">${escapeHtml(p.description || t("product.noDescription"))}</div>
           <div class="d-flex gap-3 flex-wrap">
             <div class="d-flex align-items-center gap-2 flex-wrap">
@@ -86,12 +86,12 @@ export default async function renderProductDetail(container, route, params) {
             ${p.isAuctioned && p.auctionId ? `<a href="#/auction-detail?id=${p.auctionId}" class="btn btn-success btn-lg"><i class="fas fa-gavel"></i> ${t("product.viewAuction")}</a>` : !p.isAuctioned && getUser()?.id === p.sellerId && hasAnyRole(...(SELLER_ROLES)) ? `<button class="btn btn-primary btn-lg" id="startAuctionBtn"><i class="fas fa-gavel"></i> ${t("auction.startAuction")}</button>` : ""}
             ${p.sellerId ? `<a href="#/seller-profile?userId=${p.sellerId}" class="btn btn-outline btn-lg"><i class="fas fa-envelope"></i> ${t("product.contactSeller")}</a>` : ""}
           </div>
-          ${p.sellerId ? `<div style="margin-top:24px;padding-top:16px;border-top:1px solid var(--border)"><strong>${t("product.seller")}:</strong> <a href="#/seller-profile?userId=${p.sellerId}" style="color:var(--primary)">${escapeHtml(p.sellerName || t("common.N/A"))}</a></div>` : ""}
+          ${p.sellerId ? `<div class="mt-4 pt-3" style="border-top:1px solid var(--border)"><strong>${t("product.seller")}:</strong> <a href="#/seller-profile?userId=${p.sellerId}" class="text-primary">${escapeHtml(p.sellerName || t("common.N/A"))}</a></div>` : ""}
 
           <!-- Reviews section -->
-          <div class="mt-4" style="padding-top:20px;border-top:1px solid var(--border)" id="reviewsSection">
+          <div class="mt-4 pt-4" style="border-top:1px solid var(--border)" id="reviewsSection">
             <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
-              <h3><i class="fas fa-star" style="color:#f59e0b"></i> ${t("review.title")} ${avgRating ? `(${renderStars(avgRating)} ${avgRating.toFixed(1)})` : ""}</h3>
+              <h3><i class="fas fa-star text-warning"></i> ${t("review.title")} ${avgRating ? `(${renderStars(avgRating)} ${avgRating.toFixed(1)})` : ""}</h3>
               ${isAuthenticated() ? `<button class="btn btn-outline btn-sm" id="showReviewForm">${t("review.writeReview")}</button>` : ""}
             </div>
             ${
@@ -125,14 +125,14 @@ export default async function renderProductDetail(container, route, params) {
                   <div style="flex:1">
                     <strong>${escapeHtml(r.userName || "User")}</strong>
                     <span class="text-warning">${renderStars(r.rating)}</span>
-                    ${r.comment ? `<p style="color:var(--text-secondary);font-size:0.9rem;margin-top:4px">${escapeHtml(r.comment)}</p>` : ""}
-                    <small style="color:var(--text-muted)">${formatDate(r.createdAt)}</small>
+                    ${r.comment ? `<p class="mt-1" style="color:var(--text-secondary);font-size:0.9rem">${escapeHtml(r.comment)}</p>` : ""}
+                    <small class="text-muted">${formatDate(r.createdAt)}</small>
                   </div>
                 </div>
               `,
                       )
                       .join("")
-                  : `<p class="text-muted text-center" style="padding:20px">${t("review.noReviews")}</p>`
+                  : `<p class="text-muted text-center p-4">${t("review.noReviews")}</p>`
               }
             </div>
           </div>
@@ -401,12 +401,12 @@ export default async function renderProductDetail(container, route, params) {
             newReview.style.animation = "";
             animate(newReview, 'fadeInUp', { duration: '0.3s' });
             newReview.innerHTML = `
-              <div style="flex:1">
+              <div class="flex-fill">
                 <strong>${escapeHtml(user?.fullName || "You")}</strong>
-                <span style="color:#f59e0b">${renderStars(rating)}</span>
-                ${comment ? `<p style="color:var(--text-secondary);font-size:0.9rem;margin-top:4px">
+                <span class="text-warning">${renderStars(rating)}</span>
+                ${comment ? `<p class="mt-1" style="color:var(--text-secondary);font-size:0.9rem">
                   ${escapeHtml(comment)}</p>` : ""}
-                <small style="color:var(--text-muted)">${formatDate(new Date().toISOString())}</small>
+                <small class="text-muted">${formatDate(new Date().toISOString())}</small>
               </div>`;
             reviewsList.insertAdjacentElement("afterbegin", newReview);
           }

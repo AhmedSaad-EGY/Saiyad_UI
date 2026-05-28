@@ -154,7 +154,7 @@ export default async function renderWallet(container) {
                     <input type="number" x-model="depositAmount" class="form-control" :class="depositError ? 'is-invalid' : ''" placeholder="${t("wallet.enterAmount")}" min="1" step="0.01" style="max-width:200px">
                     <button class="btn btn-primary" :disabled="depositing || !!depositError" @click.prevent="submitDeposit()"><i class="fas" :class="depositing ? 'fa-spinner spinner' : 'fa-plus'"></i> ${t("wallet.deposit")}</button>
                   </div>
-                  <span x-show="depositError" x-text="depositError" class="mt-1" style="font-size:0.8rem;color:var(--danger, #dc3545)"></span>
+                  <span x-show="depositError" x-text="depositError" class="mt-1 small text-danger"></span>
                 </div>
               </div>
               <div class="wallet-readonly-notice" x-show="isAdmin" style="padding:12px 0;opacity:0.8">
@@ -167,7 +167,7 @@ export default async function renderWallet(container) {
             <template x-if="currentPage && currentPage.items && currentPage.items.length > 0">
               <div class="wallet-txn-table animate-on-scroll">
                 <table class="table">
-                  <caption style="caption-side:bottom;margin-top:8px;font-size:0.78rem;color:var(--text-muted)">${t("wallet.transactions")}</caption>
+                  <caption class="small text-muted" style="caption-side:bottom;margin-top:8px">${t("wallet.transactions")}</caption>
                   <thead><tr><th scope="col">${t("wallet.date")}</th><th scope="col">${t("wallet.type")}</th><th scope="col">${t("wallet.description")}</th><th scope="col">${t("wallet.amount")}</th></tr></thead>
                   <tbody>
                     <template x-for="txn in currentPage.items" :key="txn.id">
@@ -189,8 +189,8 @@ export default async function renderWallet(container) {
             </template>
             <template x-if="currentPage && (!currentPage.items || currentPage.items.length === 0)">
               <div class="empty-state mt-3">
-                <div class="empty-state-visual"><i class="fas fa-receipt" style="font-size:2.5rem;color:var(--text-muted)"></i></div>
-                <p style="color:var(--text-muted);margin:0">${t("wallet.noTransactions")}</p>
+                <div class="empty-state-visual"><i class="fas fa-receipt fs-1 text-muted"></i></div>
+                <p class="text-muted m-0">${t("wallet.noTransactions")}</p>
               </div>
             </template>
           </div>

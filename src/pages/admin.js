@@ -91,7 +91,7 @@ export default async function renderAdmin(container) {
       panel.innerHTML = `
         <div class="table-wrapper">
           <table class="table">
-            <caption style="caption-side:bottom;font-size:0.78rem;color:var(--text-muted)" class="mt-2">${t("admin.users")}</caption>
+            <caption class="text-muted" style="caption-side:bottom;font-size:0.78rem" class="mt-2">${t("admin.users")}</caption>
             <thead><tr>
               <th scope="col">${t("auth.fullName")}</th>
               <th scope="col">${t("auth.email")}</th>
@@ -156,7 +156,7 @@ export default async function renderAdmin(container) {
 
       content.innerHTML = `
         <div class="table-wrapper"><table class="table">
-          <caption style="caption-side:bottom;font-size:0.78rem;color:var(--text-muted)" class="mt-2">${t("admin.reports")}</caption>
+          <caption class="text-muted" style="caption-side:bottom;font-size:0.78rem" class="mt-2">${t("admin.reports")}</caption>
           <thead><tr><th scope="col">${t("admin.id")}</th><th scope="col">${t("cart.product")}</th><th scope="col">${t("admin.reportReason")}</th><th scope="col">${t("admin.reportStatus")}</th><th scope="col"></th></tr></thead>
           <tbody>${reports
             .map(
@@ -216,7 +216,7 @@ export default async function renderAdmin(container) {
       panel.innerHTML = `
         <div class="table-wrapper">
           <table class="table">
-            <caption style="caption-side:bottom;font-size:0.78rem;color:var(--text-muted)" class="mt-2">${t("admin.products")}</caption>
+            <caption class="text-muted" style="caption-side:bottom;font-size:0.78rem" class="mt-2">${t("admin.products")}</caption>
             <thead><tr>
               <th scope="col">${t("product.title")}</th>
               <th scope="col">${t("product.seller")}</th>
@@ -233,7 +233,7 @@ export default async function renderAdmin(container) {
                   <td>${escapeHtml(p.categoryName || "-")}</td>
                   <td class="fw-semibold">${formatPrice(p.price || 0)}</td>
                   <td>
-                    <select class="form-select product-status-select" data-product-id="${p.id}" style="min-width:130px">
+                    <select class="form-select product-status-select" data-product-id="${p.id}" class="w-auto" style="min-width:130px">
                       ${productModerationStatuses.map((status) => `
                         <option value="${status}" ${p.status === status ? "selected" : ""}>${tStatus(status, "product")}</option>
                       `).join("")}
@@ -301,7 +301,7 @@ export default async function renderAdmin(container) {
       panel.innerHTML = `
         <div class="table-wrapper">
           <table class="table">
-            <caption style="caption-side:bottom;font-size:0.78rem;color:var(--text-muted)" class="mt-2">${t("admin.orders")}</caption>
+            <caption class="text-muted" style="caption-side:bottom;font-size:0.78rem" class="mt-2">${t("admin.orders")}</caption>
             <thead><tr>
               <th scope="col">#</th>
               <th scope="col">${t("order.buyer")}</th>
@@ -351,7 +351,7 @@ export default async function renderAdmin(container) {
             </form>
           </div>
           <div class="empty-state mt-2">
-            <div class="empty-state-visual"><i class="fas fa-tags" style="font-size:2.5rem;color:var(--text-muted)"></i></div>
+            <div class="empty-state-visual"><i class="fas fa-tags" class="text-muted" style="font-size:2.5rem"></i></div>
             <h3>${t("admin.noCategories") || "No categories found"}</h3>
             <p style="color:var(--text-muted)">${t("admin.createFirstCategory") || "Create your first category to organize products."}</p>
           </div>`;
@@ -384,7 +384,7 @@ export default async function renderAdmin(container) {
           </form>
         </div>
         <div class="table-wrapper"><table class="table">
-          <caption style="caption-side:bottom;font-size:0.78rem;color:var(--text-muted)" class="mt-2">${t("admin.categories")}</caption>
+          <caption class="text-muted" style="caption-side:bottom;font-size:0.78rem" class="mt-2">${t("admin.categories")}</caption>
           <thead><tr><th scope="col">${t("admin.id")}</th><th scope="col">${t("admin.name")}</th><th scope="col">${t("admin.categoryDesc")}</th><th scope="col"></th></tr></thead>
           <tbody>${cats
             .map(
@@ -494,7 +494,7 @@ export default async function renderAdmin(container) {
             </div>
           </div>
           <div class="col-md-3">
-            <div class="card card-sm text-center" style="border-left:3px solid var(--primary)">
+            <div class="card card-sm text-center" class="border-start border-3 border-primary">
               <small class="text-muted">${t("admin.totalFees")}</small>
               <div class="fs-4 fw-bold" style="color:var(--primary)">${formatPrice(totalFees)}</div>
             </div>
@@ -503,7 +503,7 @@ export default async function renderAdmin(container) {
         <h3 class="mb-2">${t("admin.feeIncome")}</h3>
         <div class="table-wrapper">
           <table class="table">
-            <caption style="caption-side:bottom;font-size:0.78rem;color:var(--text-muted)" class="mt-2">${t("admin.feeIncome")}</caption>
+            <caption class="text-muted" style="caption-side:bottom;font-size:0.78rem" class="mt-2">${t("admin.feeIncome")}</caption>
             <thead><tr>
               <th scope="col">${t("admin.id")}</th>
               <th scope="col">${t("wallet.type")}</th>
@@ -557,7 +557,7 @@ export default async function renderAdmin(container) {
           <button class="btn btn-primary" id="addPlanBtn"><i class="fas fa-plus"></i> ${t("admin.addPlan") || "Add Plan"}</button>
         </div>
         <div class="table-responsive"><table class="table">
-          <caption style="caption-side:bottom;font-size:0.78rem;color:var(--text-muted)" class="mt-2">${t("admin.plans")}</caption>
+          <caption class="text-muted" style="caption-side:bottom;font-size:0.78rem" class="mt-2">${t("admin.plans")}</caption>
           <thead><tr>
             <th scope="col">${t("common.name") || "Name"}</th><th scope="col">${t("common.tier") || "Tier"}</th><th scope="col">Price</th>
             <th scope="col">Auctions</th><th scope="col">Bids</th><th scope="col">Requests</th>

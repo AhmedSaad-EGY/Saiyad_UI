@@ -8,7 +8,7 @@ export default function renderVerifyEmail(container) {
   const token = params.get("token");
 
   if (!token) {
-    container.innerHTML = `<div class="auth-page"><div class="card"><div class="card-body"><div class="empty-state"><i class="fas fa-exclamation-triangle"></i><h3>${t("verify.invalidLink")}</h3><a href="#/login" class="btn btn-primary" style="margin-top:16px">${t("auth.login")}</a></div></div></div></div>`;
+    container.innerHTML = `<div class="auth-page"><div class="card"><div class="card-body"><div class="empty-state"><i class="fas fa-exclamation-triangle"></i><h3>${t("verify.invalidLink")}</h3><a href="#/login" class="btn btn-primary mt-3">${t("auth.login")}</a></div></div></div></div>`;
     return;
   }
 
@@ -40,7 +40,7 @@ export default function renderVerifyEmail(container) {
           <div class="card-body">
           <div class="empty-state"><i class="fas fa-exclamation-triangle"></i><h3>${t("verify.error")}</h3>
           <p style="font-size:var(--text-sm);opacity:0.7;margin-top:4px">${escapeHtml(err.message || "")}</p>
-          <a href="#/login" class="btn btn-primary" style="margin-top:16px">${t("auth.login")}</a>
+          <a href="#/login" class="btn btn-primary mt-3">${t("auth.login")}</a>
         </div></div></div></div>`;
     });
 }

@@ -9,7 +9,7 @@ export function $$(sel, parent = document) {
 export function showLoading(container, type = "page") {
   const skeletons = {
     page: `
-      <div class="skeleton-shimmer" style="padding:40px 0">
+      <div class="skeleton-shimmer py-5" style="padding-top:0;padding-bottom:0">
         <div class="skeleton skeleton-title" style="width:40%"></div>
         <div class="skeleton skeleton-text"></div>
         <div class="skeleton skeleton-text"></div>
@@ -24,7 +24,7 @@ export function showLoading(container, type = "page") {
     detail: `
       <div class="skeleton-detail skeleton-shimmer">
         <div class="skeleton skeleton-image" style="height:380px"></div>
-        <div style="padding:24px 0">
+        <div class="py-4" style="padding-top:0;padding-bottom:0">
           <div class="skeleton skeleton-title" style="width:60%"></div>
           <div class="skeleton skeleton-text" style="width:20%;height:32px"></div>
           <div class="skeleton skeleton-text"></div>
@@ -33,7 +33,7 @@ export function showLoading(container, type = "page") {
         </div>
       </div>`,
     table: `
-      <div class="skeleton-shimmer" style="padding:12px 0">
+      <div class="skeleton-shimmer py-2" style="padding-top:0;padding-bottom:0">
         <div class="skeleton skeleton-row-header"></div>
         <div class="skeleton skeleton-row"></div>
         <div class="skeleton skeleton-row"></div>
@@ -42,13 +42,13 @@ export function showLoading(container, type = "page") {
       </div>`,
     auth: `
       <div class="auth-page skeleton-shimmer" style="min-height:300px">
-        <div class="skeleton" style="width:40%;height:28px;margin:0 auto 24px"></div>
-        <div class="skeleton mb-3" style="height:44px;border-radius:8px"></div>
-        <div class="skeleton mb-4" style="height:44px;border-radius:8px"></div>
-        <div class="skeleton" style="height:44px;width:100%;border-radius:8px"></div>
+        <div class="skeleton mx-auto mb-4" style="width:40%;height:28px"></div>
+        <div class="skeleton mb-3 rounded-3" style="height:44px"></div>
+        <div class="skeleton mb-4 rounded-3" style="height:44px"></div>
+        <div class="skeleton w-100 rounded-3" style="height:44px"></div>
       </div>`,
     form: `
-      <div class="skeleton-form skeleton-shimmer" style="padding:16px 0">
+      <div class="skeleton-form skeleton-shimmer py-3" style="padding-top:0;padding-bottom:0">
         <div class="skeleton skeleton-text" style="width:30%"></div>
         <div class="skeleton skeleton-input"></div>
         <div class="skeleton skeleton-text" style="width:30%"></div>
@@ -119,7 +119,7 @@ export function renderEmptyState(
     if (mappedType) {
       visual = emptyIllustration(mappedType);
     } else if (icon.startsWith("fa-")) {
-      visual = `<i class="fas ${icon} mb-2" style="font-size:3.5rem;color:var(--text-muted);display:block"></i>`;
+      visual = `<i class="fas ${icon} mb-2 d-block text-muted" style="font-size:3.5rem"></i>`;
     } else {
       visual = emptyIllustration(icon);
     }
@@ -157,7 +157,7 @@ export function escapeHtml(str) {
 
 export function progressiveImg(src, alt = "", className = "") {
   if (!src)
-    return `<div class="${className}" style="background:var(--body-bg);display:flex;align-items:center;justify-content:center;color:var(--text-muted);font-size:2rem"><i class="fas fa-image"></i></div>`;
+    return `<div class="${className} d-flex align-items-center justify-content-center text-muted" style="background:var(--body-bg);font-size:2rem"><i class="fas fa-image"></i></div>`;
   const id = "pi_" + Math.random().toString(36).slice(2, 8);
   return `
     <div class="${className} progressive-wrap" style="position:relative;overflow:hidden;background:var(--body-bg)">

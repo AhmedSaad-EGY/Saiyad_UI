@@ -245,13 +245,13 @@ export function openQuickView(product) {
 
   overlay.innerHTML = `
     <div class="modal" onclick="event.stopPropagation()">
-      <div style="display:flex;gap:20px;flex-wrap:wrap">
-        ${image ? `<img src="${escapeHtml(image)}" alt="${escapeHtml(title)}" loading="lazy" style="width:180px;height:180px;object-fit:cover;border-radius:var(--radius-md);flex-shrink:0">` : ""}
+      <div class="d-flex gap-4 flex-wrap">
+        ${image ? `<img src="${escapeHtml(image)}" alt="${escapeHtml(title)}" loading="lazy" class="flex-shrink-0" style="width:180px;height:180px;object-fit:cover;border-radius:var(--radius-md)">` : ""}
         <div style="flex:1;min-width:200px">
           <h3>${escapeHtml(title)}</h3>
-          <div style="font-size:1.4rem;font-weight:700;color:var(--primary);margin:8px 0">${price}</div>
+          <div class="fw-bold text-primary" style="font-size:1.4rem;margin:8px 0">${price}</div>
           <p style="color:var(--text-secondary);font-size:0.88rem;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden">${escapeHtml(desc) || t("product.noDescription")}</p>
-          <div class="modal-actions" style="margin-top:20px">
+          <div class="modal-actions mt-4">
             <a href="${link}" class="btn btn-primary" onclick="this.closest('.modal-overlay').remove()"><i class="fas fa-eye"></i> ${t("common.page")}</a>
             <button class="btn btn-ghost" onclick="this.closest('.modal-overlay').remove()">${t("common.close") || "Close"}</button>
           </div>
@@ -382,11 +382,11 @@ export function renderRecentlyViewed(container) {
         .map(
           (v) => `
         <a href="${v.type === "auction" ? "#/auction-detail?id=" : "#/product-detail?id="}${v.id}" class="recently-viewed-item" title="${escapeHtml(v.title)}">
-          ${v.image ? `<img src="${v.image}" alt="${escapeHtml(v.title)}" loading="lazy">` : '<div style="width:60px;height:60px;background:var(--body-bg);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;color:var(--text-muted)"><i class="fas fa-image"></i></div>'}
+          ${v.image ? `<img src="${v.image}" alt="${escapeHtml(v.title)}" loading="lazy">` : '<div class="d-flex align-items-center justify-content-center text-muted" style="width:60px;height:60px;background:var(--body-bg);border-radius:var(--radius-sm)"><i class="fas fa-image"></i></div>'}
           <div class="recently-viewed-info">
             <span class="recently-viewed-title">${escapeHtml(v.title)}</span>
             ${v.price != null ? `<span class="recently-viewed-price">${formatPrice(v.price)}</span>` : ""}
-            <span class="recently-viewed-type" style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--text-muted)">
+            <span class="recently-viewed-type text-uppercase text-muted" style="font-size:0.7rem;letter-spacing:0.05em">
               <i class="fas ${v.type === "auction" ? "fa-gavel" : "fa-tag"}" aria-hidden="true"></i>
               ${v.type === "auction" ? t("nav.auctions") : t("nav.products")}
             </span>

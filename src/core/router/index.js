@@ -79,7 +79,7 @@ export async function router(force = false) {
     app.style.transition = "";
     app.innerHTML = `
       <div class="not-found-page animate-on-scroll">
-        <div class="not-found-fish"><i class="fas fa-fish" style="font-size:4rem;color:var(--text-muted);opacity:0.5"></i></div>
+        <div class="not-found-fish"><i class="fas fa-fish fs-1 text-muted opacity-50"></i></div>
         <h1>404</h1>
         <h2>${t("common.pageNotFound")}</h2>
         <p>${t("common.pageNotFoundDesc")}</p>

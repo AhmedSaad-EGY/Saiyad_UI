@@ -39,27 +39,27 @@ export default async function renderSubscriptions(container) {
 
     root.innerHTML = `
       <div>
-        <div class="card mb-4" style="background:var(--primary-gradient, linear-gradient(135deg,var(--primary),var(--primary-light)));color:var(--text-inverse);border:none">
+        <div class="card mb-4 border-0" style="background:var(--primary-gradient, linear-gradient(135deg,var(--primary),var(--primary-light)));color:var(--text-inverse)">
           <div class="card-body">
-            <h3 class="mb-1" style="margin-top:0">${escapeHtml(info.heading)}</h3>
-            <p class="m-0" style="opacity:0.85">${escapeHtml(info.desc)}</p>
+            <h3 class="mb-1 mt-0">${escapeHtml(info.heading)}</h3>
+            <p class="m-0 opacity-75">${escapeHtml(info.desc)}</p>
           </div>
         </div>
 
         <div class="d-flex gap-3 flex-wrap mb-4">
           ${walletBalance !== null ? `
-            <div class="card card-sm" style="padding:12px 20px;display:flex;align-items:center;gap:12px">
-              <i class="fas fa-wallet" style="font-size:1.2rem;color:var(--primary)"></i>
-              <div><small style="color:var(--text-muted)">${t("wallet.available")}</small>
-              <div style="font-weight:700">${formatPrice(walletBalance)}</div></div>
+            <div class="card card-sm d-flex align-items-center gap-3 p-3">
+              <i class="fas fa-wallet fs-6 text-primary"></i>
+              <div><small class="text-muted">${t("wallet.available")}</small>
+              <div class="fw-bold">${formatPrice(walletBalance)}</div></div>
             </div>` : ''}
           ${mySubscription ? `
-            <div class="card card-sm" style="padding:12px 20px;display:flex;align-items:center;gap:12px">
-              <i class="fas fa-crown" style="font-size:1.2rem;color:var(--primary)"></i>
-              <div><small style="color:var(--text-muted)">${t("subscriptions.currentPlan")}</small>
-              <div style="font-weight:700">
+            <div class="card card-sm d-flex align-items-center gap-3 p-3">
+              <i class="fas fa-crown fs-6 text-primary"></i>
+              <div><small class="text-muted">${t("subscriptions.currentPlan")}</small>
+              <div class="fw-bold">
                 ${escapeHtml(mySubscription.tier || t('subscriptions.noPlan'))}
-                ${mySubscription.endDate ? `<span style="color:var(--text-muted);font-weight:400;font-size:0.85rem"> · ${t("common.endsIn")}: ${new Date(mySubscription.endDate).toLocaleDateString()}</span>` : ''}
+                ${mySubscription.endDate ? `<span class="text-muted fw-normal" style="font-size:0.85rem"> · ${t("common.endsIn")}: ${new Date(mySubscription.endDate).toLocaleDateString()}</span>` : ''}
               </div></div>
             </div>` : ''}
         </div>
@@ -75,20 +75,20 @@ export default async function renderSubscriptions(container) {
               ${isPop ? `<span class="position-absolute" style="top:-10px;right:16px;background:var(--primary);color:var(--text-inverse);padding:2px 12px;border-radius:20px;font-size:0.78rem;font-weight:600">${t("subscriptions.popular")}</span>` : ''}
               <div class="card-body" style="display:flex;flex-direction:column">
               <div class="text-center mb-3">
-                <i class="fas ${getPlanIcon(p.tier)}" style="font-size:2rem;color:var(--primary);margin-bottom:8px"></i>
+                <i class="fas ${getPlanIcon(p.tier)} text-primary mb-2" style="font-size:2rem"></i>
                 <h3>${escapeHtml(p.name)}</h3>
-                ${p.description ? `<p style="color:var(--text-muted);font-size:0.88rem">${escapeHtml(p.description)}</p>` : ''}
+                ${p.description ? `<p class="text-muted" style="font-size:0.88rem">${escapeHtml(p.description)}</p>` : ''}
               </div>
               <div class="text-center mb-3">
                 ${p.price > 0
-                  ? `<span style="font-size:2rem;font-weight:700">${formatPrice(p.price)}</span>`
-                  : `<span style="font-size:2rem;font-weight:700">${t("subscriptions.free")}</span>`
+                  ? `<span class="fs-1 fw-bold">${formatPrice(p.price)}</span>`
+                  : `<span class="fs-1 fw-bold">${t("subscriptions.free")}</span>`
                 }
-                <span style="color:var(--text-muted)">${p.billingCycle === 'Yearly' ? ' ' + t('subscriptions.perYear') : p.billingCycle === 'Monthly' ? ' ' + t('subscriptions.perMonth') : ''}</span>
+                <span class="text-muted">${p.billingCycle === 'Yearly' ? ' ' + t('subscriptions.perYear') : p.billingCycle === 'Monthly' ? ' ' + t('subscriptions.perMonth') : ''}</span>
               </div>
               <ul class="list-unstyled mb-3" style="flex:1">
                 ${(p.features || []).map(f => `
-                  <li style="padding:6px 0;border-bottom:1px solid var(--border)"><i class="fas fa-check" style="color:var(--success);margin-right:8px;width:16px"></i>${escapeHtml(f)}</li>
+                  <li class="py-2" style="border-bottom:1px solid var(--border)"><i class="fas fa-check text-success me-2" style="width:16px"></i>${escapeHtml(f)}</li>
                 `).join('')}
               </ul>
               <button class="btn ${isCurrent ? 'btn-ghost' : insufficient ? 'btn-outline' : 'btn-primary'} sub-upgrade-btn"
@@ -100,10 +100,10 @@ export default async function renderSubscriptions(container) {
             </div>`;
           }).join('')}
         </div>` : `
-        <div class="empty-state" style="margin-top:24px">
+        <div class="empty-state mt-4">
           <div class="empty-state-visual"><i class="fas fa-crown" style="font-size:3rem;color:var(--text-muted)"></i></div>
           <h3>${t("subscriptions.noPlans") || "No plans available"}</h3>
-          <p style="color:var(--text-muted)">${t("subscriptions.noPlansDesc") || "Subscription plans are not available at this time."}</p>
+          <p class="text-muted">${t("subscriptions.noPlansDesc") || "Subscription plans are not available at this time."}</p>
         </div>`}
       </div>`;
 
@@ -135,10 +135,10 @@ export default async function renderSubscriptions(container) {
     const root = document.getElementById('subs-root');
     if (root) {
       root.innerHTML = `
-        <div class="empty-state" style="margin-top:24px">
-          <div class="empty-state-visual"><i class="fas fa-crown" style="font-size:3rem;color:var(--text-muted)"></i></div>
+        <div class="empty-state mt-4">
+          <div class="empty-state-visual"><i class="fas fa-crown fs-1 text-muted"></i></div>
           <h3>${t("common.error")}</h3>
-          <p style="color:var(--text-muted)">${t("common.loadFailed") || "Failed to load subscription plans."}</p>
+          <p class="text-muted">${t("common.loadFailed") || "Failed to load subscription plans."}</p>
         </div>`;
     }
   }

@@ -51,6 +51,8 @@ Backend API: `https://sayiad.runasp.net/api`
 
 ## Gotchas
 
+- **Inline-style-to-Bootstrap migration (May 28, 2026):** 200+ inline `style` attributes migrated to Bootstrap utility classes across 22 files. Key patterns: spacing uses `py-*`/`p-*`/`mt-*`/`gap-*` (Bootstrap's 0.25rem step scale — some values are approximations, e.g., 20px→`mt-4` (24px)), `flex:1` uses `flex-fill` (different flex-basis behavior: `1 1 auto` vs `1 1 0%`), empty state icons use `fs-1 text-muted`, border radius uses `rounded-2` (6px) or `rounded-3` (8px), table captions use `small text-muted` class. Always prefer Bootstrap utilities over inline styles for consistency.
+
 - **Alpine functions in templates:** Module-level functions called in Alpine directives (`x-text`, `@click`, etc.) must be exposed in the component's `data()` return object (e.g., `t`, `formatPrice` must be returned)
 - **No test runner** — manual testing only; must check all 25 routes after changes
 - **Service worker:** Cache version is **auto-versioned** via `__SW_VERSION__` placeholder in `sw.js` — Vite plugin injects a build timestamp on every `npm run build`. Do NOT manually edit the version string.

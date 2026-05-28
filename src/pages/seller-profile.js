@@ -19,7 +19,7 @@ export default async function renderSellerProfile(container) {
         <div class="card" style="max-width:600px;margin:0 auto">
           <div class="card-body">
           <div class="text-center mb-4">
-            <i class="fas fa-store mb-2" style="font-size:3rem;color:var(--primary)"></i>
+            <i class="fas fa-store mb-2 fs-1 text-primary"></i>
             <h2>${escapeHtml(profile.storeName)}</h2>
             ${profile.description ? `<p style="color:var(--text-secondary)">${escapeHtml(profile.description)}</p>` : ''}
           </div>
@@ -27,7 +27,7 @@ export default async function renderSellerProfile(container) {
             ${profile.averageRating ? `<span><strong>${t('seller.rating')}:</strong> ${renderStars(profile.averageRating)} (${profile.averageRating.toFixed(1)})</span>` : ''}
             <span><strong>${t('seller.totalSales')}:</strong> ${profile.totalSales || 0}</span>
           </div>
-          <div style="border-top:1px solid var(--border);padding-top:16px;color:var(--text-secondary);font-size:0.88rem">
+          <div class="pt-3" style="border-top:1px solid var(--border);color:var(--text-secondary);font-size:0.88rem">
             ${profile.contactEmail ? `<p><i class="fas fa-envelope"></i> ${escapeHtml(profile.contactEmail)}</p>` : ''}
             ${profile.contactPhone ? `<p><i class="fas fa-phone"></i> ${escapeHtml(profile.contactPhone)}</p>` : ''}
             ${profile.location ? `<p><i class="fas fa-map-marker-alt"></i> ${escapeHtml(profile.location)}</p>` : ''}

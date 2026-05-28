@@ -45,13 +45,13 @@ export function handleApiError(err) {
 
 export function showErrorFallback(container, message) {
   container.innerHTML = `
-    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:50vh;text-align:center;padding:40px 20px">
-      <div class="mb-3" style="font-size:3.5rem;color:var(--text-muted);animation:fishSwim 2s ease-in-out infinite">
+    <div class="d-flex flex-column align-items-center justify-content-center text-center py-5 px-3" style="min-height:50vh">
+      <div class="mb-3 text-muted" style="font-size:3.5rem;animation:fishSwim 2s ease-in-out infinite">
         <i class="fas fa-fish"></i>
       </div>
       <h2 class="mb-2" style="font-size:1.5rem">${t('common.somethingWentWrong') || 'Something went wrong'}</h2>
       <p class="text-muted mb-4" style="max-width:400px">${escapeHtml(message || t('common.errorFallbackDesc') || 'An unexpected error occurred. Please try refreshing the page.')}</p>
-      <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center">
+      <div class="d-flex gap-3 flex-wrap justify-content-center">
         <button class="btn btn-primary btn-lg" data-action="refresh"><i class="fas fa-sync-alt"></i> ${t('common.refresh') || 'Refresh'}</button>
         <a href="#/" class="btn btn-outline btn-lg"><i class="fas fa-home"></i> ${t('common.goHome') || 'Home'}</a>
       </div>

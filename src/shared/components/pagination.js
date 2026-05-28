@@ -31,7 +31,7 @@ Alpine.data('pagination', ({ page, totalPages, onPageChange } = {}) => ({
  */
 export function alpinePaginationHtml() {
   return `
-    <div class="d-flex align-items-center gap-2 mt-4" style="justify-content:center"
+    <div class="d-flex align-items-center justify-content-center gap-2 mt-4"
          x-data="pagination({ page, totalPages, onPageChange: goToPage })">
       <template x-for="p in pages" :key="p">
         <span>
@@ -39,7 +39,7 @@ export function alpinePaginationHtml() {
                   x-text="p"
                   :class="'btn btn-sm ' + (p === currentPage ? 'btn-primary' : 'btn-ghost')"
                   @click="goTo(p)"></button>
-          <span x-show="p === '...'" class="px-1" style="color:var(--text-muted)">&hellip;</span>
+          <span x-show="p === '...'" class="px-1 text-muted">&hellip;</span>
         </span>
       </template>
     </div>
@@ -61,7 +61,7 @@ export function manualPaginationHtml({ page, totalPages, prefix = 'pag' }) {
       <button class="btn btn-sm btn-ghost" id="${prefix}PrevBtn" ${page <= 1 ? 'disabled' : ''}>
         <i class="fas ${leftChevron}"></i>
       </button>
-      <span style="font-size:0.88rem;color:var(--text-muted)">
+      <span class="text-muted" style="font-size:0.88rem">
         ${t("common.page") || 'Page'} ${page} / ${Math.max(totalPages, 1)}
       </span>
       <button class="btn btn-sm btn-ghost" id="${prefix}NextBtn" ${page >= totalPages ? 'disabled' : ''}>

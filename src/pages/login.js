@@ -99,8 +99,8 @@ export default function renderLogin(container) {
         <div class="card-body">
         <div x-show="error" x-text="error" class="alert alert-error" role="alert" x-cloak></div>
         <div x-show="unverifiedEmail" x-cloak>
-          <div class="alert alert-warning" role="alert" style="text-align:center">
-            <i class="fas fa-envelope mb-2" style="font-size:2rem;display:block"></i>
+          <div class="alert alert-warning text-center" role="alert">
+            <i class="fas fa-envelope mb-2 fs-1 d-block"></i>
             <strong>${t('auth.emailNotVerified') || 'Email not verified.'}</strong>
             <p class="my-2" style="font-size:var(--text-sm)">${t('auth.checkInbox') || 'Please check your inbox and click the verification link.'}</p>
             <button class="btn btn-primary btn-sm mt-1" x-ref="resendBtn" @click="resendVerification()">
