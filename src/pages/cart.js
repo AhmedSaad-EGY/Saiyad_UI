@@ -242,7 +242,7 @@ export default async function renderCart(container) {
                   <tr>
                     <td class="cart-product-cell">
                       <a :href="'#/product-detail?id=' + item.productId"
-                         class="d-flex align-items-center gap-2 text-decoration-none" style="color:var(--text-primary)">
+                         class="d-flex align-items-center gap-2 text-decoration-none" style="color:var(--text)">
                         <template x-if="item.productImageUrl || item.imageUrl">
                           <img :src="item.productImageUrl || item.imageUrl"
                                :alt="item.productTitle || ''"
@@ -250,7 +250,7 @@ export default async function renderCart(container) {
                                loading="lazy">
                         </template>
                         <template x-if="!(item.productImageUrl || item.imageUrl)">
-                          <div class="d-flex align-items-center justify-content-center flex-shrink-0 rounded-2" style="width:48px;height:48px;background:var(--background-secondary);border:1px solid var(--border)">
+                          <div class="d-flex align-items-center justify-content-center flex-shrink-0 rounded-2" style="width:48px;height:48px;background:var(--body-bg);border:1px solid var(--border)">
                             <i class="fas fa-image text-muted fs-6"></i>
                           </div>
                         </template>

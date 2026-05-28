@@ -257,6 +257,12 @@
   }
 }
 
+@keyframes fishSwimSmall {
+  0%, 100% { transform: translateX(0) rotate(0deg); }
+  25% { transform: translateX(10px) rotate(5deg); }
+  75% { transform: translateX(-10px) rotate(-5deg); }
+}
+
 /* ============================================================
    SCROLL ANIMATIONS — Animate.css powered (fadeInUp via JS)
    ============================================================ */

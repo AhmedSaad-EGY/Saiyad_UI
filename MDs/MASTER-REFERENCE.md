@@ -15,6 +15,7 @@
 | **`AUDIT_REPORT.md`** | Deep audit: 22 findings with code snippets, before/after, severity per file | Implementing a fix — copy-paste the exact code changes |
 | **`user-role-flow.md`** | Permission matrices: 16 tables covering every feature × 5 roles | Debugging role/permission issues |
 | **`phase-spec.md`** | Strategy: backend stack, what's broken, priorities, roadmap | Planning sprints, understanding the full picture |
+| **`TOUGH_CLEANUP_PLAN.md`** | 70+ cleanup items across 7 phases — CSS dead code, unused imports, missing states, memory safety | **Every session — read first!** Prioritized execution order, updated as tasks complete |
 | **`knowledge.md`** | Dev onboarding: conventions, gotchas, data flow rules | New devs, reminders about gotchas (Alpine, CDN, SW, circular deps) |
 
 ---
@@ -398,13 +399,15 @@ MODERATOR_ROLES = [Auctioneer, Admin]                  # Review + Analytics
 
 > 📖 **Full future roadmap → see [`phase-spec.md`](./phase-spec.md#7-future-work-post-roles)**
 
+> 📖 **Full cleanup checklist with per-item status → see [`TOUGH_CLEANUP_PLAN.md`](./TOUGH_CLEANUP_PLAN.md)**
+
 ### Immediate (Next)
-1. Remove 28 unused component variable mappings (modals, tooltips, popovers, dropdowns, badges, alerts) from `_bootstrap-overrides.css`
-2. Fix duplicate `@keyframes slideDown` in app.js (`translateY(-100%)`) that overrides `_animations.css` definition (`translateY(-12px)`)
+1. Remove 28 unused component variable mappings from `_bootstrap-overrides.css`
+2. ❌ ~~Fix duplicate `@keyframes slideDown`~~ ✅ Already fixed — app.js no longer injects it
 
 ### Short-term
-3. Standardize Bootstrap usage patterns across all 25 page modules
-4. Complete the remaining Animate.css migration (SW update banner fadeIn, product-detail reviews)
+3. Follow TOUGH_CLEANUP_PLAN.md execution order (CSS → Core JS → Pages → Shared → Config)
+4. Standardize Bootstrap usage patterns across all 25 page modules
 
 ---
 

@@ -11,6 +11,22 @@ const _routeHistory = [];
 const MAX_HISTORY = 50;
 let _initialLoad = true;
 
+// Close mobile nav drawer when route changes
+function closeDrawer() {
+  const drawer = document.getElementById('navDrawer');
+  const overlay = document.getElementById('navOverlay');
+  if (!drawer && !overlay) return;
+  drawer?.classList.remove('open');
+  overlay?.classList.remove('open');
+  document.body.classList.remove('nav-open');
+  const btn = document.getElementById('hamburger');
+  if (btn) {
+    btn.innerHTML = '<i class="fas fa-bars" aria-hidden="true"></i>';
+    btn.setAttribute('aria-expanded', 'false');
+  }
+  btn?.focus();
+}
+
 export function registerRouteCleanup(fn) {
   _routeCleanups.push(fn);
 }
@@ -105,6 +121,9 @@ export async function router(force = false) {
     }, 0);
     return;
   }
+
+  // Close mobile drawer
+  closeDrawer();
 
   // Cleanup previous route resources
   runRouteCleanups();

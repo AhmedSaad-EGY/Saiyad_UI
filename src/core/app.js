@@ -591,10 +591,10 @@ function showUpdateBanner(worker) {
     "left:50%",
     "transform:translateX(-50%)",
     "z-index:99999",
-    "background:var(--color-background-primary, #fff)",
-    "color:var(--color-text-primary, #1a1a1a)",
-    "border:1px solid var(--color-border-secondary, #e0e0e0)",
-    "border-radius:var(--border-radius-lg, 12px)",
+    "background:var(--card-bg, #fff)",
+    "color:var(--text, #1a1a1a)",
+    "border:1px solid var(--border, #e0e0e0)",
+    "border-radius:var(--radius-lg, 12px)",
     "padding:12px 20px",
     "display:flex",
     "align-items:center",
@@ -612,14 +612,14 @@ function showUpdateBanner(worker) {
     </span>
     <button id="swUpdateBtn"
       class="border-0 text-white fw-semibold text-nowrap"
-      style="background:var(--primary,#1D6ECC);border-radius:var(--border-radius-md,8px);padding:7px 16px;
+      style="background:var(--primary,#1D6ECC);border-radius:var(--radius-md,8px);padding:7px 16px;
              font-size:13px;cursor:pointer;font-family:inherit">
       Refresh
     </button>
     <button id="swDismissBtn" aria-label="Dismiss"
       class="border-0"
       style="background:transparent;cursor:pointer;
-             color:var(--color-text-secondary,#888);font-size:18px;line-height:1;
+             color:var(--text-secondary,#888);font-size:18px;line-height:1;
              padding:0 2px">
       ×
     </button>

@@ -55,13 +55,7 @@ export function showErrorFallback(container, message) {
         <button class="btn btn-primary btn-lg" data-action="refresh"><i class="fas fa-sync-alt"></i> ${t('common.refresh') || 'Refresh'}</button>
         <a href="#/" class="btn btn-outline btn-lg"><i class="fas fa-home"></i> ${t('common.goHome') || 'Home'}</a>
       </div>
-      <style>
-        @keyframes fishSwimSmall {
-          0%, 100% { transform: translateX(0) rotate(0deg); }
-          25% { transform: translateX(10px) rotate(5deg); }
-          75% { transform: translateX(-10px) rotate(-5deg); }
-        }
-      </style>
+
     </div>`;
 
   container.querySelector('[data-action="refresh"]')?.addEventListener('click', () => {
