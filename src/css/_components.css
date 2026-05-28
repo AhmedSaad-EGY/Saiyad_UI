@@ -1840,11 +1840,7 @@ tr:last-child td {
 /* ============================================================
    FEATURES GRID
    ============================================================ */
-.features-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  margin: 48px 0;
-}
+/* .features-grid migrated to Bootstrap .row + row-cols-* classes + my-5 */
 
 .feature-card {
   text-align: center;
@@ -2643,11 +2639,7 @@ tr:last-child td {
   border: 1px solid var(--glass-border);
 }
 
-.profile-links-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-  margin-top: var(--space-4);
-}
+/* .profile-links-grid migrated to Bootstrap .row + row-cols-* classes */
 
 .profile-link-card {
   display: flex;

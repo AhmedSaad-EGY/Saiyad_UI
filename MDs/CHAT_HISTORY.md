@@ -1041,4 +1041,100 @@ Kept CSS Grid `grid-template-columns: repeat(auto-fill, minmax(240px, 1fr))` for
 
 ---
 
+## 32. PRODUCT-GRID MIGRATION — CSS GRID → BOOTSTRAP ROW/COLS (5 PAGES)
+
+**Date**: May 28, 2026  
+**Action**: Replaced the `.product-grid` CSS Grid auto-fill layout with Bootstrap `.row` + `row-cols-*` classes across 5 page modules.
+
+### CSS Changes
+
+| # | File | Change |
+|---|------|--------|
+| 1 | **`_components.css`** | Removed `.product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); overflow: visible; }` base rule |
+| 2 | **`_layout.css @768px`** | Removed `.product-grid { grid-template-columns: repeat(auto-fill, minmax(min(220px, 100%), 1fr)); }` responsive override |
+| 3 | **`_components.css @480px`** | Removed `.product-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); padding: var(--space-1); margin: -2px; }` mobile rule |
+| 4 | **`_components.css @360px`** | Removed `.product-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }` tiny screen rule |
+
+### JS Changes (9 replacements across 5 files)
+
+| File | Instances | Bootstrap Classes Applied |
+|------|-----------|--------------------------|
+| **home.js** | 3 (skeleton, products grid, auctions grid) | `row row-cols-2 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4` |
+| **products.js** | 2 (skeleton, product grid) | Same |
+| **auctions.js** | 2 (skeleton, auction grid) | Same |
+| **product-detail.js** | 1 (similar products) | Same |
+| **seller-profile.js** | 1 (seller products) | Same |
+
+### Column Mapping
+
+| Breakpoint | Original (auto-fill minmax) | New (row-cols-*) |
+|-----------|----------------------------|------------------|
+| xs (<576px) | 2 cols (at 360-480px) | 2 cols |
+| sm (576-767px) | 2-3 cols | 2 cols |
+| md (768-991px) | 2-3 cols | 2 cols |
+| lg (992-1199px) | 3-4 cols | 3 cols |
+| xl (1200+px) | 4+ cols | 4 cols |
+
+**Build**: ✅ 0 errors | **Review**: ✅ Clean
+
+---
+
+## 33. FEATURES-GRID MIGRATION — CSS GRID → BOOTSTRAP ROW/COLS (home.js)
+
+**Date**: May 28, 2026  
+**Action**: Replaced the `.features-grid` CSS Grid layout in home.js with Bootstrap `.row` + `row-cols-*` classes.
+
+### Changes Made
+
+| # | File | Change |
+|---|------|--------|
+| 1 | **`_components.css`** | Removed `.features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin: 48px 0; }` |
+| 2 | **`home.js`** | `class="features-grid gap-4"` → `class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 my-5"` |
+
+### Column Mapping
+
+| Breakpoint | Original (auto-fit minmax(220px)) | New (row-cols-*) |
+|-----------|-----------------------------------|------------------|
+| xs (<440px) | 1 column | `row-cols-1` — matches original collapse |
+| sm (576-767px) | 2 columns | `row-cols-sm-2` |
+| md (768-991px) | 3 columns | `row-cols-md-3` |
+| lg (992+px) | 4 columns | `row-cols-lg-4` |
+
+**Note**: Review flagged that `row-cols-2` (no xs class) would be cramped on narrow phones (~375px). Fixed by adding `row-cols-1` as the xs default.
+
+**Build**: ✅ 0 errors | **Review**: ✅ Clean
+
+---
+
+## 34. PROFILE-LINKS-GRID MIGRATION — CSS GRID → BOOTSTRAP ROW/COLS (profile.js)
+
+**Date**: May 28, 2026  
+**Action**: Replaced the `.profile-links-grid` CSS Grid layout in profile.js with Bootstrap `.row` + `row-cols-*` classes.
+
+### Changes Made
+
+| # | File | Change |
+|---|------|--------|
+| 1 | **`_components.css`** | Removed `.profile-links-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); margin-top: var(--space-4); }` |
+| 2 | **`profile.js`** | `class="profile-links-grid gap-3"` → `class="row row-cols-2 row-cols-sm-3 row-cols-md-4 g-3 mt-3"` |
+
+### Measurement Equivalence
+
+| Original | Bootstrap Equivalent | Value |
+|----------|---------------------|-------|
+| `margin-top: var(--space-4)` | `mt-3` | 1rem (16px) |
+| `gap: var(--space-3)` | `g-3` | 1rem (16px) |
+
+### Column Mapping
+
+| Breakpoint | Original (auto-fill minmax(130px)) | New (row-cols-*) |
+|-----------|------------------------------------|------------------|
+| xs (<576px) | 2 cols (at ~327px content width) | `row-cols-2` |
+| sm (576-767px) | 3 cols | `row-cols-sm-3` |
+| md (768+px) | 4 cols | `row-cols-md-4` |
+
+**Build**: ✅ 0 errors | **Review**: ✅ Clean
+
+---
+
 *End of chat history record. Update this file at the start of each session by appending new sections.*

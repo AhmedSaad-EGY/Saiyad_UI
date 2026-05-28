@@ -142,7 +142,7 @@ async function renderOverview(content, user) {
       </div>
       <div class="card-body">
         <p class="text-muted mt-1">${t("dash.welcome")}, <strong>${escapeHtml(user?.fullName || "User")}</strong>!</p>
-        <p style="color:var(--text-muted)">${t("dash.role")}: <span class="category-tag">${user?.role || t("common.N/A")}</span></p>
+        <p class="text-muted">${t("dash.role")}: <span class="category-tag">${user?.role || t("common.N/A")}</span></p>
       </div>
     </div>
     <div class="row g-3 mt-3">
@@ -159,7 +159,7 @@ async function renderOverview(content, user) {
   try {
     const orders = await api.get("/orders", { pageSize: 1 });
     document.getElementById("dashOrders").innerHTML =
-      `<h3><i class="fas fa-box"></i> ${t("dash.orders")}</h3><p class="fs-2 fw-bold" style="color:var(--primary)">${orders.totalCount || orders.total || 0}</p><p style="color:var(--text-muted)">${t("dash.totalOrders")}</p>`;
+      `<h3><i class="fas fa-box"></i> ${t("dash.orders")}</h3><p class="fs-2 fw-bold text-primary">${orders.totalCount || orders.total || 0}</p><p class="text-muted">${t("dash.totalOrders")}</p>`;
   } catch {
     document.getElementById("dashOrders").innerHTML =
       `<div class="alert alert-info" role="alert">${t("common.error")}</div>`;
@@ -178,11 +178,10 @@ async function renderOverview(content, user) {
         const overviewEl = document.getElementById("dashOverview") || content;
         const banner = document.createElement("div");
         banner.id = "sellerOnboardBanner";
-        banner.className = "alert alert-info animate-on-scroll";
+        banner.className = "alert alert-info animate-on-scroll d-flex align-items-center gap-3 flex-wrap mb-3";
         banner.setAttribute("role", "status");
-        banner.style.cssText = "margin-bottom:16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap";
         banner.innerHTML = `
-          <i class="fas fa-store" style="font-size:1.2rem;flex-shrink:0"></i>
+          <i class="fas fa-store fs-5 flex-shrink-0"></i>
           <span class="flex-fill">
             <strong>${t("seller.setupRequired") || "Set up your seller profile"}</strong> —
             ${t("seller.setupDesc") || "Complete your seller profile before listing products."}
@@ -199,14 +198,14 @@ async function renderOverview(content, user) {
     try {
       const products = await api.get("/products/my", { pageSize: 1 });
       document.getElementById("dashProducts").innerHTML =
-        `<h3><i class="fas fa-tag"></i> ${t("dash.products")}</h3><p class="fs-2 fw-bold" style="color:var(--primary)">${products.totalCount || products.total || 0}</p><p style="color:var(--text-muted)">${t("dash.yourProducts")}</p>`;
+        `<h3><i class="fas fa-tag"></i> ${t("dash.products")}</h3><p class="fs-2 fw-bold text-primary">${products.totalCount || products.total || 0}</p><p class="text-muted">${t("dash.yourProducts")}</p>`;
     } catch (e) {
       document.getElementById("dashProducts").innerHTML =
-        `<div class="card" style="text-align:center;padding:24px"><h3><i class="fas fa-tag"></i> ${t("dash.products")}</h3><p style="color:var(--text-muted);margin-top:8px">${t("dash.productsNotAvailable")}</p></div>`;
+        `<div class="card text-center p-4"><h3><i class="fas fa-tag"></i> ${t("dash.products")}</h3><p class="text-muted mt-2">${t("dash.productsNotAvailable")}</p></div>`;
     }
   } else {
     document.getElementById("dashProducts").innerHTML =
-      `<div class="card" style="text-align:center;padding:24px"><h3><i class="fas fa-tag"></i> ${t("dash.products")}</h3><p style="color:var(--text-muted);margin-top:8px">${t("dash.productsNotAvailable")}</p></div>`;
+      `<div class="card text-center p-4"><h3><i class="fas fa-tag"></i> ${t("dash.products")}</h3><p class="text-muted mt-2">${t("dash.productsNotAvailable")}</p></div>`;
   }
 }
 
@@ -218,7 +217,7 @@ async function renderOrders(content) {
 
   async function loadOrders() {
     const list = document.getElementById("ordersList");
-    list.innerHTML = `<div class="loading" style="padding:20px"><i class="fas fa-spinner spinner"></i><p>${t("common.loading")}</p></div>`;
+    list.innerHTML = `<div class="loading p-4"><i class="fas fa-spinner spinner"></i><p>${t("common.loading")}</p></div>`;
     try {
       const data = await api.get("/orders", { page, pageSize });
       const orders = data.items || data.data || [];
@@ -236,19 +235,19 @@ async function renderOrders(content) {
       list.innerHTML = `
         <div class="table-wrapper animate-on-scroll">
           <table class="table">
-            <caption style="caption-side:bottom;font-size:0.78rem;color:var(--text-muted)" class="mt-2">${t("dash.orders")}</caption>
+            <caption class="mt-2 text-muted" style="caption-side:bottom;font-size:0.78rem">${t("dash.orders")}</caption>
             <thead><tr><th scope="col">${t("dash.orderNum")}</th><th scope="col">${t("cart.total")}</th><th scope="col">${t("product.status")}</th><th scope="col">${t("dash.date")}</th><th scope="col"></th></tr></thead>
             <tbody>${orders
               .map(
                 (o) => `
               <tr>
                 <td>#${o.id}</td>
-                <td style="font-weight:600">${formatPrice(o.totalPrice)}</td>
+                <td class="fw-semibold">${formatPrice(o.totalPrice)}</td>
                 <td><span class="status ${statusClass(o.status)}">${tStatus(o.status)}</span></td>
                 <td>${formatDate(o.createdAt || o.orderDate)}</td>
                 <td>
                   <a href="#/order-detail?id=${o.id}" class="btn btn-outline btn-sm">${t("dash.view")}</a>
-                  ${o.status === "Pending" || o.status === "Confirmed" ? `<button class="btn btn-outline btn-sm cancel-order-btn" data-order-id="${o.id}" style="color:var(--danger);border-color:var(--danger);margin-inline-start:4px">${t("order.cancel")}</button>` : ""}
+                  ${o.status === "Pending" || o.status === "Confirmed" ? `<button class="btn btn-outline-danger btn-sm cancel-order-btn ms-1" data-order-id="${o.id}">${t("order.cancel")}</button>` : ""}
                 </td>
               </tr>
             `,
@@ -300,7 +299,7 @@ async function renderMyProducts(content) {
       <h3><i class="fas fa-tag"></i> ${t("dash.products")}</h3>
       <button class="btn btn-primary btn-sm" id="showProductForm"><i class="fas fa-plus"></i> ${t("product.create")}</button>
     </div>
-    <div id="productFormContainer" class="d-none card card-sm" style="max-width:500px;margin-bottom:16px">
+    <div id="productFormContainer" class="d-none card card-sm mb-3" style="max-width:500px">
       <h4 class="mb-2">${t("product.create")}</h4>
       <form id="myProductForm" novalidate>
         <div class="form-group"><label class="form-label">${t("product.title")} *</label><input type="text" class="form-input form-control" id="prodTitle" required></div>
@@ -313,9 +312,9 @@ async function renderMyProducts(content) {
         <div class="form-group"><label class="form-label">${t("product.condition")}</label><select class="form-select" id="prodCondition"><option value="New">${t("product.new")}</option><option value="Used">${t("product.used")}</option></select></div>
           <div class="form-group">
             <label class="form-label">${t("product.images")}</label>
-            <input type="file" class="form-input form-control" id="prodImageInput" accept="image/jpeg,image/png,image/webp" style="padding:8px">
-            <img id="prodImagePreview" class="d-none" style="width:120px;height:120px;object-fit:cover;border-radius:var(--radius-md);margin-top:8px;border:1px solid var(--border)">
-            <div id="uploadProgress" style="margin-top:4px;font-size:0.82rem;color:var(--text-muted)"></div>
+            <input type="file" class="form-input form-control p-2" id="prodImageInput" accept="image/jpeg,image/png,image/webp">
+            <img id="prodImagePreview" class="d-none rounded border mt-2" style="width:120px;height:120px;object-fit:cover">
+            <div id="uploadProgress" class="mt-1 text-muted small"></div>
           </div>
         <div id="productAlert"></div>
         <div class="d-flex gap-2 flex-wrap">
@@ -340,8 +339,7 @@ async function renderMyProducts(content) {
         if (el) el.value = draft[id];
       });
       const draftBanner = document.createElement("div");
-      draftBanner.className = "alert alert-info";
-      draftBanner.style.cssText = "display:flex;justify-content:space-between;align-items:center;margin-bottom:12px";
+      draftBanner.className = "alert alert-info d-flex justify-content-between align-items-center mb-3";
       draftBanner.innerHTML = `
         <span><i class="fas fa-history"></i> ${t("product.draftRestored")}</span>
         <button class="btn btn-ghost btn-sm" id="discardDraftBtn">${t("product.discardDraft")}</button>
@@ -491,17 +489,17 @@ async function renderMyProducts(content) {
     }
     list.innerHTML = `
       <div class="table-wrapper animate-on-scroll">          <table class="table">
-            <caption style="caption-side:bottom;font-size:0.78rem;color:var(--text-muted)" class="mt-2">${t("dash.products")}</caption>
+            <caption class="mt-2 text-muted" style="caption-side:bottom;font-size:0.78rem">${t("dash.products")}</caption>
             <thead><tr><th scope="col">${t("cart.product")}</th><th scope="col">${t("cart.price")}</th><th scope="col">${t("product.status")}</th><th scope="col">${t("product.stock")}</th><th scope="col"></th></tr></thead>
           <tbody>${products
             .map(
               (p) => `
             <tr>
-              <td><a href="#/product-detail?id=${p.id}" style="text-decoration:none;color:var(--text);font-weight:500">${escapeHtml(p.title)}</a></td>
-              <td style="font-weight:600">${formatPrice(p.price)}</td>
+              <td><a href="#/product-detail?id=${p.id}" class="text-decoration-none text-reset fw-medium">${escapeHtml(p.title)}</a></td>
+              <td class="fw-semibold">${formatPrice(p.price)}</td>
               <td><span class="status ${statusClass(p.status)}">${tStatus(p.status, "product")}</span></td>
               <td>${p.stockQuantity ?? "-"}</td>
-              <td style="display:flex;gap:4px;flex-wrap:nowrap">
+              <td class="d-flex gap-1 flex-nowrap">
                 <a href="#/product-detail?id=${p.id}" class="btn btn-outline btn-sm">${t("dash.view")}</a>
                 <button class="btn btn-ghost btn-sm edit-product-btn" data-product-id="${p.id}"><i class="fas fa-pen"></i> ${t("product.edit")}</button>
                 <button class="btn btn-ghost btn-sm delete-product-btn text-danger" data-product-id="${p.id}"><i class="fas fa-trash"></i> ${t("common.delete")}</button>
@@ -567,7 +565,7 @@ async function renderMyProducts(content) {
     });
   } catch (e) {
     document.getElementById("myProductsList").innerHTML =
-      `<div class="card" style="text-align:center;padding:24px"><h3><i class="fas fa-tag"></i> ${t("dash.products")}</h3><p style="color:var(--text-muted);margin-top:8px">${t("dash.productsNotAvailable")}</p></div>`;
+      `<div class="card text-center p-4"><h3><i class="fas fa-tag"></i> ${t("dash.products")}</h3><p class="text-muted mt-2">${t("dash.productsNotAvailable")}</p></div>`;
   }
 }
 
@@ -710,13 +708,13 @@ async function renderWishlist(content) {
     }
     document.getElementById("wishlistItems").innerHTML = `
       <div class="table-wrapper animate-on-scroll">          <table class="table">
-            <caption style="caption-side:bottom;font-size:0.78rem;color:var(--text-muted)" class="mt-2">${t("dash.wishlist")}</caption>
+            <caption class="mt-2 text-muted" style="caption-side:bottom;font-size:0.78rem">${t("dash.wishlist")}</caption>
             <thead><tr><th scope="col">${t("cart.product")}</th><th scope="col">${t("cart.price")}</th><th scope="col"></th></tr></thead>
           <tbody>${items
             .map(
               (w) => `
             <tr>
-              <td><a href="#/product-detail?id=${w.productId}" style="text-decoration:none;color:var(--text);font-weight:500">${escapeHtml(w.product?.title || `Product #${w.productId}`)}</a></td>
+              <td><a href="#/product-detail?id=${w.productId}" class="text-decoration-none text-reset fw-medium">${escapeHtml(w.product?.title || `Product #${w.productId}`)}</a></td>
               <td>${w.product?.price ? formatPrice(w.product.price) : "-"}</td>
               <td>
                 <div class="d-flex gap-2 flex-wrap">
@@ -731,7 +729,7 @@ async function renderWishlist(content) {
                   </button>
                   <button class="btn btn-ghost btn-sm remove-wishlist"
                     data-id="${w.productId}" aria-label="${t('common.remove')}">
-                    <i class="fas fa-trash" style="color:var(--danger)"></i>
+                    <i class="fas fa-trash text-danger"></i>
                   </button>
                 </div>
               </td>
@@ -809,10 +807,10 @@ async function renderNotifications(content) {
       .map(
         (n) => `
       <div class="notif-item ${n.isRead ? "" : "unread"}">
-        <div style="flex:1">
+        <div class="flex-grow-1">
           <strong>${escapeHtml(n.title)}</strong>
-          <p style="color:var(--text-muted);font-size:0.9rem">${escapeHtml(n.message)}</p>
-          <small style="color:var(--text-muted)">${formatDate(n.createdAt)}</small>
+          <p class="text-muted small">${escapeHtml(n.message)}</p>
+          <small class="text-muted">${formatDate(n.createdAt)}</small>
         </div>
         ${!n.isRead ? `<button class="btn btn-sm btn-ghost mark-read" data-id="${n.id}"><i class="fas fa-check"></i></button>` : ""}
       </div>

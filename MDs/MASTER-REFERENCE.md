@@ -323,6 +323,9 @@ MODERATOR_ROLES = [Auctioneer, Admin]                  # Review + Analytics
 - [x] **May 28**: **Bootstrap Grid Phase B — Product/feature grids** — Replaced custom `gap: 24px` on `.product-grid` and `.features-grid` with Bootstrap `.gap-4` utility class (1.5rem = 24px); removed responsive gap overrides at 480px/360px; added `.gap-4` to all 8 grid instances across home.js, products.js, auctions.js | Build: ✅ 0 errors | Review: ✅
 - [x] **May 28**: **Bootstrap Grid Phase C — Page layout grids** — Migrated checkout `.detail-page` → `.row.g-5` + `.col-lg-6`, dashboard `.dashboard-layout` → `.row.g-3` + `.col-md-3/.col-md-9`, product-detail/auction-detail `.detail-page` → `.row.g-5` + `.col-lg-6`; fixed mismatched HTML in checkout.js and product-detail.js; removed `.detail-page` and `.dashboard-layout` CSS rules | Build: ✅ 0 errors | Review: ✅
 - [x] **May 28**: **Bootstrap Grid Phase D — CSS cleanup** — Removed stale responsive grid overrides from `_layout.css` at 1024px/768px/480px breakpoints for `.dashboard-layout`, `.detail-page`, `.grid-2/3/4`, `.features-grid`, `.product-grid`, `.profile-stats`; cleaned up dead `.checkout-grid` rule | Build: ✅ 0 errors | Review: ✅
+- [x] **May 28**: **product-grid → Bootstrap row/cols** — Replaced `.product-grid` CSS Grid across 5 pages (home.js, products.js, auctions.js, product-detail.js, seller-profile.js) with `row row-cols-2 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4`; removed 4 CSS rules from `_components.css` and `_layout.css` | Build: ✅ 0 errors | Review: ✅
+- [x] **May 28**: **features-grid → Bootstrap row/cols** — Replaced `.features-grid` CSS Grid in home.js with `row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 my-5`; removed CSS rule from `_components.css` | Build: ✅ 0 errors | Review: ✅
+- [x] **May 28**: **profile-links-grid → Bootstrap row/cols** — Replaced `.profile-links-grid` CSS Grid in profile.js with `row row-cols-2 row-cols-sm-3 row-cols-md-4 g-3 mt-3`; removed CSS rule from `_components.css`; restored `.profile-link-card` base rule after accidental deletion | Build: ✅ 0 errors | Review: ✅
 
 ---
 
@@ -400,9 +403,9 @@ MODERATOR_ROLES = [Auctioneer, Admin]                  # Review + Analytics
 4. Fix duplicate `@keyframes slideDown` in app.js (`translateY(-100%)`) that overrides `_animations.css` definition (`translateY(-12px)`)
 
 ### Short-term
-3. Standardize Bootstrap usage patterns across all 25 page modules
-4. Replace remaining custom `slideUp` usages with Animate.css — app.js banners (offline/online dismissal), product-detail.js review entries, app.js SW update banner
-5. Fix duplicate `@keyframes slideDown` in app.js (`translateY(-100%)`) that overrides `_animations.css` definition (`translateY(-12px)`)
+5. Standardize Bootstrap usage patterns across all 25 page modules
+6. Replace remaining custom `slideUp` usages with Animate.css (app.js banners, product-detail.js reviews, SW update)
+7. Fix duplicate `@keyframes slideDown` in app.js
 
 ---
 

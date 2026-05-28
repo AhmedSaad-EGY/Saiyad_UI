@@ -202,9 +202,9 @@ export default async function renderCart(container) {
         <div>
           <div class="section-header"><h2><i class="fas fa-shopping-cart"></i> ${t('cart.title')}</h2></div>
           <div class="empty-state">
-            <i class="fas fa-shopping-cart" style="font-size:3rem;color:var(--text-muted);margin-bottom:16px"></i>
+            <i class="fas fa-shopping-cart mb-3" style="font-size:3rem;color:var(--text-muted)"></i>
             <h3>${t('cart.empty')}</h3>
-            <p style="color:var(--text-muted);margin-bottom:20px">${t('cart.emptyDesc')}</p>
+            <p class="text-muted mb-4">${t('cart.emptyDesc')}</p>
             <a href="#/products" class="btn btn-primary"><i class="fas fa-store"></i> ${t('cart.browseProducts')}</a>
           </div>
         </div>

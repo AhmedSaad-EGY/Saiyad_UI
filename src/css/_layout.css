@@ -749,13 +749,6 @@ input[type="date"].form-input::-webkit-datetime-edit-year-field:focus {
   margin-top: var(--space-16);
 }
 
-.footer-grid {
-  display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1fr;
-  gap: var(--space-8);
-  margin-bottom: var(--space-8);
-}
-
 .footer-logo {
   font-size: var(--text-xl);
   font-weight: 700;

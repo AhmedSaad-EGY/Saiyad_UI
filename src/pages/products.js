@@ -246,7 +246,7 @@ export default async function renderProducts(_container, _fullPath, params) {
         <div class="empty-state-visual"><i class="fas fa-exclamation-triangle" style="font-size:3.5rem;color:var(--text-muted)"></i></div>
         <h3>${t('products.loadError')}</h3>
         <p x-text="error"></p>
-        <button class="btn btn-primary" @click="reload()" style="margin-top:16px">${t('common.retry')}</button>
+        <button class="btn btn-primary mt-3" @click="reload()">${t('common.retry')}</button>
       </div>
 
       <!-- Product grid -->
@@ -274,12 +274,12 @@ export default async function renderProducts(_container, _fullPath, params) {
         <div class="empty-state-visual"><i class="fas fa-box-open" style="font-size:3.5rem;color:var(--text-muted)"></i></div>
         <h3>${t('products.noProducts')}</h3>
         <p>${t('common.clearFilters')}</p>
-        <button class="btn btn-primary" @click="resetFilters()" style="margin-top:16px">${t('common.clearFilters')}</button>
+        <button class="btn btn-primary mt-3" @click="resetFilters()">${t('common.clearFilters')}</button>
       </div>
 
       <!-- Alpine pagination -->
       <div x-show="!loading && products.length" x-data="pagination({ page, totalPages, onPageChange: goToPage })">
-        <div class="d-flex align-items-center gap-2" style="justify-content:center;margin-top:24px">
+        <div class="d-flex align-items-center gap-2 mt-4" style="justify-content:center">
           <template x-for="p in pages" :key="p">
             <span>
               <button x-show="p !== '...'" x-text="p" :class="'btn btn-sm ' + (p === currentPage ? 'btn-primary' : 'btn-ghost')" @click="goTo(p)"></button>
@@ -298,7 +298,7 @@ export default async function renderProducts(_container, _fullPath, params) {
           <input type="text" x-model="mobileSearch" id="productMobileSearchInput" class="form-input form-control" placeholder="${t('products.search')}" @keydown.enter="applyMobileSearch()">
           <button class="btn btn-ghost btn-icon" @click="closeSearchOverlay()" aria-label="${t('common.close')}"><i class="fas fa-times fa-lg"></i></button>
         </div>
-        <button class="btn btn-primary" @click="applyMobileSearch()" style="align-self:center;margin-top:12px"><i class="fas fa-search"></i> ${t('common.search')}</button>
+        <button class="btn btn-primary mt-3" @click="applyMobileSearch()" style="align-self:center"><i class="fas fa-search"></i> ${t('common.search')}</button>
       </div>
 
       <!-- Mobile filter bottom sheet -->

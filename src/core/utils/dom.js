@@ -43,8 +43,8 @@ export function showLoading(container, type = "page") {
     auth: `
       <div class="auth-page skeleton-shimmer" style="min-height:300px">
         <div class="skeleton" style="width:40%;height:28px;margin:0 auto 24px"></div>
-        <div class="skeleton" style="height:44px;margin-bottom:12px;border-radius:8px"></div>
-        <div class="skeleton" style="height:44px;margin-bottom:20px;border-radius:8px"></div>
+        <div class="skeleton mb-3" style="height:44px;border-radius:8px"></div>
+        <div class="skeleton mb-4" style="height:44px;border-radius:8px"></div>
         <div class="skeleton" style="height:44px;width:100%;border-radius:8px"></div>
       </div>`,
     form: `
@@ -92,9 +92,9 @@ export function renderEmptyState(
   const btnId = "es_btn_" + Math.random().toString(36).slice(2, 8);
   const wrapId = "es_wrap_" + Math.random().toString(36).slice(2, 8);
   const cta = actionHref
-    ? `<a href="${actionHref}" class="${actionClass}" style="margin-top:16px">${actionText}</a>`
+    ? `<a href="${actionHref}" class="${actionClass} mt-3">${actionText}</a>`
     : actionFn
-      ? `<button id="${btnId}" class="${actionClass}" style="margin-top:16px">${actionText}</button>`
+      ? `<button id="${btnId}" class="${actionClass} mt-3">${actionText}</button>`
       : "";
 
   let visual;
@@ -103,7 +103,7 @@ export function renderEmptyState(
   } else if (icon.trim().startsWith("<svg")) {
     visual = icon;
   } else if (icon.match(/^(https?:\/\/|\/|\.\/)/) || icon.includes(".")) {
-    visual = `<img src="${icon}" alt="" style="width:120px;max-height:120px;object-fit:contain;margin-bottom:8px">`;
+    visual = `<img src="${icon}" alt="" class="mb-2" style="width:120px;max-height:120px;object-fit:contain">`;
   } else {
     const illMap = {
       "fa-shopping-cart": "cart",
@@ -119,7 +119,7 @@ export function renderEmptyState(
     if (mappedType) {
       visual = emptyIllustration(mappedType);
     } else if (icon.startsWith("fa-")) {
-      visual = `<i class="fas ${icon}" style="font-size:3.5rem;color:var(--text-muted);margin-bottom:8px;display:block"></i>`;
+      visual = `<i class="fas ${icon} mb-2" style="font-size:3.5rem;color:var(--text-muted);display:block"></i>`;
     } else {
       visual = emptyIllustration(icon);
     }
@@ -127,7 +127,7 @@ export function renderEmptyState(
 
   container.innerHTML = `
     <div class="empty-state" id="${wrapId}">
-      <div class="empty-state-visual" style="margin-bottom:12px">${visual}</div>
+      <div class="empty-state-visual mb-3">${visual}</div>
       ${title ? `<h3>${title}</h3>` : ""}
       ${desc ? `<p>${desc}</p>` : ""}
       ${cta}

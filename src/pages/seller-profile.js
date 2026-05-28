@@ -18,12 +18,12 @@ export default async function renderSellerProfile(container) {
       container.innerHTML = `
         <div class="card" style="max-width:600px;margin:0 auto">
           <div class="card-body">
-          <div style="text-align:center;margin-bottom:20px">
-            <i class="fas fa-store" style="font-size:3rem;color:var(--primary);margin-bottom:8px"></i>
+          <div class="text-center mb-4">
+            <i class="fas fa-store mb-2" style="font-size:3rem;color:var(--primary)"></i>
             <h2>${escapeHtml(profile.storeName)}</h2>
             ${profile.description ? `<p style="color:var(--text-secondary)">${escapeHtml(profile.description)}</p>` : ''}
           </div>
-          <div style="display:flex;gap:20px;justify-content:center;flex-wrap:wrap;margin-bottom:16px">
+          <div class="d-flex gap-3 justify-content-center flex-wrap mb-3">
             ${profile.averageRating ? `<span><strong>${t('seller.rating')}:</strong> ${renderStars(profile.averageRating)} (${profile.averageRating.toFixed(1)})</span>` : ''}
             <span><strong>${t('seller.totalSales')}:</strong> ${profile.totalSales || 0}</span>
           </div>

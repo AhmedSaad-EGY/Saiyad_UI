@@ -162,7 +162,7 @@ export default function renderRegister(container) {
             </div>
           </div>
           <div class="form-group">
-            <div style="display:flex; gap:10px; align-items:flex-start; margin-bottom:8px">
+            <div class="d-flex mb-2" style="gap:10px; align-items:flex-start">
               <input type="checkbox" id="regTerms" name="terms" x-model="terms" style="width:18px; height:18px; cursor:pointer; margin-top:2px">
               <label for="regTerms" style="font-size:var(--text-sm); color:var(--text-secondary); cursor:pointer; line-height:1.4">
                 ${t('auth.iAccept')} <a href="#/terms" class="legal-link" style="color:var(--primary); font-weight:600; text-decoration:none">${t('auth.termsAndConditions')}</a> 

@@ -13,7 +13,7 @@ export default async function renderShipping(container) {
     <div id="addressList"></div>
     <div id="addressForm" class="card d-none" style="max-width:480px;margin-top:16px">
       <div class="card-header">
-        <h3 style="margin-bottom:0">${t("shipping.addNew")}</h3>
+        <h3 class="mb-0">${t("shipping.addNew")}</h3>
       </div>
       <div class="card-body">
       <form id="shipForm" novalidate>

@@ -100,13 +100,13 @@ export default function renderLogin(container) {
         <div x-show="error" x-text="error" class="alert alert-error" role="alert" x-cloak></div>
         <div x-show="unverifiedEmail" x-cloak>
           <div class="alert alert-warning" role="alert" style="text-align:center">
-            <i class="fas fa-envelope" style="font-size:2rem;display:block;margin-bottom:8px"></i>
+            <i class="fas fa-envelope mb-2" style="font-size:2rem;display:block"></i>
             <strong>${t('auth.emailNotVerified') || 'Email not verified.'}</strong>
-            <p style="margin:8px 0;font-size:var(--text-sm)">${t('auth.checkInbox') || 'Please check your inbox and click the verification link.'}</p>
-            <button class="btn btn-primary btn-sm" x-ref="resendBtn" @click="resendVerification()" style="margin-top:4px">
+            <p class="my-2" style="font-size:var(--text-sm)">${t('auth.checkInbox') || 'Please check your inbox and click the verification link.'}</p>
+            <button class="btn btn-primary btn-sm mt-1" x-ref="resendBtn" @click="resendVerification()">
               <i class="fas fa-paper-plane"></i> ${t('auth.resendVerification') || 'Resend Verification'}
             </button>
-            <p style="margin:8px 0 0;font-size:var(--text-xs);opacity:0.7"><i class="fas fa-clock"></i> ${t('auth.checkSpam') || "Didn't get it? Check your spam folder."}</p>
+            <p class="mt-2" style="font-size:var(--text-xs);opacity:0.7"><i class="fas fa-clock"></i> ${t('auth.checkSpam') || "Didn't get it? Check your spam folder."}</p>
           </div>
         </div>
         <form @submit.prevent="submit()" novalidate>

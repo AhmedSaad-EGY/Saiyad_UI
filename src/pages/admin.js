@@ -343,7 +343,7 @@ export default async function renderAdmin(container) {
       if (!cats.length) {
         content.innerHTML = `
           <div class="mb-3"><button class="btn btn-primary btn-sm" id="showAddCat"><i class="fas fa-plus"></i> ${t("admin.addCategory")}</button></div>
-        <div id="addCatForm" class="d-none card card-sm" style="max-width:400px;margin-bottom:16px">
+        <div id="addCatForm" class="d-none card card-sm mb-3" style="max-width:400px">
           <form id="catForm" novalidate>
               <div class="form-group"><label class="form-label">${t("admin.categoryName")}</label><input type="text" class="form-input form-control" id="catName" required></div>
               <div class="form-group"><label class="form-label">${t("admin.categoryDesc")}</label><input type="text" class="form-input form-control" id="catDesc"></div>
@@ -524,7 +524,7 @@ export default async function renderAdmin(container) {
                 </tr>
               `              ).join("") : `<tr><td colspan="6" style="text-align:center;padding:32px;color:var(--text-muted)">
                 <div class="empty-state-inline">
-                  <i class="fas fa-chart-line" style="font-size:2rem;margin-bottom:8px;opacity:0.5"></i>
+                  <i class="fas fa-chart-line mb-2" style="font-size:2rem;opacity:0.5"></i>
                   <p style="margin:0">${t("admin.noFees") || "No fee transactions yet"}</p>
                 </div>
               </td></tr>`}

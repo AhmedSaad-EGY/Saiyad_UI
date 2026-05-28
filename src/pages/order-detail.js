@@ -24,7 +24,7 @@ export default async function renderOrderDetail(container) {
       </div>
       <div class="card mb-3">
         <div class="card-body">
-        <div style="display:flex;flex-wrap:wrap;gap:24px;margin-bottom:12px">
+        <div class="d-flex flex-wrap gap-4 mb-3">
           <div><strong>${t('order.status')}:</strong> <span class="status ${statusClass(order.status)}">${tStatus(order.status)}</span></div>
           <div><strong>${t('order.date')}:</strong> ${formatDate(order.createdAt)}</div>
           <div><strong>${t('order.buyer')}:</strong> ${escapeHtml(order.buyerName || 'N/A')}</div>
@@ -39,7 +39,7 @@ export default async function renderOrderDetail(container) {
       </div>
       <div class="card">
         <div class="card-header">
-          <h3 style="margin-bottom:0">${t('order.items')}</h3>
+          <h3 class="mb-0">${t('order.items')}</h3>
         </div>
         <div class="card-body">
         <div class="table-wrapper">

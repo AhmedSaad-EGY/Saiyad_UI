@@ -172,7 +172,7 @@ export default async function renderCheckout(container) {
             <div class="col-lg-6">
               <div class="card">
                 <div class="card-header">
-                  <h3 style="margin-bottom:0">${t('cart.title')}</h3>
+                  <h3 class="mb-0">${t('cart.title')}</h3>
                 </div>
                 <div class="card-body">
                 <template x-for="item in items" :key="item.productId">
@@ -186,13 +186,13 @@ export default async function renderCheckout(container) {
                   <span style="color:var(--primary)" x-text="formatPrice(total)"></span>
                 </div>
                 <hr style="border-color:var(--border);margin:16px 0">
-                <h3 style="margin-bottom:16px">${t('cart.shippingAddress')}</h3>
+                <h3 class="mb-3">${t('cart.shippingAddress')}</h3>
 
                 <template x-if="addresses.length > 0">
-                  <div style="margin-bottom:12px">
-                    <label style="font-weight:600;display:block;margin-bottom:8px">${t('shipping.savedAddresses') || 'Saved Addresses'}</label>
+                  <div class="mb-3">
+                    <label class="fw-semibold d-block mb-2">${t('shipping.savedAddresses') || 'Saved Addresses'}</label>
                     <template x-for="(a, i) in addresses" :key="a.id">
-                      <label class="radio-card d-flex align-items-start gap-2" style="padding:10px;margin-bottom:6px;border:1px solid var(--border);border-radius:8px;cursor:pointer;background:var(--card-bg)">
+                      <label class="radio-card d-flex align-items-start gap-2 p-2 mb-1" style="border:1px solid var(--border);border-radius:8px;cursor:pointer;background:var(--card-bg)">
                         <input type="radio" name="savedAddr" :value="a.id" :checked="selectedAddressId === a.id" @change="selectAddress(a.id)" style="margin-top:3px">
                         <div>
                           <strong x-text="a.fullName || a.name || ''"></strong><br>
@@ -201,7 +201,7 @@ export default async function renderCheckout(container) {
                         </div>
                       </label>
                     </template>
-                    <label class="radio-card d-flex align-items-center gap-2" style="padding:10px;margin-bottom:6px;border:1px dashed var(--border);border-radius:8px;cursor:pointer;background:var(--card-bg)">
+                    <label class="radio-card d-flex align-items-center gap-2 p-2 mb-1" style="border:1px dashed var(--border);border-radius:8px;cursor:pointer;background:var(--card-bg)">
                       <input type="radio" name="savedAddr" value="new" :checked="useNewAddress" @change="selectAddress('new')" style="margin:0">
                       <span><i class="fas fa-plus"></i> ${t('shipping.addNew')}</span>
                     </label>
@@ -248,7 +248,7 @@ export default async function renderCheckout(container) {
             <div class="col-lg-6">
               <div class="card">
                 <div class="card-header">
-                  <h3 style="margin-bottom:0">${t('cart.paymentMethod')}</h3>
+                  <h3 class="mb-0">${t('cart.paymentMethod')}</h3>
                 </div>
                 <div class="card-body">
                 <div class="mb-3 d-flex align-items-center gap-3" style="padding:12px;border:1px solid var(--border);border-radius:8px">
@@ -257,9 +257,9 @@ export default async function renderCheckout(container) {
                     <small style="color:var(--text-muted)">${t('wallet.available')}</small>
                     <div style="font-weight:700;font-size:1.1rem" x-text="availableBalance !== null ? formatPrice(availableBalance) : '—'"></div>
                   </div>
-                  <a href="#/wallet" class="btn btn-sm btn-outline" style="margin-left:auto"><i class="fas fa-plus"></i> ${t('wallet.deposit')}</a>
+                  <a href="#/wallet" class="btn btn-sm btn-outline ms-auto"><i class="fas fa-plus"></i> ${t('wallet.deposit')}</a>
                 </div>
-                <select class="form-select" id="paymentMethod" x-model="paymentMethod" style="margin-bottom:20px">
+                <select class="form-select mb-4" id="paymentMethod" x-model="paymentMethod">
                   <option value="CreditCard">${t('cart.creditCard')}</option>
                   <option value="CashOnDelivery">${t('cart.cashOnDelivery')}</option>
                 </select>
@@ -268,7 +268,7 @@ export default async function renderCheckout(container) {
                   <i class="fas fa-spinner spinner" x-show="placing" x-cloak></i>
                   <span x-text="placing ? $t('cart.placingOrder') : $t('cart.placeOrder')"></span>
                 </button>
-                <a href="#/cart" class="btn btn-outline w-100" style="margin-top:8px"><i class="fas fa-arrow-left"></i> ${t('cart.backToCart')}</a>
+                <a href="#/cart" class="btn btn-outline w-100 mt-2"><i class="fas fa-arrow-left"></i> ${t('cart.backToCart')}</a>
               </div>
               </div>
             </div>

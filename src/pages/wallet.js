@@ -154,7 +154,7 @@ export default async function renderWallet(container) {
                     <input type="number" x-model="depositAmount" class="form-control" :class="depositError ? 'is-invalid' : ''" placeholder="${t("wallet.enterAmount")}" min="1" step="0.01" style="max-width:200px">
                     <button class="btn btn-primary" :disabled="depositing || !!depositError" @click.prevent="submitDeposit()"><i class="fas" :class="depositing ? 'fa-spinner spinner' : 'fa-plus'"></i> ${t("wallet.deposit")}</button>
                   </div>
-                  <span x-show="depositError" x-text="depositError" style="font-size:0.8rem;color:var(--danger, #dc3545);margin-top:2px"></span>
+                  <span x-show="depositError" x-text="depositError" class="mt-1" style="font-size:0.8rem;color:var(--danger, #dc3545)"></span>
                 </div>
               </div>
               <div class="wallet-readonly-notice" x-show="isAdmin" style="padding:12px 0;opacity:0.8">
@@ -163,7 +163,7 @@ export default async function renderWallet(container) {
               <div class="wallet-msg" :class="depositMsgClass" x-text="depositMsg" x-show="depositMsg"></div>
               </div>
             </div>
-            <div class="section-header" style="margin-top:32px"><h3><i class="fas fa-list"></i> ${t("wallet.transactions")}</h3></div>
+            <div class="section-header mt-5"><h3><i class="fas fa-list"></i> ${t("wallet.transactions")}</h3></div>
             <template x-if="currentPage && currentPage.items && currentPage.items.length > 0">
               <div class="wallet-txn-table animate-on-scroll">
                 <table class="table">
@@ -180,7 +180,7 @@ export default async function renderWallet(container) {
                     </template>
                   </tbody>
                 </table>
-                <div class="pagination" style="display:flex;gap:8px;justify-content:center;margin-top:16px" x-show="currentPage.totalPages > 1">
+                <div class="pagination d-flex gap-2 justify-content-center mt-3" x-show="currentPage.totalPages > 1">
                   <template x-for="p in currentPage.totalPages" :key="p">
                     <button class="btn btn-sm" :class="p === (currentPage.page || 1) ? 'btn-primary' : 'btn-outline'" @click="loadTransactions(p)" x-text="p"></button>
                   </template>
@@ -188,7 +188,7 @@ export default async function renderWallet(container) {
               </div>
             </template>
             <template x-if="currentPage && (!currentPage.items || currentPage.items.length === 0)">
-              <div class="empty-state" style="margin-top:16px">
+              <div class="empty-state mt-3">
                 <div class="empty-state-visual"><i class="fas fa-receipt" style="font-size:2.5rem;color:var(--text-muted)"></i></div>
                 <p style="color:var(--text-muted);margin:0">${t("wallet.noTransactions")}</p>
               </div>

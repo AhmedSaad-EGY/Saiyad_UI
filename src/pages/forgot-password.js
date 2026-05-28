@@ -195,7 +195,7 @@ export default function renderForgotPassword(container) {
 
           <template x-if="step === 'code'">
             <form @submit.prevent="step2()" novalidate>
-              <div class="alert alert-success" style="margin-bottom:16px">
+              <div class="alert alert-success mb-3">
                 <i class="fas fa-envelope"></i> ${t('auth.resetLinkSent')}
               </div>
               <div class="form-group">
@@ -208,7 +208,7 @@ export default function renderForgotPassword(container) {
               </button>
               <div style="margin-top:12px">
                 <button type="button" class="btn btn-ghost w-100" @click="handleResend()" :disabled="resendSeconds > 0" x-text="resendLabel"></button>
-                <button type="button" class="btn btn-ghost w-100" style="margin-top:4px" @click="backToEmail()"><i class="fas fa-arrow-left"></i> ${t('common.back')}</button>
+                <button type="button" class="btn btn-ghost w-100 mt-1" @click="backToEmail()"><i class="fas fa-arrow-left"></i> ${t('common.back')}</button>
               </div>
             </form>
           </template>

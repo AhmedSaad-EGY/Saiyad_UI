@@ -41,12 +41,12 @@ export default async function renderSubscriptions(container) {
       <div>
         <div class="card mb-4" style="background:var(--primary-gradient, linear-gradient(135deg,var(--primary),var(--primary-light)));color:var(--text-inverse);border:none">
           <div class="card-body">
-            <h3 style="margin:0 0 6px">${escapeHtml(info.heading)}</h3>
-            <p style="margin:0;opacity:0.85">${escapeHtml(info.desc)}</p>
+            <h3 class="mb-1" style="margin-top:0">${escapeHtml(info.heading)}</h3>
+            <p class="m-0" style="opacity:0.85">${escapeHtml(info.desc)}</p>
           </div>
         </div>
 
-        <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:24px">
+        <div class="d-flex gap-3 flex-wrap mb-4">
           ${walletBalance !== null ? `
             <div class="card card-sm" style="padding:12px 20px;display:flex;align-items:center;gap:12px">
               <i class="fas fa-wallet" style="font-size:1.2rem;color:var(--primary)"></i>
@@ -72,14 +72,14 @@ export default async function renderSubscriptions(container) {
             const isPop = isPopularPlan(p.sortOrder);
             return `
             <div class="card" style="display:flex;flex-direction:column;position:relative;${isPop ? 'border:2px solid var(--primary)' : ''}">
-              ${isPop ? `<span style="position:absolute;top:-10px;right:16px;background:var(--primary);color:var(--text-inverse);padding:2px 12px;border-radius:20px;font-size:0.78rem;font-weight:600">${t("subscriptions.popular")}</span>` : ''}
+              ${isPop ? `<span class="position-absolute" style="top:-10px;right:16px;background:var(--primary);color:var(--text-inverse);padding:2px 12px;border-radius:20px;font-size:0.78rem;font-weight:600">${t("subscriptions.popular")}</span>` : ''}
               <div class="card-body" style="display:flex;flex-direction:column">
-              <div style="text-align:center;margin-bottom:16px">
+              <div class="text-center mb-3">
                 <i class="fas ${getPlanIcon(p.tier)}" style="font-size:2rem;color:var(--primary);margin-bottom:8px"></i>
                 <h3>${escapeHtml(p.name)}</h3>
                 ${p.description ? `<p style="color:var(--text-muted);font-size:0.88rem">${escapeHtml(p.description)}</p>` : ''}
               </div>
-              <div style="text-align:center;margin-bottom:16px">
+              <div class="text-center mb-3">
                 ${p.price > 0
                   ? `<span style="font-size:2rem;font-weight:700">${formatPrice(p.price)}</span>`
                   : `<span style="font-size:2rem;font-weight:700">${t("subscriptions.free")}</span>`

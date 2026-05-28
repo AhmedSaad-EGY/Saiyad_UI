@@ -110,7 +110,7 @@ export default async function renderHome(container) {
         </div>
       </section>
 
-      <div class="features-grid gap-4">
+      <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 my-5">
         <div class="feature-card animate-on-scroll stagger-1"><i class="fas fa-fish"></i><h3>${t('home.qualityGear')}</h3><p>${t('home.qualityGearDesc')}</p></div>
         <div class="feature-card animate-on-scroll stagger-2"><i class="fas fa-gavel"></i><h3>${t('home.liveAuctions')}</h3><p>${t('home.liveAuctionsDesc')}</p></div>
         <div class="feature-card animate-on-scroll stagger-3"><i class="fas fa-truck"></i><h3>${t('home.fastShipping')}</h3><p>${t('home.fastShippingDesc')}</p></div>
@@ -148,7 +148,7 @@ export default async function renderHome(container) {
         <div class="empty-state-visual"><i class="fas fa-exclamation-triangle" style="font-size:3.5rem;color:var(--text-muted)"></i></div>
         <h3>${t('home.loadError')}</h3>
         <p x-text="error"></p>
-        <button class="btn btn-primary" @click="loadData()" style="margin-top:16px">${t('common.retry')}</button>
+        <button class="btn btn-primary mt-3" @click="loadData()">${t('common.retry')}</button>
       </div>
 
       <!-- Product grid -->

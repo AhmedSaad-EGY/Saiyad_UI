@@ -31,7 +31,7 @@ Alpine.data('pagination', ({ page, totalPages, onPageChange } = {}) => ({
  */
 export function alpinePaginationHtml() {
   return `
-    <div class="d-flex align-items-center gap-2" style="justify-content:center;margin-top:24px"
+    <div class="d-flex align-items-center gap-2 mt-4" style="justify-content:center"
          x-data="pagination({ page, totalPages, onPageChange: goToPage })">
       <template x-for="p in pages" :key="p">
         <span>
@@ -57,7 +57,7 @@ export function manualPaginationHtml({ page, totalPages, prefix = 'pag' }) {
   const rightChevron = isRtl ? 'fa-chevron-left' : 'fa-chevron-right';
 
   return `
-    <div class="pagination-bar" style="display:flex;justify-content:center;align-items:center;gap:8px;margin-top:16px">
+    <div class="pagination-bar d-flex justify-content-center align-items-center gap-2 mt-3">
       <button class="btn btn-sm btn-ghost" id="${prefix}PrevBtn" ${page <= 1 ? 'disabled' : ''}>
         <i class="fas ${leftChevron}"></i>
       </button>

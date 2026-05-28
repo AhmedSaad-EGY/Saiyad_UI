@@ -113,7 +113,7 @@ export default async function renderProductDetail(container, route, params) {
               <button class="btn btn-primary btn-sm" id="reviewSubmit"><i class="fas fa-paper-plane"></i> ${t("review.submit")}</button>
             </div>
             `
-                : `<p style="color:var(--text-muted);font-size:0.9rem"><a href="#/login" style="color:var(--primary)">${t("auth.login")}</a> ${t("review.title")}</p>`
+                : `<p class="text-muted small"><a href="#/login" style="color:var(--primary)">${t("auth.login")}</a> ${t("review.title")}</p>`
             }
             <div id="reviewsList">
               ${

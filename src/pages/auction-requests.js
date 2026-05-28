@@ -48,7 +48,7 @@ export default async function renderAuctionRequests(container) {
     content.innerHTML = `
       <div class="card" style="max-width:600px;margin-top:16px">
         <div class="card-header">
-          <h3 style="margin-bottom:0">${existing ? t("auctionRequests.submit") : t("auctionRequests.submit")}</h3>
+          <h3 class="mb-0">${existing ? t("auctionRequests.submit") : t("auctionRequests.submit")}</h3>
         </div>
         <div class="card-body">
         <form id="auctionReqForm" novalidate>
