@@ -146,9 +146,9 @@ export default async function renderAuctions(_container, _fullPath, params) {
       <!-- Skeleton -->
       <div x-show="loading" class="row row-cols-2 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4 skeleton-shimmer">
         <template x-for="i in 6" :key="i">
-          <div class="product-card card" style="pointer-events:none">
+          <div class="product-card card pe-none">
             <div class="product-card-img skeleton-image-shim"></div>
-            <div class="product-card-body" style="padding:12px">
+            <div class="product-card-body p-3">
               <div class="skeleton skeleton-title"></div>
               <div class="skeleton skeleton-text" style="width:30%"></div>
             </div>
@@ -194,7 +194,7 @@ export default async function renderAuctions(_container, _fullPath, params) {
 
       <!-- Empty -->
       <div x-show="!loading && !error && !auctions.length" class="empty-state">
-        <div class="empty-state-visual"><i class="fa-gavel text-muted" style="font-size:3.5rem"></i></div>
+        <div class="empty-state-visual"><i class="fas fa-gavel text-muted" style="font-size:3.5rem"></i></div>
         <h3>${t("home.noAuctions")}</h3>
         <p>${t("auctions.noAuctionsDesc")}</p>
         <button class="btn btn-primary mt-3" @click="resetFilters()">${t('common.clearFilters')}</button>

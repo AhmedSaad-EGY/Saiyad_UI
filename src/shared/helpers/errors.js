@@ -45,7 +45,7 @@ export function handleApiError(err) {
 
 export function showErrorFallback(container, message) {
   container.innerHTML = `
-    <div class="d-flex flex-column align-items-center justify-content-center text-center py-5 px-3" style="min-height:50vh">
+    <div class="d-flex flex-column align-items-center justify-content-center text-center py-5 px-3 min-vh-50">
       <div class="mb-3 text-muted" style="font-size:3.5rem;animation:fishSwim 2s ease-in-out infinite">
         <i class="fas fa-fish"></i>
       </div>

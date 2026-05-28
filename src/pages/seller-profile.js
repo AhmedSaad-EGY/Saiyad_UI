@@ -16,7 +16,7 @@ export default async function renderSellerProfile(container) {
     try {
       const profile = await api.get(`/seller-profile/${userId}`);
       container.innerHTML = `
-        <div class="card" style="max-width:600px;margin:0 auto">
+        <div class="card mx-auto" style="max-width:600px">
           <div class="card-body">
           <div class="text-center mb-4">
             <i class="fas fa-store mb-2 fs-1 text-primary"></i>

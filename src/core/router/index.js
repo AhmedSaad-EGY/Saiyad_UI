@@ -83,7 +83,7 @@ export async function router(force = false) {
         <h1>404</h1>
         <h2>${t("common.pageNotFound")}</h2>
         <p>${t("common.pageNotFoundDesc")}</p>
-        <div class="search-bar mx-auto mt-4" style="max-width:380px;justify-content:center">
+        <div class="search-bar mx-auto mt-4" class="justify-content-center" style="max-width:380px">
           <input type="text" id="notFoundSearch" class="form-input" placeholder="${t('products.search')}" style="max-width:240px">
           <button class="btn btn-primary" id="notFoundSearchBtn"><i class="fas fa-search"></i> ${t('common.search')}</button>
         </div>

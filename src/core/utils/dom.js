@@ -9,7 +9,7 @@ export function $$(sel, parent = document) {
 export function showLoading(container, type = "page") {
   const skeletons = {
     page: `
-      <div class="skeleton-shimmer py-5" style="padding-top:0;padding-bottom:0">
+      <div class="skeleton-shimmer py-5 pt-0 pb-0">
         <div class="skeleton skeleton-title" style="width:40%"></div>
         <div class="skeleton skeleton-text"></div>
         <div class="skeleton skeleton-text"></div>
@@ -24,7 +24,7 @@ export function showLoading(container, type = "page") {
     detail: `
       <div class="skeleton-detail skeleton-shimmer">
         <div class="skeleton skeleton-image" style="height:380px"></div>
-        <div class="py-4" style="padding-top:0;padding-bottom:0">
+        <div class="py-4 pt-0 pb-0">
           <div class="skeleton skeleton-title" style="width:60%"></div>
           <div class="skeleton skeleton-text" style="width:20%;height:32px"></div>
           <div class="skeleton skeleton-text"></div>

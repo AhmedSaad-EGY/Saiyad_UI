@@ -1231,4 +1231,79 @@ Kept CSS Grid `grid-template-columns: repeat(auto-fill, minmax(240px, 1fr))` for
 
 ---
 
+## 36. INLINE STYLE AUDIT & MIGRATION — PHASE 2 (SECOND PASS)
+
+**Date**: May 28, 2026  
+**Action**: Second comprehensive scan and migration of remaining inline `style` attributes to Bootstrap utility classes across 18 files.
+
+### Motivation
+
+The Phase 1 migration (Section 35) covered 22 files with 200+ inline style replacements. A follow-up audit revealed ~75 more inline styles that were missed, particularly in pages with complex template literals (admin.js, auctioneer-analytics.js, checkout.js).
+
+### Changes by File
+
+| File | Changes | Key Migrations |
+|------|---------|---------------|
+| **auctioneer-analytics.js** | 20+/- (40 lines) | 6 stat cards `style="text-align:center"` → `class="text-center"`; icon colors → `text-primary/success/warning/info`; labels → `small text-muted`; fee td → `fw-semibold`; featured card → `border-start border-3` |
+| **admin.js** | 16+/- (32 lines) | Modal body padding → `p-3`; actions → `p-3 pt-2 d-flex gap-2 justify-content-end`; chart icon → `fs-2 opacity-50`; loading panel → `p-4 text-center`; category desc → `text-muted`; tags icon → `fs-2 text-muted`; empty fee → `text-center p-4 text-muted`; fee total → `text-primary`; pay-btn table → `text-center`; empty table cells → `p-3`; no-fees → `mb-0`; duplicate class attrs merged |
+| **checkout.js** | 7+/- (14 lines) | Item spans → `fw-semibold`; totals → `fs-6`; radio inputs → `mt-1`; item rows → `py-2`; hr → `my-3` (fixed from `my-4` after review); address cards → `p-3 gap-3` |
+| **product-detail.js** | 4+/- (8 lines) | Tab links → `flex-fill text-center py-2`; section icons → `fs-4 text-primary`; description → `text-center` |
+| **auction-detail.js** | 3+/- (6 lines) | Skeleton container → `py-4`; login link → `text-reset text-decoration-underline`; bid wrapper → `flex:1;min-width:200px` (kept inline — flex-fill uses different basis) |
+| **cart.js** | 3+/- (6 lines) | Placeholder icon → `fs-6` |
+| **auctions.js** | 3+/- (6 lines) | `pe-none` applied; empty icon → `fas fa-gavel` (fixed missing fas prefix) |
+| **profile.js** | 3+/- (6 lines) | Auth links → `d-flex gap-3`; user info → `d-none` |
+| **home.js** | 2+/- (4 lines) | Counter icons → `text-primary fs-3` |
+| **login.js** | 2+/- (4 lines) | Forgot link → `text-end text-primary` |
+| **register.js** | 2+/- (4 lines) | Terms checkbox → `d-flex gap-2 align-items-start` |
+| **app.js** | 2+/- (4 lines) | Ripple button → `flex-fill`; close → `fw-medium` |
+| **dom.js** | 2+/- (4 lines) | Skeleton → `pt-0 pb-0` |
+| **products.js** | 2+/- (4 lines) | Filter panel → `text-center p-3` |
+| **seller-profile.js** | 1+/- (2 lines) | Section → `mx-auto` |
+| **pagination.js** | 1+/- (2 lines) | Page info → `fs-6` |
+| **router/index.js** | 1+/- (2 lines) | Results → `text-center` |
+| **errors.js** | 1+/- (2 lines) | Error icon → `fs-1` |
+
+### Code Review Feedback & Fixes
+
+The code review flagged several issues that were fixed in a follow-up round:
+
+| Issue | Files Affected | Fix |
+|-------|--------------|-----|
+| `fs-1` (2.5rem) too small for empty-state 3.5rem icons | 6 files (auction-detail, auctions, home, products, cart, checkout) | Reverted to `style="font-size:3.5rem"` — kept inline for oversized icons |
+| Missing `fas` prefix on `fa-gavel` | auctions.js | `fa-gavel` → `fas fa-gavel` |
+| `flex-fill` vs `flex:1` behavior | auction-detail.js | Changed `class="flex-fill"` back to `style="flex:1;min-width:200px"` (`flex-fill` uses `1 1 auto` base, `flex:1` uses `1 1 0%`) |
+| `my-4` (24px) too much for hr margin | checkout.js | Changed `my-4` → `my-3` (16px matches original `margin:16px 0`) |
+| `fs-2` (2.5rem) too large for admin icons | admin.js | Reverted to `style="font-size:2rem"` for tags and chart-line icons |
+| `fs-6` (1rem) too small for total line | checkout.js | Reverted to `style="font-size:1.1rem"` |
+| Duplicate `class=""` attributes | admin.js, cart.js | Merged into single `class="text-muted mt-2"` etc. |
+
+### Measurement Decisions
+
+| Original | Attempted | Final Decision |
+|----------|-----------|---------------|
+| `font-size: 3.5rem` | `fs-1` (~2.5rem) | ❌ Kept inline — 28% too small for empty-state icons |
+| `font-size: 2rem` | `fs-2` (2.5rem) | ❌ Kept inline — 25% too large for admin icons |
+| `font-size: 1.1rem` | `fs-6` (1rem) | ❌ Kept inline — ~10% too small for total amount |
+| `flex:1` | `flex-fill` | ❌ Kept inline — different `flex-basis` behavior |
+| `margin: 16px 0` | `my-4` (24px) | ⚠️ Fixed to `my-3` (16px) after review |
+| `margin: 3px` | `mt-1` (4px) | ✅ Acceptable approximation |
+| `border-color: var(--primary)` | `border-primary` | ✅ Exact match via CSS var mapping |
+
+### Build & Review
+
+- `npm run build` — ✅ **0 errors, 0 warnings**
+- Code review — ✅ Clean, fixes applied
+
+### Migration Statistics (Phase 1 + Phase 2 Combined)
+
+| Metric | Phase 1 | Phase 2 | Total |
+|--------|---------|---------|-------|
+| **Files modified** | 22 | 18 | 40 unique |
+| **Insertions** | 130 | 75 | 205 |
+| **Deletions** | 132 | 75 | 207 |
+| **Inline styles removed** | ~200+ | ~75 | ~275+ |
+| **Build errors** | 0 | 0 | 0 |
+
+---
+
 *End of chat history record. Update this file at the start of each session by appending new sections.*

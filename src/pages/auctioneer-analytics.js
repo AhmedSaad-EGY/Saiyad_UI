@@ -31,49 +31,49 @@ export default async function renderAuctioneerAnalytics(container) {
 
     content.innerHTML = `
       <div class="grid grid-4 mb-4">
-        <div class="card" style="text-align:center;">
+        <div class="card text-center">
           <div class="card-body">
-          <i class="fas fa-gavel fs-3" style="color:var(--primary)"></i>
+          <i class="fas fa-gavel fs-3 text-primary"></i>
           <div class="fs-2 fw-bold">${dash.totalAuctions ?? 0}</div>
-          <div class="text-muted" style="font-size:0.88rem">${t("analytics.totalAuctions")}</div>
+          <div class="text-muted small">${t("analytics.totalAuctions")}</div>
           </div>
         </div>
-        <div class="card" style="text-align:center;">
+        <div class="card text-center">
           <div class="card-body">
-          <i class="fas fa-play-circle fs-3" style="color:var(--success)"></i>
+          <i class="fas fa-play-circle fs-3 text-success"></i>
           <div class="fs-2 fw-bold">${dash.activeAuctions ?? 0}</div>
-          <div class="text-muted" style="font-size:0.88rem">${t("analytics.activeAuctions")}</div>
+          <div class="text-muted small">${t("analytics.activeAuctions")}</div>
           </div>
         </div>
-        <div class="card" style="text-align:center;">
+        <div class="card text-center">
           <div class="card-body">
-          <i class="fas fa-check-circle fs-3" style="color:var(--warning)"></i>
+          <i class="fas fa-check-circle fs-3 text-warning"></i>
           <div class="fs-2 fw-bold">${dash.finishedAuctions ?? 0}</div>
-          <div class="text-muted" style="font-size:0.88rem">${t("analytics.finishedAuctions")}</div>
+          <div class="text-muted small">${t("analytics.finishedAuctions")}</div>
           </div>
         </div>
-        <div class="card" style="text-align:center;">
+        <div class="card text-center">
           <div class="card-body">
-          <i class="fas fa-hand-pointer fs-3" style="color:var(--info, #0ea5e9)"></i>
+          <i class="fas fa-hand-pointer fs-3 text-info"></i>
           <div class="fs-2 fw-bold">${dash.totalBids ?? 0}</div>
-          <div class="text-muted" style="font-size:0.88rem">${t("analytics.totalBids")}</div>
+          <div class="text-muted small">${t("analytics.totalBids")}</div>
           </div>
         </div>
       </div>
       <div class="grid grid-2 mb-4">
-        <div class="card" style="text-align:center;">
+        <div class="card text-center">
           <div class="card-body">
-          <i class="fas fa-money-bill-wave fs-3" style="color:var(--success)"></i>
+          <i class="fas fa-money-bill-wave fs-3 text-success"></i>
           <div class="fs-2 fw-bold">${dash.totalRevenue != null ? formatPrice(dash.totalRevenue) : formatPrice(0)}</div>
-          <div class="text-muted" style="font-size:0.88rem">${t("analytics.totalRevenue")}</div>
+          <div class="text-muted small">${t("analytics.totalRevenue")}</div>
           </div>
         </div>
-        <div class="card" style="text-align:center;border-left:3px solid var(--primary)">
+        <div class="card text-center border-start border-3" style="border-color:var(--primary)">
           <div class="card-body">
-          <i class="fas fa-percentage fs-3" style="color:var(--primary)"></i>
+          <i class="fas fa-percentage fs-3 text-primary"></i>
           <div class="fs-2 fw-bold">${formatPrice(totalFees)}</div>
-          <div class="text-muted" style="font-size:0.88rem">${t("analytics.totalFees")}</div>
-          <small style="color:var(--text-muted)">${wallet ? formatPrice(wallet.availableBalance) + " " + t("analytics.availableInWallet") : ""}</small>
+          <div class="text-muted small">${t("analytics.totalFees")}</div>
+          <small class="text-muted">${wallet ? formatPrice(wallet.availableBalance) + " " + t("analytics.availableInWallet") : ""}</small>
           </div>
         </div>
       </div>
@@ -83,7 +83,7 @@ export default async function renderAuctioneerAnalytics(container) {
           <h3 class="mb-0">${t("analytics.feeIncome")}</h3>
         </div>
         <div class="card-body">
-        <div class="table-responsive"><table class="table"><thead><tr><th>${t("wallet.date")}</th><th>${t("wallet.amount")}</th><th>${t("wallet.description")}</th></tr></thead><tbody>${feeTxns.map(t => `<tr><td>${formatDate(t.createdAt)}</td><td style="font-weight:600">${formatPrice(t.amount)}</td><td>${escapeHtml(t.description || "")}</td></tr>`).join("")}</tbody></table></div>
+        <div class="table-responsive"><table class="table"><thead><tr><th>${t("wallet.date")}</th><th>${t("wallet.amount")}</th><th>${t("wallet.description")}</th></tr></thead><tbody>${feeTxns.map(t => `<tr><td>${formatDate(t.createdAt)}</td><td class="fw-semibold">${formatPrice(t.amount)}</td><td>${escapeHtml(t.description || "")}</td></tr>`).join("")}</tbody></table></div>
       </div>` : ''}
       ${recent.length > 0 ? `
       <div class="card mt-3">

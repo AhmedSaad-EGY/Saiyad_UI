@@ -606,8 +606,8 @@ function showUpdateBanner(worker) {
   ].join(";");
 
   banner.innerHTML = `
-    <i class="fas fa-arrow-up-circle text-primary flex-shrink-0" style="font-size:1.3rem"></i>
-    <span style="flex:1;font-weight:500">
+    <i class="fas fa-arrow-up-circle text-primary flex-shrink-0 fs-5"></i>
+    <span class="flex-fill fw-medium">
       A new version is available.
     </span>
     <button id="swUpdateBtn"

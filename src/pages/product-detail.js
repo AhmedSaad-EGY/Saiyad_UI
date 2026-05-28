@@ -101,7 +101,7 @@ export default async function renderProductDetail(container, route, params) {
               <div id="reviewAlert"></div>
               <div class="form-group">
                 <label class="form-label">${t("review.rating")}</label>
-                <div id="starRating" role="radiogroup" aria-label="${t("review.rating")}" class="d-flex gap-2" style="font-size:1.5rem;cursor:pointer;color:var(--text-muted)">
+                <div id="starRating" role="radiogroup" aria-label="${t("review.rating")}" class="d-flex gap-2 fs-4 text-muted" style="cursor:pointer">
                   ${[1, 2, 3, 4, 5].map((i) => `<i class="fas fa-star" data-star="${i}" role="radio" aria-checked="false" aria-label="${i} ${t("review.stars")}" style="transition:color 0.15s,transform 0.15s"></i>`).join("")}
                 </div>
                 <input type="hidden" id="ratingVal" value="0">
@@ -113,7 +113,7 @@ export default async function renderProductDetail(container, route, params) {
               <button class="btn btn-primary btn-sm" id="reviewSubmit"><i class="fas fa-paper-plane"></i> ${t("review.submit")}</button>
             </div>
             `
-                : `<p class="text-muted small"><a href="#/login" style="color:var(--primary)">${t("auth.login")}</a> ${t("review.title")}</p>`
+                : `<p class="text-muted small"><a href="#/login" class="text-primary">${t("auth.login")}</a> ${t("review.title")}</p>`
             }
             <div id="reviewsList">
               ${
@@ -122,7 +122,7 @@ export default async function renderProductDetail(container, route, params) {
                       .map(
                         (r) => `
                 <div class="notif-item">
-                  <div style="flex:1">
+                  <div class="flex-fill">
                     <strong>${escapeHtml(r.userName || "User")}</strong>
                     <span class="text-warning">${renderStars(r.rating)}</span>
                     ${r.comment ? `<p class="mt-1" style="color:var(--text-secondary);font-size:0.9rem">${escapeHtml(r.comment)}</p>` : ""}
@@ -153,7 +153,7 @@ export default async function renderProductDetail(container, route, params) {
         const items = similar.items || similar.data || [];
         if (items.length) {
           const section = document.createElement("div");
-          section.style.marginTop = "40px";
+          section.classList.add("mt-5");
           section.innerHTML = `<div class="section-header"><h2><i class="fas fa-layer-group"></i> ${t("products.similar")}</h2></div><div class="row row-cols-2 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4" id="similarGrid"></div>`;
           container.appendChild(section);
           const grid = document.getElementById("similarGrid");

@@ -120,8 +120,8 @@ export default function renderLogin(container) {
               <input :type="showPassword ? 'text' : 'password'" class="form-input form-control" id="loginPassword" name="password" x-model="password" @input="clearError(); clearFieldError($el)" placeholder="${t('auth.password')}" required autocomplete="current-password" minlength="6">
               <button type="button" class="toggle-password" @click="togglePw()" :aria-label="showPassword ? $t('auth.hidePassword') : $t('auth.showPassword')"><i :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i></button>
             </div>
-            <div style="text-align: right; margin-top: 4px;">
-              <a href="#/forgot-password" style="font-size: var(--text-xs); color: var(--primary); text-decoration: none;">${t('auth.forgotPassword')}</a>
+            <div class="text-end mt-1">
+              <a href="#/forgot-password" class="text-primary text-decoration-none" style="font-size:var(--text-xs)">${t('auth.forgotPassword')}</a>
             </div>
           </div>
           <button type="submit" class="btn btn-primary w-100 btn-lg" :disabled="loading">

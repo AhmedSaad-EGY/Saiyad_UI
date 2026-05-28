@@ -329,7 +329,7 @@ export default async function renderAuctionDetail(container, _route, params) {
       <!-- Loading skeleton -->
       <div x-show="loading" class="skeleton-detail skeleton-shimmer" role="status" aria-label="${t('common.loading')}">
         <div class="skeleton skeleton-image" style="height:380px"></div>
-        <div style="padding:24px 0">
+        <div class="py-4">
           <div class="skeleton skeleton-title" style="width:60%"></div>
           <div class="skeleton skeleton-text" style="width:20%;height:32px"></div>
           <div class="skeleton skeleton-text"></div>
@@ -501,7 +501,7 @@ export default async function renderAuctionDetail(container, _route, params) {
                         <i class="fas fa-robot" aria-hidden="true"></i>
                         <span x-text="t('auction.autoBid')"></span>
                       </label>
-                      <div x-show="autoBidEnabled" style="flex:1">
+                      <div x-show="autoBidEnabled" class="flex-fill">
                         <input type="number" class="form-input form-control" x-model="autoBidMax" step="0.01" min="0"
                                :placeholder="t('auction.autoBidMaxPlaceholder') || 'Max bid amount'"
                                style="padding:6px 10px;font-size:var(--text-sm)" />
@@ -525,7 +525,7 @@ export default async function renderAuctionDetail(container, _route, params) {
                   <span x-text="t('auction.bidCustomerOnly') || 'Only customers can place bids.'"></span>
                 </template>
                 <template x-if="!isLoggedIn()">
-                  <a href="#/login" style="color:inherit;text-decoration:underline">
+                  <a href="#/login" class="text-reset text-decoration-underline">
                     <span x-text="t('auction.loginToBid') || 'Login as a customer to place bids.'"></span>
                   </a>
                 </template>

@@ -74,7 +74,7 @@ Alpine.data('checkoutPage', () => ({
     this.alert = '';
 
     if (this.availableBalance !== null && this.availableBalance < this.total) {
-      this.alert = `<div class="alert alert-error"><i class="fas fa-exclamation-circle"></i> ${t('cart.insufficientWallet')} — <a href="#/wallet" style="color:inherit;text-decoration:underline"><i class="fas fa-plus"></i> ${t('wallet.deposit')}</a></div>`;
+      this.alert = `<div class="alert alert-error"><i class="fas fa-exclamation-circle"></i> ${t('cart.insufficientWallet')} — <a href="#/wallet" style="color:inherit;text-decoration:underline"><i class="fas fa-plus small"></i> ${t('wallet.deposit')}</a></div>`;
       this.placing = false;
       return;
     }
@@ -157,7 +157,7 @@ export default async function renderCheckout(container) {
         <div>
           <div class="section-header"><h2><i class="fas fa-credit-card"></i> ${t('cart.checkout')}</h2></div>
           <div class="empty-state">
-            <i class="fas fa-shopping-cart fs-1 text-muted mb-4"></i>
+            <i class="fas fa-shopping-cart text-muted mb-4" style="font-size:3.5rem"></i>
             <h3>${t('cart.empty')}</h3>
             <p class="text-muted mb-4">${t('cart.emptyDesc')}</p>
             <a href="#/products" class="btn btn-primary"><i class="fas fa-store"></i> ${t('cart.browseProducts')}</a>
@@ -176,23 +176,23 @@ export default async function renderCheckout(container) {
                 </div>
                 <div class="card-body">
                 <template x-for="item in items" :key="item.productId">
-                  <div class="d-flex justify-content-between" style="padding:8px 0;border-bottom:1px solid var(--border)">
+                  <div class="d-flex justify-content-between" class="py-2" style="border-bottom:1px solid var(--border)">
                     <span><span x-text="item.productTitle || ('Product #' + item.productId)"></span> <small class="text-muted" x-text="' x' + (item.quantity || 1)"></small></span>
-                    <span style="font-weight:600" x-text="formatPrice((item.product?.price || item.unitPrice || item.price || 0) * (item.quantity || 1))"></span>
+                    <span class="fw-semibold" x-text="formatPrice((item.product?.price || item.unitPrice || item.price || 0) * (item.quantity || 1))"></span>
                   </div>
                 </template>
                 <div class="d-flex justify-content-between py-3 fw-bold" style="font-size:1.1rem">
                   <span>${t('cart.total')}</span>
                   <span class="text-primary" x-text="formatPrice(total)"></span>
                 </div>
-                <hr style="border-color:var(--border);margin:16px 0">
+                <hr class="my-3">
                 <h3 class="mb-3">${t('cart.shippingAddress')}</h3>
 
                 <template x-if="addresses.length > 0">
                   <div class="mb-3">
                     <label class="fw-semibold d-block mb-2">${t('shipping.savedAddresses') || 'Saved Addresses'}</label>
                     <template x-for="(a, i) in addresses" :key="a.id"><label class="radio-card d-flex align-items-start gap-2 p-2 mb-1 rounded-3" style="border:1px solid var(--border);cursor:pointer;background:var(--card-bg)">
-                        <input type="radio" name="savedAddr" :value="a.id" :checked="selectedAddressId === a.id" @change="selectAddress(a.id)" style="margin-top:3px">
+                        <input type="radio" name="savedAddr" :value="a.id" :checked="selectedAddressId === a.id" @change="selectAddress(a.id)" class="mt-1" style="margin-top:3px">
                         <div>
                           <strong x-text="a.fullName || a.name || ''"></strong><br>
                           <span style="font-size:0.85rem;color:var(--text-muted)" x-text="(a.addressLine || '') + ', ' + (a.city || '') + (a.postalCode ? ' - ' + a.postalCode : '')"></span><br>
@@ -253,7 +253,7 @@ export default async function renderCheckout(container) {
                   <i class="fas fa-wallet fs-5 text-primary"></i>
                   <div>
                     <small class="text-muted">${t('wallet.available')}</small>
-                    <div class="fw-bold" style="font-size:1.1rem" x-text="availableBalance !== null ? formatPrice(availableBalance) : '—'"></div>
+                    <div class="fw-bold fs-6" x-text="availableBalance !== null ? formatPrice(availableBalance) : '—'"></div>
                   </div>
                   <a href="#/wallet" class="btn btn-sm btn-outline ms-auto"><i class="fas fa-plus"></i> ${t('wallet.deposit')}</a>
                 </div>

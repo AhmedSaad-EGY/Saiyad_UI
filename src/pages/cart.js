@@ -202,7 +202,7 @@ export default async function renderCart(container) {
         <div>
           <div class="section-header"><h2><i class="fas fa-shopping-cart"></i> ${t('cart.title')}</h2></div>
           <div class="empty-state">
-            <i class="fas fa-shopping-cart mb-3 fs-1 text-muted"></i>
+            <i class="fas fa-shopping-cart mb-3 text-muted" style="font-size:3.5rem"></i>
             <h3>${t('cart.empty')}</h3>
             <p class="text-muted mb-4">${t('cart.emptyDesc')}</p>
             <a href="#/products" class="btn btn-primary"><i class="fas fa-store"></i> ${t('cart.browseProducts')}</a>
@@ -242,7 +242,7 @@ export default async function renderCart(container) {
                   <tr>
                     <td class="cart-product-cell">
                       <a :href="'#/product-detail?id=' + item.productId"
-                         class="d-flex align-items-center gap-2" class="text-decoration-none" style="color:var(--text-primary)">
+                         class="d-flex align-items-center gap-2 text-decoration-none" style="color:var(--text-primary)">
                         <template x-if="item.productImageUrl || item.imageUrl">
                           <img :src="item.productImageUrl || item.imageUrl"
                                :alt="item.productTitle || ''"
@@ -251,7 +251,7 @@ export default async function renderCart(container) {
                         </template>
                         <template x-if="!(item.productImageUrl || item.imageUrl)">
                           <div class="d-flex align-items-center justify-content-center flex-shrink-0 rounded-2" style="width:48px;height:48px;background:var(--background-secondary);border:1px solid var(--border)">
-                            <i class="fas fa-image text-muted" style="font-size:1.2rem"></i>
+                            <i class="fas fa-image text-muted fs-6"></i>
                           </div>
                         </template>
                         <span x-text="item.productTitle || ('Product #' + item.productId)"></span>

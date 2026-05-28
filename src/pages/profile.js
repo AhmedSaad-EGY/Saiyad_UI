@@ -66,12 +66,12 @@ export default async function renderUserProfile(container) {
   container.innerHTML = `
     <div x-data="profilePage" class="profile-page">
       <div class="profile-hero card animate-on-scroll">
-        <div class="card-body" style="display:flex;align-items:center;gap:var(--space-6);flex-wrap:wrap">
+        <div class="card-body d-flex align-items-center gap-4 flex-wrap">
         <div class="profile-avatar" id="profileAvatar" @click="triggerUpload()" title="Click to upload photo">
           <span class="avatar-overlay"><i class="fas fa-camera"></i></span>
           ${user?.profileImageUrl ? `<img src="${user.profileImageUrl}" alt="" loading="lazy">` : '<i class="fas fa-user"></i>'}
         </div>
-        <input type="file" id="profileAvatarInput" accept="image/jpeg,image/png,image/webp" @change="handleFile($event)" style="display:none">
+        <input type="file" id="profileAvatarInput" accept="image/jpeg,image/png,image/webp" @change="handleFile($event)" class="d-none">
         <div class="profile-hero-info">
           <h1 class="profile-name">${escapeHtml(user?.fullName || t('dash.profile'))}</h1>
           <p class="profile-email"><i class="fas fa-envelope"></i> ${escapeHtml(user?.email || '')}</p>
@@ -110,7 +110,7 @@ export default async function renderUserProfile(container) {
       </div>
 
       <div class="profile-quick-links card animate-on-scroll stagger-2">
-        <div class="card-header" style="border-bottom:none">
+        <div class="card-header border-bottom-0">
           <h3>${t('common.quickLinks')}</h3>
         </div>
         <div class="card-body">

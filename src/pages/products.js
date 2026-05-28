@@ -231,9 +231,9 @@ export default async function renderProducts(_container, _fullPath, params) {
       <!-- Skeleton loading -->
       <div x-show="loading" class="row row-cols-2 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4 skeleton-shimmer">
         <template x-for="i in 6" :key="i">
-          <div class="product-card card" style="pointer-events:none">
+          <div class="product-card card pe-none">
             <div class="product-card-img skeleton-image-shim"></div>
-            <div class="product-card-body" style="padding:12px">
+            <div class="product-card-body p-3">
               <div class="skeleton skeleton-title"></div>
               <div class="skeleton skeleton-text" style="width:30%"></div>
             </div>

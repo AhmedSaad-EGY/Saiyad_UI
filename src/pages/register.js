@@ -207,8 +207,8 @@ function showVerificationOverlay(email, password) {
       <div class="verify-overlay-dots" id="verifyDots">
         <span></span><span></span><span></span>
       </div>
-      <div id="verifyError" style="display:none" class="alert alert-error"></div>
-      <div class="verify-actions" style="margin-top: 20px; display: flex; flex-direction: column; gap: 10px;">
+      <div id="verifyError" class="d-none alert alert-error"></div>
+      <div class="verify-actions mt-4 d-flex flex-column gap-2">
         <button class="btn btn-primary" id="verifyCheckBtn"><i class="fas fa-check-circle"></i> ${t('verify.alreadyVerified')}</button>
         <button class="btn btn-ghost" id="verifyChangeEmailBtn"><i class="fas fa-arrow-left"></i> ${t('verify.useOtherEmail')}</button>
       </div>
