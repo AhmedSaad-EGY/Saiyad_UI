@@ -87,26 +87,32 @@ export default async function renderDashboard(container, route, params) {
   ];
 
   container.innerHTML = `
-    <div x-data="dashboardPage" class="dashboard-layout" x-init="init()">
-      <div class="dashboard-sidebar">
-        ${tabs.map(tabItem => `
-          <a href="#/dashboard${tabItem.id === 'overview' ? '' : '?tab=' + tabItem.id}"
-             class="dash-link"
-             :class="{ active: activeTab === '${tabItem.id}' }"
-             @click.prevent="switchTab('${tabItem.id}')">
-            <i class="fas ${tabItem.icon}"></i> ${tabItem.label}
-          </a>
-        `).join('')}
-      </div>
-      <div class="dash-mobile-tabs">
-        <select class="form-select" aria-label="Dashboard tabs" x-model="activeTab" @change="switchTab(activeTab)">
-          ${tabs.map(tabItem => `<option value="${tabItem.id}">${tabItem.label}</option>`).join('')}
-        </select>
-      </div>
-      <div class="dashboard-content">
-        ${tabs.map(tabItem => `
-          <div id="dashTab_${tabItem.id}" x-show="activeTab === '${tabItem.id}'" x-transition:enter="transition-fade" x-transition:enter-start="op-0" x-transition:enter-end="op-100"></div>
-        `).join('')}
+    <div x-data="dashboardPage" x-init="init()">
+      <div class="row g-3">
+        <div class="col-md-3">
+          <div class="dashboard-sidebar">
+            ${tabs.map(tabItem => `
+              <a href="#/dashboard${tabItem.id === 'overview' ? '' : '?tab=' + tabItem.id}"
+                 class="dash-link"
+                 :class="{ active: activeTab === '${tabItem.id}' }"
+                 @click.prevent="switchTab('${tabItem.id}')">
+                <i class="fas ${tabItem.icon}"></i> ${tabItem.label}
+              </a>
+            `).join('')}
+          </div>
+        </div>
+        <div class="col-md-9">
+          <div class="dash-mobile-tabs">
+            <select class="form-select" aria-label="Dashboard tabs" x-model="activeTab" @change="switchTab(activeTab)">
+              ${tabs.map(tabItem => `<option value="${tabItem.id}">${tabItem.label}</option>`).join('')}
+            </select>
+          </div>
+          <div class="dashboard-content">
+            ${tabs.map(tabItem => `
+              <div id="dashTab_${tabItem.id}" x-show="activeTab === '${tabItem.id}'" x-transition:enter="transition-fade" x-transition:enter-start="op-0" x-transition:enter-end="op-100"></div>
+            `).join('')}
+          </div>
+        </div>
       </div>
       <div class="dash-bottom-bar">
         ${tabs.map(tabItem => `
@@ -139,9 +145,13 @@ async function renderOverview(content, user) {
         <p style="color:var(--text-muted)">${t("dash.role")}: <span class="category-tag">${user?.role || t("common.N/A")}</span></p>
       </div>
     </div>
-    <div class="grid grid-2 mt-3">
-      <div class="card animate-on-scroll stagger-1" id="dashOrders"><i class="fas fa-spinner spinner"></i> ${t("common.loading")}</div>
-      <div class="card animate-on-scroll stagger-2" id="dashProducts"><i class="fas fa-spinner spinner"></i> ${t("common.loading")}</div>
+    <div class="row g-3 mt-3">
+      <div class="col-sm-6">
+        <div class="card animate-on-scroll stagger-1" id="dashOrders"><i class="fas fa-spinner spinner"></i> ${t("common.loading")}</div>
+      </div>
+      <div class="col-sm-6">
+        <div class="card animate-on-scroll stagger-2" id="dashProducts"><i class="fas fa-spinner spinner"></i> ${t("common.loading")}</div>
+      </div>
     </div>
   `;
   observeAnimations();

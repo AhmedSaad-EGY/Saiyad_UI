@@ -43,13 +43,14 @@ export default async function renderProductDetail(container, route, params) {
 
     container.innerHTML = `
       <nav class="breadcrumb" aria-label="Breadcrumb"><a href="#/">${t("nav.home")}</a> <i class="fas fa-chevron-${getCurrentLang() === "ar" ? "left" : "right"}" aria-hidden="true"></i> <a href="#/products">${t("nav.products")}</a> <i class="fas fa-chevron-${getCurrentLang() === "ar" ? "left" : "right"}" aria-hidden="true"></i> <span>${escapeHtml(p.title)}</span></nav>
-      <div class="detail-page">
-        <div>
+      <div class="row g-5">
+        <div class="col-lg-6">
           <div class="detail-image" id="mainImageWrap" style="cursor:pointer;padding:0;position:relative">
             ${p.primaryImageUrl ? progressiveImg(p.primaryImageUrl, p.title, "") : '<i class="fas fa-image"></i>'}
             <div style="position:absolute;bottom:12px;right:12px;background:rgba(0,0,0,0.5);color:#fff;border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;pointer-events:none"><i class="fas fa-search-plus" style="font-size:1rem"></i></div>
           </div>
         </div>
+        <div class="col-lg-6">
         <div class="detail-info">
           <h1>${escapeHtml(p.title)}</h1>
           <div class="detail-price">${formatPrice(p.price)}</div>
@@ -137,6 +138,7 @@ export default async function renderProductDetail(container, route, params) {
           </div>
         </div>
       </div>
+    </div>
     `;
 
     fadeInContent(container);
@@ -152,7 +154,7 @@ export default async function renderProductDetail(container, route, params) {
         if (items.length) {
           const section = document.createElement("div");
           section.style.marginTop = "40px";
-          section.innerHTML = `<div class="section-header"><h2><i class="fas fa-layer-group"></i> ${t("products.similar")}</h2></div><div class="product-grid" id="similarGrid"></div>`;
+          section.innerHTML = `<div class="section-header"><h2><i class="fas fa-layer-group"></i> ${t("products.similar")}</h2></div><div class="product-grid gap-4" id="similarGrid"></div>`;
           container.appendChild(section);
           const grid = document.getElementById("similarGrid");
           renderProductCards(

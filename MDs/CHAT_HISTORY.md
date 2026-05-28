@@ -932,4 +932,113 @@ All classes (`nav-actions`, `nav-toggles`, `footer-grid`, `footer-logo`, `footer
 
 ---
 
+---
+
+## 28. BOOTSTRAP GRID PHASE A — SIMPLE GRIDS MIGRATED
+
+**Date**: May 28, 2026  
+**Action**: Migrated simple grid layouts to Bootstrap `.row` + `.col-*` classes.
+
+### Changes Made
+
+| # | File | Change |
+|---|------|--------|
+| 1 | **`src/pages/dashboard.js`** | `.grid.grid-2.mt-3` → `.row.g-3.mt-3` with two `.col-sm-6` children for the overview stats cards (orders + products) |
+| 2 | **`src/pages/profile.js`** | `.profile-stats` → `.row.g-3` with three `.col-sm-4` children; fixed mismatched HTML (extra closing `</div>`) |
+| 3 | **`src/pages/admin.js`** | Inline CSS Grid (`auto-fit, minmax(200px, 1fr)`) → `.row.g-3.mb-4` with four `.col-md-3` children; standardized all 4 revenue cards to `card card-sm text-center` |
+| 4 | **`src/css/_components.css`** | Removed `.grid`, `.grid-2`, `.grid-3`, `.grid-4` custom CSS block (verified unused); removed `.profile-stats` grid definition |
+
+### Build
+
+- `npx vite build` — ✅ **0 errors**
+
+---
+
+## 29. BOOTSTRAP GRID PHASE B — PRODUCT/FEATURE GRIDS MIGRATED
+
+**Date**: May 28, 2026  
+**Action**: Replaced custom CSS `gap` on product and feature grids with Bootstrap `.gap-4` utility class.
+
+### CSS Changes
+
+| # | File | Change |
+|---|------|--------|
+| 1 | **`src/css/_components.css`** | Removed `gap: 24px;` from `.product-grid` base rule |
+| 2 | **`src/css/_components.css`** | Removed `gap: 24px;` from `.features-grid` base rule |
+| 3 | **`src/css/_components.css`** | Removed `gap: var(--space-3) var(--space-2);` from 480px `@media` `.product-grid` override |
+| 4 | **`src/css/_components.css`** | Removed `gap: var(--space-2);` from 360px `@media` `.product-grid` override |
+
+### JS Changes
+
+| # | File | Instances |
+|---|------|-----------|
+| 1 | **`src/pages/home.js`** | Added `.gap-4` to features-grid, skeleton grid, product grid, auction grid (4 instances) |
+| 2 | **`src/pages/products.js`** | Added `.gap-4` to skeleton grid, product grid (2 instances) |
+| 3 | **`src/pages/auctions.js`** | Added `.gap-4` to skeleton grid, auction grid (2 instances) |
+
+### Key Decision
+
+Kept CSS Grid `grid-template-columns: repeat(auto-fill, minmax(240px, 1fr))` for product/feature grids — auto-fill behavior isn't achievable with Bootstrap's fixed 12-column grid.
+
+### Build
+
+- `npx vite build` — ✅ **0 errors** | Code review: ✅ Clean
+
+---
+
+## 30. BOOTSTRAP GRID PHASE C — PAGE LAYOUT GRIDS MIGRATED
+
+**Date**: May 28, 2026  
+**Action**: Migrated page layout grids (checkout, dashboard, product-detail, auction-detail) to Bootstrap grid.
+
+### CSS Changes
+
+| # | File | Change |
+|---|------|--------|
+| 1 | **`src/css/_components.css`** | Removed `.detail-page { grid-template-columns: 1fr 380px; gap: 24px; }` |
+| 2 | **`src/css/_components.css`** | Removed `.dashboard-layout { grid-template-columns: 220px 1fr; gap: 24px; }` |
+| 3 | **`src/css/_components.css`** | Removed empty `.detail-page { }` and `.dashboard-layout { }` selectors after grid properties removed |
+| 4 | **`src/css/_components.css`** | Added `.gap-4` to similar products grid in product-detail.js (Phase B miss fix) |
+
+### Page Changes
+
+| # | File | Change |
+|---|------|--------|
+| 1 | **`src/pages/checkout.js`** | `.detail-page` wrapper → `.row.g-5` with `.col-lg-6` for each section; address form `.grid.grid-2` → `.row.g-3` with `.col-sm-6` for half-width fields + `.col-12` for full-width fields |
+| 2 | **`src/pages/dashboard.js`** | Sidebar + content wrapped in `.row.g-3` with `.col-md-3` (sidebar) + `.col-md-9` (content + mobile tabs); responsive handled by Bootstrap column classes |
+| 3 | **`src/pages/product-detail.js`** | `.detail-page` → `.row.g-5`, image in `.col-lg-6`, info in `.col-lg-6`; fixed Phase B miss (`.gap-4` on similar products); fixed mismatched closing `</div>` (outer container div) |
+| 4 | **`src/pages/auction-detail.js`** | `.detail-page` → `.row.g-5`, image in `.col-lg-6`, info in `.col-lg-6` |
+
+### Build
+
+- `npx vite build` — ✅ **0 errors** | Code review: ✅ Clean
+
+---
+
+## 31. BOOTSTRAP GRID PHASE D — CSS CLEANUP
+
+**Date**: May 28, 2026  
+**Action**: Cleaned up all stale responsive grid overrides from `_layout.css`.
+
+### Changes Made
+
+| Breakpoint | CSS Removed | Reason |
+|-----------|-------------|--------|
+| 1024px | `.dashboard-layout { grid-template-columns: 200px 1fr; gap: 20px; }` | Replaced by Bootstrap `.col-md-3/.col-md-9` |
+| 1024px | `.detail-page { gap: 32px; }` | Replaced by Bootstrap `.g-5` (48px) |
+| 768px | `.detail-page { grid-template-columns: 1fr; gap: 24px; }` | Bootstrap `.row.g-5` stacks on small screens |
+| 768px | `.grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }` | Classes removed in Phase A |
+| 768px | `.dashboard-layout { grid-template-columns: 1fr; }` | Bootstrap `.col-md-*` handles stacking |
+| 768px | `.features-grid { gap: 16px; }` | Replaced by Bootstrap `.gap-4` |
+| 768px | `.product-grid { gap: var(--space-4) var(--space-3); }` | Replaced by Bootstrap `.gap-4` |
+| 480px | `.product-grid { gap: var(--space-3) var(--space-2); }` | Replaced by Bootstrap `.gap-4` |
+| 480px | `.profile-stats { }` (empty) | Dead after Phase A migration |
+
+### Build
+
+- `npx vite build` — ✅ **0 errors**
+- Code review: ✅ Clean — caught a dead `.checkout-grid` rule at 640px breakpoint (already absent — cleaned in prior work)
+
+---
+
 *End of chat history record. Update this file at the start of each session by appending new sections.*

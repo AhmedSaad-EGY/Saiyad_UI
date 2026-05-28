@@ -315,26 +315,6 @@
 }
 
 /* ============================================================
-   GRID
-   ============================================================ */
-.grid {
-  display: grid;
-  gap: 24px;
-}
-
-.grid-2 {
-  grid-template-columns: repeat(2, 1fr);
-}
-
-.grid-3 {
-  grid-template-columns: repeat(3, 1fr);
-}
-
-.grid-4 {
-  grid-template-columns: repeat(4, 1fr);
-}
-
-/* ============================================================
    FORMS
    ============================================================ */
 .form-group {
@@ -853,7 +833,6 @@
 .product-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
-  gap: 24px;
   overflow: visible;
 }
 
@@ -1109,13 +1088,9 @@
 }
 
 /* ============================================================
-   DETAIL PAGE
+   DETAIL PAGE — layout handled by Bootstrap .row.g-5
    ============================================================ */
-.detail-page {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 48px;
-}
+
 
 .detail-image {
   width: 100%;
@@ -1872,7 +1847,6 @@ tr:last-child td {
 .features-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 24px;
   margin: 48px 0;
 }
 
@@ -1956,13 +1930,8 @@ tr:last-child td {
 }
 
 /* ============================================================
-   DASHBOARD
+   DASHBOARD — layout handled by Bootstrap .row.g-3
    ============================================================ */
-.dashboard-layout {
-  display: grid;
-  grid-template-columns: 240px 1fr;
-  gap: 24px;
-}
 
 .dashboard-sidebar {
   background: var(--glass-bg);
@@ -2632,12 +2601,6 @@ tr:last-child td {
   align-items: flex-start;
 }
 
-.profile-stats {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-4);
-}
-
 .profile-stat-card {
   background: var(--glass-bg);
   backdrop-filter: var(--glass-blur);
@@ -2736,11 +2699,6 @@ tr:last-child td {
     width: 64px;
     height: 64px;
     font-size: 1.5rem;
-  }
-
-  .profile-stats {
-    grid-template-columns: repeat(3, 1fr);
-    gap: var(--space-2);
   }
 
   .profile-stat-card {
@@ -3332,9 +3290,8 @@ tr:last-child td {
     outline-offset: 2px;
   }
 
+  /* Bootstrap row handles mobile stacking */
   .dashboard-layout {
-    flex-direction: column;
-    gap: var(--space-4);
   }
 
   .table-wrapper {
@@ -3459,7 +3416,6 @@ tr:last-child td {
 
   .product-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--space-3) var(--space-2);
     padding: var(--space-1);
     margin: -2px;
   }
@@ -3481,7 +3437,6 @@ tr:last-child td {
 @media (max-width: 360px) {
   .product-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--space-2);
   }
 
   .nav-drawer {

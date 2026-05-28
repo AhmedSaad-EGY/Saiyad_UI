@@ -357,9 +357,9 @@ export default async function renderAuctionDetail(container, _route, params) {
           <span x-text="auction.productTitle || 'Auction Item'"></span>
         </nav>
 
-        <div class="detail-page">
+        <div class="row g-5">
           <!-- Image -->
-          <div>
+          <div class="col-lg-6">
             <div class="detail-image">
               <template x-if="auction.productImageUrl">
                 <img :src="auction.productImageUrl" :alt="auction.productTitle || 'Auction Item'" loading="lazy" style="width:100%;height:100%;object-fit:cover">
@@ -371,6 +371,7 @@ export default async function renderAuctionDetail(container, _route, params) {
           </div>
 
           <!-- Info -->
+          <div class="col-lg-6">
           <div class="detail-info">
             <h1 x-text="auction.productTitle || 'Auction Item'"></h1>
 

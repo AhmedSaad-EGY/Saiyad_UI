@@ -144,7 +144,7 @@ export default async function renderAuctions(_container, _fullPath, params) {
       </div>
 
       <!-- Skeleton -->
-      <div x-show="loading" class="product-grid skeleton-shimmer">
+      <div x-show="loading" class="product-grid gap-4 skeleton-shimmer">
         <template x-for="i in 6" :key="i">
           <div class="product-card card" style="pointer-events:none">
             <div class="product-card-img skeleton-image-shim"></div>
@@ -165,7 +165,7 @@ export default async function renderAuctions(_container, _fullPath, params) {
       </div>
 
       <!-- Auction grid -->
-      <div x-show="!loading && !error && auctions.length" class="product-grid">
+      <div x-show="!loading && !error && auctions.length" class="product-grid gap-4">
         <template x-for="(a, i) in auctions" :key="a.id">
           <a :href="'#/auction-detail?id='+a.id" class="product-card card animate-on-scroll" :class="'stagger-' + Math.min(i + 1, 8)" :aria-label="(a.productTitle || 'Auction') + ' — ' + formatPrice(a.currentHighestBid || a.startingPrice)">
             <div class="product-card-img">

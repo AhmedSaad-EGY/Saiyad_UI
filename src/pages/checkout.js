@@ -163,100 +163,114 @@ export default async function renderCheckout(container) {
             <a href="#/products" class="btn btn-primary"><i class="fas fa-store"></i> ${t('cart.browseProducts')}</a>
           </div>
         </div>
-      </template>
+      </div>
       </div>
       <div x-show="!loading && items.length > 0" x-transition:enter="transition-fade" x-transition:enter-start="op-0" x-transition:enter-end="op-100">
         <div>
           <div class="section-header"><h2><i class="fas fa-credit-card"></i> ${t('cart.checkout')}</h2></div>
-          <div class="detail-page">
-            <div class="card" style="grid-column:1">
-              <div class="card-header">
-                <h3 style="margin-bottom:0">${t('cart.title')}</h3>
-              </div>
-              <div class="card-body">
-              <template x-for="item in items" :key="item.productId">
-                <div class="d-flex justify-content-between" style="padding:8px 0;border-bottom:1px solid var(--border)">
-                  <span><span x-text="item.productTitle || ('Product #' + item.productId)"></span> <small class="text-muted" x-text="' x' + (item.quantity || 1)"></small></span>
-                  <span style="font-weight:600" x-text="formatPrice((item.product?.price || item.unitPrice || item.price || 0) * (item.quantity || 1))"></span>
+          <div class="row g-5">
+            <div class="col-lg-6">
+              <div class="card">
+                <div class="card-header">
+                  <h3 style="margin-bottom:0">${t('cart.title')}</h3>
                 </div>
-              </template>
-              <div class="d-flex justify-content-between" style="padding:12px 0;font-size:1.1rem;font-weight:700">
-                <span>${t('cart.total')}</span>
-                <span style="color:var(--primary)" x-text="formatPrice(total)"></span>
-              </div>
-              <hr style="border-color:var(--border);margin:16px 0">
-              <h3 style="margin-bottom:16px">${t('cart.shippingAddress')}</h3>
+                <div class="card-body">
+                <template x-for="item in items" :key="item.productId">
+                  <div class="d-flex justify-content-between" style="padding:8px 0;border-bottom:1px solid var(--border)">
+                    <span><span x-text="item.productTitle || ('Product #' + item.productId)"></span> <small class="text-muted" x-text="' x' + (item.quantity || 1)"></small></span>
+                    <span style="font-weight:600" x-text="formatPrice((item.product?.price || item.unitPrice || item.price || 0) * (item.quantity || 1))"></span>
+                  </div>
+                </template>
+                <div class="d-flex justify-content-between" style="padding:12px 0;font-size:1.1rem;font-weight:700">
+                  <span>${t('cart.total')}</span>
+                  <span style="color:var(--primary)" x-text="formatPrice(total)"></span>
+                </div>
+                <hr style="border-color:var(--border);margin:16px 0">
+                <h3 style="margin-bottom:16px">${t('cart.shippingAddress')}</h3>
 
-              <template x-if="addresses.length > 0">
-                <div style="margin-bottom:12px">
-                  <label style="font-weight:600;display:block;margin-bottom:8px">${t('shipping.savedAddresses') || 'Saved Addresses'}</label>
-                  <template x-for="(a, i) in addresses" :key="a.id">
-                    <label class="radio-card d-flex align-items-start gap-2" style="padding:10px;margin-bottom:6px;border:1px solid var(--border);border-radius:8px;cursor:pointer;background:var(--card-bg)">
-                      <input type="radio" name="savedAddr" :value="a.id" :checked="selectedAddressId === a.id" @change="selectAddress(a.id)" style="margin-top:3px">
-                      <div>
-                        <strong x-text="a.fullName || a.name || ''"></strong><br>
-                        <span style="font-size:0.85rem;color:var(--text-muted)" x-text="(a.addressLine || '') + ', ' + (a.city || '') + (a.postalCode ? ' - ' + a.postalCode : '')"></span><br>
-                        <span style="font-size:0.85rem;color:var(--text-muted)" x-text="a.phone || ''"></span>
-                      </div>
+                <template x-if="addresses.length > 0">
+                  <div style="margin-bottom:12px">
+                    <label style="font-weight:600;display:block;margin-bottom:8px">${t('shipping.savedAddresses') || 'Saved Addresses'}</label>
+                    <template x-for="(a, i) in addresses" :key="a.id">
+                      <label class="radio-card d-flex align-items-start gap-2" style="padding:10px;margin-bottom:6px;border:1px solid var(--border);border-radius:8px;cursor:pointer;background:var(--card-bg)">
+                        <input type="radio" name="savedAddr" :value="a.id" :checked="selectedAddressId === a.id" @change="selectAddress(a.id)" style="margin-top:3px">
+                        <div>
+                          <strong x-text="a.fullName || a.name || ''"></strong><br>
+                          <span style="font-size:0.85rem;color:var(--text-muted)" x-text="(a.addressLine || '') + ', ' + (a.city || '') + (a.postalCode ? ' - ' + a.postalCode : '')"></span><br>
+                          <span style="font-size:0.85rem;color:var(--text-muted)" x-text="a.phone || ''"></span>
+                        </div>
+                      </label>
+                    </template>
+                    <label class="radio-card d-flex align-items-center gap-2" style="padding:10px;margin-bottom:6px;border:1px dashed var(--border);border-radius:8px;cursor:pointer;background:var(--card-bg)">
+                      <input type="radio" name="savedAddr" value="new" :checked="useNewAddress" @change="selectAddress('new')" style="margin:0">
+                      <span><i class="fas fa-plus"></i> ${t('shipping.addNew')}</span>
                     </label>
-                  </template>
-                  <label class="radio-card d-flex align-items-center gap-2" style="padding:10px;margin-bottom:6px;border:1px dashed var(--border);border-radius:8px;cursor:pointer;background:var(--card-bg)">
-                    <input type="radio" name="savedAddr" value="new" :checked="useNewAddress" @change="selectAddress('new')" style="margin:0">
-                    <span><i class="fas fa-plus"></i> ${t('shipping.addNew')}</span>
-                  </label>
-                </div>
-              </template>
+                  </div>
+                </template>
 
-              <form id="addressForm" x-show="useNewAddress || addresses.length === 0">
-                <div id="addressFields" class="grid grid-2" style="gap:12px">
-                  <div class="form-group">
-                    <label class="form-label" for="addrFullName">${t('auth.fullName')} *</label>
-                    <input type="text" class="form-input form-control" id="addrFullName" name="fullName" x-model="addrFullName" @input="clearFieldError($el)" autocomplete="name" required>
+                <form id="addressForm" x-show="useNewAddress || addresses.length === 0">
+                  <div id="addressFields" class="row g-3">
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label class="form-label" for="addrFullName">${t('auth.fullName')} *</label>
+                        <input type="text" class="form-input form-control" id="addrFullName" name="fullName" x-model="addrFullName" @input="clearFieldError($el)" autocomplete="name" required>
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label class="form-label" for="addrPhone">${t('auth.phone')} *</label>
+                        <input type="tel" class="form-input form-control" id="addrPhone" name="phone" x-model="addrPhone" @input="clearFieldError($el)" autocomplete="tel" required>
+                      </div>
+                    </div>
+                    <div class="col-12">
+                      <div class="form-group">
+                        <label class="form-label" for="addrAddressLine">${t('cart.addressLine')} *</label>
+                        <input type="text" class="form-input form-control" id="addrAddressLine" name="addressLine" x-model="addrAddressLine" @input="clearFieldError($el)" autocomplete="street-address" required>
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label class="form-label" for="addrCity">${t('cart.city')} *</label>
+                        <input type="text" class="form-input form-control" id="addrCity" name="city" x-model="addrCity" @input="clearFieldError($el)" autocomplete="address-level2" required>
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label class="form-label" for="addrPost">${t('shipping.postalCode')}</label>
+                        <input type="text" class="form-input form-control" id="addrPost" name="postalCode" x-model="addrPost" autocomplete="postal-code">
+                      </div>
+                    </div>
                   </div>
-                  <div class="form-group">
-                    <label class="form-label" for="addrPhone">${t('auth.phone')} *</label>
-                    <input type="tel" class="form-input form-control" id="addrPhone" name="phone" x-model="addrPhone" @input="clearFieldError($el)" autocomplete="tel" required>
-                  </div>
-                  <div class="form-group" style="grid-column:1/-1">
-                    <label class="form-label" for="addrAddressLine">${t('cart.addressLine')} *</label>
-                    <input type="text" class="form-input form-control" id="addrAddressLine" name="addressLine" x-model="addrAddressLine" @input="clearFieldError($el)" autocomplete="street-address" required>
-                  </div>
-                  <div class="form-group">
-                    <label class="form-label" for="addrCity">${t('cart.city')} *</label>
-                    <input type="text" class="form-input form-control" id="addrCity" name="city" x-model="addrCity" @input="clearFieldError($el)" autocomplete="address-level2" required>
-                  </div>
-                  <div class="form-group">
-                    <label class="form-label" for="addrPost">${t('shipping.postalCode')}</label>
-                    <input type="text" class="form-input form-control" id="addrPost" name="postalCode" x-model="addrPost" autocomplete="postal-code">
-                  </div>
-                </div>
-              </form>
-            </div>
-            </div>
-            <div class="card" style="grid-column:2">
-              <div class="card-header">
-                <h3 style="margin-bottom:0">${t('cart.paymentMethod')}</h3>
+                </form>
               </div>
-              <div class="card-body">
-              <div class="mb-3 d-flex align-items-center gap-3" style="padding:12px;border:1px solid var(--border);border-radius:8px">
-                <i class="fas fa-wallet" style="font-size:1.3rem;color:var(--primary)"></i>
-                <div>
-                  <small style="color:var(--text-muted)">${t('wallet.available')}</small>
-                  <div style="font-weight:700;font-size:1.1rem" x-text="availableBalance !== null ? formatPrice(availableBalance) : '—'"></div>
-                </div>
-                <a href="#/wallet" class="btn btn-sm btn-outline" style="margin-left:auto"><i class="fas fa-plus"></i> ${t('wallet.deposit')}</a>
               </div>
-              <select class="form-select" id="paymentMethod" x-model="paymentMethod" style="margin-bottom:20px">
-                <option value="CreditCard">${t('cart.creditCard')}</option>
-                <option value="CashOnDelivery">${t('cart.cashOnDelivery')}</option>
-              </select>
-              <div x-html="alert" x-show="alert" x-cloak></div>
-              <button class="btn btn-primary w-100 btn-lg" @click="placeOrder()" :disabled="placing">
-                <i class="fas fa-spinner spinner" x-show="placing" x-cloak></i>
-                <span x-text="placing ? $t('cart.placingOrder') : $t('cart.placeOrder')"></span>
-              </button>
-              <a href="#/cart" class="btn btn-outline w-100" style="margin-top:8px"><i class="fas fa-arrow-left"></i> ${t('cart.backToCart')}</a>
             </div>
+            <div class="col-lg-6">
+              <div class="card">
+                <div class="card-header">
+                  <h3 style="margin-bottom:0">${t('cart.paymentMethod')}</h3>
+                </div>
+                <div class="card-body">
+                <div class="mb-3 d-flex align-items-center gap-3" style="padding:12px;border:1px solid var(--border);border-radius:8px">
+                  <i class="fas fa-wallet" style="font-size:1.3rem;color:var(--primary)"></i>
+                  <div>
+                    <small style="color:var(--text-muted)">${t('wallet.available')}</small>
+                    <div style="font-weight:700;font-size:1.1rem" x-text="availableBalance !== null ? formatPrice(availableBalance) : '—'"></div>
+                  </div>
+                  <a href="#/wallet" class="btn btn-sm btn-outline" style="margin-left:auto"><i class="fas fa-plus"></i> ${t('wallet.deposit')}</a>
+                </div>
+                <select class="form-select" id="paymentMethod" x-model="paymentMethod" style="margin-bottom:20px">
+                  <option value="CreditCard">${t('cart.creditCard')}</option>
+                  <option value="CashOnDelivery">${t('cart.cashOnDelivery')}</option>
+                </select>
+                <div x-html="alert" x-show="alert" x-cloak></div>
+                <button class="btn btn-primary w-100 btn-lg" @click="placeOrder()" :disabled="placing">
+                  <i class="fas fa-spinner spinner" x-show="placing" x-cloak></i>
+                  <span x-text="placing ? $t('cart.placingOrder') : $t('cart.placeOrder')"></span>
+                </button>
+                <a href="#/cart" class="btn btn-outline w-100" style="margin-top:8px"><i class="fas fa-arrow-left"></i> ${t('cart.backToCart')}</a>
+              </div>
+              </div>
             </div>
           </div>
         </div>

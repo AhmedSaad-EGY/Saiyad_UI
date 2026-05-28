@@ -84,23 +84,29 @@ export default async function renderUserProfile(container) {
         </div>
       </div>
 
-      <div class="profile-stats animate-on-scroll stagger-1" id="profileStats">
-        <div class="profile-stat-card">
-          <i class="fas fa-box"></i>
-          <div class="profile-stat-num" x-text="stats.orders">—</div>
-          <div class="profile-stat-label">${t('dash.orders')}</div>
+      <div class="row g-3 animate-on-scroll stagger-1" id="profileStats">
+        <div class="col-sm-4">
+          <div class="profile-stat-card">
+            <i class="fas fa-box"></i>
+            <div class="profile-stat-num" x-text="stats.orders">—</div>
+            <div class="profile-stat-label">${t('dash.orders')}</div>
+          </div>
         </div>
-        <div class="profile-stat-card">
-          <i class="fas fa-heart"></i>
-          <div class="profile-stat-num" x-text="stats.wishlist">—</div>
-          <div class="profile-stat-label">${t('dash.wishlist')}</div>
+        <div class="col-sm-4">
+          <div class="profile-stat-card">
+            <i class="fas fa-heart"></i>
+            <div class="profile-stat-num" x-text="stats.wishlist">—</div>
+            <div class="profile-stat-label">${t('dash.wishlist')}</div>
+          </div>
         </div>
-        <div class="profile-stat-card">
-          <i class="fas fa-bell"></i>
-          <div class="profile-stat-num" x-text="stats.notifs">—</div>
-          <div class="profile-stat-label">${t('dash.notifications')}</div>
+        <div class="col-sm-4">
+          <div class="profile-stat-card">
+            <i class="fas fa-bell"></i>
+            <div class="profile-stat-num" x-text="stats.notifs">—</div>
+            <div class="profile-stat-label">${t('dash.notifications')}</div>
+          </div>
         </div>
-        </div>
+      </div>
       </div>
 
       <div class="profile-quick-links card animate-on-scroll stagger-2">

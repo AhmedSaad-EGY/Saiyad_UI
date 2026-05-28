@@ -474,22 +474,30 @@ export default async function renderAdmin(container) {
       const totalFees = feeTxns.reduce((sum, t) => sum + Math.abs(t.amount), 0);
 
       content.innerHTML = `
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px" class="mb-4">
-          <div class="card card-sm p-3 text-center">
-            <small class="text-muted">${t("admin.platformBalance")}</small>
-            <div class="fs-4 fw-bold">${formatPrice(wallet.balance || 0)}</div>
+        <div class="row g-3 mb-4">
+          <div class="col-md-3">
+            <div class="card card-sm text-center">
+              <small class="text-muted">${t("admin.platformBalance")}</small>
+              <div class="fs-4 fw-bold">${formatPrice(wallet.balance || 0)}</div>
+            </div>
           </div>
-          <div class="card card-sm" style="padding:16px;text-align:center">
-            <small class="text-muted">${t("wallet.held")}</small>
-            <div class="fs-4 fw-bold">${formatPrice(wallet.heldBalance || 0)}</div>
+          <div class="col-md-3">
+            <div class="card card-sm text-center">
+              <small class="text-muted">${t("wallet.held")}</small>
+              <div class="fs-4 fw-bold">${formatPrice(wallet.heldBalance || 0)}</div>
+            </div>
           </div>
-          <div class="card card-sm" style="padding:16px;text-align:center">
-            <small class="text-muted">${t("wallet.available")}</small>
-            <div class="fs-4 fw-bold">${formatPrice(wallet.availableBalance || 0)}</div>
+          <div class="col-md-3">
+            <div class="card card-sm text-center">
+              <small class="text-muted">${t("wallet.available")}</small>
+              <div class="fs-4 fw-bold">${formatPrice(wallet.availableBalance || 0)}</div>
+            </div>
           </div>
-          <div class="card card-sm" style="padding:16px;text-align:center;border-left:3px solid var(--primary)">
-            <small class="text-muted">${t("admin.totalFees")}</small>
-            <div class="fs-4 fw-bold" style="color:var(--primary)">${formatPrice(totalFees)}</div>
+          <div class="col-md-3">
+            <div class="card card-sm text-center" style="border-left:3px solid var(--primary)">
+              <small class="text-muted">${t("admin.totalFees")}</small>
+              <div class="fs-4 fw-bold" style="color:var(--primary)">${formatPrice(totalFees)}</div>
+            </div>
           </div>
         </div>
         <h3 class="mb-2">${t("admin.feeIncome")}</h3>

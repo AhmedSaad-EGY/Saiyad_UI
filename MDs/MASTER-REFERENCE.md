@@ -319,6 +319,10 @@ MODERATOR_ROLES = [Auctioneer, Admin]                  # Review + Analytics
 - [x] **May 28**: **_animations.css full audit** — All 8 keyframes (`slideUp`, `slideDown`, `scaleIn`, `spin`, `pulse`, `ripple`, `skeleton-loading`, `contentFadeIn`) and all classes verified in active use — no stale animations remain | Build: ✅ 0 errors | Review: ✅
 - [x] **May 28**: **Remove 2 stale keyframes** — Removed `@keyframes priceFlash` and `@keyframes shake` (plus `.form-input.shake` selector) from `_components.css`; both were unused, Animate.css provides equivalents via CDN | Build: ✅ 0 errors | Review: ✅
 - [x] **May 28**: **Layout CSS audit — _layout.css** — Audited all keyframes (`ping`, `fishSwim`, `navWave`), classes (`nav-actions`, `nav-toggles`, `footer-*`, etc.), and custom properties. All 100% in use. Minor finding: `.auth-page .card` padding at 480px breakpoint is inert (overridden by Bootstrap `:has()` selector) — pending future cleanup. | Build: ✅ 0 errors | Review: ✅
+- [x] **May 28**: **Bootstrap Grid Phase A — Simple grids** — Migrated dashboard overview (`.grid.grid-2` → `.row.g-3.mt-3` + `.col-sm-6`), profile stats (`.profile-stats` → `.row.g-3` + `.col-sm-4`), admin revenue (inline grid → `.row.g-3.mb-4` + `.col-md-3`), profile links (`.profile-links-grid` → `.row-cols-2.row-cols-sm-3`); removed stale `.grid`, `.grid-2`, `.grid-3`, `.grid-4`, `.profile-stats` CSS rules | Build: ✅ 0 errors | Review: ✅
+- [x] **May 28**: **Bootstrap Grid Phase B — Product/feature grids** — Replaced custom `gap: 24px` on `.product-grid` and `.features-grid` with Bootstrap `.gap-4` utility class (1.5rem = 24px); removed responsive gap overrides at 480px/360px; added `.gap-4` to all 8 grid instances across home.js, products.js, auctions.js | Build: ✅ 0 errors | Review: ✅
+- [x] **May 28**: **Bootstrap Grid Phase C — Page layout grids** — Migrated checkout `.detail-page` → `.row.g-5` + `.col-lg-6`, dashboard `.dashboard-layout` → `.row.g-3` + `.col-md-3/.col-md-9`, product-detail/auction-detail `.detail-page` → `.row.g-5` + `.col-lg-6`; fixed mismatched HTML in checkout.js and product-detail.js; removed `.detail-page` and `.dashboard-layout` CSS rules | Build: ✅ 0 errors | Review: ✅
+- [x] **May 28**: **Bootstrap Grid Phase D — CSS cleanup** — Removed stale responsive grid overrides from `_layout.css` at 1024px/768px/480px breakpoints for `.dashboard-layout`, `.detail-page`, `.grid-2/3/4`, `.features-grid`, `.product-grid`, `.profile-stats`; cleaned up dead `.checkout-grid` rule | Build: ✅ 0 errors | Review: ✅
 
 ---
 
@@ -391,7 +395,9 @@ MODERATOR_ROLES = [Auctioneer, Admin]                  # Review + Analytics
 
 ### Immediate (Next)
 1. Remove 7 non-existent `--bs-input-*` mappings from `_bootstrap-overrides.css`
-2. Identify remaining pages for deeper Bootstrap migration (admin, cart, product-detail, auction-detail)
+2. Remove 28 unused component variable mappings (modals, tooltips, popovers, dropdowns, badges, alerts) from `_bootstrap-overrides.css`
+3. Replace remaining custom `slideUp` usages with Animate.css — app.js banners (offline/online dismissal), product-detail.js review entries, app.js SW update banner
+4. Fix duplicate `@keyframes slideDown` in app.js (`translateY(-100%)`) that overrides `_animations.css` definition (`translateY(-12px)`)
 
 ### Short-term
 3. Standardize Bootstrap usage patterns across all 25 page modules
