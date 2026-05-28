@@ -941,13 +941,13 @@ function renderChangePassword(content) {
       <div class="card-body">
       <form id="passwordForm">
         <div class="form-group">
-          <label class="form-label">${t("dash.currentPassword")}</label>
-          <input type="password" class="form-input form-control" id="oldPassword" required>
+          <label class="form-label" for="oldPassword">${t("dash.currentPassword")}</label>
+          <input type="password" class="form-input form-control" id="oldPassword" name="oldPassword" required autocomplete="current-password">
         </div>
         <div class="form-group">
-          <label class="form-label">${t("dash.newPassword")}</label>
+          <label class="form-label" for="newPassword">${t("dash.newPassword")}</label>
           <div class="password-wrapper">
-            <input type="password" class="form-input form-control" id="newPassword" required minlength="6">
+            <input type="password" class="form-input form-control" id="newPassword" name="newPassword" required minlength="6" autocomplete="new-password">
           </div>
           <div class="password-strength" id="dashStrength"><div class="password-strength-bar" id="dashStrengthBar"></div></div>
           <div class="password-strength-text" id="dashStrengthText"></div>

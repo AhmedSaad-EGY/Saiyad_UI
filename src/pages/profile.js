@@ -8,18 +8,43 @@ import { showToast } from '../core/utils/ui.js';
 import Alpine from 'alpinejs';
 
 Alpine.data('profilePage', () => ({
-  stats: { orders: '—', wishlist: '—', notifs: '—' },
+  stats: { orders: 0, wishlist: 0, notifs: 0 },
   init() {
     Promise.allSettled([
       api.get('/orders', { page: 1, pageSize: 1 }),
       api.get('/wishlist', { page: 1, pageSize: 1 }),
       api.get('/notifications/unread-count'),
     ]).then(([orders, wishlist, notifs]) => {
-      if (orders.status === 'fulfilled') this.stats.orders = orders.value?.totalCount ?? '0';
-      if (wishlist.status === 'fulfilled') this.stats.wishlist = wishlist.value?.totalCount ?? '0';
-      if (notifs.status === 'fulfilled') this.stats.notifs = notifs.value?.count ?? '0';
+      if (orders.status === 'fulfilled') this.animateValue('orders', parseInt(orders.value?.totalCount ?? 0, 10));
+      if (wishlist.status === 'fulfilled') this.animateValue('wishlist', parseInt(wishlist.value?.totalCount ?? 0, 10));
+      if (notifs.status === 'fulfilled') this.animateValue('notifs', parseInt(notifs.value?.count ?? 0, 10));
     });
-    this.$nextTick(() => observeAnimations());
+    this.$nextTick(() => {
+      // Trigger profile fill anim transition
+      const fillEl = document.querySelector('.profile-completion-fill');
+      if (fillEl) fillEl.style.width = fillEl.style.width; // Trigger reflow/paint
+      observeAnimations();
+    });
+  },
+
+  animateValue(prop, endVal) {
+    if (endVal <= 0) {
+      this.stats[prop] = 0;
+      return;
+    }
+    let start = 0;
+    const duration = 800;
+    const stepTime = Math.max(10, Math.floor(duration / endVal));
+    const stepAmount = Math.max(1, Math.ceil(endVal / (duration / stepTime)));
+    const timer = setInterval(() => {
+      start += stepAmount;
+      if (start >= endVal) {
+        this.stats[prop] = endVal;
+        clearInterval(timer);
+      } else {
+        this.stats[prop] = start;
+      }
+    }, stepTime);
   },
 
   triggerUpload() {
@@ -62,6 +87,11 @@ export default async function renderUserProfile(container) {
   }
 
   const user = getUser();
+  let completionPercent = 0;
+  if (user?.fullName) completionPercent += 25;
+  if (user?.email) completionPercent += 25;
+  if (user?.phone) completionPercent += 25;
+  if (user?.profileImageUrl) completionPercent += 25;
 
   container.innerHTML = `
     <div x-data="profilePage" class="profile-page">
@@ -81,6 +111,17 @@ export default async function renderUserProfile(container) {
         <div class="profile-hero-actions">
           <a href="#/dashboard?tab=profile" class="btn btn-outline btn-sm"><i class="fas fa-edit"></i> ${t('dash.updateProfile')}</a>
           <a href="#/dashboard?tab=password" class="btn btn-ghost btn-sm"><i class="fas fa-lock"></i> ${t('dash.changePassword')}</a>
+        </div>
+      </div>
+
+      <!-- Profile Completion Tracker -->
+      <div class="profile-completion animate-on-scroll mt-3">
+        <div class="profile-completion-header">
+          <span><i class="fas fa-id-card"></i> ${t('profile.completion') || 'Profile Completion'}</span>
+          <span class="fw-bold text-primary">${completionPercent}%</span>
+        </div>
+        <div class="profile-completion-bar">
+          <div class="profile-completion-fill" style="width: ${completionPercent}%"></div>
         </div>
       </div>
 

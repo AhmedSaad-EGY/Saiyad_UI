@@ -27,6 +27,10 @@ Alpine.data('productsPage', () => ({
   searchOverlayOpen: false,
   mobileSearch: '',
 
+  // Layout view style
+  isListView: false,
+  totalItems: 0,
+
   // Init
   async init() {
     // Hydrate from URL params
@@ -98,8 +102,8 @@ Alpine.data('productsPage', () => ({
 
       const data = await api.get('/products', apiParams);
       this.products = data.items || data.data || [];
-      const total = data.totalCount || data.total || this.products.length;
-      this.totalPages = Math.ceil(total / this.pageSize);
+      this.totalItems = data.totalCount || data.total || this.products.length;
+      this.totalPages = Math.ceil(this.totalItems / this.pageSize);
     } catch (e) {
       this.error = e.message || t('common.error');
     } finally {
@@ -160,6 +164,20 @@ Alpine.data('productsPage', () => ({
 
   applyMobileFilters() {
     this.filterSheetOpen = false;
+    this.reload();
+  },
+
+  hasActiveFilters() {
+    return this.search || this.categoryId || this.condition || this.minPrice || this.maxPrice || this.inStock;
+  },
+
+  removeFilter(field) {
+    if (field === 'search') { this.search = ''; this.mobileSearch = ''; }
+    else if (field === 'categoryId') this.categoryId = '';
+    else if (field === 'condition') this.condition = '';
+    else if (field === 'minPrice') this.minPrice = '';
+    else if (field === 'maxPrice') this.maxPrice = '';
+    else if (field === 'inStock') this.inStock = false;
     this.reload();
   },
 
@@ -224,8 +242,54 @@ export default async function renderProducts(_container, _fullPath, params) {
           </label>
           <a href="#/products" class="btn btn-ghost btn-sm" @click.prevent="resetFilters()">${t('common.clearFilters')}</a>
         </div>
-        <button class="btn btn-outline filter-toggle-btn" @click="filterSheetOpen = true"><i class="fas fa-sliders-h"></i> ${t('products.filters')}</button>
-        <button class="btn btn-outline search-toggle-btn" @click="openSearchOverlay()" aria-label="${t('common.search')}"><i class="fas fa-search"></i></button>
+        <div class="d-flex gap-2 align-items-center">
+          <button class="btn btn-outline btn-icon search-toggle-btn" @click="openSearchOverlay()" aria-label="${t('common.search')}"><i class="fas fa-search"></i></button>
+          <button class="btn btn-outline btn-icon filter-toggle-btn" @click="filterSheetOpen = true"><i class="fas fa-sliders-h"></i></button>
+          <div class="d-none d-md-flex btn-group rounded-pill overflow-hidden border">
+            <button class="btn btn-sm px-3" :class="!isListView ? 'btn-primary' : 'btn-ghost'" @click="isListView = false" title="Grid View"><i class="fas fa-th-large"></i></button>
+            <button class="btn btn-sm px-3" :class="isListView ? 'btn-primary' : 'btn-ghost'" @click="isListView = true" title="List View"><i class="fas fa-list"></i></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Active Filter Chips -->
+      <div x-show="hasActiveFilters()" class="filter-chips" x-cloak>
+        <template x-if="search">
+          <span class="filter-chip" @click="removeFilter('search')">
+            <i class="fas fa-search"></i> <span x-text="'&quot;' + search + '&quot;'"></span> <i class="fas fa-times"></i>
+          </span>
+        </template>
+        <template x-if="categoryId">
+          <span class="filter-chip" @click="removeFilter('categoryId')">
+            <i class="fas fa-tag"></i> <span x-text="categories.find(c => String(c.id) === String(categoryId))?.name || 'Category'"></span> <i class="fas fa-times"></i>
+          </span>
+        </template>
+        <template x-if="condition">
+          <span class="filter-chip" @click="removeFilter('condition')">
+            <i class="fas fa-info-circle"></i> <span x-text="condition"></span> <i class="fas fa-times"></i>
+          </span>
+        </template>
+        <template x-if="minPrice">
+          <span class="filter-chip" @click="removeFilter('minPrice')">
+            <span x-text="'>= ' + formatPrice(minPrice)"></span> <i class="fas fa-times"></i>
+          </span>
+        </template>
+        <template x-if="maxPrice">
+          <span class="filter-chip" @click="removeFilter('maxPrice')">
+            <span x-text="'<= ' + formatPrice(maxPrice)"></span> <i class="fas fa-times"></i>
+          </span>
+        </template>
+        <template x-if="inStock">
+          <span class="filter-chip" @click="removeFilter('inStock')">
+            <i class="fas fa-check-circle"></i> ${t('products.inStockOnly')} <i class="fas fa-times"></i>
+          </span>
+        </template>
+        <button class="btn btn-ghost btn-sm text-primary py-0" @click="resetFilters()">${t('common.clearFilters')}</button>
+      </div>
+
+      <!-- Results Count Info -->
+      <div x-show="!loading && products.length" class="mb-3 d-flex justify-content-between align-items-center" x-cloak>
+        <span class="text-muted small" x-text="'Showing ' + products.length + ' of ' + totalItems + ' products'"></span>
       </div>
 
       <!-- Skeleton loading -->
@@ -250,7 +314,7 @@ export default async function renderProducts(_container, _fullPath, params) {
       </div>
 
       <!-- Product grid -->
-      <div x-show="!loading && !error && products.length" class="row row-cols-2 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4" id="productGrid">
+      <div x-show="!loading && !error && products.length" :class="isListView ? 'product-list-view d-flex flex-column gap-3' : 'row row-cols-2 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4'" id="productGrid">
         <template x-for="(p, i) in products" :key="p.id">
           <a :href="'#/product-detail?id='+p.id" class="product-card card" :class="'animate-on-scroll stagger-' + Math.min(i + 1, 8)" :aria-label="escapeHtml(p.title || 'Product') + ' — ' + formatPrice(p.price)">
             <div class="product-card-img">

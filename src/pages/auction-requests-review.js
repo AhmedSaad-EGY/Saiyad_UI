@@ -31,19 +31,26 @@ export default async function renderAuctionRequestsReview(container) {
         content.innerHTML = `<div class="empty-state"><i class="fas fa-gavel"></i><h3>${t("auctionRequestsReview.noPending")}</h3><p>${t("auctionRequestsReview.noPendingDesc")}</p></div>`;
         return;
       }
-      content.innerHTML = `<div class="table-responsive"><table class="table"><thead><tr><th>${t("auctionRequests.productTitle")}</th><th>${t("auctionRequestsReview.fisherman")}</th><th>${t("auctionRequests.fishType")}</th><th>${t("auctionRequests.quantityKg")}</th><th>${t("auctionRequests.estimatedValue")}</th><th>${t("auctionRequests.status")}</th><th>${t("auctionRequests.createdAt")}</th><th>${t("auctionRequestsReview.actions")}</th></tr></thead><tbody>${items.map(r => `<tr><td>${escapeHtml(r.productTitle)}</td><td>${escapeHtml(r.fishermanName || '-')}</td><td>${escapeHtml(r.fishType)}</td><td>${r.quantityKg}</td><td>${r.estimatedValue}</td><td><span class="${statusClass(r.status)}">${t(`auctionRequests.${  r.status.toLowerCase()}`)}</span></td><td>${new Date(r.createdAt).toLocaleDateString()}</td><td><button class="btn btn-sm btn-success" data-action="approve" data-id="${r.id}"><i class="fas fa-check"></i> ${t("auctionRequestsReview.approve")}</button> <button class="btn btn-sm btn-danger" data-action="reject" data-id="${r.id}"><i class="fas fa-times"></i> ${t("auctionRequestsReview.reject")}</button></td></tr>`).join("")}</tbody></table></div>`;
-      attachActions();
+      content.innerHTML = `<div class="table-responsive"><table class="table"><thead><tr><th>${t("auctionRequests.productTitle")}</th><th>${t("auctionRequestsReview.fisherman")}</th><th>${t("auctionRequests.fishType")}</th><th>${t("auctionRequests.quantityKg")}</th><th>${t("auctionRequests.estimatedValue")}</th><th>${t("auctionRequests.status")}</th><th>${t("auctionRequests.createdAt")}</th><th>${t("auctionRequestsReview.actions")}</th></tr></thead><tbody>${items.map(r => `<tr><td><a href="#" class="fw-semibold text-primary view-details-link" data-id="${r.id}">${escapeHtml(r.productTitle)}</a></td><td>${escapeHtml(r.fishermanName || '-')}</td><td>${escapeHtml(r.fishType)}</td><td>${r.quantityKg}</td><td>${r.estimatedValue}</td><td><span class="${statusClass(r.status)}">${t(`auctionRequests.${  r.status.toLowerCase()}`)}</span></td><td>${new Date(r.createdAt).toLocaleDateString()}</td><td><button class="btn btn-sm btn-outline btn-icon" data-action="details" data-id="${r.id}" title="View Details"><i class="fas fa-eye"></i></button> <button class="btn btn-sm btn-success" data-action="approve" data-id="${r.id}"><i class="fas fa-check"></i> ${t("auctionRequestsReview.approve")}</button> <button class="btn btn-sm btn-danger" data-action="reject" data-id="${r.id}"><i class="fas fa-times"></i> ${t("auctionRequestsReview.reject")}</button></td></tr>`).join("")}</tbody></table></div>`;
+      attachActions(items);
     } catch (err) {
       content.innerHTML = `<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><h3>${t("common.error")}</h3><p>${escapeHtml(err.message)}</p></div>`;
     }
   }
 
-  function attachActions() {
+  function attachActions(items) {
     document.querySelectorAll("[data-action='approve']").forEach(btn => {
       btn.addEventListener("click", () => showApproveModal(btn.dataset.id));
     });
     document.querySelectorAll("[data-action='reject']").forEach(btn => {
       btn.addEventListener("click", () => showRejectModal(btn.dataset.id));
+    });
+    document.querySelectorAll("[data-action='details'], .view-details-link").forEach(btn => {
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
+        const request = items.find(r => String(r.id) === String(btn.dataset.id));
+        if (request) showDetailDrawer(request);
+      });
     });
   }
 
@@ -156,5 +163,67 @@ export default async function renderAuctionRequestsReview(container) {
         btn.innerHTML = `<i class="fas fa-times"></i> ${t("auctionRequestsReview.reject")}`;
       }
     });
+  }
+
+  function showDetailDrawer(r) {
+    const existing = document.getElementById("detailDrawer");
+    if (existing) existing.remove();
+
+    const drawer = document.createElement("div");
+    drawer.id = "detailDrawer";
+    drawer.className = "modal-overlay drawer-overlay";
+    drawer.setAttribute("role", "dialog");
+    drawer.setAttribute("aria-modal", "true");
+    drawer.setAttribute("aria-label", r.productTitle);
+    drawer.innerHTML = `
+      <div class="modal-content drawer-content" style="position:fixed;top:0;right:-500px;width:100%;max-width:500px;height:100vh;background:var(--background);border-left:1px solid var(--border);border-radius:0;display:flex;flex-direction:column;transition:right 0.3s ease-out;box-shadow:-5px 0 25px rgba(0,0,0,0.15);z-index:1050">
+        <div class="modal-header d-flex justify-content-between align-items-center p-3 border-bottom">
+          <h3 class="mb-0 text-truncate" style="max-width:80%">${escapeHtml(r.productTitle)}</h3>
+          <button class="btn btn-ghost btn-icon p-1" id="closeDrawerBtn" aria-label="${t('common.close')}"><i class="fas fa-times fa-lg"></i></button>
+        </div>
+        <div class="modal-body p-4 flex-grow-1" style="overflow-y:auto">
+          ${r.imageUrl || r.productImageUrl ? `<div class="mb-4 text-center"><img src="${r.imageUrl || r.productImageUrl}" alt="${escapeHtml(r.productTitle)}" class="img-fluid rounded border" style="max-height:220px;object-fit:cover;width:100%"></div>` : ''}
+          <table class="table table-bordered">
+            <tbody>
+              <tr><th scope="row" style="width:35%">${t("auctionRequestsReview.fisherman") || 'Fisherman'}</th><td>${escapeHtml(r.fishermanName || '-')}</td></tr>
+              <tr><th scope="row">${t("auctionRequests.fishType") || 'Fish Type'}</th><td>${escapeHtml(r.fishType)}</td></tr>
+              <tr><th scope="row">${t("auctionRequests.quantityKg") || 'Quantity'}</th><td><span class="fw-semibold">${r.quantityKg} kg</span></td></tr>
+              <tr><th scope="row">${t("auctionRequests.estimatedValue") || 'Est. Value'}</th><td><span class="fw-semibold text-primary">${r.estimatedValue}</span></td></tr>
+              <tr><th scope="row">${t("auctionRequests.catchLocation") || 'Location'}</th><td>${escapeHtml(r.catchLocation || '-')}</td></tr>
+              <tr><th scope="row">${t("auctionRequests.catchDate") || 'Catch Date'}</th><td>${r.catchDate ? new Date(r.catchDate).toLocaleDateString() : '-'}</td></tr>
+              <tr><th scope="row">${t("auctionRequests.status") || 'Status'}</th><td><span class="${statusClass(r.status)}">${t(`auctionRequests.${r.status.toLowerCase()}`)}</span></td></tr>
+            </tbody>
+          </table>
+          <div class="mt-3">
+            <h4 class="h6 fw-bold">${t("auctionRequests.productDescription") || 'Description'}</h4>
+            <p class="text-secondary small bg-light p-3 rounded border" style="white-space:pre-wrap">${escapeHtml(r.productDescription || t("common.noDescription") || 'No description provided')}</p>
+          </div>
+        </div>
+        <div class="modal-footer p-3 border-top d-flex gap-2 justify-content-end bg-light">
+          <button class="btn btn-success btn-sm" id="drawerApproveBtn"><i class="fas fa-check"></i> ${t("auctionRequestsReview.approve")}</button>
+          <button class="btn btn-danger btn-sm" id="drawerRejectBtn"><i class="fas fa-times"></i> ${t("auctionRequestsReview.reject")}</button>
+        </div>
+      </div>`;
+    document.body.appendChild(drawer);
+    
+    // Slide-in animation trigger
+    requestAnimationFrame(() => {
+      drawer.classList.add("show");
+      drawer.querySelector(".drawer-content").style.right = "0";
+    });
+
+    const close = () => { 
+      drawer.querySelector(".drawer-content").style.right = "-500px";
+      drawer.classList.remove("show"); 
+      setTimeout(() => drawer.remove(), 300); 
+    };
+    
+    drawer.addEventListener("click", (e) => { 
+      if (e.target === drawer) close(); 
+    });
+    
+    document.getElementById("closeDrawerBtn").addEventListener("click", close);
+    document.getElementById("drawerApproveBtn").addEventListener("click", () => { close(); showApproveModal(r.id); });
+    document.getElementById("drawerRejectBtn").addEventListener("click", () => { close(); showRejectModal(r.id); });
   }
 }

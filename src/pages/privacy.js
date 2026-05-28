@@ -5,6 +5,24 @@ export default async function renderPrivacy(container) {
   const isAr = document.documentElement.lang === 'ar';
 
   container.innerHTML = `
+    <style>
+      @media print {
+        body { background: white !important; color: black !important; }
+        .navbar, .footer, .legal-hero, .legal-toc, .legal-footer { display: none !important; }
+        .legal-page { padding: 0 !important; margin: 0 !important; }
+        .legal-section { border: none !important; box-shadow: none !important; background: transparent !important; page-break-inside: avoid; padding: 0 !important; margin-bottom: 2rem !important; }
+        .legal-section-header h2 { color: black !important; }
+      }
+      .toc-link.active {
+        color: var(--primary) !important;
+        font-weight: 600 !important;
+        border-inline-start: 2px solid var(--primary);
+        padding-inline-start: 8px;
+      }
+      .toc-link {
+        transition: all 0.2s ease;
+      }
+    </style>
     <div class="legal-page">
       <div class="legal-hero animate-on-scroll">
         <div class="legal-hero-icon" aria-hidden="true">
@@ -104,4 +122,23 @@ export default async function renderPrivacy(container) {
     </div>
   `;
   observeAnimations();
+
+  // TOC active state observation
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.getAttribute("id");
+        document.querySelectorAll(".toc-link").forEach(link => {
+          if (link.getAttribute("href") === `#${id}`) {
+            link.classList.add("active");
+          } else {
+            link.classList.remove("active");
+          }
+        });
+      }
+    });
+  }, { rootMargin: "-20% 0px -60% 0px", threshold: 0 });
+
+  document.querySelectorAll(".legal-section").forEach(sec => observer.observe(sec));
+}
 }
