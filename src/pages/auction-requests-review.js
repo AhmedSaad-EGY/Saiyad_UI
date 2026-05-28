@@ -65,11 +65,11 @@ export default async function renderAuctionRequestsReview(container) {
       <div class="modal-content" style="max-width:480px">
         <h3><i class="fas fa-check-circle"></i> ${t("auctionRequestsReview.approve")}</h3>
         <form id="approveForm" novalidate>
-          <div class="form-group"><label class="form-label">${t("scheduling.endTime")} *</label><input type="datetime-local" class="form-input" id="appEndTime" value="${fmt(defaultEnd)}" required></div>
-          <div class="form-group"><label class="form-label">${t("analytics.startingPrice")} *</label><input type="number" class="form-input" id="appStartingPrice" step="0.01" min="0" required placeholder="0.00"></div>
-          <div class="form-group"><label class="form-label">${t("auction.reservePrice")}</label><input type="number" class="form-input" id="appReservePrice" step="0.01" min="0" placeholder="0.00"></div>
-          <div class="form-group"><label class="form-label">${t("auction.minimumIncrement")}</label><input type="number" class="form-input" id="appMinIncrement" step="0.01" min="0" placeholder="0.00"></div>
-          <div style="display:flex;gap:8px;margin-top:16px">
+          <div class="form-group"><label class="form-label">${t("scheduling.endTime")} *</label><input type="datetime-local" class="form-input form-control" id="appEndTime" value="${fmt(defaultEnd)}" required></div>
+          <div class="form-group"><label class="form-label">${t("analytics.startingPrice")} *</label><input type="number" class="form-input form-control" id="appStartingPrice" step="0.01" min="0" required placeholder="0.00"></div>
+          <div class="form-group"><label class="form-label">${t("auction.reservePrice")}</label><input type="number" class="form-input form-control" id="appReservePrice" step="0.01" min="0" placeholder="0.00"></div>
+          <div class="form-group"><label class="form-label">${t("auction.minimumIncrement")}</label><input type="number" class="form-input form-control" id="appMinIncrement" step="0.01" min="0" placeholder="0.00"></div>
+          <div class="d-flex gap-2 mt-3">
             <button type="submit" class="btn btn-primary" id="confirmApproveBtn"><i class="fas fa-check"></i> ${t("auctionRequestsReview.approve")}</button>
             <button type="button" class="btn btn-ghost" id="cancelApproveBtn">${t("common.cancel")}</button>
           </div>
@@ -123,11 +123,11 @@ export default async function renderAuctionRequestsReview(container) {
     modal.innerHTML = `
       <div class="modal-content" style="max-width:420px">
         <h3>${t("auctionRequestsReview.reject")}</h3>
-        <div class="form-group" style="margin-top:12px">
+        <div class="form-group mt-2">
           <label class="form-label">${t("auctionRequestsReview.rejectionReason")} *</label>
-          <textarea class="form-textarea" id="rejectReason" rows="3" placeholder="${t("auctionRequestsReview.rejectionReasonPlaceholder")}"></textarea>
+          <textarea class="form-textarea form-control" id="rejectReason" rows="3" placeholder="${t("auctionRequestsReview.rejectionReasonPlaceholder")}"></textarea>
         </div>
-        <div style="display:flex;gap:8px;margin-top:16px">
+        <div class="d-flex gap-2 mt-3">
           <button class="btn btn-danger" id="confirmRejectBtn"><i class="fas fa-times"></i> ${t("auctionRequestsReview.reject")}</button>
           <button class="btn btn-ghost" id="cancelRejectBtn">${t("common.cancel")}</button>
         </div>

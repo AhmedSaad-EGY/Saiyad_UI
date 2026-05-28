@@ -22,7 +22,8 @@ export default async function renderOrderDetail(container) {
         <h2><i class="fas fa-file-invoice"></i> ${t('order.title')} #${order.id}</h2>
         <a href="#/dashboard?tab=orders" class="btn btn-ghost btn-sm"><i class="fas fa-arrow-left"></i> ${t('order.backToOrders')}</a>
       </div>
-      <div class="card" style="margin-bottom:16px">
+      <div class="card mb-3">
+        <div class="card-body">
         <div style="display:flex;flex-wrap:wrap;gap:24px;margin-bottom:12px">
           <div><strong>${t('order.status')}:</strong> <span class="status ${statusClass(order.status)}">${tStatus(order.status)}</span></div>
           <div><strong>${t('order.date')}:</strong> ${formatDate(order.createdAt)}</div>
@@ -34,11 +35,15 @@ export default async function renderOrderDetail(container) {
             <button class="btn btn-outline" id="cancelOrderBtn" style="color:var(--danger);border-color:var(--danger)"><i class="fas fa-times"></i> ${t('order.cancel')}</button>
           </div>
         ` : ""}
+        </div>
       </div>
       <div class="card">
-        <h3 style="margin-bottom:12px">${t('order.items')}</h3>
+        <div class="card-header">
+          <h3 style="margin-bottom:0">${t('order.items')}</h3>
+        </div>
+        <div class="card-body">
         <div class="table-wrapper">
-          <table>
+          <table class="table">
             <thead><tr><th>${t('cart.product')}</th><th>${t('order.seller')}</th><th>${t('order.quantity')}</th><th>${t('order.price')}</th><th>${t('order.subtotal')}</th></tr></thead>
             <tbody>
               ${(order.items || []).map(item => `
@@ -52,6 +57,7 @@ export default async function renderOrderDetail(container) {
               `).join('')}
             </tbody>
           </table>
+        </div>
         </div>
       </div>
       <div id="cancelOrderResult"></div>`;

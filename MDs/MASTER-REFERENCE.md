@@ -1,8 +1,8 @@
 # 🎯 Sayiad (صياد) — Master Reference & TODO
 
 > **Project**: Egypt's premier fishing marketplace & live auction platform  
-> **Stack**: Vanilla JS SPA + Alpine.js 3.14.8 + Vite 6 + SignalR + i18n (EN/AR)  
-> **Last Updated**: May 26, 2026  
+> **Stack**: Vanilla JS SPA + Alpine.js 3.14.8 + Bootstrap 5.3 + Animate.css 4.1 + Vite 6 + SignalR + i18n (EN/AR)  
+> **Last Updated**: May 28, 2026  
 > **Purpose**: Single entry point — each section links to the deeper doc it summarizes
 
 ---
@@ -84,8 +84,8 @@ src/
 │   ├── constants/routes.js # ROLES, routeGuards, routes, routeTitleKeys
 │   ├── helpers/errors.js   # Error boundary with fallback UI
 │   └── components/         # modal.js, pagination.js, toast.js
-├── css/                    # 7 partials → style.css
-├── public/sw.js            # Service worker (sayiad-v12)
+├── css/                    # 8 partials → style.css (+ Bootstrap)
+├── public/sw.js            # Service worker (auto-versioned via build)
 └── features/               # checkout/helpers.js, subscriptions/helpers.js
 ```
 
@@ -301,6 +301,22 @@ MODERATOR_ROLES = [Auctioneer, Admin]                  # Review + Analytics
 - [x] **May 26**: **Phase 2 Fix 7** — Wallet input validation (Alpine `depositError` getter, max 100k EGP, 2 decimal limit, real-time feedback, 2 i18n keys) | Build: ✅ | Review: ✅
 - [x] **May 26**: **Phase 2 Fix 9** — Add `loading="lazy"` to dynamically generated images (`openQuickView`, auction-detail main image, profile avatar) | Build: ✅ | Review: ✅
 - [x] **May 26**: **Phase 2 Fix 10** — `registerRouteCleanup` in auction-detail.js (already implemented — verified: SignalR group leave, countdown interval clear, auto-refresh timer all registered) | No changes needed
+- [x] **May 28**: **Bootstrap Phase 1** — Foundation setup (install Bootstrap 5.3.8 + Popper, create `_bootstrap-overrides.css` mapping 30+ OKLCH tokens → Bootstrap CSS vars, wire imports in style.css + main.js) | Build: ✅ 0 errors | Review: ✅
+- [x] **May 28**: **Animate.css Phase 1** — CDN link + `animate()` utility in `dom.js` (supports duration/delay/iterations/keep opts, auto-cleanup via `animationend`) | Build: ✅ 0 errors | Review: ✅
+- [x] **May 28**: **Bootstrap Phase 2** — Navbar migration to Bootstrap component classes (html: navbar-expand-lg, navbar-brand, navbar-nav, navbar-toggler; CSS: .nav-logo→.navbar-brand, .nav-links→.navbar-nav, .hamburger→.navbar-toggler; JS: selector update) | Build: ✅ 0 errors | Review: ✅
+- [x] **May 28**: **Bootstrap Phase 3** — Card component migration (added `card` class to all `product-card` + `glass-card` elements across 5 JS files; increased CSS specificity to `.product-card.card:hover` to beat `.card:hover` from overrides; fixed touch device override) | Build: ✅ 0 errors | Review: ✅
+- [x] **May 28**: **Bootstrap Phase 4** — Auth cards + account pages migrated to Bootstrap card sub-components (`.card-header`, `.card-body`, `.card-footer` across 14 page files; CSS `:has()` selector logic to handle bare cards vs sub-component cards; mobile auth-page responsive overrides) | Build: ✅ 0 errors | Review: ✅
+- [x] **May 28**: **Bootstrap Phase 5** — Cleanup redundant custom CSS (`.hidden`→`.d-none`, `.sr-only`→`.visually-hidden`, `.btn-block`→`.w-100`, `.flex .items-center`→`.d-flex .align-items-center`; removed 20+ utility classes from `_components.css`) | Build: ✅ 0 errors | Review: ✅
+- [x] **May 28**: **Animate.css Phase 2** — Toast entrance + cart total pop + bid count-up flash: replaced custom keyframes with `animate(el, 'bounceIn')` via `animate()` utility; removed `@keyframes priceFlash`, `@keyframes cartTotalPop`, `.price-flash`, `.cart-total-pop` | Build: ✅ 0 errors | Review: ✅
+- [x] **May 28**: **Animate.css Phase 3** — Scroll animation migration: `observeAnimations()` now applies Animate.css `fadeInUp` via `animate()` instead of custom fadeInUp/staggerIn keyframes; removed `@keyframes fadeInUp`, `@keyframes staggerIn`; stagger delay managed via CSS nth-child | Build: ✅ 0 errors | Review: ✅
+- [x] **May 28**: **Animate.css Phase 4** — Removed unused `@keyframes fadeIn` (now provided by Animate.css CDN), `slideLeft`, `slideRight` (zero usages) from `_animations.css`; retained `slideUp`, `slideDown`, `scaleIn`, `shake` as custom (Animate.css equivalents use 100% element-height transforms that would visually break subtle offsets) | Build: ✅ 0 errors | Review: ✅
+- [x] **May 28**: **Auth page entrance** — `.auth-page` CSS animation swapped from custom `slideUp` to Animate.css `fadeIn` (affects login.js, register.js, forgot-password.js) | Build: ✅ 0 errors | Review: ✅
+- [x] **May 28**: **Auction detail-info entrance** — Replaced inline `animation:slideUp` on `.detail-info` in auction-detail.js with `animate(el, 'fadeInUp', { duration: '0.5s' })` inside `$nextTick`; removed CSS `animation: slideUp` from `.detail-info` rule in `_components.css` | Build: ✅ 0 errors | Review: ✅
+- [x] **May 28**: **Animate.css audit — _animations.css** — Found and removed unused `@keyframes shimmer` (zero `animation:` references); cleaned up 2 stale comments from bounceIn migration; verified all 8 remaining keyframes + all classes are actively referenced | Build: ✅ 0 errors | Review: ✅
+- [x] **May 28**: **CSS vars audit — _variables.css** — Removed 11 unused CSS custom properties (9 from `:root`: `--leading-none`, `--ease-in-out`, `--accent-ghost`, `--text-4xl`, `--text-5xl`, `--blob-1/2/3`, `--color-border-tertiary`, `--shimmer-gradient`, `--urgency-bg`; 2 from `[data-theme="dark"]`: `--accent-ghost`, `--blob-1/2/3`) | Build: ✅ 0 errors | Review: ✅
+- [x] **May 28**: **Keyframe audit — _components.css** — Found 2 unused keyframes (`priceFlash` — replaced by Animate.css `bounceIn` in Phase 2, `shake` — zero references, Animate.css provides same via CDN); 12 of 14 keyframes in active use | Build: ✅ 0 errors | Review: ✅
+- [x] **May 28**: **Bootstrap overrides audit — _bootstrap-overrides.css** — Found 7 non-existent `--bs-input-*` mappings (inert — Bootstrap 5.3 doesn't define them, sets Sass vars like `$input-bg` not `--bs-input-bg`); 28 valid but unused component vars (modals, tooltips, popovers, dropdowns, badges, alerts — none of these Bootstrap JS components are used in the project) | Build: ✅ 0 errors | Review: ✅
+- [x] **May 28**: **_animations.css full audit** — All 8 keyframes (`slideUp`, `slideDown`, `scaleIn`, `spin`, `pulse`, `ripple`, `skeleton-loading`, `contentFadeIn`) and all classes verified in active use — no stale animations remain | Build: ✅ 0 errors | Review: ✅
 
 ---
 
@@ -340,6 +356,7 @@ MODERATOR_ROLES = [Auctioneer, Admin]                  # Review + Analytics
 
 | Purpose | File Path |
 |---------|-----------|
+| Bootstrap overrides | `src/css/_bootstrap-overrides.css` |
 | API config | `src/core/api/config.js` |
 | Auth | `src/core/auth/index.js` |
 | Router + guards | `src/core/router/index.js` |
@@ -370,18 +387,14 @@ MODERATOR_ROLES = [Auctioneer, Admin]                  # Review + Analytics
 
 > 📖 **Full future roadmap → see [`phase-spec.md`](./phase-spec.md#7-future-work-post-roles)**
 
-### Immediate (Fix this sprint)
-1. Phase 1 — Critical fixes (inline JS, EventBus, SignalR, i18n keys, !important)
-2. Push + redeploy to Vercel
-3. Verify all 5 roles on live site
+### Immediate (Next)
+1. Remove 2 stale `@keyframes` (`priceFlash`, `shake`) and 7 non-existent `--bs-input-*` mappings from `_bootstrap-overrides.css`
+2. Identify remaining pages for deeper Bootstrap migration (admin, cart, product-detail, auction-detail)
 
 ### Short-term
-4. Phase 2 — XSS audit, form validation, loading states, lazy images
-5. Phase 2 — Route cleanup, CSRF, swipe gestures, empty states
-
-### Medium-term
-6. Phase 3 — Sourcemaps, debounce, SW auto-versioning, ARIA
-7. Phase 3 — ESLint, request dedup, mobile tap targets
+3. Standardize Bootstrap usage patterns across all 25 page modules
+4. Replace remaining custom `slideUp` usages with Animate.css — app.js banners (offline/online dismissal), product-detail.js review entries, app.js SW update banner
+5. Fix duplicate `@keyframes slideDown` in app.js (`translateY(-100%)`) that overrides `_animations.css` definition (`translateY(-12px)`) | Build: ✅ | Review: ✅
 
 ---
 

@@ -100,8 +100,8 @@
   transition: transform var(--duration-fast) var(--ease-out);
 }
 
-.badge:not(.hidden) {
-  animation: badgePop 0.35s var(--ease-bounce);
+.badge:not(.d-none) {
+  animation: bounceIn 0.35s var(--ease-bounce);
 }
 
 .cart-nav-link {
@@ -110,43 +110,37 @@
 
 /* Mobile nav drawer — inner layout (handled in .nav-drawer block below) */
 
-.nav-container {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 60px;
-  gap: 16px;
-}
-
-.nav-logo {
-  font-size: 1.25rem;
-  font-weight: 800;
-  color: var(--primary);
-  text-decoration: none;
+/* Navbar brand — replaces .nav-logo */
+.navbar-brand {
   display: flex;
   align-items: center;
   gap: 8px;
   flex-shrink: 0;
   transition: transform var(--transition);
   letter-spacing: -0.02em;
+  font-weight: 800;
+  color: var(--primary);
+  text-decoration: none;
+  padding: 0;
+  margin: 0;
 }
 
-.nav-logo:hover {
+.navbar-brand:hover {
   transform: scale(1.03);
 }
 
-.nav-logo-img {
+.navbar-brand-img {
   height: 32px;
   width: auto;
   display: block;
   transition: opacity var(--duration-fast) var(--ease-out);
 }
 
-.nav-logo:hover .nav-logo-img {
+.navbar-brand:hover .navbar-brand-img {
   opacity: 0.85;
 }
 
-.nav-logo-text {
+.navbar-brand-text {
   font-weight: var(--weight-bold);
   font-size: var(--text-lg);
   color: var(--primary);
@@ -162,8 +156,8 @@
   justify-content: flex-end;
 }
 
-/* Desktop: nav-links is an inline flex row; toggles/actions flow inline */
-.nav-links {
+/* Desktop: navbar-nav is an inline flex row; toggles/actions flow inline */
+.navbar-nav {
   display: flex;
   align-items: center;
   gap: 4px;
@@ -244,7 +238,7 @@
 /* ============================================================
    HAMBURGER
    ============================================================ */
-.hamburger {
+.navbar-toggler {
   display: none;
   background: none;
   border: none;
@@ -265,12 +259,12 @@
   position: relative;
 }
 
-.hamburger:hover {
+.navbar-toggler:hover {
   background: var(--primary-ghost);
   color: var(--primary);
 }
 
-.hamburger:focus-visible {
+.navbar-toggler:focus-visible {
   outline: 2px solid var(--primary);
   outline-offset: 2px;
 }

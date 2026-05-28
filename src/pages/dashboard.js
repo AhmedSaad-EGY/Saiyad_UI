@@ -131,11 +131,15 @@ export default async function renderDashboard(container, route, params) {
 async function renderOverview(content, user) {
   content.innerHTML = `
     <div class="card animate-on-scroll">
-      <h3><i class="fas fa-tachometer-alt"></i> ${t("dash.overview")}</h3>
-      <p style="color:var(--text-muted);margin-top:6px">${t("dash.welcome")}, <strong>${escapeHtml(user?.fullName || "User")}</strong>!</p>
-      <p style="color:var(--text-muted)">${t("dash.role")}: <span class="category-tag">${user?.role || t("common.N/A")}</span></p>
+      <div class="card-header">
+        <h3><i class="fas fa-tachometer-alt"></i> ${t("dash.overview")}</h3>
+      </div>
+      <div class="card-body">
+        <p class="text-muted mt-1">${t("dash.welcome")}, <strong>${escapeHtml(user?.fullName || "User")}</strong>!</p>
+        <p style="color:var(--text-muted)">${t("dash.role")}: <span class="category-tag">${user?.role || t("common.N/A")}</span></p>
+      </div>
     </div>
-    <div class="grid grid-2" style="margin-top:16px">
+    <div class="grid grid-2 mt-3">
       <div class="card animate-on-scroll stagger-1" id="dashOrders"><i class="fas fa-spinner spinner"></i> ${t("common.loading")}</div>
       <div class="card animate-on-scroll stagger-2" id="dashProducts"><i class="fas fa-spinner spinner"></i> ${t("common.loading")}</div>
     </div>
@@ -145,7 +149,7 @@ async function renderOverview(content, user) {
   try {
     const orders = await api.get("/orders", { pageSize: 1 });
     document.getElementById("dashOrders").innerHTML =
-      `<h3><i class="fas fa-box"></i> ${t("dash.orders")}</h3><p style="font-size:2rem;font-weight:700;color:var(--primary)">${orders.totalCount || orders.total || 0}</p><p style="color:var(--text-muted)">${t("dash.totalOrders")}</p>`;
+      `<h3><i class="fas fa-box"></i> ${t("dash.orders")}</h3><p class="fs-2 fw-bold" style="color:var(--primary)">${orders.totalCount || orders.total || 0}</p><p style="color:var(--text-muted)">${t("dash.totalOrders")}</p>`;
   } catch {
     document.getElementById("dashOrders").innerHTML =
       `<div class="alert alert-info" role="alert">${t("common.error")}</div>`;
@@ -169,7 +173,7 @@ async function renderOverview(content, user) {
         banner.style.cssText = "margin-bottom:16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap";
         banner.innerHTML = `
           <i class="fas fa-store" style="font-size:1.2rem;flex-shrink:0"></i>
-          <span style="flex:1">
+          <span class="flex-fill">
             <strong>${t("seller.setupRequired") || "Set up your seller profile"}</strong> —
             ${t("seller.setupDesc") || "Complete your seller profile before listing products."}
           </span>
@@ -185,7 +189,7 @@ async function renderOverview(content, user) {
     try {
       const products = await api.get("/products/my", { pageSize: 1 });
       document.getElementById("dashProducts").innerHTML =
-        `<h3><i class="fas fa-tag"></i> ${t("dash.products")}</h3><p style="font-size:2rem;font-weight:700;color:var(--primary)">${products.totalCount || products.total || 0}</p><p style="color:var(--text-muted)">${t("dash.yourProducts")}</p>`;
+        `<h3><i class="fas fa-tag"></i> ${t("dash.products")}</h3><p class="fs-2 fw-bold" style="color:var(--primary)">${products.totalCount || products.total || 0}</p><p style="color:var(--text-muted)">${t("dash.yourProducts")}</p>`;
     } catch (e) {
       document.getElementById("dashProducts").innerHTML =
         `<div class="card" style="text-align:center;padding:24px"><h3><i class="fas fa-tag"></i> ${t("dash.products")}</h3><p style="color:var(--text-muted);margin-top:8px">${t("dash.productsNotAvailable")}</p></div>`;
@@ -197,7 +201,7 @@ async function renderOverview(content, user) {
 }
 
 async function renderOrders(content) {
-  content.innerHTML = `<div class="card"><h3><i class="fas fa-box"></i> ${t("dash.orders")}</h3><div id="ordersList"><i class="fas fa-spinner spinner"></i> ${t("common.loading")}</div></div>`;
+  content.innerHTML = `<div class="card"><div class="card-header"><h3><i class="fas fa-box"></i> ${t("dash.orders")}</h3></div><div class="card-body"><div id="ordersList"><i class="fas fa-spinner spinner"></i> ${t("common.loading")}</div></div></div>`;
 
   let page = 1;
   const pageSize = 10;
@@ -221,8 +225,8 @@ async function renderOrders(content) {
       const pages = Math.ceil(total / pageSize);
       list.innerHTML = `
         <div class="table-wrapper animate-on-scroll">
-          <table>
-            <caption style="caption-side:bottom;margin-top:8px;font-size:0.78rem;color:var(--text-muted)">${t("dash.orders")}</caption>
+          <table class="table">
+            <caption style="caption-side:bottom;font-size:0.78rem;color:var(--text-muted)" class="mt-2">${t("dash.orders")}</caption>
             <thead><tr><th scope="col">${t("dash.orderNum")}</th><th scope="col">${t("cart.total")}</th><th scope="col">${t("product.status")}</th><th scope="col">${t("dash.date")}</th><th scope="col"></th></tr></thead>
             <tbody>${orders
               .map(
@@ -282,31 +286,31 @@ async function renderMyProducts(content) {
   const sellerRoles = hasAnyRole(...(SELLER_ROLES));
   let editingProductId = null;
   content.innerHTML = `
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:8px">
+    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
       <h3><i class="fas fa-tag"></i> ${t("dash.products")}</h3>
       <button class="btn btn-primary btn-sm" id="showProductForm"><i class="fas fa-plus"></i> ${t("product.create")}</button>
     </div>
-    <div id="productFormContainer" class="hidden card card-sm" style="max-width:500px;margin-bottom:16px">
-      <h4 style="margin-bottom:12px">${t("product.create")}</h4>
+    <div id="productFormContainer" class="d-none card card-sm" style="max-width:500px;margin-bottom:16px">
+      <h4 class="mb-2">${t("product.create")}</h4>
       <form id="myProductForm" novalidate>
-        <div class="form-group"><label class="form-label">${t("product.title")} *</label><input type="text" class="form-input" id="prodTitle" required></div>
-        <div class="form-group"><label class="form-label">${t("product.description")} *</label><textarea class="form-textarea" id="prodDesc" required></textarea></div>
-        <div class="form-group"><label class="form-label">${t("product.brand") || "Brand"} *</label><input type="text" class="form-input" id="prodBrand" required></div>
-        <div class="form-group"><label class="form-label">${t("product.price")} *</label><input type="number" class="form-input" id="prodPrice" min="0" step="0.01" required></div>
-        <div class="form-group"><label class="form-label">${t("product.stock") || "Stock Quantity"} *</label><input type="number" class="form-input" id="prodStock" min="0" value="1" required></div>
-        <div class="form-group"><label class="form-label">${t("product.location") || "Location"} *</label><input type="text" class="form-input" id="prodLocation" required></div>
+        <div class="form-group"><label class="form-label">${t("product.title")} *</label><input type="text" class="form-input form-control" id="prodTitle" required></div>
+        <div class="form-group"><label class="form-label">${t("product.description")} *</label><textarea class="form-textarea form-control" id="prodDesc" required></textarea></div>
+        <div class="form-group"><label class="form-label">${t("product.brand") || "Brand"} *</label><input type="text" class="form-input form-control" id="prodBrand" required></div>
+        <div class="form-group"><label class="form-label">${t("product.price")} *</label><input type="number" class="form-input form-control" id="prodPrice" min="0" step="0.01" required></div>
+        <div class="form-group"><label class="form-label">${t("product.stock") || "Stock Quantity"} *</label><input type="number" class="form-input form-control" id="prodStock" min="0" value="1" required></div>
+        <div class="form-group"><label class="form-label">${t("product.location") || "Location"} *</label><input type="text" class="form-input form-control" id="prodLocation" required></div>
         <div class="form-group"><label class="form-label">${t("product.category") || "Category"} *</label><select class="form-select" id="prodCategory"><option value="">${t("common.loading") || "Loading..."}</option></select></div>
         <div class="form-group"><label class="form-label">${t("product.condition")}</label><select class="form-select" id="prodCondition"><option value="New">${t("product.new")}</option><option value="Used">${t("product.used")}</option></select></div>
           <div class="form-group">
             <label class="form-label">${t("product.images")}</label>
-            <input type="file" class="form-input" id="prodImageInput" accept="image/jpeg,image/png,image/webp" style="padding:8px">
-            <img id="prodImagePreview" class="hidden" style="width:120px;height:120px;object-fit:cover;border-radius:var(--radius-md);margin-top:8px;border:1px solid var(--border)">
+            <input type="file" class="form-input form-control" id="prodImageInput" accept="image/jpeg,image/png,image/webp" style="padding:8px">
+            <img id="prodImagePreview" class="d-none" style="width:120px;height:120px;object-fit:cover;border-radius:var(--radius-md);margin-top:8px;border:1px solid var(--border)">
             <div id="uploadProgress" style="margin-top:4px;font-size:0.82rem;color:var(--text-muted)"></div>
           </div>
         <div id="productAlert"></div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <div class="d-flex gap-2 flex-wrap">
           <button type="submit" class="btn btn-primary" id="prodSubmit">${t("product.save")}</button>
-          <button type="button" class="btn btn-ghost hidden" id="prodCancelEdit">${t("common.cancel")}</button>
+          <button type="button" class="btn btn-ghost d-none" id="prodCancelEdit">${t("common.cancel")}</button>
         </div>
       </form>
     </div>
@@ -314,8 +318,8 @@ async function renderMyProducts(content) {
 
   document.getElementById("showProductForm").addEventListener("click", () => {
     const form = document.getElementById("productFormContainer");
-    form.classList.toggle("hidden");
-    if (!form.classList.contains("hidden") && !editingProductId) {
+    form.classList.toggle("d-none");
+    if (!form.classList.contains("d-none") && !editingProductId) {
       document.querySelector("#productFormContainer h4").textContent = t("product.create");
     }
     // Restore saved draft
@@ -346,8 +350,8 @@ async function renderMyProducts(content) {
   document.getElementById("prodCancelEdit")?.addEventListener("click", () => {
     editingProductId = null;
     document.getElementById("myProductForm").reset();
-    document.getElementById("prodImagePreview")?.classList.add("hidden");
-    document.getElementById("prodCancelEdit").classList.add("hidden");
+    document.getElementById("prodImagePreview")?.classList.add("d-none");
+    document.getElementById("prodCancelEdit").classList.add("d-none");
     document.querySelector("#productFormContainer h4").textContent = t("product.create");
   });
 
@@ -356,7 +360,7 @@ async function renderMyProducts(content) {
   const draftFields = ["prodTitle", "prodDesc", "prodBrand", "prodPrice", "prodCondition", "prodStock", "prodLocation", "prodCategory"];
   const _draftInterval = setInterval(() => {
     const form = document.getElementById("productFormContainer");
-    if (form && !form.classList.contains("hidden")) {
+    if (form && !form.classList.contains("d-none")) {
       const draft = {};
       draftFields.forEach((id) => {
         const el = document.getElementById(id);
@@ -371,7 +375,7 @@ async function renderMyProducts(content) {
     const preview = document.getElementById("prodImagePreview");
     if (file && preview) {
       const reader = new FileReader();
-      reader.onload = (ev) => { preview.src = ev.target.result; preview.classList.remove("hidden"); };
+      reader.onload = (ev) => { preview.src = ev.target.result; preview.classList.remove("d-none"); };
       reader.readAsDataURL(file);
     }
   });
@@ -442,7 +446,7 @@ async function renderMyProducts(content) {
         editingProductId = null;
         localStorage.removeItem("product_draft");
         document.getElementById("myProductForm").reset();
-        document.getElementById("productFormContainer").classList.add("hidden");
+        document.getElementById("productFormContainer").classList.add("d-none");
         renderMyProducts(content);
       } catch (err) {
         alertDiv.innerHTML = `<div class="alert alert-error" role="alert">${escapeHtml(err.message)}</div>`;
@@ -476,8 +480,8 @@ async function renderMyProducts(content) {
       return;
     }
     list.innerHTML = `
-      <div class="table-wrapper animate-on-scroll">          <table>
-            <caption style="caption-side:bottom;margin-top:8px;font-size:0.78rem;color:var(--text-muted)">${t("dash.products")}</caption>
+      <div class="table-wrapper animate-on-scroll">          <table class="table">
+            <caption style="caption-side:bottom;font-size:0.78rem;color:var(--text-muted)" class="mt-2">${t("dash.products")}</caption>
             <thead><tr><th scope="col">${t("cart.product")}</th><th scope="col">${t("cart.price")}</th><th scope="col">${t("product.status")}</th><th scope="col">${t("product.stock")}</th><th scope="col"></th></tr></thead>
           <tbody>${products
             .map(
@@ -519,7 +523,7 @@ async function renderMyProducts(content) {
         const p = productsById.get(editBtn.dataset.productId);
         if (!p) return;
         editingProductId = p.id;
-        document.getElementById("productFormContainer").classList.remove("hidden");
+        document.getElementById("productFormContainer").classList.remove("d-none");
         document.querySelector("#productFormContainer h4").textContent = t("product.edit");
         document.getElementById("prodTitle").value = p.title || "";
         document.getElementById("prodDesc").value = p.description || "";
@@ -530,7 +534,7 @@ async function renderMyProducts(content) {
         document.getElementById("prodCategory").value = p.categoryId || "";
         document.getElementById("prodCondition").value =
           p.condition === 0 ? "New" : p.condition === 1 ? "Used" : (p.condition || "New");
-        document.getElementById("prodCancelEdit").classList.remove("hidden");
+        document.getElementById("prodCancelEdit").classList.remove("d-none");
         document.getElementById("productFormContainer").scrollIntoView({ behavior: "smooth", block: "start" });
         return;
       }
@@ -586,19 +590,19 @@ function showAuctionModal(productId, productTitle) {
         </div>` : ""}
         <div class="form-group">
           <label class="form-label">${t("auction.end")} *</label>
-          <input type="datetime-local" class="form-input" id="auctionEndTime" min="${minEnd}" required>
+          <input type="datetime-local" class="form-input form-control" id="auctionEndTime" min="${minEnd}" required>
         </div>
         <div class="form-group">
           <label class="form-label">${t("auction.startingPrice")} *</label>
-          <input type="number" class="form-input" id="auctionStartPrice" min="0.01" step="0.01" required>
+          <input type="number" class="form-input form-control" id="auctionStartPrice" min="0.01" step="0.01" required>
         </div>
         <div class="form-group">
           <label class="form-label">${t("auction.reservePrice")}</label>
-          <input type="number" class="form-input" id="auctionReservePrice" min="0" step="0.01" value="0">
+          <input type="number" class="form-input form-control" id="auctionReservePrice" min="0" step="0.01" value="0">
         </div>
         <div class="form-group">
           <label class="form-label">${t("auction.minIncrement")} *</label>
-          <input type="number" class="form-input" id="auctionMinIncrement" min="0.01" step="0.01" value="1" required>
+          <input type="number" class="form-input form-control" id="auctionMinIncrement" min="0.01" step="0.01" value="1" required>
         </div>
         <div class="modal-actions">
           <button type="button" class="btn btn-ghost" id="auctionModalCancel">${t("common.cancel") || "Cancel"}</button>
@@ -671,9 +675,9 @@ function showAuctionModal(productId, productTitle) {
 
 async function renderDashAuctions(content) {
   content.innerHTML = `
-    <div class="card" style="text-align:center;padding:32px">
+    <div class="card text-center p-4">
       <h3><i class="fas fa-gavel"></i> ${t("dash.auctions")}</h3>
-      <p style="color:var(--text-muted);margin-bottom:16px">${t("auction.startNew") || "Start a new auction for any product"}</p>
+      <p class="text-muted mb-3">${t("auction.startNew") || "Start a new auction for any product"}</p>
       <button class="btn btn-primary" id="createNewAuctionBtn"><i class="fas fa-plus"></i> ${t("auctions.title") || "Create Auction"}</button>
     </div>
   `;
@@ -681,7 +685,7 @@ async function renderDashAuctions(content) {
 }
 
 async function renderWishlist(content) {
-  content.innerHTML = `<div class="card"><h3><i class="fas fa-heart"></i> ${t("dash.wishlist")}</h3><div id="wishlistItems"><i class="fas fa-spinner spinner"></i> ${t("common.loading")}</div></div>`;
+  content.innerHTML = `<div class="card"><div class="card-header"><h3><i class="fas fa-heart"></i> ${t("dash.wishlist")}</h3></div><div class="card-body"><div id="wishlistItems"><i class="fas fa-spinner spinner"></i> ${t("common.loading")}</div></div></div>`;
   try {
       const data = await api.get("/wishlist", { pageSize: 50 });
     const items = data.items || data.data || data;
@@ -695,8 +699,8 @@ async function renderWishlist(content) {
       return;
     }
     document.getElementById("wishlistItems").innerHTML = `
-      <div class="table-wrapper animate-on-scroll">          <table>
-            <caption style="caption-side:bottom;margin-top:8px;font-size:0.78rem;color:var(--text-muted)">${t("dash.wishlist")}</caption>
+      <div class="table-wrapper animate-on-scroll">          <table class="table">
+            <caption style="caption-side:bottom;font-size:0.78rem;color:var(--text-muted)" class="mt-2">${t("dash.wishlist")}</caption>
             <thead><tr><th scope="col">${t("cart.product")}</th><th scope="col">${t("cart.price")}</th><th scope="col"></th></tr></thead>
           <tbody>${items
             .map(
@@ -705,7 +709,7 @@ async function renderWishlist(content) {
               <td><a href="#/product-detail?id=${w.productId}" style="text-decoration:none;color:var(--text);font-weight:500">${escapeHtml(w.product?.title || `Product #${w.productId}`)}</a></td>
               <td>${w.product?.price ? formatPrice(w.product.price) : "-"}</td>
               <td>
-                <div style="display:flex;gap:6px;flex-wrap:wrap">
+                <div class="d-flex gap-2 flex-wrap">
                   <a href="#/product-detail?id=${w.productId}"
                      class="btn btn-outline btn-sm">
                     <i class="fas fa-eye"></i> ${t("common.view") || "View"}
@@ -779,7 +783,7 @@ async function renderWishlist(content) {
 }
 
 async function renderNotifications(content) {
-  content.innerHTML = `<div class="card animate-on-scroll"><h3><i class="fas fa-bell"></i> ${t("dash.notifications")}</h3><div style="display:flex;gap:8px;margin-bottom:12px"><button class="btn btn-sm btn-ghost" id="markAllRead"><i class="fas fa-check-double"></i> ${t("notif.markAllRead")}</button></div><div id="notifList"><i class="fas fa-spinner spinner"></i> ${t("common.loading")}</div></div>`;
+  content.innerHTML = `<div class="card animate-on-scroll"><div class="card-header"><h3><i class="fas fa-bell"></i> ${t("dash.notifications")}</h3></div><div class="card-body"><div class="d-flex gap-2 mb-2"><button class="btn btn-sm btn-ghost" id="markAllRead"><i class="fas fa-check-double"></i> ${t("notif.markAllRead")}</button></div><div id="notifList"><i class="fas fa-spinner spinner"></i> ${t("common.loading")}</div></div></div>`;
   try {
     const data = await api.get("/notifications");
     const notifs = data.items || data.data || [];
@@ -836,23 +840,27 @@ async function renderNotifications(content) {
 function renderProfile(content, user) {
   content.innerHTML = `
     <div class="card animate-on-scroll">
-      <h3><i class="fas fa-user"></i> ${t("dash.profile")}</h3>
+      <div class="card-header">
+        <h3><i class="fas fa-user"></i> ${t("dash.profile")}</h3>
+      </div>
+      <div class="card-body">
       <form id="profileForm">
         <div class="form-group">
           <label class="form-label">${t("auth.fullName")}</label>
-          <input type="text" class="form-input" id="profileName" value="${escapeHtml(user?.fullName || "")}" required>
+          <input type="text" class="form-input form-control" id="profileName" value="${escapeHtml(user?.fullName || "")}" required>
         </div>
         <div class="form-group">
           <label class="form-label">${t("auth.email")}</label>
-          <input type="email" class="form-input" id="profileEmail" value="${escapeHtml(user?.email || "")}" required>
+          <input type="email" class="form-input form-control" id="profileEmail" value="${escapeHtml(user?.email || "")}" required>
         </div>
         <div class="form-group">
           <label class="form-label">${t("auth.phone")}</label>
-          <input type="tel" class="form-input" id="profilePhone" value="${escapeHtml(user?.phone || "")}">
+          <input type="tel" class="form-input form-control" id="profilePhone" value="${escapeHtml(user?.phone || "")}">
         </div>
         <div id="profileAlert"></div>
       <button type="submit" class="btn btn-primary" id="profileSubmit">${t("dash.updateProfile")}</button>
     </form>
+    </div>
     </div>
   `;
   observeAnimations();
@@ -909,23 +917,26 @@ function renderProfile(content, user) {
 function renderChangePassword(content) {
   content.innerHTML = `
     <div class="card animate-on-scroll">
-      <h3><i class="fas fa-key"></i> ${t("dash.changePassword")}</h3>
+      <div class="card-header">
+        <h3><i class="fas fa-key"></i> ${t("dash.changePassword")}</h3>
+      </div>
+      <div class="card-body">
       <form id="passwordForm">
         <div class="form-group">
           <label class="form-label">${t("dash.currentPassword")}</label>
-          <input type="password" class="form-input" id="oldPassword" required>
+          <input type="password" class="form-input form-control" id="oldPassword" required>
         </div>
         <div class="form-group">
           <label class="form-label">${t("dash.newPassword")}</label>
           <div class="password-wrapper">
-            <input type="password" class="form-input" id="newPassword" required minlength="6">
+            <input type="password" class="form-input form-control" id="newPassword" required minlength="6">
           </div>
           <div class="password-strength" id="dashStrength"><div class="password-strength-bar" id="dashStrengthBar"></div></div>
           <div class="password-strength-text" id="dashStrengthText"></div>
         </div>
-        <div id="passwordAlert"></div>
-        <button type="submit" class="btn btn-primary" id="passwordSubmit">${t("dash.changePwBtn")}</button>
-      </form>
+        <div id="passwordAlert"></div>      <button type="submit" class="btn btn-primary" id="passwordSubmit">${t("dash.changePwBtn")}</button>
+    </form>
+    </div>
     </div>
   `;
   observeAnimations();

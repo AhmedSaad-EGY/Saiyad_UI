@@ -1183,3 +1183,68 @@ The Sayiad frontend demonstrates **solid foundational architecture** with Alpine
 ---
 
 *Report generated with thorough file analysis and architectural assessment.*
+
+---
+
+## 🧹 POST-MIGRATION CLEANUP AUDIT (May 28, 2026)
+
+### Finding A: 11 Unused CSS Custom Properties in `_variables.css`
+**Severity:** 🟢 Cleanup  
+**Action:** Removed
+
+| Variable | Value | Category | Reason |
+|----------|-------|----------|--------|
+| `--leading-none` | `1` | Typography | 0 references |
+| `--ease-in-out` | `cubic-bezier(0.65, 0, 0.35, 1)` | Transitions | 0 references (only `--ease-out`, `--ease-enter`, `--ease-bounce` used) |
+| `--accent-ghost` | `oklch(0.65 0.19 48 / 0.1)` | Colors | 0 references (also removed from `[data-theme="dark"]`) |
+| `--text-4xl` | `2.4rem` | Typography | 0 references — largest used is `--text-3xl` |
+| `--text-5xl` | `3rem` | Typography | 0 references |
+| `--blob-1/2/3` | 3 OKLCH values | Ocean effect | 0 references — intended for canvas/blob animation system that was never built |
+| `--color-border-tertiary` | `var(--border)` | Backward-compat | 0 references; `--color-border-secondary` has 1 ref |
+| `--shimmer-gradient` | `linear-gradient(...)` | Animations | Dead code after `@keyframes shimmer` removal |
+| `--urgency-bg` | `oklch(0.95 0.05 35)` | Colors | 0 references; `--urgency` is used but not its bg variant |
+
+**Verification:** Cross-referenced every property in `_variables.css` against all CSS, JS, and inline style references across the entire codebase. 11 props had zero references.
+
+**Build:** ✅ 0 errors  **Review:** ✅ Clean
+
+---
+
+### Finding B: 2 Unused `@keyframes` in `_components.css`
+**Severity:** 🟢 Cleanup  
+**Action:** Pending removal
+
+| Keyframe | Line | Reason Unused |
+|----------|------|---------------|
+| `priceFlash` | 509 | Replaced by Animate.css `bounceIn` via `animate(el, 'bounceIn')` in Phase 2 of Animate.css migration; the `@keyframes` definition was overlooked during cleanup |
+| `shake` | 779 | Zero references in any source file (CSS class, inline style, or JS animation call). Animate.css CDN provides the same keyframe |
+
+**All other 12 keyframes** (urgentPulse, endingSoonPulse, iconBounce, heartBeat, float, drawerItemIn, drawerItemInRtl, confettiFall, dotPulse, luxuryShimmer, navWave, bidHighlight) are actively referenced.
+
+---
+
+### Finding C: 7 Non-Existent `--bs-*` Mappings in `_bootstrap-overrides.css`
+**Severity:** 🟢 Cleanup  
+**Action:** Pending removal
+
+| Line | Mapping | Bootstrap 5.3 Reality |
+|------|---------|----------------------|
+| 107 | `--bs-input-bg: var(--input-bg)` | ❌ Not a real `--bs-*` variable — Bootstrap uses `--bs-body-bg` for `.form-control` background |
+| 108 | `--bs-input-color: var(--text)` | ❌ Bootstrap uses `--bs-body-color` |
+| 109 | `--bs-input-border-color: var(--border)` | ❌ No `--bs-input-border-color` exists |
+| 110 | `--bs-input-focus-border-color: var(--border-focus)` | ❌ Not a real variable |
+| 111 | `--bs-input-focus-box-shadow: var(--shadow-glow)` | ❌ Not a real variable |
+| 112 | `--bs-input-placeholder-color: var(--text-muted)` | ❌ Bootstrap uses `--bs-secondary-color` |
+| 113 | `--bs-input-disabled-bg: var(--body-bg)` | ❌ Not a real variable |
+
+**Root cause:** These were created by mapping Sass variable names (like `$input-bg`) directly to CSS variable names (`--bs-input-bg`), but Bootstrap 5.3 does not expose `$input-*` values as CSS custom properties. All 7 are inert — they set variables Bootstrap never reads.
+
+**Additionally:** 28 valid but unused component CSS variable mappings were identified (modals, tooltips, popovers, dropdowns, badges, alerts) — none of these Bootstrap JavaScript components are used anywhere in the project.
+
+---
+
+### Finding D: `_animations.css` — All Clean After Migration
+**Severity:** 🟢 Verified  
+**Action:** No changes needed
+
+All 8 keyframes (`slideUp`, `slideDown`, `scaleIn`, `spin`, `pulse`, `ripple`, `skeleton-loading`, `contentFadeIn`) and all classes (`.animate-on-scroll`, `.skeleton` + 12 variants, `.content-fade`, `.transition-fade`, `.op-0`, `.op-100`) verified in active use via codebase-wide search. The Animate.css migration (Phases 1-4) correctly removed only what was replaced.

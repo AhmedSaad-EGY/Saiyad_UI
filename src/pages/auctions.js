@@ -131,7 +131,7 @@ export default async function renderAuctions(_container, _fullPath, params) {
     <div x-data="auctionsPage" @keydown.escape.window="filterSheetOpen = false">
       <div class="section-header"><h2><i class="fas fa-gavel"></i> ${t("auctions.title")}</h2></div>
       <div class="search-bar">
-        <input type="text" class="form-input" x-model="search" @input.debounce.400ms="reload()" placeholder="${t("auctions.search")}" />
+        <input type="text" class="form-input form-control" x-model="search" @input.debounce.400ms="reload()" placeholder="${t("auctions.search")}" />
         <div class="desktop-filters">
           <select class="form-select" x-model="status" @change="reload()">
             <option value="Active">${t("auctions.active")}</option>
@@ -146,7 +146,7 @@ export default async function renderAuctions(_container, _fullPath, params) {
       <!-- Skeleton -->
       <div x-show="loading" class="product-grid skeleton-shimmer">
         <template x-for="i in 6" :key="i">
-          <div class="product-card" style="pointer-events:none">
+          <div class="product-card card" style="pointer-events:none">
             <div class="product-card-img skeleton-image-shim"></div>
             <div class="product-card-body" style="padding:12px">
               <div class="skeleton skeleton-title"></div>
@@ -167,7 +167,7 @@ export default async function renderAuctions(_container, _fullPath, params) {
       <!-- Auction grid -->
       <div x-show="!loading && !error && auctions.length" class="product-grid">
         <template x-for="(a, i) in auctions" :key="a.id">
-          <a :href="'#/auction-detail?id='+a.id" class="product-card animate-on-scroll" :class="'stagger-' + Math.min(i + 1, 8)" :aria-label="(a.productTitle || 'Auction') + ' — ' + formatPrice(a.currentHighestBid || a.startingPrice)">
+          <a :href="'#/auction-detail?id='+a.id" class="product-card card animate-on-scroll" :class="'stagger-' + Math.min(i + 1, 8)" :aria-label="(a.productTitle || 'Auction') + ' — ' + formatPrice(a.currentHighestBid || a.startingPrice)">
             <div class="product-card-img">
               <img :src="a.productImageUrl || ''" :alt="a.productTitle || 'Auction'" loading="lazy">
               <span class="product-card-badge" :class="statusClass(a.status)" x-text="tStatus(a.status)"></span>
@@ -202,7 +202,7 @@ export default async function renderAuctions(_container, _fullPath, params) {
 
       <!-- Pagination -->
       <div x-show="!loading && auctions.length" x-data="pagination({ page, totalPages, onPageChange: goToPage })">
-        <div class="flex items-center gap-2" style="justify-content:center;margin-top:24px">
+        <div class="d-flex align-items-center gap-2" style="justify-content:center;margin-top:24px">
           <template x-for="p in pages" :key="p">
             <span>
               <button x-show="p !== '...'" x-text="p" :class="'btn btn-sm ' + (p === currentPage ? 'btn-primary' : 'btn-ghost')" @click="goTo(p)"></button>

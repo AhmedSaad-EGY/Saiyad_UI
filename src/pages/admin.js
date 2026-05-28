@@ -28,7 +28,7 @@ export default async function renderAdmin(container) {
 
   container.innerHTML = `
     <div class="section-header"><h2><i class="fas fa-shield-alt"></i> ${t("admin.title")}</h2></div>
-    <div class="tabs" id="adminTabs">${tabs.map((t) => `<button class="tab ${t.id === activeTab ? "active" : ""}" data-tab="${t.id}"><i class="fas ${t.icon}"></i> ${t.label}</button>`).join("")}</div>
+    <div class="tabs nav nav-tabs" id="adminTabs">${tabs.map((t) => `<button class="tab ${t.id === activeTab ? "active" : ""}" data-tab="${t.id}"><i class="fas ${t.icon}"></i> ${t.label}</button>`).join("")}</div>
     <div id="adminContent"></div>`;
 
   const content = document.getElementById("adminContent");
@@ -72,7 +72,7 @@ export default async function renderAdmin(container) {
   async function loadUsers() {
     const panel = document.getElementById("usersPanel");
     if (!panel) return;
-    panel.innerHTML = `<div style="padding:24px;text-align:center">
+    panel.innerHTML = `<div class="p-4 text-center">
       <i class="fas fa-spinner spinner"></i> ${t("common.loading")}</div>`;
     try {
       const data = await api.get("/users", { page: _usersPage, pageSize: _usersPageSize });
@@ -90,8 +90,8 @@ export default async function renderAdmin(container) {
 
       panel.innerHTML = `
         <div class="table-wrapper">
-          <table>
-            <caption style="caption-side:bottom;margin-top:8px;font-size:0.78rem;color:var(--text-muted)">${t("admin.users")}</caption>
+          <table class="table">
+            <caption style="caption-side:bottom;font-size:0.78rem;color:var(--text-muted)" class="mt-2">${t("admin.users")}</caption>
             <thead><tr>
               <th scope="col">${t("auth.fullName")}</th>
               <th scope="col">${t("auth.email")}</th>
@@ -155,8 +155,8 @@ export default async function renderAdmin(container) {
       }
 
       content.innerHTML = `
-        <div class="table-wrapper"><table>
-          <caption style="caption-side:bottom;margin-top:8px;font-size:0.78rem;color:var(--text-muted)">${t("admin.reports")}</caption>
+        <div class="table-wrapper"><table class="table">
+          <caption style="caption-side:bottom;font-size:0.78rem;color:var(--text-muted)" class="mt-2">${t("admin.reports")}</caption>
           <thead><tr><th scope="col">${t("admin.id")}</th><th scope="col">${t("cart.product")}</th><th scope="col">${t("admin.reportReason")}</th><th scope="col">${t("admin.reportStatus")}</th><th scope="col"></th></tr></thead>
           <tbody>${reports
             .map(
@@ -197,7 +197,7 @@ export default async function renderAdmin(container) {
   async function loadAdminProducts() {
     const panel = document.getElementById("productsPanel");
     if (!panel) return;
-    panel.innerHTML = `<div style="padding:24px;text-align:center">
+    panel.innerHTML = `<div class="p-4 text-center">
       <i class="fas fa-spinner spinner"></i> ${t("common.loading")}</div>`;
     try {
       const data = await api.get("/products", { page: _productsPage, pageSize: _productsPageSize });
@@ -215,8 +215,8 @@ export default async function renderAdmin(container) {
 
       panel.innerHTML = `
         <div class="table-wrapper">
-          <table>
-            <caption style="caption-side:bottom;margin-top:8px;font-size:0.78rem;color:var(--text-muted)">${t("admin.products")}</caption>
+          <table class="table">
+            <caption style="caption-side:bottom;font-size:0.78rem;color:var(--text-muted)" class="mt-2">${t("admin.products")}</caption>
             <thead><tr>
               <th scope="col">${t("product.title")}</th>
               <th scope="col">${t("product.seller")}</th>
@@ -231,7 +231,7 @@ export default async function renderAdmin(container) {
                   <td>${escapeHtml(p.title || "-")}</td>
                   <td>${escapeHtml(p.sellerName || `#${p.sellerId || "-"}`)}</td>
                   <td>${escapeHtml(p.categoryName || "-")}</td>
-                  <td style="font-weight:600">${formatPrice(p.price || 0)}</td>
+                  <td class="fw-semibold">${formatPrice(p.price || 0)}</td>
                   <td>
                     <select class="form-select product-status-select" data-product-id="${p.id}" style="min-width:130px">
                       ${productModerationStatuses.map((status) => `
@@ -239,7 +239,7 @@ export default async function renderAdmin(container) {
                       `).join("")}
                     </select>
                   </td>
-                  <td style="display:flex;gap:6px;flex-wrap:wrap">
+                  <td class="d-flex gap-2 flex-wrap">
                     <button class="btn btn-primary btn-sm save-product-status" data-product-id="${p.id}">${t("common.save")}</button>
                     <a href="#/product-detail?id=${p.id}" class="btn btn-outline btn-sm">${t("common.view")}</a>
                   </td>
@@ -282,7 +282,7 @@ export default async function renderAdmin(container) {
   async function loadAdminOrders() {
     const panel = document.getElementById("ordersPanel");
     if (!panel) return;
-    panel.innerHTML = `<div style="padding:24px;text-align:center">
+    panel.innerHTML = `<div class="p-4 text-center">
       <i class="fas fa-spinner spinner"></i> ${t("common.loading")}</div>`;
     try {
       const data = await api.get("/orders", { page: _ordersPage, pageSize: _ordersPageSize });
@@ -300,8 +300,8 @@ export default async function renderAdmin(container) {
 
       panel.innerHTML = `
         <div class="table-wrapper">
-          <table>
-            <caption style="caption-side:bottom;margin-top:8px;font-size:0.78rem;color:var(--text-muted)">${t("admin.orders")}</caption>
+          <table class="table">
+            <caption style="caption-side:bottom;font-size:0.78rem;color:var(--text-muted)" class="mt-2">${t("admin.orders")}</caption>
             <thead><tr>
               <th scope="col">#</th>
               <th scope="col">${t("order.buyer")}</th>
@@ -315,7 +315,7 @@ export default async function renderAdmin(container) {
                 <tr>
                   <td>#${escapeHtml(String(o.id))}</td>
                   <td>${escapeHtml(o.buyerName || "-")}</td>
-                  <td style="font-weight:600">${formatPrice(o.totalPrice)}</td>
+                  <td class="fw-semibold">${formatPrice(o.totalPrice)}</td>
                   <td><span class="status ${statusClass(o.status)}">${tStatus(o.status)}</span></td>
                   <td>${formatDate(o.createdAt || o.orderDate)}</td>
                   <td><a href="#/order-detail?id=${o.id}" class="btn btn-outline btn-sm">
@@ -342,21 +342,21 @@ export default async function renderAdmin(container) {
 
       if (!cats.length) {
         content.innerHTML = `
-          <div style="margin-bottom:16px"><button class="btn btn-primary btn-sm" id="showAddCat"><i class="fas fa-plus"></i> ${t("admin.addCategory")}</button></div>
-          <div id="addCatForm" class="hidden card card-sm" style="max-width:400px;margin-bottom:16px">
-            <form id="catForm" novalidate>
-              <div class="form-group"><label class="form-label">${t("admin.categoryName")}</label><input type="text" class="form-input" id="catName" required></div>
-              <div class="form-group"><label class="form-label">${t("admin.categoryDesc")}</label><input type="text" class="form-input" id="catDesc"></div>
+          <div class="mb-3"><button class="btn btn-primary btn-sm" id="showAddCat"><i class="fas fa-plus"></i> ${t("admin.addCategory")}</button></div>
+        <div id="addCatForm" class="d-none card card-sm" style="max-width:400px;margin-bottom:16px">
+          <form id="catForm" novalidate>
+              <div class="form-group"><label class="form-label">${t("admin.categoryName")}</label><input type="text" class="form-input form-control" id="catName" required></div>
+              <div class="form-group"><label class="form-label">${t("admin.categoryDesc")}</label><input type="text" class="form-input form-control" id="catDesc"></div>
               <button type="submit" class="btn btn-primary btn-sm">${t("admin.addCategory")}</button>
             </form>
           </div>
-          <div class="empty-state" style="margin-top:8px">
+          <div class="empty-state mt-2">
             <div class="empty-state-visual"><i class="fas fa-tags" style="font-size:2.5rem;color:var(--text-muted)"></i></div>
             <h3>${t("admin.noCategories") || "No categories found"}</h3>
             <p style="color:var(--text-muted)">${t("admin.createFirstCategory") || "Create your first category to organize products."}</p>
           </div>`;
         document.getElementById("showAddCat")?.addEventListener("click", () =>
-          document.getElementById("addCatForm").classList.toggle("hidden")
+          document.getElementById("addCatForm").classList.toggle("d-none")
         );
         document.getElementById("catForm")?.addEventListener("submit", async (e) => {
           e.preventDefault();
@@ -375,16 +375,16 @@ export default async function renderAdmin(container) {
       }
 
       content.innerHTML = `
-        <div style="margin-bottom:16px"><button class="btn btn-primary btn-sm" id="showAddCat"><i class="fas fa-plus"></i> ${t("admin.addCategory")}</button></div>
-        <div id="addCatForm" class="hidden card card-sm" style="max-width:400px;margin-bottom:16px">
+        <div class="mb-3"><button class="btn btn-primary btn-sm" id="showAddCat"><i class="fas fa-plus"></i> ${t("admin.addCategory")}</button></div>
+        <div id="addCatForm" class="d-none card card-sm mb-3" style="max-width:400px">
           <form id="catForm" novalidate>
-            <div class="form-group"><label class="form-label">${t("admin.categoryName")}</label><input type="text" class="form-input" id="catName" required></div>
-            <div class="form-group"><label class="form-label">${t("admin.categoryDesc")}</label><input type="text" class="form-input" id="catDesc"></div>
+            <div class="form-group"><label class="form-label">${t("admin.categoryName")}</label><input type="text" class="form-input form-control" id="catName" required></div>
+            <div class="form-group"><label class="form-label">${t("admin.categoryDesc")}</label><input type="text" class="form-input form-control" id="catDesc"></div>
             <button type="submit" class="btn btn-primary btn-sm">${t("admin.addCategory")}</button>
           </form>
         </div>
-        <div class="table-wrapper"><table>
-          <caption style="caption-side:bottom;margin-top:8px;font-size:0.78rem;color:var(--text-muted)">${t("admin.categories")}</caption>
+        <div class="table-wrapper"><table class="table">
+          <caption style="caption-side:bottom;font-size:0.78rem;color:var(--text-muted)" class="mt-2">${t("admin.categories")}</caption>
           <thead><tr><th scope="col">${t("admin.id")}</th><th scope="col">${t("admin.name")}</th><th scope="col">${t("admin.categoryDesc")}</th><th scope="col"></th></tr></thead>
           <tbody>${cats
             .map(
@@ -399,7 +399,7 @@ export default async function renderAdmin(container) {
       document
         .getElementById("showAddCat")
         ?.addEventListener("click", () =>
-          document.getElementById("addCatForm").classList.toggle("hidden"),
+          document.getElementById("addCatForm").classList.toggle("d-none"),
         );
       document
         .getElementById("catForm")
@@ -448,7 +448,7 @@ export default async function renderAdmin(container) {
       <div class="modal" onclick="event.stopPropagation()" style="max-width:500px">
         <div class="modal-header"><h3>${escapeHtml(title)}</h3></div>
         <div class="modal-body" style="padding:16px">${html}</div>
-        <div class="modal-actions" style="padding:12px 16px;display:flex;gap:8px;justify-content:flex-end;border-top:1px solid var(--border)">
+        <div class="modal-actions" style="padding:12px 16px;border-top:1px solid var(--border)" class="d-flex gap-2 justify-content-end">
           <button class="btn btn-ghost" id="fmCancel">${t("common.cancel") || "Cancel"}</button>
           <button class="btn btn-primary" id="fmSave">${t("common.save") || "Save"}</button>
         </div>
@@ -474,28 +474,28 @@ export default async function renderAdmin(container) {
       const totalFees = feeTxns.reduce((sum, t) => sum + Math.abs(t.amount), 0);
 
       content.innerHTML = `
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:24px">
-          <div class="card card-sm" style="padding:16px;text-align:center">
-            <small style="color:var(--text-muted)">${t("admin.platformBalance")}</small>
-            <div style="font-size:1.5rem;font-weight:700">${formatPrice(wallet.balance || 0)}</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px" class="mb-4">
+          <div class="card card-sm p-3 text-center">
+            <small class="text-muted">${t("admin.platformBalance")}</small>
+            <div class="fs-4 fw-bold">${formatPrice(wallet.balance || 0)}</div>
           </div>
           <div class="card card-sm" style="padding:16px;text-align:center">
-            <small style="color:var(--text-muted)">${t("wallet.held")}</small>
-            <div style="font-size:1.5rem;font-weight:700">${formatPrice(wallet.heldBalance || 0)}</div>
+            <small class="text-muted">${t("wallet.held")}</small>
+            <div class="fs-4 fw-bold">${formatPrice(wallet.heldBalance || 0)}</div>
           </div>
           <div class="card card-sm" style="padding:16px;text-align:center">
-            <small style="color:var(--text-muted)">${t("wallet.available")}</small>
-            <div style="font-size:1.5rem;font-weight:700">${formatPrice(wallet.availableBalance || 0)}</div>
+            <small class="text-muted">${t("wallet.available")}</small>
+            <div class="fs-4 fw-bold">${formatPrice(wallet.availableBalance || 0)}</div>
           </div>
           <div class="card card-sm" style="padding:16px;text-align:center;border-left:3px solid var(--primary)">
-            <small style="color:var(--text-muted)">${t("admin.totalFees")}</small>
-            <div style="font-size:1.5rem;font-weight:700;color:var(--primary)">${formatPrice(totalFees)}</div>
+            <small class="text-muted">${t("admin.totalFees")}</small>
+            <div class="fs-4 fw-bold" style="color:var(--primary)">${formatPrice(totalFees)}</div>
           </div>
         </div>
-        <h3 style="margin-bottom:12px">${t("admin.feeIncome")}</h3>
+        <h3 class="mb-2">${t("admin.feeIncome")}</h3>
         <div class="table-wrapper">
-          <table>
-            <caption style="caption-side:bottom;margin-top:8px;font-size:0.78rem;color:var(--text-muted)">${t("admin.feeIncome")}</caption>
+          <table class="table">
+            <caption style="caption-side:bottom;font-size:0.78rem;color:var(--text-muted)" class="mt-2">${t("admin.feeIncome")}</caption>
             <thead><tr>
               <th scope="col">${t("admin.id")}</th>
               <th scope="col">${t("wallet.type")}</th>
@@ -509,7 +509,7 @@ export default async function renderAdmin(container) {
                 <tr>
                   <td>${t.id}</td>
                   <td><span class="status ${t.type === "PlatformFee" ? "status-available" : "status-pending"}">${t.type}</span></td>
-                  <td style="font-weight:600">${formatPrice(t.amount)}</td>
+                  <td class="fw-semibold">${formatPrice(t.amount)}</td>
                   <td>${t.referenceType || "-"} #${t.referenceId || "-"}</td>
                   <td>${escapeHtml(t.description || "-")}</td>
                   <td>${formatDate(t.createdAt)}</td>
@@ -545,11 +545,11 @@ export default async function renderAdmin(container) {
       }
 
       panel.innerHTML = `
-        <div style="margin-bottom:16px">
+        <div class="mb-3">
           <button class="btn btn-primary" id="addPlanBtn"><i class="fas fa-plus"></i> ${t("admin.addPlan") || "Add Plan"}</button>
         </div>
-        <div class="table-responsive"><table>
-          <caption style="caption-side:bottom;margin-top:8px;font-size:0.78rem;color:var(--text-muted)">${t("admin.plans")}</caption>
+        <div class="table-responsive"><table class="table">
+          <caption style="caption-side:bottom;font-size:0.78rem;color:var(--text-muted)" class="mt-2">${t("admin.plans")}</caption>
           <thead><tr>
             <th scope="col">${t("common.name") || "Name"}</th><th scope="col">${t("common.tier") || "Tier"}</th><th scope="col">Price</th>
             <th scope="col">Auctions</th><th scope="col">Bids</th><th scope="col">Requests</th>
@@ -587,8 +587,8 @@ export default async function renderAdmin(container) {
           ];
           const formHtml = fields.map(f =>
             f.type === "checkbox"
-              ? '<label style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><input type="checkbox" id="ef-' + f.key + '" ' + (f.value === "true" ? "checked" : "") + '> ' + f.label + '</label>'
-              : '<div style="margin-bottom:8px"><label style="display:block;font-size:0.85rem;margin-bottom:2px">' + f.label + '</label><input type="' + f.type + '" id="ef-' + f.key + '" class="form-control" value="' + escapeHtml(f.value) + '"></div>'
+              ? '<label class="d-flex align-items-center gap-2 mb-2"><input type="checkbox" id="ef-' + f.key + '" ' + (f.value === "true" ? "checked" : "") + '> ' + f.label + '</label>'
+              : '<div class="mb-2"><label class="d-block small mb-0">' + f.label + '</label><input type="' + f.type + '" id="ef-' + f.key + '" class="form-control" value="' + escapeHtml(f.value) + '"></div>'
           ).join("");
 
           showFormModal("Edit Plan", formHtml, async function() {
@@ -622,14 +622,14 @@ export default async function renderAdmin(container) {
       document.getElementById("addPlanBtn")?.addEventListener("click", function() {
         const tierOptions = ["Free", "Basic", "Pro", "Enterprise"].map(function(t) { return '<option value="' + t + '">' + t + '</option>'; }).join("");
         const formHtml =
-          '<div style="margin-bottom:8px"><label>Tier</label><select id="af-tier" class="form-control">' + tierOptions + '</select></div>' +
-          '<div style="margin-bottom:8px"><label>Name</label><input id="af-name" class="form-control"></div>' +
-          '<div style="margin-bottom:8px"><label>Description</label><input id="af-desc" class="form-control"></div>' +
-          '<div style="margin-bottom:8px"><label>Price (EGP)</label><input id="af-price" class="form-control" type="number" value="0"></div>' +
-          '<div style="margin-bottom:8px"><label>Max Auctions/Month</label><input id="af-auctions" class="form-control" type="number" value="3"></div>' +
-          '<div style="margin-bottom:8px"><label>Max Bids/Month</label><input id="af-bids" class="form-control" type="number" value="3"></div>' +
-          '<div style="margin-bottom:8px"><label>Max Requests/Month</label><input id="af-requests" class="form-control" type="number" value="3"></div>' +
-          '<div style="margin-bottom:8px"><label>Sort Order</label><input id="af-sort" class="form-control" type="number" value="1"></div>';
+          '<div class="mb-2"><label>Tier</label><select id="af-tier" class="form-control">' + tierOptions + '</select></div>' +
+          '<div class="mb-2"><label>Name</label><input id="af-name" class="form-control"></div>' +
+          '<div class="mb-2"><label>Description</label><input id="af-desc" class="form-control"></div>' +
+          '<div class="mb-2"><label>Price (EGP)</label><input id="af-price" class="form-control" type="number" value="0"></div>' +
+          '<div class="mb-2"><label>Max Auctions/Month</label><input id="af-auctions" class="form-control" type="number" value="3"></div>' +
+          '<div class="mb-2"><label>Max Bids/Month</label><input id="af-bids" class="form-control" type="number" value="3"></div>' +
+          '<div class="mb-2"><label>Max Requests/Month</label><input id="af-requests" class="form-control" type="number" value="3"></div>' +
+          '<div class="mb-2"><label>Sort Order</label><input id="af-sort" class="form-control" type="number" value="1"></div>';
 
         showFormModal("Add Subscription Plan", formHtml, async function() {
           try {

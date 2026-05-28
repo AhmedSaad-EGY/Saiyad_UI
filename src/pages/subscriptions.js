@@ -39,9 +39,11 @@ export default async function renderSubscriptions(container) {
 
     root.innerHTML = `
       <div>
-        <div class="card" style="padding:20px;margin-bottom:24px;background:var(--primary-gradient, linear-gradient(135deg,var(--primary),var(--primary-light)));color:var(--text-inverse);border:none">
-          <h3 style="margin:0 0 6px">${escapeHtml(info.heading)}</h3>
-          <p style="margin:0;opacity:0.85">${escapeHtml(info.desc)}</p>
+        <div class="card mb-4" style="background:var(--primary-gradient, linear-gradient(135deg,var(--primary),var(--primary-light)));color:var(--text-inverse);border:none">
+          <div class="card-body">
+            <h3 style="margin:0 0 6px">${escapeHtml(info.heading)}</h3>
+            <p style="margin:0;opacity:0.85">${escapeHtml(info.desc)}</p>
+          </div>
         </div>
 
         <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:24px">
@@ -69,8 +71,9 @@ export default async function renderSubscriptions(container) {
             const insufficient = !isCurrent && p.price > 0 && walletBalance !== null && walletBalance < p.price;
             const isPop = isPopularPlan(p.sortOrder);
             return `
-            <div class="card" style="display:flex;flex-direction:column;position:relative;padding:24px${isPop ? ';border:2px solid var(--primary)' : ''}">
+            <div class="card" style="display:flex;flex-direction:column;position:relative;${isPop ? 'border:2px solid var(--primary)' : ''}">
               ${isPop ? `<span style="position:absolute;top:-10px;right:16px;background:var(--primary);color:var(--text-inverse);padding:2px 12px;border-radius:20px;font-size:0.78rem;font-weight:600">${t("subscriptions.popular")}</span>` : ''}
+              <div class="card-body" style="display:flex;flex-direction:column">
               <div style="text-align:center;margin-bottom:16px">
                 <i class="fas ${getPlanIcon(p.tier)}" style="font-size:2rem;color:var(--primary);margin-bottom:8px"></i>
                 <h3>${escapeHtml(p.name)}</h3>
@@ -83,7 +86,7 @@ export default async function renderSubscriptions(container) {
                 }
                 <span style="color:var(--text-muted)">${p.billingCycle === 'Yearly' ? ' ' + t('subscriptions.perYear') : p.billingCycle === 'Monthly' ? ' ' + t('subscriptions.perMonth') : ''}</span>
               </div>
-              <ul style="list-style:none;padding:0;margin:0 0 16px;flex:1">
+              <ul class="list-unstyled mb-3" style="flex:1">
                 ${(p.features || []).map(f => `
                   <li style="padding:6px 0;border-bottom:1px solid var(--border)"><i class="fas fa-check" style="color:var(--success);margin-right:8px;width:16px"></i>${escapeHtml(f)}</li>
                 `).join('')}
@@ -93,6 +96,7 @@ export default async function renderSubscriptions(container) {
                 ${isCurrent ? 'disabled' : insufficient ? `disabled title="${t('subscriptions.insufficientFunds')}"` : ''}>
                 ${isCurrent ? t("subscriptions.current") : insufficient ? t("subscriptions.insufficientFunds") : t("subscriptions.upgrade")}
               </button>
+              </div>
             </div>`;
           }).join('')}
         </div>` : `

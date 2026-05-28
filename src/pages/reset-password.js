@@ -83,7 +83,10 @@ export default function renderResetPassword(container) {
     container.innerHTML = `
       <div x-data="resetPwForm" class="auth-page">
         <div class="card">
-          <h2><i class="fas fa-key"></i> ${t('auth.resetPassword')}</h2>
+          <div class="card-header">
+            <h2><i class="fas fa-key"></i> ${t('auth.resetPassword')}</h2>
+          </div>
+          <div class="card-body">
           <div x-show="error" class="alert alert-error" x-text="error" x-cloak></div>
           <div x-show="success" class="alert alert-success" x-cloak>
             <i class="fas fa-check-circle"></i> ${t('auth.passwordResetSuccess')}
@@ -91,12 +94,12 @@ export default function renderResetPassword(container) {
           <form @submit.prevent="submit()" x-show="!success" novalidate>
             <div class="form-group">
               <label class="form-label" for="resetEmail">${t('auth.email')} *</label>
-              <input type="email" class="form-input" id="resetEmail" name="email" x-model="email" placeholder="your@email.com" required autocomplete="email" inputmode="email">
+              <input type="email" class="form-input form-control" id="resetEmail" name="email" x-model="email" placeholder="your@email.com" required autocomplete="email" inputmode="email">
             </div>
             <div class="form-group">
               <label class="form-label" for="resetPassword">${t('auth.newPassword')}</label>
               <div class="password-wrapper">
-                <input :type="showPassword ? 'text' : 'password'" class="form-input" id="resetPassword" name="password" x-model="password" @input="computeStrength()" required minlength="6">
+                <input :type="showPassword ? 'text' : 'password'" class="form-input form-control" id="resetPassword" name="password" x-model="password" @input="computeStrength()" required minlength="6">
                 <button type="button" class="toggle-password" @click="showPassword = !showPassword"><i :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i></button>
               </div>
               <div class="password-strength"><div class="password-strength-bar" :class="'password-strength-bar ' + strengthCls"></div></div>
@@ -105,15 +108,16 @@ export default function renderResetPassword(container) {
             <div class="form-group">
               <label class="form-label" for="resetConfirmPw">${t('auth.confirmNewPassword')}</label>
               <div class="password-wrapper">
-                <input :type="showConfirmPw ? 'text' : 'password'" class="form-input" id="resetConfirmPw" name="confirmPassword" x-model="confirmPassword" required minlength="6">
+                <input :type="showConfirmPw ? 'text' : 'password'" class="form-input form-control" id="resetConfirmPw" name="confirmPassword" x-model="confirmPassword" required minlength="6">
                 <button type="button" class="toggle-password" @click="showConfirmPw = !showConfirmPw"><i :class="showConfirmPw ? 'fas fa-eye-slash' : 'fas fa-eye'"></i></button>
               </div>
             </div>
-            <button type="submit" class="btn btn-primary btn-block btn-lg" :disabled="loading">
+            <button type="submit" class="btn btn-primary w-100 btn-lg" :disabled="loading">
               <i class="fas fa-spinner spinner" x-show="loading" x-cloak></i>
               <span x-text="loading ? $t('auth.updatingPassword') : $t('auth.resetPassword')"></span>
             </button>
           </form>
+          </div>
         </div>
       </div>`;
   }, 300);

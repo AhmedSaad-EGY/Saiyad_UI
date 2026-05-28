@@ -166,6 +166,7 @@ export default function renderForgotPassword(container) {
     container.innerHTML = `
       <div x-data="forgotPwPage" class="auth-page">
         <div class="card">
+          <div class="card-header">
           <h2>
             <template x-if="step === 'email'"><i class="fas fa-unlock"></i></template>
             <template x-if="step === 'code'"><i class="fas fa-shield-alt"></i></template>
@@ -175,15 +176,17 @@ export default function renderForgotPassword(container) {
             <template x-if="step === 'password'"> ${t('auth.newPassword')}</template>
             <template x-if="step === 'done'"><i class="fas fa-check-circle"></i> ${t('auth.passwordResetSuccess')}</template>
           </h2>
+          </div>
+          <div class="card-body">
           <div x-show="error" class="alert alert-error" x-text="error" x-cloak></div>
 
           <template x-if="step === 'email'">
             <form @submit.prevent="step1()" novalidate>
               <div class="form-group">
                 <label class="form-label" for="forgotEmail">${t('auth.email')}</label>
-                <input type="email" class="form-input" id="forgotEmail" name="email" x-model="email" placeholder="your@email.com" required autocomplete="email" inputmode="email">
+                <input type="email" class="form-input form-control" id="forgotEmail" name="email" x-model="email" placeholder="your@email.com" required autocomplete="email" inputmode="email">
               </div>
-              <button type="submit" class="btn btn-primary btn-block btn-lg" :disabled="loading">
+              <button type="submit" class="btn btn-primary w-100 btn-lg" :disabled="loading">
                 <i class="fas fa-spinner spinner" x-show="loading" x-cloak></i>
                 <span x-text="loading ? $t('auth.sendingResetLink') : $t('auth.sendResetLink')"></span>
               </button>
@@ -197,15 +200,15 @@ export default function renderForgotPassword(container) {
               </div>
               <div class="form-group">
                 <label class="form-label" for="forgotCode">${t('auth.verificationCode')}</label>
-                <input type="text" class="form-input" id="forgotCode" name="code" x-model="code" placeholder="${t('auth.tokenPlaceholder') || 'Enter the 6-digit code'}" required autocomplete="off" inputmode="numeric" maxlength="6" style="text-align:center;font-size:1.5rem;letter-spacing:8px">
+                <input type="text" class="form-input form-control" id="forgotCode" name="code" x-model="code" placeholder="${t('auth.tokenPlaceholder') || 'Enter the 6-digit code'}" required autocomplete="off" inputmode="numeric" maxlength="6" style="text-align:center;font-size:1.5rem;letter-spacing:8px">
               </div>
-              <button type="submit" class="btn btn-primary btn-block btn-lg" :disabled="loading">
+              <button type="submit" class="btn btn-primary w-100 btn-lg" :disabled="loading">
                 <i class="fas fa-spinner spinner" x-show="loading" x-cloak></i>
                 <span x-text="loading ? ($t('auth.verifying') || 'Verifying...') : $t('auth.verifyCode')"></span>
               </button>
               <div style="margin-top:12px">
-                <button type="button" class="btn btn-ghost btn-block" @click="handleResend()" :disabled="resendSeconds > 0" x-text="resendLabel"></button>
-                <button type="button" class="btn btn-ghost btn-block" style="margin-top:4px" @click="backToEmail()"><i class="fas fa-arrow-left"></i> ${t('common.back')}</button>
+                <button type="button" class="btn btn-ghost w-100" @click="handleResend()" :disabled="resendSeconds > 0" x-text="resendLabel"></button>
+                <button type="button" class="btn btn-ghost w-100" style="margin-top:4px" @click="backToEmail()"><i class="fas fa-arrow-left"></i> ${t('common.back')}</button>
               </div>
             </form>
           </template>
@@ -215,21 +218,21 @@ export default function renderForgotPassword(container) {
               <div class="form-group">
                 <label class="form-label" for="forgotNewPw">${t('auth.newPassword')}</label>
                 <div class="password-wrapper">
-                  <input type="password" class="form-input" id="forgotNewPw" name="newPassword" x-model="newPassword" placeholder="${t('auth.newPassword')}" required autocomplete="new-password" minlength="8">
+                  <input type="password" class="form-input form-control" id="forgotNewPw" name="newPassword" x-model="newPassword" placeholder="${t('auth.newPassword')}" required autocomplete="new-password" minlength="8">
                 </div>
               </div>
               <div class="form-group">
                 <label class="form-label" for="forgotConfirmPw">${t('auth.confirmNewPassword')}</label>
                 <div class="password-wrapper">
-                  <input type="password" class="form-input" id="forgotConfirmPw" name="confirmPassword" x-model="confirmPassword" placeholder="${t('auth.confirmNewPassword')}" required autocomplete="new-password" minlength="8">
+                  <input type="password" class="form-input form-control" id="forgotConfirmPw" name="confirmPassword" x-model="confirmPassword" placeholder="${t('auth.confirmNewPassword')}" required autocomplete="new-password" minlength="8">
                 </div>
               </div>
-              <button type="submit" class="btn btn-primary btn-block btn-lg" :disabled="loading">
+              <button type="submit" class="btn btn-primary w-100 btn-lg" :disabled="loading">
                 <i class="fas fa-spinner spinner" x-show="loading" x-cloak></i>
                 <span x-text="loading ? $t('auth.updatingPassword') : $t('auth.resetPassword')"></span>
               </button>
               <div style="margin-top:12px">
-                <button type="button" class="btn btn-ghost btn-block" @click="backToCode()"><i class="fas fa-arrow-left"></i> ${t('common.back')}</button>
+                <button type="button" class="btn btn-ghost w-100" @click="backToCode()"><i class="fas fa-arrow-left"></i> ${t('common.back')}</button>
               </div>
             </form>
           </template>
@@ -238,7 +241,10 @@ export default function renderForgotPassword(container) {
             <div class="alert alert-success"><i class="fas fa-check-circle"></i> ${t('auth.passwordResetSuccess')}</div>
           </template>
 
-          <div class="auth-footer"><a href="#/login">${t('auth.login')}</a></div>
+          </div>
+          <div class="card-footer">
+            <div class="auth-footer"><a href="#/login">${t('auth.login')}</a></div>
+          </div>
         </div>
       </div>`;
   }, 300);

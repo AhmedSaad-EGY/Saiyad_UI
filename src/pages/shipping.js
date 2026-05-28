@@ -11,23 +11,27 @@ export default async function renderShipping(container) {
     <div class="section-header"><h2><i class="fas fa-truck"></i> ${t("shipping.title")}</h2><button class="btn btn-primary btn-sm" id="showAddForm"><i class="fas fa-plus"></i> ${t("shipping.addNew")}</button></div>
     <div id="shippingAlert"></div>
     <div id="addressList"></div>
-    <div id="addressForm" class="card hidden" style="max-width:480px;margin-top:16px">
-      <h3 style="margin-bottom:16px">${t("shipping.addNew")}</h3>
+    <div id="addressForm" class="card d-none" style="max-width:480px;margin-top:16px">
+      <div class="card-header">
+        <h3 style="margin-bottom:0">${t("shipping.addNew")}</h3>
+      </div>
+      <div class="card-body">
       <form id="shipForm" novalidate>
-        <div class="form-group"><label class="form-label">${t("shipping.fullName")}</label><input type="text" class="form-input" id="shipName" required></div>
-        <div class="form-group"><label class="form-label">${t("shipping.phone")}</label><input type="tel" class="form-input" id="shipPhone" required></div>
-        <div class="form-group"><label class="form-label">${t("shipping.city")}</label><input type="text" class="form-input" id="shipCity" required></div>
-        <div class="form-group"><label class="form-label">${t("shipping.addressLine")}</label><input type="text" class="form-input" id="shipAddressLine" required></div>
-        <div class="form-group"><label class="form-label">${t("shipping.postalCode")}</label><input type="text" class="form-input" id="shipPostal"></div>
+        <div class="form-group"><label class="form-label">${t("shipping.fullName")}</label><input type="text" class="form-input form-control" id="shipName" required></div>
+        <div class="form-group"><label class="form-label">${t("shipping.phone")}</label><input type="tel" class="form-input form-control" id="shipPhone" required></div>
+        <div class="form-group"><label class="form-label">${t("shipping.city")}</label><input type="text" class="form-input form-control" id="shipCity" required></div>
+        <div class="form-group"><label class="form-label">${t("shipping.addressLine")}</label><input type="text" class="form-input form-control" id="shipAddressLine" required></div>
+        <div class="form-group"><label class="form-label">${t("shipping.postalCode")}</label><input type="text" class="form-input form-control" id="shipPostal"></div>
         <button type="submit" class="btn btn-primary" id="shipSubmit">${t("shipping.save")}</button>
       </form>
+      </div>
     </div>`;
 
   const list = document.getElementById("addressList");
   const alertDiv = document.getElementById("shippingAlert");
 
   document.getElementById("showAddForm").addEventListener("click", () => {
-    document.getElementById("addressForm").classList.remove("hidden");
+    document.getElementById("addressForm").classList.remove("d-none");
     document.getElementById("showAddForm").disabled = true;
   });
 
@@ -46,7 +50,7 @@ export default async function renderShipping(container) {
       });
       showToast(t("shipping.saved"), "success");
       document.getElementById("shipForm").reset();
-      document.getElementById("addressForm").classList.add("hidden");
+      document.getElementById("addressForm").classList.add("d-none");
       document.getElementById("showAddForm").disabled = false;
       loadAddresses();
     } catch (err) {

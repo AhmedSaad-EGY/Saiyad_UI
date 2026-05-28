@@ -66,6 +66,7 @@ export default async function renderUserProfile(container) {
   container.innerHTML = `
     <div x-data="profilePage" class="profile-page">
       <div class="profile-hero card animate-on-scroll">
+        <div class="card-body" style="display:flex;align-items:center;gap:var(--space-6);flex-wrap:wrap">
         <div class="profile-avatar" id="profileAvatar" @click="triggerUpload()" title="Click to upload photo">
           <span class="avatar-overlay"><i class="fas fa-camera"></i></span>
           ${user?.profileImageUrl ? `<img src="${user.profileImageUrl}" alt="" loading="lazy">` : '<i class="fas fa-user"></i>'}
@@ -99,10 +100,14 @@ export default async function renderUserProfile(container) {
           <div class="profile-stat-num" x-text="stats.notifs">—</div>
           <div class="profile-stat-label">${t('dash.notifications')}</div>
         </div>
+        </div>
       </div>
 
       <div class="profile-quick-links card animate-on-scroll stagger-2">
-        <h3>${t('common.quickLinks')}</h3>
+        <div class="card-header" style="border-bottom:none">
+          <h3>${t('common.quickLinks')}</h3>
+        </div>
+        <div class="card-body">
         <div class="profile-links-grid">
           ${user?.role !== 'Admin' ? `
             <a href="#/dashboard?tab=orders" class="profile-link-card"><i class="fas fa-shopping-bag"></i><span>${t('dash.orders')}</span></a>
@@ -114,6 +119,7 @@ export default async function renderUserProfile(container) {
             <a href="#/dashboard?tab=products" class="profile-link-card"><i class="fas fa-store"></i><span>${t('dash.myProducts')}</span></a>
             <a href="#/dashboard?tab=overview" class="profile-link-card"><i class="fas fa-chart-line"></i><span>${t('dash.sellerDashboard')}</span></a>
           ` : ''}
+        </div>
         </div>
       </div>
     </div>`;

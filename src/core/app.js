@@ -10,11 +10,7 @@ import { setupGlobalErrorHandlers } from '../shared/helpers/errors.js';
 const injectedStyles = document.createElement("style");
 injectedStyles.textContent = `
   .toast-container { pointer-events: none; }
-  @keyframes toastSlideIn {
-    from { transform: translateX(80px) scale(0.9); opacity: 0; }
-    to { transform: translateX(0) scale(1); opacity: 1; }
-  }
-  @keyframes slideDown {
+  @keyframes bannerSlideDown {
     from { transform: translateY(-100%); }
     to { transform: translateY(0); }
   }
@@ -161,7 +157,7 @@ navOverlay?.addEventListener("touchstart", (e) => {
     "#/shipping": "fa-map-marker-alt",
     "#/admin": "fa-shield-alt",
   };
-  document.querySelectorAll(".nav-links .nav-link").forEach((link) => {
+  document.querySelectorAll(".navbar-nav .nav-link").forEach((link) => {
     const href = link.getAttribute("href");
     const iconClass = iconMap[href];
     if (iconClass && !link.querySelector(".nav-icon")) {
@@ -459,7 +455,7 @@ setupGlobalErrorHandlers();
         'background:var(--success,#16a34a)', 'color:#fff',
         'text-align:center', 'padding:10px 16px',
         'font-size:0.875rem', 'font-weight:600',
-        'animation:slideDown 0.3s ease both',
+        'animation:bannerSlideDown 0.3s ease both',
         'display:flex', 'align-items:center', 'justify-content:center', 'gap:8px',
       ].join(';');
       el.innerHTML = `<i class="fas fa-wifi"></i> ${t('common.backOnline') || 'Back online!'}`;
@@ -471,10 +467,9 @@ setupGlobalErrorHandlers();
       'position:fixed', 'top:0', 'left:0', 'right:0', 'z-index:100000',
       'background:var(--danger,#dc2626)', 'color:#fff',
       'text-align:center', 'padding:10px 16px',
-      'font-size:0.875rem', 'font-weight:500',
-      'animation:slideDown 0.3s ease both',
-      'display:flex', 'align-items:center', 'justify-content:center', 'gap:8px',
-    ].join(';');
+      'font-size:0.875rem', 'font-weight:500','animation:bannerSlideDown 0.3s ease both',
+        'display:flex', 'align-items:center', 'justify-content:center', 'gap:8px',
+      ].join(';');
     const close = document.createElement('button');
     close.innerHTML = '&times;';
     close.setAttribute('aria-label', 'Dismiss');

@@ -62,21 +62,13 @@ export default async function renderProductDetail(container, route, params) {
           </div>
           ${p.brand ? `<p style="margin-bottom:8px"><strong>${t("product.brand")}:</strong> ${escapeHtml(p.brand)}</p>` : ""}
           <div class="detail-desc">${escapeHtml(p.description || t("product.noDescription"))}</div>
-          <div style="display:flex;gap:12px;flex-wrap:wrap">
-            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-              <div style="display:flex;align-items:center;border:1px solid var(--border);
-                   border-radius:var(--border-radius-md);overflow:hidden;height:44px">
-                <button type="button" id="qtyMinus" aria-label="Decrease quantity"
-                  style="width:40px;height:100%;background:var(--card-bg);border:none;
-                         font-size:1.1rem;cursor:pointer;color:var(--text-primary)">−</button>
+          <div class="d-flex gap-3 flex-wrap">
+            <div class="d-flex align-items-center gap-2 flex-wrap">
+              <div class="qty-btn-group">
+                <button type="button" class="qty-btn" id="qtyMinus" aria-label="Decrease quantity">−</button>
                 <input type="number" id="productQty" value="1" min="1"
-                  max="${p.stockQuantity || 99}" aria-label="Quantity"
-                  style="width:48px;height:100%;border:none;text-align:center;
-                         background:var(--card-bg);font-size:0.95rem;
-                         color:var(--text-primary);font-family:inherit">
-                <button type="button" id="qtyPlus" aria-label="Increase quantity"
-                  style="width:40px;height:100%;background:var(--card-bg);border:none;
-                         font-size:1.1rem;cursor:pointer;color:var(--text-primary)">+</button>
+                  max="${p.stockQuantity || 99}" aria-label="Quantity" class="cart-qty-input">
+                <button type="button" class="qty-btn" id="qtyPlus" aria-label="Increase quantity">+</button>
               </div>
               <button class="btn btn-primary btn-lg" id="addToCartBtn"
                 ${!isAvailable ? "disabled" : ""} style="flex:1;min-width:160px">
@@ -96,26 +88,26 @@ export default async function renderProductDetail(container, route, params) {
           ${p.sellerId ? `<div style="margin-top:24px;padding-top:16px;border-top:1px solid var(--border)"><strong>${t("product.seller")}:</strong> <a href="#/seller-profile?userId=${p.sellerId}" style="color:var(--primary)">${escapeHtml(p.sellerName || t("common.N/A"))}</a></div>` : ""}
 
           <!-- Reviews section -->
-          <div style="margin-top:32px;padding-top:20px;border-top:1px solid var(--border)" id="reviewsSection">
-            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:16px">
+          <div class="mt-4" style="padding-top:20px;border-top:1px solid var(--border)" id="reviewsSection">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
               <h3><i class="fas fa-star" style="color:#f59e0b"></i> ${t("review.title")} ${avgRating ? `(${renderStars(avgRating)} ${avgRating.toFixed(1)})` : ""}</h3>
               ${isAuthenticated() ? `<button class="btn btn-outline btn-sm" id="showReviewForm">${t("review.writeReview")}</button>` : ""}
             </div>
             ${
               isAuthenticated()
                 ? `
-            <div id="reviewFormContainer" class="hidden card card-sm" style="margin-bottom:16px">
+            <div id="reviewFormContainer" class="d-none card card-sm mb-3">
               <div id="reviewAlert"></div>
               <div class="form-group">
                 <label class="form-label">${t("review.rating")}</label>
-                <div id="starRating" role="radiogroup" aria-label="${t("review.rating")}" style="display:flex;gap:6px;font-size:1.5rem;cursor:pointer;color:var(--text-muted)">
+                <div id="starRating" role="radiogroup" aria-label="${t("review.rating")}" class="d-flex gap-2" style="font-size:1.5rem;cursor:pointer;color:var(--text-muted)">
                   ${[1, 2, 3, 4, 5].map((i) => `<i class="fas fa-star" data-star="${i}" role="radio" aria-checked="false" aria-label="${i} ${t("review.stars")}" style="transition:color 0.15s,transform 0.15s"></i>`).join("")}
                 </div>
                 <input type="hidden" id="ratingVal" value="0">
               </div>
               <div class="form-group">
                 <label class="form-label">${t("review.comment")}</label>
-                <textarea class="form-input" id="reviewComment" rows="3" placeholder="${t("review.rateProduct")}" style="resize:vertical"></textarea>
+                <textarea class="form-textarea form-control" id="reviewComment" rows="3" placeholder="${t("review.rateProduct")}" style="resize:vertical"></textarea>
               </div>
               <button class="btn btn-primary btn-sm" id="reviewSubmit"><i class="fas fa-paper-plane"></i> ${t("review.submit")}</button>
             </div>
@@ -131,7 +123,7 @@ export default async function renderProductDetail(container, route, params) {
                 <div class="notif-item">
                   <div style="flex:1">
                     <strong>${escapeHtml(r.userName || "User")}</strong>
-                    <span style="color:#f59e0b">${renderStars(r.rating)}</span>
+                    <span class="text-warning">${renderStars(r.rating)}</span>
                     ${r.comment ? `<p style="color:var(--text-secondary);font-size:0.9rem;margin-top:4px">${escapeHtml(r.comment)}</p>` : ""}
                     <small style="color:var(--text-muted)">${formatDate(r.createdAt)}</small>
                   </div>
@@ -139,7 +131,7 @@ export default async function renderProductDetail(container, route, params) {
               `,
                       )
                       .join("")
-                  : `<p style="color:var(--text-muted);text-align:center;padding:20px">${t("review.noReviews")}</p>`
+                  : `<p class="text-muted text-center" style="padding:20px">${t("review.noReviews")}</p>`
               }
             </div>
           </div>
@@ -267,19 +259,19 @@ export default async function renderProductDetail(container, route, params) {
           <form id="auctionModalForm" novalidate>
             <div class="form-group">
               <label class="form-label">${t("auction.end")} *</label>
-              <input type="datetime-local" class="form-input" id="auctionEndTime" min="${minEnd}" required>
+              <input type="datetime-local" class="form-input form-control" id="auctionEndTime" min="${minEnd}" required>
             </div>
             <div class="form-group">
               <label class="form-label">${t("auction.startingPrice")} *</label>
-              <input type="number" class="form-input" id="auctionStartPrice" min="0.01" step="0.01" required>
+              <input type="number" class="form-input form-control" id="auctionStartPrice" min="0.01" step="0.01" required>
             </div>
             <div class="form-group">
               <label class="form-label">${t("auction.reservePrice")}</label>
-              <input type="number" class="form-input" id="auctionReservePrice" min="0" step="0.01" value="0">
+              <input type="number" class="form-input form-control" id="auctionReservePrice" min="0" step="0.01" value="0">
             </div>
             <div class="form-group">
               <label class="form-label">${t("auction.minIncrement")} *</label>
-              <input type="number" class="form-input" id="auctionMinIncrement" min="0.01" step="0.01" value="1" required>
+              <input type="number" class="form-input form-control" id="auctionMinIncrement" min="0.01" step="0.01" value="1" required>
             </div>
             <div class="modal-actions">
               <button type="button" class="btn btn-ghost" id="auctionModalCancel">${t("common.cancel") || "Cancel"}</button>
@@ -325,7 +317,7 @@ export default async function renderProductDetail(container, route, params) {
       if (!isAuthenticated()) { showToast(t("auth.loginRequired") || "Please log in to write a review.", "warning"); return; }
       const form = document.getElementById("reviewFormContainer");
       if (!form) { showToast(t("auth.loginRequired") || "Please log in to write a review.", "warning"); return; }
-      form.classList.toggle("hidden");
+      form.classList.toggle("d-none");
       form.scrollIntoView({ behavior: "smooth", block: "nearest" });
     });
 
@@ -390,7 +382,7 @@ export default async function renderProductDetail(container, route, params) {
           showToast(t("review.submitted"), "success");
           document
             .getElementById("reviewFormContainer")
-            .classList.add("hidden");
+            .classList.add("d-none");
           document.getElementById("reviewComment").value = "";
           ratingVal.value = "0";
           stars.forEach((s) => {

@@ -30,50 +30,69 @@ export default async function renderAuctioneerAnalytics(container) {
     const wallet = await api.get("/wallet").catch(() => null);
 
     content.innerHTML = `
-      <div class="grid grid-4" style="margin-bottom:24px">
-        <div class="card" style="text-align:center;padding:20px">
-          <i class="fas fa-gavel" style="font-size:1.8rem;color:var(--primary);margin-bottom:8px"></i>
-          <div style="font-size:1.6rem;font-weight:700">${dash.totalAuctions ?? 0}</div>
-          <div style="color:var(--text-muted);font-size:0.88rem">${t("analytics.totalAuctions")}</div>
+      <div class="grid grid-4 mb-4">
+        <div class="card" style="text-align:center;">
+          <div class="card-body">
+          <i class="fas fa-gavel fs-3" style="color:var(--primary)"></i>
+          <div class="fs-2 fw-bold">${dash.totalAuctions ?? 0}</div>
+          <div class="text-muted" style="font-size:0.88rem">${t("analytics.totalAuctions")}</div>
+          </div>
         </div>
-        <div class="card" style="text-align:center;padding:20px">
-          <i class="fas fa-play-circle" style="font-size:1.8rem;color:var(--success);margin-bottom:8px"></i>
-          <div style="font-size:1.6rem;font-weight:700">${dash.activeAuctions ?? 0}</div>
-          <div style="color:var(--text-muted);font-size:0.88rem">${t("analytics.activeAuctions")}</div>
+        <div class="card" style="text-align:center;">
+          <div class="card-body">
+          <i class="fas fa-play-circle fs-3" style="color:var(--success)"></i>
+          <div class="fs-2 fw-bold">${dash.activeAuctions ?? 0}</div>
+          <div class="text-muted" style="font-size:0.88rem">${t("analytics.activeAuctions")}</div>
+          </div>
         </div>
-        <div class="card" style="text-align:center;padding:20px">
-          <i class="fas fa-check-circle" style="font-size:1.8rem;color:var(--warning);margin-bottom:8px"></i>
-          <div style="font-size:1.6rem;font-weight:700">${dash.finishedAuctions ?? 0}</div>
-          <div style="color:var(--text-muted);font-size:0.88rem">${t("analytics.finishedAuctions")}</div>
+        <div class="card" style="text-align:center;">
+          <div class="card-body">
+          <i class="fas fa-check-circle fs-3" style="color:var(--warning)"></i>
+          <div class="fs-2 fw-bold">${dash.finishedAuctions ?? 0}</div>
+          <div class="text-muted" style="font-size:0.88rem">${t("analytics.finishedAuctions")}</div>
+          </div>
         </div>
-        <div class="card" style="text-align:center;padding:20px">
-          <i class="fas fa-hand-pointer" style="font-size:1.8rem;color:var(--info, #0ea5e9);margin-bottom:8px"></i>
-          <div style="font-size:1.6rem;font-weight:700">${dash.totalBids ?? 0}</div>
-          <div style="color:var(--text-muted);font-size:0.88rem">${t("analytics.totalBids")}</div>
+        <div class="card" style="text-align:center;">
+          <div class="card-body">
+          <i class="fas fa-hand-pointer fs-3" style="color:var(--info, #0ea5e9)"></i>
+          <div class="fs-2 fw-bold">${dash.totalBids ?? 0}</div>
+          <div class="text-muted" style="font-size:0.88rem">${t("analytics.totalBids")}</div>
+          </div>
         </div>
       </div>
-      <div class="grid grid-2" style="margin-bottom:24px">
-        <div class="card" style="text-align:center;padding:20px">
-          <i class="fas fa-money-bill-wave" style="font-size:1.8rem;color:var(--success);margin-bottom:8px"></i>
-          <div style="font-size:1.6rem;font-weight:700">${dash.totalRevenue != null ? formatPrice(dash.totalRevenue) : formatPrice(0)}</div>
-          <div style="color:var(--text-muted);font-size:0.88rem">${t("analytics.totalRevenue")}</div>
+      <div class="grid grid-2 mb-4">
+        <div class="card" style="text-align:center;">
+          <div class="card-body">
+          <i class="fas fa-money-bill-wave fs-3" style="color:var(--success)"></i>
+          <div class="fs-2 fw-bold">${dash.totalRevenue != null ? formatPrice(dash.totalRevenue) : formatPrice(0)}</div>
+          <div class="text-muted" style="font-size:0.88rem">${t("analytics.totalRevenue")}</div>
+          </div>
         </div>
-        <div class="card" style="text-align:center;padding:20px;border-left:3px solid var(--primary)">
-          <i class="fas fa-percentage" style="font-size:1.8rem;color:var(--primary);margin-bottom:8px"></i>
-          <div style="font-size:1.6rem;font-weight:700">${formatPrice(totalFees)}</div>
-          <div style="color:var(--text-muted);font-size:0.88rem">${t("analytics.totalFees")}</div>
+        <div class="card" style="text-align:center;border-left:3px solid var(--primary)">
+          <div class="card-body">
+          <i class="fas fa-percentage fs-3" style="color:var(--primary)"></i>
+          <div class="fs-2 fw-bold">${formatPrice(totalFees)}</div>
+          <div class="text-muted" style="font-size:0.88rem">${t("analytics.totalFees")}</div>
           <small style="color:var(--text-muted)">${wallet ? formatPrice(wallet.availableBalance) + " " + t("analytics.availableInWallet") : ""}</small>
+          </div>
         </div>
       </div>
       ${feeTxns.length > 0 ? `
-      <div class="card" style="margin-top:16px">
-        <h3 style="margin-bottom:12px">${t("analytics.feeIncome")}</h3>
+      <div class="card mt-3">
+        <div class="card-header">
+          <h3 class="mb-0">${t("analytics.feeIncome")}</h3>
+        </div>
+        <div class="card-body">
         <div class="table-responsive"><table class="table"><thead><tr><th>${t("wallet.date")}</th><th>${t("wallet.amount")}</th><th>${t("wallet.description")}</th></tr></thead><tbody>${feeTxns.map(t => `<tr><td>${formatDate(t.createdAt)}</td><td style="font-weight:600">${formatPrice(t.amount)}</td><td>${escapeHtml(t.description || "")}</td></tr>`).join("")}</tbody></table></div>
       </div>` : ''}
       ${recent.length > 0 ? `
-      <div class="card" style="margin-top:16px">
-        <h3 style="margin-bottom:12px">${t("analytics.recentAuctions")}</h3>
+      <div class="card mt-3">
+        <div class="card-header">
+          <h3 class="mb-0">${t("analytics.recentAuctions")}</h3>
+        </div>
+        <div class="card-body">
         <div class="table-responsive"><table class="table"><thead><tr><th>${t("common.title") || "Title"}</th><th>${t("auctionRequests.status")}</th><th>${t("analytics.startingPrice")}</th><th>${t("analytics.currentPrice")}</th><th>${t("analytics.bidCount")}</th><th>${t("analytics.endTime")}</th></tr></thead><tbody>${recent.map(a => `<tr><td>${escapeHtml(a.title || a.productName || '-')}</td><td><span class="${statusClass(a.status)}">${tStatus(a.status, "auction")}</span></td><td>${formatPrice(a.startingPrice || 0)}</td><td>${formatPrice(a.currentPrice || a.startingPrice || 0)}</td><td>${a.bidCount ?? 0}</td><td>${a.endTime ? formatDate(a.endTime) : '-'}</td></tr>`).join("")}</tbody></table></div>
+      </div>
       </div>` : ''}`;
   } catch (err) {
     content.innerHTML = `<div class="empty-state"><i class="fas fa-chart-bar"></i><h3>${t("analytics.noData")}</h3><p>${escapeHtml(err.message)}</p></div>`;

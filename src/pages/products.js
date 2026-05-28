@@ -1,7 +1,7 @@
 import Alpine from 'alpinejs';
 import { t } from '../core/i18n/index.js';
 import { api } from '../core/api/client.js';
-import { escapeHtml, observeAnimations, initPullToRefresh, initInfiniteScroll, /*renderEmptyState*/ } from '../core/utils/dom.js';
+import { escapeHtml, observeAnimations, initPullToRefresh, initInfiniteScroll } from '../core/utils/dom.js';
 import { formatPrice } from '../core/utils/format.js';
 Alpine.data('productsPage', () => ({
   // Filter state
@@ -197,7 +197,7 @@ export default async function renderProducts(_container, _fullPath, params) {
     <div x-data="productsPage" class="products-page-alpine" @keydown.escape.window="closeSearchOverlay(); filterSheetOpen = false">
       <div class="section-header"><h2><i class="fas fa-store"></i> ${t('products.title')}</h2></div>
       <div class="search-bar">
-        <input type="text" class="form-input" x-model="search" @input.debounce.400ms="reload()" placeholder="${t('products.search')}" />
+        <input type="text" class="form-input form-control" x-model="search" @input.debounce.400ms="reload()" placeholder="${t('products.search')}" />
         <div class="desktop-filters">
           <select class="form-select" x-model="categoryId" @change="reload()">
             <option value="">${t('products.allCategories')}</option>
@@ -216,8 +216,8 @@ export default async function renderProducts(_container, _fullPath, params) {
             <option value="price-asc">${t('products.priceLowHigh')}</option>
             <option value="price-desc">${t('products.priceHighLow')}</option>
           </select>
-          <input type="number" class="form-input" x-model.number="minPrice" @input.debounce.500ms="reload()" min="0" step="1" placeholder="${t('products.minPrice')}" />
-          <input type="number" class="form-input" x-model.number="maxPrice" @input.debounce.500ms="reload()" min="0" step="1" placeholder="${t('products.maxPrice')}" />
+          <input type="number" class="form-input form-control" x-model.number="minPrice" @input.debounce.500ms="reload()" min="0" step="1" placeholder="${t('products.minPrice')}" />
+          <input type="number" class="form-input form-control" x-model.number="maxPrice" @input.debounce.500ms="reload()" min="0" step="1" placeholder="${t('products.maxPrice')}" />
           <label class="filter-check">
             <input type="checkbox" x-model="inStock" @change="reload()" />
             <span>${t('products.inStockOnly')}</span>
@@ -231,7 +231,7 @@ export default async function renderProducts(_container, _fullPath, params) {
       <!-- Skeleton loading -->
       <div x-show="loading" class="product-grid skeleton-shimmer">
         <template x-for="i in 6" :key="i">
-          <div class="product-card" style="pointer-events:none">
+          <div class="product-card card" style="pointer-events:none">
             <div class="product-card-img skeleton-image-shim"></div>
             <div class="product-card-body" style="padding:12px">
               <div class="skeleton skeleton-title"></div>
@@ -252,7 +252,7 @@ export default async function renderProducts(_container, _fullPath, params) {
       <!-- Product grid -->
       <div x-show="!loading && !error && products.length" class="product-grid" id="productGrid">
         <template x-for="(p, i) in products" :key="p.id">
-          <a :href="'#/product-detail?id='+p.id" class="product-card" :class="'animate-on-scroll stagger-' + Math.min(i + 1, 8)" :aria-label="escapeHtml(p.title || 'Product') + ' — ' + formatPrice(p.price)">
+          <a :href="'#/product-detail?id='+p.id" class="product-card card" :class="'animate-on-scroll stagger-' + Math.min(i + 1, 8)" :aria-label="escapeHtml(p.title || 'Product') + ' — ' + formatPrice(p.price)">
             <div class="product-card-img">
               <img :src="p.primaryImageUrl || p.imageUrl || ''" :alt="escapeHtml(p.title || 'Product')" loading="lazy">
               <span x-show="p.status != null" class="product-card-badge" :class="'status-' + (p.status === 0 || p.status === 'Available' ? 'available' : 'draft')" x-text="p.status === 0 || p.status === 'Available' ? '${t('product.statusAvailable')}' : '${t('product.statusSold')}'"></span>
@@ -279,7 +279,7 @@ export default async function renderProducts(_container, _fullPath, params) {
 
       <!-- Alpine pagination -->
       <div x-show="!loading && products.length" x-data="pagination({ page, totalPages, onPageChange: goToPage })">
-        <div class="flex items-center gap-2" style="justify-content:center;margin-top:24px">
+        <div class="d-flex align-items-center gap-2" style="justify-content:center;margin-top:24px">
           <template x-for="p in pages" :key="p">
             <span>
               <button x-show="p !== '...'" x-text="p" :class="'btn btn-sm ' + (p === currentPage ? 'btn-primary' : 'btn-ghost')" @click="goTo(p)"></button>
@@ -295,7 +295,7 @@ export default async function renderProducts(_container, _fullPath, params) {
       <!-- Mobile full-screen search overlay -->
       <div x-show="searchOverlayOpen" class="search-overlay open" @click.outside="closeSearchOverlay()">
         <div class="search-overlay-header">
-          <input type="text" x-model="mobileSearch" id="productMobileSearchInput" class="form-input" placeholder="${t('products.search')}" @keydown.enter="applyMobileSearch()">
+          <input type="text" x-model="mobileSearch" id="productMobileSearchInput" class="form-input form-control" placeholder="${t('products.search')}" @keydown.enter="applyMobileSearch()">
           <button class="btn btn-ghost btn-icon" @click="closeSearchOverlay()" aria-label="${t('common.close')}"><i class="fas fa-times fa-lg"></i></button>
         </div>
         <button class="btn btn-primary" @click="applyMobileSearch()" style="align-self:center;margin-top:12px"><i class="fas fa-search"></i> ${t('common.search')}</button>
@@ -337,11 +337,11 @@ export default async function renderProducts(_container, _fullPath, params) {
             </div>
             <div class="form-group">
               <label>${t('products.minPrice')}</label>
-              <input type="number" class="form-input" x-model.number="minPrice" min="0" step="1" placeholder="${t('products.minPrice')}" />
+              <input type="number" class="form-input form-control" x-model.number="minPrice" min="0" step="1" placeholder="${t('products.minPrice')}" />
             </div>
             <div class="form-group">
               <label>${t('products.maxPrice')}</label>
-              <input type="number" class="form-input" x-model.number="maxPrice" min="0" step="1" placeholder="${t('products.maxPrice')}" />
+              <input type="number" class="form-input form-control" x-model.number="maxPrice" min="0" step="1" placeholder="${t('products.maxPrice')}" />
             </div>
             <label class="filter-check" style="margin-top:4px">
               <input type="checkbox" x-model="inStock" />

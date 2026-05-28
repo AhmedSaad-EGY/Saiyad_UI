@@ -133,7 +133,7 @@ export default async function renderHome(container) {
       <!-- Product skeleton -->
       <div x-show="loading" class="product-grid skeleton-shimmer">
         <template x-for="i in 4" :key="i">
-          <div class="product-card" style="pointer-events:none">
+          <div class="product-card card" style="pointer-events:none">
             <div class="product-card-img skeleton-image-shim"></div>
             <div class="product-card-body" style="padding:12px">
               <div class="skeleton skeleton-title"></div>
@@ -154,7 +154,7 @@ export default async function renderHome(container) {
       <!-- Product grid -->
       <div x-show="!loading && !error" class="product-grid">
         <template x-for="(p, i) in products" :key="p.id">
-          <a :href="'#/product-detail?id='+p.id" class="product-card animate-on-scroll" :class="'stagger-' + Math.min(i + 1, 8)" :aria-label="escapeHtml(p.title || 'Product') + ' — ' + formatPrice(p.price)">
+          <a :href="'#/product-detail?id='+p.id" class="product-card card animate-on-scroll" :class="'stagger-' + Math.min(i + 1, 8)" :aria-label="escapeHtml(p.title || 'Product') + ' — ' + formatPrice(p.price)">
             <div class="product-card-img">
               <img :src="p.primaryImageUrl || p.imageUrl || ''" :alt="escapeHtml(p.title || 'Product')" loading="lazy">
             </div>
@@ -175,7 +175,7 @@ export default async function renderHome(container) {
       <!-- Auction grid (no separate skeleton — reuses same loading state) -->
       <div x-show="!loading && !error" class="product-grid animate-on-scroll">
         <template x-for="(a, i) in auctions" :key="a.id">
-          <a :href="'#/auction-detail?id='+a.id" class="product-card" :class="'animate-on-scroll stagger-' + Math.min(i + 1, 8)" :aria-label="(a.productTitle || 'Auction') + ' — ' + formatPrice(a.currentHighestBid || a.startingPrice)">
+          <a :href="'#/auction-detail?id='+a.id" class="product-card card" :class="'animate-on-scroll stagger-' + Math.min(i + 1, 8)" :aria-label="(a.productTitle || 'Auction') + ' — ' + formatPrice(a.currentHighestBid || a.startingPrice)">
             <div class="product-card-img">
               <img :src="a.productImageUrl || ''" :alt="a.productTitle || 'Auction'" loading="lazy">
               <span class="product-card-badge" :class="statusClass(a.status)" x-text="tStatus(a.status)"></span>
@@ -238,7 +238,7 @@ export function renderAuctionCards(container, auctions) {
       const price = formatPrice(a.currentHighestBid || a.startingPrice);
       const label = `${title} - ${price}`;
       return `
-      <a href="#/auction-detail?id=${a.id}" class="product-card animate-on-scroll stagger-${Math.min(i + 1, 8)}${urgent ? " auction-urgent" : ""}" aria-label="${escapeHtml(label)}">
+      <a href="#/auction-detail?id=${a.id}" class="product-card card animate-on-scroll stagger-${Math.min(i + 1, 8)}${urgent ? " auction-urgent" : ""}" aria-label="${escapeHtml(label)}">
         <div class="product-card-img">
           ${a.productImageUrl ? progressiveImg(a.productImageUrl, a.productTitle || "Auction", "") : '<i class="fas fa-gavel" aria-hidden="true"></i>'}
           <button class="btn btn-sm btn-primary quick-view-btn" data-quickview-id="${a.id}" data-quickview-title="${escapeHtml(a.productTitle || "Auction Item")}" data-quickview-price="${a.currentHighestBid || a.startingPrice}" data-quickview-image="${a.productImageUrl || ""}" data-quickview-desc=""><i class="fas fa-eye"></i> Quick View</button>

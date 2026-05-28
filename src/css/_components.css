@@ -105,10 +105,6 @@
   box-shadow: none !important;
 }
 
-.btn-block {
-  width: 100%;
-}
-
 .btn-icon {
   padding: 8px;
   border-radius: 50%;
@@ -120,100 +116,6 @@
    BADGE
    ============================================================ */
 
-
-.hidden {
-  display: none !important;
-}
-
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
-}
-
-.flex {
-  display: flex;
-}
-
-.flex-col {
-  flex-direction: column;
-}
-
-.items-center {
-  align-items: center;
-}
-
-.justify-between {
-  justify-content: space-between;
-}
-
-.gap-2 {
-  gap: 8px;
-}
-
-.gap-3 {
-  gap: 12px;
-}
-
-.gap-4 {
-  gap: 16px;
-}
-
-.gap-6 {
-  gap: 24px;
-}
-
-.mt-2 {
-  margin-top: 8px;
-}
-
-.mt-4 {
-  margin-top: 16px;
-}
-
-.mt-6 {
-  margin-top: 24px;
-}
-
-.mb-2 {
-  margin-bottom: 8px;
-}
-
-.mb-4 {
-  margin-bottom: 16px;
-}
-
-.mb-6 {
-  margin-bottom: 24px;
-}
-
-.p-4 {
-  padding: 16px;
-}
-
-.p-6 {
-  padding: 24px;
-}
-
-.w-full {
-  width: 100%;
-}
-
-.text-center {
-  text-align: center;
-}
-
-.truncate {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
 
 /* ============================================================
    DROPDOWN
@@ -351,31 +253,65 @@
 }
 
 /* ============================================================
-   CARDS
+   CARDS — Bootstrap-powered (base styles via CSS vars)
    ============================================================ */
+/* Bootstrap provides: background, border, border-radius, box-shadow.
+   We only supply spacing and transitions for bare .card usage.
+   When .card-header / .card-body / .card-footer sub-components are
+   present, the outer .card padding is removed. */
 .card {
-  background: var(--card-bg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow);
-  padding: 24px;
   margin-bottom: 16px;
-  transition: transform 0.25s var(--ease-enter), box-shadow 0.25s var(--ease-enter), border-color 0.25s var(--ease-enter), background-color var(--theme-transition);
+  padding: 24px;
 }
 
-.card:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-hover);
-  border-color: var(--primary-light);
+/* Keep default padding for cards without Bootstrap sub-component classes */
+.card:not(:has(.card-header)):not(:has(.card-body)):not(:has(.card-footer)) {
+  padding: 24px;
+}
+
+/* Cards using Bootstrap sub-component structure — outer padding removed */
+.card:has(.card-header),
+.card:has(.card-body),
+.card:has(.card-footer) {
+  padding: 0;
+}
+
+/* Bootstrap card-header — cap padding from CSS vars, bottom border */
+.card-header {
+  padding: var(--bs-card-cap-padding-y, 16px) var(--bs-card-cap-padding-x, 24px);
+  margin-bottom: 0;
+  border-bottom: 1px solid var(--bs-card-border-color, var(--border));
+}
+
+/* Bootstrap card-body — spacer padding from CSS vars */
+.card-body {
+  padding: var(--bs-card-spacer-y, 24px) var(--bs-card-spacer-x, 24px);
+  flex: 1 1 auto;
+}
+
+/* Bootstrap card-footer — cap padding from CSS vars, top border */
+.card-footer {
+  padding: var(--bs-card-cap-padding-y, 16px) var(--bs-card-cap-padding-x, 24px);
+  border-top: 1px solid var(--bs-card-border-color, var(--border));
 }
 
 .card-sm {
   padding: 16px;
 }
 
-.card-sm:hover {
-  transform: none;
-  box-shadow: var(--shadow);
+/* Auth-page card sub-component mobile padding */
+@media (max-width: 480px) {
+  .auth-page .card-body {
+    padding: var(--space-5) var(--space-4);
+  }
+  .auth-page .card-header {
+    padding: var(--space-4) var(--space-4) 0;
+    border-bottom: none;
+  }
+  .auth-page .card-footer {
+    padding: 0 var(--space-4) var(--space-5);
+    border-top: none;
+  }
 }
 
 /* ============================================================
@@ -810,7 +746,7 @@
   color: var(--text-inverse);
 }
 
-.product-card:hover .quick-view-btn {
+.product-card.card:hover .quick-view-btn {
   opacity: 1;
   transform: translate(-50%, -50%) scale(1);
   pointer-events: auto;
@@ -827,11 +763,11 @@
   z-index: 1;
 }
 
-.product-card:hover .product-card-img::after {
+.product-card.card:hover .product-card-img::after {
   background: oklch(0% 0 0 / 0.06);
 }
 
-[data-theme="dark"] .product-card:hover .product-card-img::after {
+[data-theme="dark"] .product-card.card:hover .product-card-img::after {
   background: oklch(0% 0 0 / 0.15);
 }
 
@@ -866,8 +802,7 @@
 
 .form-input.shake,
 .form-select.shake,
-.form-textarea.shake,
-.modal.shake {
+.form-textarea.shake {
   animation: shake 0.4s ease;
 }
 
@@ -981,7 +916,7 @@
   will-change: transform;
 }
 
-.product-card:hover {
+.product-card.card:hover {
   transform: translateY(-5px);
   box-shadow: var(--shadow-hover);
   border-top-color: var(--primary);
@@ -1008,7 +943,7 @@
   transition: transform 0.4s var(--ease-out);
 }
 
-.product-card:hover .product-card-img img {
+.product-card.card:hover .product-card-img img {
   transform: scale(1.07);
 }
 
@@ -1130,7 +1065,7 @@
   transition: color var(--duration-fast) var(--ease-out);
 }
 
-.product-card:hover .product-card-title {
+.product-card.card:hover .product-card-title {
   color: var(--primary);
 }
 
@@ -1270,7 +1205,6 @@
 }
 
 .detail-info {
-  animation: slideUp 0.5s var(--ease-enter);
   padding: 24px;
   border-radius: var(--radius-xl);
   background: var(--glass-bg);
@@ -1331,7 +1265,7 @@
 .auth-page {
   max-width: 420px;
   margin: 48px auto;
-  animation: slideUp 0.5s var(--ease-enter);
+  animation: fadeIn 0.5s var(--ease-enter);
   padding-inline: var(--space-4);
 }
 
@@ -2911,7 +2845,7 @@ tr:last-child td {
   height: 16px;
   font-size: 0.55rem;
   padding: 0 4px;
-  animation: badgePop 0.35s var(--ease-bounce);
+  animation: bounceIn 0.35s var(--ease-bounce);
 }
 
 [dir="rtl"] .notif-bell .badge {
@@ -3034,7 +2968,7 @@ tr:last-child td {
   }
 
   /* ── ZONE 2: NAV LINKS ─────────────────────────────────────── */
-  .nav-drawer .nav-links {
+  .nav-drawer .navbar-nav {
     flex-direction: column;
     align-items: stretch;
     gap: 2px;
@@ -3046,7 +2980,7 @@ tr:last-child td {
     scrollbar-width: none;
   }
 
-  .nav-drawer .nav-links::-webkit-scrollbar {
+  .nav-drawer .navbar-nav::-webkit-scrollbar {
     display: none;
   }
 
@@ -3327,19 +3261,19 @@ tr:last-child td {
     animation: drawerItemIn 0.3s var(--ease-out) both;
   }
 
-  .nav-drawer.open .nav-links .nav-link:nth-child(1) {
+  .nav-drawer.open .navbar-nav .nav-link:nth-child(1) {
     animation-delay: 0.04s;
   }
 
-  .nav-drawer.open .nav-links .nav-link:nth-child(2) {
+  .nav-drawer.open .navbar-nav .nav-link:nth-child(2) {
     animation-delay: 0.08s;
   }
 
-  .nav-drawer.open .nav-links .nav-link:nth-child(3) {
+  .nav-drawer.open .navbar-nav .nav-link:nth-child(3) {
     animation-delay: 0.12s;
   }
 
-  .nav-drawer.open .nav-links .nav-link:nth-child(4) {
+  .nav-drawer.open .navbar-nav .nav-link:nth-child(4) {
     animation-delay: 0.16s;
   }
 
@@ -3386,7 +3320,7 @@ tr:last-child td {
   }
 
   /* ── HAMBURGER (close button) ──────────────────────────────── */
-  .hamburger {
+  .navbar-toggler {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -3408,34 +3342,34 @@ tr:last-child td {
     flex-shrink: 0;
   }
 
-  .hamburger:hover {
+  .navbar-toggler:hover {
     background: var(--primary-ghost);
     color: var(--primary);
   }
 
-  .hamburger:active {
+  .navbar-toggler:active {
     transform: scale(0.92);
   }
 
-  .hamburger[aria-expanded="true"] {
+  .navbar-toggler[aria-expanded="true"] {
     background: var(--primary-ghost);
     color: var(--primary);
   }
 
-  .hamburger[aria-expanded="true"] i {
+  .navbar-toggler[aria-expanded="true"] i {
     transform: rotate(180deg) scale(0.85);
   }
 
-  .hamburger i {
+  .navbar-toggler i {
     transition: transform 0.35s var(--ease-out);
   }
 
-  .hamburger[aria-expanded="true"]:hover {
+  .navbar-toggler[aria-expanded="true"]:hover {
     background: oklch(from var(--danger) l c h / 0.1);
     color: var(--danger);
   }
 
-  .hamburger:focus-visible {
+  .navbar-toggler:focus-visible {
     outline: 2px solid var(--primary);
     outline-offset: 2px;
   }
@@ -3492,7 +3426,7 @@ tr:last-child td {
     );
   }
 
-  .nav-drawer .nav-links {
+  .nav-drawer .navbar-nav {
     padding-top: var(--space-3);
     padding-bottom: var(--space-4);
   }
@@ -3517,8 +3451,8 @@ tr:last-child td {
 
 /* 480px */
 @media (max-width: 480px) {
-  .nav-container {
-    height: 56px;
+  .navbar .container {
+    min-height: 56px;
     padding-top: env(safe-area-inset-top, 0px);
   }
   .navbar {
@@ -3570,10 +3504,6 @@ tr:last-child td {
     gap: var(--space-3) var(--space-2);
     padding: var(--space-1);
     margin: -2px;
-  }
-
-  .auth-page .card {
-    padding: var(--space-5) var(--space-4);
   }
 
   .footer-grid {
@@ -4324,7 +4254,7 @@ tr.bid-highlight {
     border-color: var(--border);
   }
 
-  .product-card:hover {
+  .product-card.card:hover {
     transform: none;
     box-shadow: var(--shadow);
     border-top-color: transparent;

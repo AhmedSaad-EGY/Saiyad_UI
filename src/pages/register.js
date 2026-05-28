@@ -107,31 +107,34 @@ export default function renderRegister(container) {
   container.innerHTML = `
     <div x-data="registerForm" class="auth-page">
       <div class="card">
-        <h2><i class="fas fa-user-plus"></i> ${t('auth.register')}</h2>
+        <div class="card-header">
+          <h2><i class="fas fa-user-plus"></i> ${t('auth.register')}</h2>
+        </div>
+        <div class="card-body">
         <div id="registerAlert"></div>
         <form id="registerForm" @submit.prevent="submit()" novalidate>
           <div class="form-group">
             <label class="form-label" for="regName">${t('auth.fullName')}</label>
-            <input type="text" class="form-input" id="regName" name="fullName" x-model="fullName" placeholder="John Doe" required autocomplete="name">
+            <input type="text" class="form-input form-control" id="regName" name="fullName" x-model="fullName" placeholder="John Doe" required autocomplete="name">
           </div>
           <div class="form-group">
             <label class="form-label" for="regEmail">${t('auth.email')}</label>
-            <input type="email" class="form-input" id="regEmail" name="email" x-model="email" placeholder="your@email.com" required autocomplete="email" inputmode="email">
+            <input type="email" class="form-input form-control" id="regEmail" name="email" x-model="email" placeholder="your@email.com" required autocomplete="email" inputmode="email">
           </div>
           <div class="form-group">
             <label class="form-label" for="regPhone">${t('auth.phone')}</label>
-            <input type="tel" class="form-input" id="regPhone" name="phone" x-model="phone" placeholder="+1234567890" autocomplete="tel" required>
+            <input type="tel" class="form-input form-control" id="regPhone" name="phone" x-model="phone" placeholder="+1234567890" autocomplete="tel" required>
           </div>
           <div class="form-group">
             <label class="form-label" for="regBirthdate">${t('auth.birthdate')}</label>
-            <input type="date" class="form-input" id="regBirthdate" name="birthdate" x-model="birthdate" @input="computeAge()"
+            <input type="date" class="form-input form-control" id="regBirthdate" name="birthdate" x-model="birthdate" @input="computeAge()"
               max="${new Date(new Date().setFullYear(new Date().getFullYear() - 18)).toISOString().split('T')[0]}" required>
             <div class="password-strength-text" x-text="ageDisplay" :style="ageColor ? 'color:' + ageColor : ''"></div>
           </div>
           <div class="form-group">
             <label class="form-label" for="regPassword">${t('auth.password')}</label>
             <div class="password-wrapper">
-              <input :type="showPassword ? 'text' : 'password'" class="form-input" id="regPassword" name="password" x-model="password" @input="computeStrength()" placeholder="${t('auth.password')}" required autocomplete="new-password" minlength="8">
+              <input :type="showPassword ? 'text' : 'password'" class="form-input form-control" id="regPassword" name="password" x-model="password" @input="computeStrength()" placeholder="${t('auth.password')}" required autocomplete="new-password" minlength="8">
               <button type="button" class="toggle-password" @click="togglePw()" :aria-label="showPassword ? $t('auth.hidePassword') : $t('auth.showPassword')"><i :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i></button>
             </div>
             <div class="password-strength"><div class="password-strength-bar" :class="'password-strength-bar ' + strengthCls"></div></div>
@@ -140,7 +143,7 @@ export default function renderRegister(container) {
           <div class="form-group">
             <label class="form-label" for="regConfirmPw">${t('auth.confirmPassword')}</label>
             <div class="password-wrapper">
-              <input type="password" class="form-input" id="regConfirmPw" name="confirmPassword" x-model="confirmPassword" placeholder="${t('auth.confirmPassword')}" required autocomplete="new-password" minlength="6">
+              <input type="password" class="form-input form-control" id="regConfirmPw" name="confirmPassword" x-model="confirmPassword" placeholder="${t('auth.confirmPassword')}" required autocomplete="new-password" minlength="6">
             </div>
           </div>
           <div class="form-group">
@@ -155,7 +158,7 @@ export default function renderRegister(container) {
           <div x-show="needsLicense" x-cloak>
             <div class="form-group animate-on-scroll slide-down" style="display: block; opacity: 1; transform: translateY(0);">
               <label class="form-label" for="regLicense">${t('auth.licenseNumber')} *</label>
-              <input type="text" class="form-input" id="regLicense" name="licenseNumber" x-model="licenseNumber" placeholder="FL-123456" required>
+              <input type="text" class="form-input form-control" id="regLicense" name="licenseNumber" x-model="licenseNumber" placeholder="FL-123456" required>
             </div>
           </div>
           <div class="form-group">
@@ -167,12 +170,15 @@ export default function renderRegister(container) {
               </label>
             </div>
           </div>
-          <button type="submit" class="btn btn-primary btn-block btn-lg" :disabled="loading">
+          <button type="submit" class="btn btn-primary w-100 btn-lg" :disabled="loading">
             <i class="fas fa-spinner spinner" x-show="loading" x-cloak></i>
             <span x-text="loading ? t('auth.creatingAccount') : t('auth.createAccount')"></span>
           </button>
         </form>
-        <div class="auth-footer">${t('auth.hasAccount')} <a href="#/login">${t('auth.login')}</a></div>
+        </div>
+        <div class="card-footer">
+          <div class="auth-footer">${t('auth.hasAccount')} <a href="#/login">${t('auth.login')}</a></div>
+        </div>
       </div>
     </div>`;
 

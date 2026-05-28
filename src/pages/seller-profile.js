@@ -17,6 +17,7 @@ export default async function renderSellerProfile(container) {
       const profile = await api.get(`/seller-profile/${userId}`);
       container.innerHTML = `
         <div class="card" style="max-width:600px;margin:0 auto">
+          <div class="card-body">
           <div style="text-align:center;margin-bottom:20px">
             <i class="fas fa-store" style="font-size:3rem;color:var(--primary);margin-bottom:8px"></i>
             <h2>${escapeHtml(profile.storeName)}</h2>
@@ -31,6 +32,7 @@ export default async function renderSellerProfile(container) {
             ${profile.contactPhone ? `<p><i class="fas fa-phone"></i> ${escapeHtml(profile.contactPhone)}</p>` : ''}
             ${profile.location ? `<p><i class="fas fa-map-marker-alt"></i> ${escapeHtml(profile.location)}</p>` : ''}
           </div>
+        </div>
         </div>`;
 
     // Load seller's public product listings
@@ -85,14 +87,16 @@ export default async function renderSellerProfile(container) {
       <div class="section-header"><h2><i class="fas fa-store"></i> ${isNew ? t('seller.create') : t('seller.myProfile')}</h2></div>
       <div id="sellerAlert"></div>
       <div class="card" style="max-width:520px">
+        <div class="card-body">
         <form id="sellerForm" novalidate>
-          <div class="form-group"><label class="form-label">${t('seller.storeName')} *</label><input type="text" class="form-input" id="sStoreName" value="${escapeHtml(profile?.storeName || '')}" required></div>
-          <div class="form-group"><label class="form-label">${t('seller.description')}</label><textarea class="form-textarea" id="sDescription">${escapeHtml(profile?.description || '')}</textarea></div>
-          <div class="form-group"><label class="form-label">${t('seller.contactEmail')}</label><input type="email" class="form-input" id="sEmail" value="${escapeHtml(profile?.contactEmail || '')}"></div>
-          <div class="form-group"><label class="form-label">${t('seller.contactPhone')}</label><input type="tel" class="form-input" id="sPhone" value="${escapeHtml(profile?.contactPhone || '')}"></div>
-          <div class="form-group"><label class="form-label">${t('seller.location')}</label><input type="text" class="form-input" id="sLocation" value="${escapeHtml(profile?.location || '')}"></div>
+          <div class="form-group"><label class="form-label">${t('seller.storeName')} *</label><input type="text" class="form-input form-control" id="sStoreName" value="${escapeHtml(profile?.storeName || '')}" required></div>
+          <div class="form-group"><label class="form-label">${t('seller.description')}</label><textarea class="form-textarea form-control" id="sDescription">${escapeHtml(profile?.description || '')}</textarea></div>
+          <div class="form-group"><label class="form-label">${t('seller.contactEmail')}</label><input type="email" class="form-input form-control" id="sEmail" value="${escapeHtml(profile?.contactEmail || '')}"></div>
+          <div class="form-group"><label class="form-label">${t('seller.contactPhone')}</label><input type="tel" class="form-input form-control" id="sPhone" value="${escapeHtml(profile?.contactPhone || '')}"></div>
+          <div class="form-group"><label class="form-label">${t('seller.location')}</label><input type="text" class="form-input form-control" id="sLocation" value="${escapeHtml(profile?.location || '')}"></div>
           <button type="submit" class="btn btn-primary" id="sellerSubmit">${t('seller.save')}</button>
         </form>
+        </div>
       </div>`;
 
     document.getElementById('sellerForm').addEventListener('submit', async (e) => {

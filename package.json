@@ -13,7 +13,9 @@
     "lint": "eslint src/"
   },
   "dependencies": {
-    "alpinejs": "^3.14.8"
+    "@popperjs/core": "^2.11.8",
+    "alpinejs": "^3.14.8",
+    "bootstrap": "^5.3.8"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

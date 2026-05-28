@@ -93,7 +93,10 @@ export default function renderLogin(container) {
   container.innerHTML = `
     <div x-data="loginForm" class="auth-page">
       <div class="card">
-        <h2><i class="fas fa-sign-in-alt"></i> ${t('auth.login')}</h2>
+        <div class="card-header">
+          <h2><i class="fas fa-sign-in-alt"></i> ${t('auth.login')}</h2>
+        </div>
+        <div class="card-body">
         <div x-show="error" x-text="error" class="alert alert-error" role="alert" x-cloak></div>
         <div x-show="unverifiedEmail" x-cloak>
           <div class="alert alert-warning" role="alert" style="text-align:center">
@@ -109,24 +112,27 @@ export default function renderLogin(container) {
         <form @submit.prevent="submit()" novalidate>
           <div class="form-group">
             <label class="form-label" for="loginEmail">${t('auth.email')}</label>
-            <input type="email" class="form-input" id="loginEmail" name="email" x-model="email" @input="clearError(); clearFieldError($el)" placeholder="your@email.com" required autocomplete="email" inputmode="email">
+            <input type="email" class="form-input form-control" id="loginEmail" name="email" x-model="email" @input="clearError(); clearFieldError($el)" placeholder="your@email.com" required autocomplete="email" inputmode="email">
           </div>
           <div class="form-group">
             <label class="form-label" for="loginPassword">${t('auth.password')}</label>
             <div class="password-wrapper">
-              <input :type="showPassword ? 'text' : 'password'" class="form-input" id="loginPassword" name="password" x-model="password" @input="clearError(); clearFieldError($el)" placeholder="${t('auth.password')}" required autocomplete="current-password" minlength="6">
+              <input :type="showPassword ? 'text' : 'password'" class="form-input form-control" id="loginPassword" name="password" x-model="password" @input="clearError(); clearFieldError($el)" placeholder="${t('auth.password')}" required autocomplete="current-password" minlength="6">
               <button type="button" class="toggle-password" @click="togglePw()" :aria-label="showPassword ? $t('auth.hidePassword') : $t('auth.showPassword')"><i :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i></button>
             </div>
             <div style="text-align: right; margin-top: 4px;">
               <a href="#/forgot-password" style="font-size: var(--text-xs); color: var(--primary); text-decoration: none;">${t('auth.forgotPassword')}</a>
             </div>
           </div>
-          <button type="submit" class="btn btn-primary btn-block btn-lg" :disabled="loading">
+          <button type="submit" class="btn btn-primary w-100 btn-lg" :disabled="loading">
             <i class="fas fa-spinner spinner" x-show="loading" x-cloak></i>
             <span x-text="loading ? $t('auth.signingIn') : $t('auth.signIn')"></span>
           </button>
         </form>
-        <div class="auth-footer">${t('auth.noAccount')} <a href="#/register">${t('auth.register')}</a></div>
+        </div>
+        <div class="card-footer">
+          <div class="auth-footer">${t('auth.noAccount')} <a href="#/register">${t('auth.register')}</a></div>
+        </div>
       </div>
     </div>`;
 }

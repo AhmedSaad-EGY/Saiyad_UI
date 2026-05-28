@@ -4,6 +4,7 @@ import { requireAuth, updateCartBadge } from '../core/auth/index.js';
 import { navigate, registerRouteCleanup } from '../core/router/index.js';
 import { formatPrice } from '../core/utils/format.js';
 import { showConfirm, showToast } from '../core/utils/ui.js';
+import { animate } from '../core/utils/dom.js';
 import { createSwipeReveal } from '../core/utils/swipe.js';
 import Alpine from 'alpinejs';
 
@@ -225,7 +226,7 @@ export default async function renderCart(container) {
             <button class="btn btn-danger btn-sm" @click="clearCart()"><i class="fas fa-trash-alt"></i> ${t('cart.clear')}</button>
           </div>
           <div class="cart-table-wrapper">
-            <table class="cart-table">
+            <table class="cart-table table">
               <caption style="caption-side:bottom;margin-top:8px;font-size:0.78rem;color:var(--text-muted)">${t('cart.title')}</caption>
               <thead>
                 <tr>
@@ -241,7 +242,7 @@ export default async function renderCart(container) {
                   <tr>
                     <td class="cart-product-cell">
                       <a :href="'#/product-detail?id=' + item.productId"
-                         style="display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--text-primary)">
+                         class="d-flex align-items-center gap-2" style="text-decoration:none;color:var(--text-primary)">
                         <template x-if="item.productImageUrl || item.imageUrl">
                           <img :src="item.productImageUrl || item.imageUrl"
                                :alt="item.productTitle || ''"
@@ -249,7 +250,7 @@ export default async function renderCart(container) {
                                loading="lazy">
                         </template>
                         <template x-if="!(item.productImageUrl || item.imageUrl)">
-                          <div style="width:48px;height:48px;border-radius:6px;background:var(--background-secondary);display:flex;align-items:center;justify-content:center;flex-shrink:0;border:1px solid var(--border)">
+                          <div class="d-flex align-items-center justify-content-center flex-shrink-0" style="width:48px;height:48px;border-radius:6px;background:var(--background-secondary);border:1px solid var(--border)">
                             <i class="fas fa-image" style="color:var(--text-muted);font-size:1.2rem"></i>
                           </div>
                         </template>
@@ -291,10 +292,9 @@ export function animateCartTotal(prev, current) {
   const el = document.getElementById('cartTotalDisplay');
   if (!el) return;
   const diff = current - prev;
-  el.style.transform = 'scale(1.15)';
   el.style.color = diff > 0 ? 'var(--danger)' : 'var(--success)';
+  animate(el, 'bounceIn', { duration: '0.4s' });
   setTimeout(() => {
-    el.style.transform = 'scale(1)';
     el.style.color = '';
   }, 400);
 }

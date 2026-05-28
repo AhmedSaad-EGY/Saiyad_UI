@@ -1,6 +1,6 @@
 import { t, getCurrentLang } from '../i18n/index.js';
 import { formatPrice, renderStars, tStatus, statusClass } from './format.js';
-import { escapeHtml, renderEmptyState, observeAnimations } from './dom.js';
+import { escapeHtml, renderEmptyState, observeAnimations, animate } from './dom.js';
 
 export function showToast(msg, type = "info") {
   const existing = document.querySelector(".toast-container");
@@ -40,7 +40,6 @@ export function showToast(msg, type = "info") {
     font-weight: 600;
     font-size: 0.95rem;
     box-shadow: 0 12px 32px -8px rgba(0,0,0,0.3);
-    animation: toastSlideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     display: flex;
     align-items: center;
     gap: 12px;
@@ -80,6 +79,7 @@ export function showToast(msg, type = "info") {
     setTimeout(() => first.remove(), 200);
   }
   container.appendChild(toast);
+  animate(toast, 'bounceInRight', { duration: '0.4s' });
   const live = document.getElementById("ariaLive");
   if (live) live.textContent = msg;
   setTimeout(() => closeToast(toast), 3500);
@@ -128,9 +128,7 @@ export function showConfirm(title, message, options = {}) {
     overlay.addEventListener("click", (e) => {
       if (e.target === overlay) {
         const modal = overlay.querySelector(".modal-confirm");
-        modal.classList.remove("shake");
-        void modal.offsetWidth;
-        modal.classList.add("shake");
+        animate(modal, 'headShake', { duration: '0.6s' });
       }
     });
 
@@ -193,7 +191,7 @@ export function renderProductCards(container, products) {
     const statusText = tStatus(p.status, "product");
     return `
       <a href="#/product-detail?id=${p.id}"
-         class="product-card animate-on-scroll stagger-${Math.min(i + 1, 8)}"
+         class="product-card card animate-on-scroll stagger-${Math.min(i + 1, 8)}"
          aria-label="${escapeHtml(title)} — ${formatPrice(p.price)}">
         <div class="product-card-img">
           ${img

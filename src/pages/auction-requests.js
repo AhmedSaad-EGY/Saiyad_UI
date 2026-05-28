@@ -47,22 +47,26 @@ export default async function renderAuctionRequests(container) {
     const content = document.getElementById("auctionReqContent");
     content.innerHTML = `
       <div class="card" style="max-width:600px;margin-top:16px">
-        <h3>${existing ? t("auctionRequests.submit") : t("auctionRequests.submit")}</h3>
+        <div class="card-header">
+          <h3 style="margin-bottom:0">${existing ? t("auctionRequests.submit") : t("auctionRequests.submit")}</h3>
+        </div>
+        <div class="card-body">
         <form id="auctionReqForm" novalidate>
-          <div class="form-group"><label class="form-label">${t("auctionRequests.productTitle")} *</label><input type="text" class="form-input" id="arProductTitle" value="${escapeHtml(existing?.productTitle || '')}" required></div>
-          <div class="form-group"><label class="form-label">${t("auctionRequests.fishType")} *</label><input type="text" class="form-input" id="arFishType" value="${escapeHtml(existing?.fishType || '')}" required></div>
-          <div class="form-group"><label class="form-label">${t("auctionRequests.quantityKg")} *</label><input type="number" step="0.01" min="0" class="form-input" id="arQuantityKg" value="${existing?.quantityKg || ''}" required></div>
-          <div class="form-group"><label class="form-label">${t("auctionRequests.estimatedValue")} *</label><input type="number" step="0.01" min="0" class="form-input" id="arEstimatedValue" value="${existing?.estimatedValue || ''}" required></div>
-          <div class="form-group"><label class="form-label">${t("auctionRequests.productDescription")}</label><textarea class="form-textarea" id="arDescription">${escapeHtml(existing?.productDescription || '')}</textarea></div>
-          <div class="form-group"><label class="form-label">${t("auctionRequests.catchLocation")}</label><input type="text" class="form-input" id="arCatchLocation" value="${escapeHtml(existing?.catchLocation || '')}"></div>
-          <div class="form-group"><label class="form-label">${t("auctionRequests.catchDate")}</label><input type="date" class="form-input" id="arCatchDate" value="${existing?.catchDate ? existing.catchDate.split('T')[0] : ''}"></div>
-          <div class="form-group"><label class="form-label">${t("auctionRequests.imageUrl")}</label><input type="url" class="form-input" id="arImageUrl" value="${escapeHtml(existing?.imageUrl || '')}" placeholder="${t("auctionRequests.imageUrlHelp")}"></div>
+          <div class="form-group"><label class="form-label">${t("auctionRequests.productTitle")} *</label><input type="text" class="form-input form-control" id="arProductTitle" value="${escapeHtml(existing?.productTitle || '')}" required></div>
+          <div class="form-group"><label class="form-label">${t("auctionRequests.fishType")} *</label><input type="text" class="form-input form-control" id="arFishType" value="${escapeHtml(existing?.fishType || '')}" required></div>
+          <div class="form-group"><label class="form-label">${t("auctionRequests.quantityKg")} *</label><input type="number" step="0.01" min="0" class="form-input form-control" id="arQuantityKg" value="${existing?.quantityKg || ''}" required></div>
+          <div class="form-group"><label class="form-label">${t("auctionRequests.estimatedValue")} *</label><input type="number" step="0.01" min="0" class="form-input form-control" id="arEstimatedValue" value="${existing?.estimatedValue || ''}" required></div>
+          <div class="form-group"><label class="form-label">${t("auctionRequests.productDescription")}</label><textarea class="form-textarea form-control" id="arDescription">${escapeHtml(existing?.productDescription || '')}</textarea></div>
+          <div class="form-group"><label class="form-label">${t("auctionRequests.catchLocation")}</label><input type="text" class="form-input form-control" id="arCatchLocation" value="${escapeHtml(existing?.catchLocation || '')}"></div>
+          <div class="form-group"><label class="form-label">${t("auctionRequests.catchDate")}</label><input type="date" class="form-input form-control" id="arCatchDate" value="${existing?.catchDate ? existing.catchDate.split('T')[0] : ''}"></div>
+          <div class="form-group"><label class="form-label">${t("auctionRequests.imageUrl")}</label><input type="url" class="form-input form-control" id="arImageUrl" value="${escapeHtml(existing?.imageUrl || '')}" placeholder="${t("auctionRequests.imageUrlHelp")}"></div>
           <p style="font-size:0.85rem;color:var(--text-muted)">${t("auctionRequests.imageUrlHelp")}</p>
-          <div style="display:flex;gap:8px;margin-top:16px">
+          <div class="d-flex gap-2 mt-3">
             <button type="submit" class="btn btn-primary" id="arSubmit">${t("auctionRequests.submit")}</button>
             <button type="button" class="btn btn-ghost" id="arCancel">${t("common.cancel")}</button>
           </div>
         </form>
+        </div>
       </div>`;
 
     document.getElementById("arCancel").addEventListener("click", () => loadRequests());

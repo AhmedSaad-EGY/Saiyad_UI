@@ -199,20 +199,36 @@ export function observeAnimations(root = document) {
     _animObserver.disconnect();
     _animObserver = null;
   }
-  const els = (root === document ? document : root).querySelectorAll(
-    ".animate-on-scroll:not(.visible)",
-  );
+
+  const selector = ".animate-on-scroll:not(.visible)";
+  const els = (root === document ? document : root).querySelectorAll(selector);
 
   if ("IntersectionObserver" in window) {
     _animObserver = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            entry.target.classList.add("visible");
-            entry.target
-              .querySelectorAll(".animate-on-scroll:not(.visible)")
-              .forEach((child) => child.classList.add("visible"));
-            _animObserver.unobserve(entry.target);
+            const el = entry.target;
+            // Mark visible immediately (removes opacity:0)
+            el.classList.add("visible");
+            // Animate with Animate.css fadeInUp + stagger delay
+            animate(el, "fadeInUp", {
+              keep: true,
+              ...(getStaggerDelay(el) ? { delay: getStaggerDelay(el) } : {}),
+            });
+            // Animate any nested animate-on-scroll children
+            el
+              .querySelectorAll(selector)
+              .forEach((child) => {
+                child.classList.add("visible");
+                animate(child, "fadeInUp", {
+                  keep: true,
+                  ...(getStaggerDelay(child)
+                    ? { delay: getStaggerDelay(child) }
+                    : {}),
+                });
+              });
+            _animObserver.unobserve(el);
           }
         });
       },
@@ -221,8 +237,27 @@ export function observeAnimations(root = document) {
 
     els.forEach((el) => _animObserver.observe(el));
   } else {
-    els.forEach((el) => el.classList.add("visible"));
+    // Fallback: animate all immediately
+    els.forEach((el) => {
+      el.classList.add("visible");
+      animate(el, "fadeInUp", {
+        keep: true,
+        ...(getStaggerDelay(el) ? { delay: getStaggerDelay(el) } : {}),
+      });
+    });
   }
+}
+
+/**
+ * Parse stagger delay from element className (e.g. stagger-3 → 150ms)
+ */
+function getStaggerDelay(el) {
+  const match = el.className.match(/stagger-(\d+)/);
+  if (match) {
+    const index = parseInt(match[1], 10);
+    return index * 50 + "ms";
+  }
+  return null;
 }
 
 export function fadeInContent(el) {
@@ -308,5 +343,36 @@ export function manageFocus(container, announcement) {
   if (announcement) {
     const live = document.getElementById("ariaLive");
     if (live) live.textContent = announcement;
+  }
+}
+
+/**
+ * Animate.css helper — applies an Animate.css animation to an element
+ * and automatically removes the classes after the animation ends.
+ *
+ * @param {Element} el - Target element
+ * @param {string} animation - Animation name without prefix (e.g., 'fadeIn', 'bounceIn')
+ * @param {object} [opts]
+ * @param {string} [opts.duration] - CSS duration value (e.g., '0.5s', '800ms')
+ * @param {string} [opts.delay] - CSS delay value (e.g., '0.2s')
+ * @param {string|number} [opts.iterations] - Repeat count (e.g., 2, 'infinite')
+ * @param {boolean} [opts.keep] - If true, does NOT remove classes after animation ends
+ */
+export function animate(el, animation, opts = {}) {
+  if (!el) return;
+  const prefix = 'animate__';
+  el.classList.add(prefix + 'animated', prefix + animation);
+
+  if (opts.duration) el.style.setProperty('--animate-duration', opts.duration);
+  if (opts.delay) el.style.setProperty('--animate-delay', opts.delay);
+  if (opts.iterations != null) el.style.setProperty('--animate-repeat', String(opts.iterations));
+
+  if (!opts.keep) {
+    el.addEventListener('animationend', () => {
+      el.classList.remove(prefix + 'animated', prefix + animation);
+      el.style.removeProperty('--animate-duration');
+      el.style.removeProperty('--animate-delay');
+      el.style.removeProperty('--animate-repeat');
+    }, { once: true });
   }
 }

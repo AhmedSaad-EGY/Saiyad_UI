@@ -51,13 +51,13 @@ let notifPollInterval = null;
 export function updateNavbar() {
   const authed = isAuthenticated();
   const user = getUser();
-  document.getElementById("loginBtn").classList.toggle("hidden", authed);
-  document.getElementById("registerBtn").classList.toggle("hidden", authed);
-  document.getElementById("userMenu").classList.toggle("hidden", !authed);
+  document.getElementById("loginBtn").classList.toggle("d-none", authed);
+  document.getElementById("registerBtn").classList.toggle("d-none", authed);
+  document.getElementById("userMenu").classList.toggle("d-none", !authed);
   if (user)
     document.getElementById("userName").textContent =
       user.fullName || user.email || "User";
-  document.getElementById("notifBell")?.classList.toggle("hidden", !authed);
+  document.getElementById("notifBell")?.classList.toggle("d-none", !authed);
   document
     .getElementById("userDropdown")
     ?.setAttribute("aria-haspopup", "true");
@@ -70,10 +70,10 @@ export function updateNavbar() {
     .forEach((item) => {
       const allowed = item.dataset.roles;
       if (allowed === "all") {
-        item.classList.toggle("hidden", !authed);
+        item.classList.toggle("d-none", !authed);
       } else {
         const roles = allowed.split(",");
-        item.classList.toggle("hidden", !authed || !roles.includes(user?.role));
+        item.classList.toggle("d-none", !authed || !roles.includes(user?.role));
       }
     });
 
@@ -96,13 +96,13 @@ export async function updateCartBadge(forceRefresh = false) {
   const badge = document.getElementById("cartBadge");
   if (!badge) return;
   if (!isAuthenticated()) {
-    badge.classList.add("hidden");
+    badge.classList.add("d-none");
     _cartCount = null;
     return;
   }
   if (!forceRefresh && _cartCount !== null) {
     badge.textContent = _cartCount;
-    badge.classList.toggle("hidden", _cartCount === 0);
+    badge.classList.toggle("d-none", _cartCount === 0);
     return;
   }
   try {
@@ -111,9 +111,9 @@ export async function updateCartBadge(forceRefresh = false) {
     const count = items.reduce((sum, i) => sum + (i.quantity || 1), 0);
     _cartCount = count;
     badge.textContent = count;
-    badge.classList.toggle("hidden", count === 0);
+    badge.classList.toggle("d-none", count === 0);
   } catch {
-    badge.classList.add("hidden");
+    badge.classList.add("d-none");
   }
 }
 
@@ -133,11 +133,11 @@ export async function updateNotifBadge() {
     const count = data.unreadCount ?? data.count ?? 0;
     if (count > 0) {
       badge.textContent = count;
-      badge.classList.remove("hidden");
-    } else badge?.classList.add("hidden");
+      badge.classList.remove("d-none");
+    } else    badge?.classList.add("d-none");
   } catch {
     if (!isAuthenticated()) stopNotifPolling();
-    else badge?.classList.add("hidden");
+    else    badge?.classList.add("d-none");
   }
 }
 
@@ -153,7 +153,7 @@ export function stopNotifPolling() {
     notifPollInterval = null;
   }
   const badge = document.getElementById("notifBadge");
-  if (badge) badge.classList.add("hidden");
+  if (badge) badge.classList.add("d-none");
 }
 
 export async function logout() {

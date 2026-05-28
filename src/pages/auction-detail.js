@@ -4,7 +4,7 @@ import { api } from '../core/api/client.js';
 import { requireAuth, getUser } from '../core/auth/index.js';
 import { registerRouteCleanup, navigate } from '../core/router/index.js';
 import { formatPrice, formatDate, statusClass, tStatus } from '../core/utils/format.js';
-import { escapeHtml, observeAnimations } from '../core/utils/dom.js';
+import { escapeHtml, observeAnimations, animate } from '../core/utils/dom.js';
 import { triggerConfetti, trackRecentlyViewed } from '../core/utils/ui.js';
 import { createScopedBus } from '../core/events/bus.js';
 import { joinAuctionGroup, leaveAuctionGroup } from '../core/realtime/index.js';
@@ -36,9 +36,6 @@ Alpine.data('auctionDetailPage', () => ({
   bidAlert: '',
   bidAlertType: '',
   placingBid: false,
-
-  // Price flash trigger (timestamp toggles animation)
-  flashBid: 0,
 
   // Winner
   winnerName: '',
@@ -129,7 +126,11 @@ Alpine.data('auctionDetailPage', () => ({
     }
 
     registerRouteCleanup(() => this.cleanup());
-    this.$nextTick(() => observeAnimations());
+    this.$nextTick(() => {
+      observeAnimations();
+      const infoEl = this.$el?.querySelector('.detail-info');
+      if (infoEl) animate(infoEl, 'fadeInUp', { duration: '0.5s' });
+    });
   },
 
   // --- Countdown ---
@@ -195,9 +196,9 @@ Alpine.data('auctionDetailPage', () => ({
     if (newVal && newVal > this.currentBidValue) {
       this.animateBidCountUp(this.currentBidValue, newVal);
     }
-    // Trigger price flash animation (reset first to restart CSS animation)
-    this.flashBid = 0;
-    this.$nextTick(() => { this.flashBid = Date.now(); });
+    // Animate the current-bid element with bounceIn
+    const bidEl = this.$el?.querySelector('.current-bid');
+    if (bidEl) animate(bidEl, 'bounceIn', { duration: '0.6s' });
 
     const bidEntry = {
       userName: bid.userName || bid.bidderName || bid.fullName || (bid.bidderId ? `User #${bid.bidderId}` : 'User'),
@@ -342,7 +343,7 @@ export default async function renderAuctionDetail(container, _route, params) {
         <div class="empty-state-visual"><i class="fas fa-gavel" style="font-size:3.5rem;color:var(--text-muted)"></i></div>
         <h3 x-text="t('common.loadFailed')"></h3>
         <p x-text="error"></p>
-        <button class="btn btn-primary" @click="retry()" style="margin-top:16px">${t('common.retry')}</button>
+        <button class="btn btn-primary mt-3" @click="retry()">${t('common.retry')}</button>
       </div>
 
       <!-- Content -->
@@ -370,24 +371,22 @@ export default async function renderAuctionDetail(container, _route, params) {
           </div>
 
           <!-- Info -->
-          <div class="detail-info" style="animation:slideUp 0.4s cubic-bezier(0.34,1.56,0.64,1)">
+          <div class="detail-info">
             <h1 x-text="auction.productTitle || 'Auction Item'"></h1>
 
             <!-- Current bid with price flash -->
-            <div class="current-bid"
-                 :style="flashBid ? 'animation:priceFlash 0.6s var(--ease-bounce)' : ''"
-                 @animationend="flashBid = 0">
+            <div class="current-bid">
               <span x-text="t('auction.currentBid') + ': ' + formatPrice(currentBidValue)"></span>
             </div>
 
             <!-- Status + countdown -->
-            <div style="margin:12px 0">
+            <div class="my-2">
               <span class="status" :class="statusClass(auction.status)" x-text="tStatus(auction.status)"></span>
 
               <!-- Active countdown -->
-              <div x-show="!ended && isActive" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+              <div x-show="!ended && isActive" class="d-flex gap-2 flex-wrap mt-2">
                 <template x-if="countdown()">
-                  <div style="display:flex;gap:8px;flex-wrap:wrap">
+                  <div class="d-flex gap-2 flex-wrap">
                     <template x-if="countdown().showDays">
                       <div class="countdown-unit">
                         <span class="countdown-num" x-text="countdown().days"></span>
@@ -414,7 +413,7 @@ export default async function renderAuctionDetail(container, _route, params) {
               </div>
 
               <!-- Ended display -->
-              <div x-show="ended || (!isActive && !ended)" style="margin-top:8px">
+              <div x-show="ended || (!isActive && !ended)" class="mt-2">
                 <span style="color:var(--danger);font-weight:600">
                   <i class="fas fa-times-circle"></i> ${t('auction.ended')}
                 </span>
@@ -460,11 +459,11 @@ export default async function renderAuctionDetail(container, _route, params) {
             <!-- Bid section (customer only, active auction) -->
             <template x-if="isActive && isCustomer()">
               <div>
-                <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:16px">
+                <div class="d-flex gap-3 flex-wrap mt-3">
                   <div style="flex:1;min-width:200px">
                     <!-- Bid input + button -->
                     <div class="bid-input-group">
-                      <input type="number" class="form-input" x-model="bidAmount" step="0.01"
+                      <input type="number" class="form-input form-control" x-model="bidAmount" step="0.01"
                              :placeholder="t('auction.placeBid') + ' (' + formatPrice(minBid) + ')'" />
                       <button class="btn btn-primary" @click="placeBid()" :disabled="placingBid">
                         <i class="fas fa-gavel" x-show="!placingBid"></i>
@@ -486,7 +485,7 @@ export default async function renderAuctionDetail(container, _route, params) {
                     </div>
 
                     <!-- Quick-bid buttons -->
-                    <div style="display:flex;gap:6px;margin-top:6px">
+                    <div class="d-flex gap-2 mt-2">
                       <button class="btn btn-outline btn-sm" @click="quickBidAdd()">
                         +<span x-text="formatPrice(auction.minimumIncrement)"></span>
                       </button>
@@ -495,14 +494,14 @@ export default async function renderAuctionDetail(container, _route, params) {
                     </div>
 
                     <!-- Auto-bid toggle -->
-                    <div style="display:flex;align-items:center;gap:8px;margin-top:8px">
-                      <label style="display:flex;align-items:center;gap:6px;font-size:var(--text-sm);cursor:pointer">
+                    <div class="d-flex align-items-center gap-2 mt-2">
+                      <label class="d-flex align-items-center gap-2" style="font-size:var(--text-sm);cursor:pointer">
                         <input type="checkbox" x-model="autoBidEnabled" :aria-label="t('auction.autoBid')" />
                         <i class="fas fa-robot" aria-hidden="true"></i>
                         <span x-text="t('auction.autoBid')"></span>
                       </label>
                       <div x-show="autoBidEnabled" style="flex:1">
-                        <input type="number" class="form-input" x-model="autoBidMax" step="0.01" min="0"
+                        <input type="number" class="form-input form-control" x-model="autoBidMax" step="0.01" min="0"
                                :placeholder="t('auction.autoBidMaxPlaceholder') || 'Max bid amount'"
                                style="padding:6px 10px;font-size:var(--text-sm)" />
                       </div>
@@ -511,7 +510,7 @@ export default async function renderAuctionDetail(container, _route, params) {
                 </div>
 
                 <!-- Bid alert -->
-                <div x-show="bidAlert" style="margin-top:8px">
+                <div x-show="bidAlert" class="mt-2">
                   <div :class="'alert alert-' + bidAlertType" x-html="bidAlert"></div>
                 </div>
               </div>
@@ -519,7 +518,7 @@ export default async function renderAuctionDetail(container, _route, params) {
 
             <!-- Non-customer message (active auction) -->
             <template x-if="isActive && !isCustomer()">
-              <div class="alert alert-info" style="margin-top:16px">
+              <div class="alert alert-info mt-3">
                 <i class="fas fa-info-circle"></i>
                 <template x-if="isLoggedIn()">
                   <span x-text="t('auction.bidCustomerOnly') || 'Only customers can place bids.'"></span>
@@ -533,7 +532,7 @@ export default async function renderAuctionDetail(container, _route, params) {
             </template>
 
             <!-- Bid history -->
-            <div style="margin-top:24px">
+            <div class="mt-4">
               <h3><span x-text="t('auction.bidHistory') + ' (' + bidCount + ')'"></span></h3>
               <div class="bid-list" aria-live="polite" aria-atomic="true" aria-relevant="additions text">
                 <template x-if="bids.length">

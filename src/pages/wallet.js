@@ -132,7 +132,8 @@ export default async function renderWallet(container) {
       <div x-show="!loading && wallet" x-transition:enter="transition-fade" x-transition:enter-start="op-0" x-transition:enter-end="op-100">
         <div>
           <div class="wallet-container">
-            <div class="wallet-card glass-card animate-on-scroll">
+            <div class="wallet-card glass-card card animate-on-scroll">
+              <div class="card-body">
               <div class="wallet-balance-row">
                 <div class="wallet-balance-item">
                   <span class="wallet-label">${t("wallet.balance")}</span>
@@ -160,11 +161,12 @@ export default async function renderWallet(container) {
                 <i class="fas fa-info-circle"></i> ${t("wallet.readOnly")}
               </div>
               <div class="wallet-msg" :class="depositMsgClass" x-text="depositMsg" x-show="depositMsg"></div>
+              </div>
             </div>
             <div class="section-header" style="margin-top:32px"><h3><i class="fas fa-list"></i> ${t("wallet.transactions")}</h3></div>
             <template x-if="currentPage && currentPage.items && currentPage.items.length > 0">
               <div class="wallet-txn-table animate-on-scroll">
-                <table>
+                <table class="table">
                   <caption style="caption-side:bottom;margin-top:8px;font-size:0.78rem;color:var(--text-muted)">${t("wallet.transactions")}</caption>
                   <thead><tr><th scope="col">${t("wallet.date")}</th><th scope="col">${t("wallet.type")}</th><th scope="col">${t("wallet.description")}</th><th scope="col">${t("wallet.amount")}</th></tr></thead>
                   <tbody>

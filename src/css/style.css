@@ -3,9 +3,16 @@
    Entry point — imports all partials
    ============================================================ */
 
+/* Bootstrap 5 — base framework layer */
+@import 'bootstrap/dist/css/bootstrap.min.css';
+
+/* Project design tokens & custom styles */
 @import '_variables.css';
 @import '_base.css';
 @import '_animations.css';
 @import '_layout.css';
 @import '_components.css';
 @import '_rtl.css';
+
+/* Bootstrap overrides — map our OKLCH tokens to Bootstrap CSS vars */
+@import '_bootstrap-overrides.css';
