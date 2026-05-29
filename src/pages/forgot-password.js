@@ -174,7 +174,8 @@ export default function renderForgotPassword(container) {
   const renderTimer = setTimeout(() => {
     if (!container.isConnected) return;
 
-    container.innerHTML = `
+    const renderContent = () => {
+      container.innerHTML = `
       <div x-data="forgotPwPage" class="auth-page">
         <div class="card">
           <div class="card-header">
@@ -258,6 +259,13 @@ export default function renderForgotPassword(container) {
           </div>
         </div>
       </div>`;
+    };
+
+    if (typeof Alpine.mutateDom === "function") {
+      Alpine.mutateDom(renderContent);
+    } else {
+      renderContent();
+    }
   }, 300);
 
   registerRouteCleanup(() => clearTimeout(renderTimer));
