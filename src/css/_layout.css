@@ -8,7 +8,9 @@
   right: 0;
   z-index: 100;
   height: var(--navbar-height, 60px);
-  background: oklch(1 0 0 / 0.96);
+  background:
+    linear-gradient(135deg, oklch(1 0 0 / 0.96), oklch(0.96 0.012 235 / 0.94)),
+    radial-gradient(circle at 18% 0%, oklch(from var(--primary) l c h / 0.10), transparent 34%);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
   border-bottom: 1px solid var(--border);
@@ -20,14 +22,24 @@
 }
 
 [data-theme="dark"] .navbar {
-  background: oklch(0.13 0.020 250 / 0.96);
+  background:
+    linear-gradient(135deg, oklch(0.105 0.022 250 / 0.96), oklch(0.16 0.028 238 / 0.94)),
+    radial-gradient(circle at 18% 0%, oklch(from var(--primary) l c h / 0.18), transparent 36%);
   border-bottom: 1px solid var(--border);
 }
 
 .navbar.scrolled {
   box-shadow: var(--shadow-md);
   border-bottom-color: transparent;
-  background: oklch(1 0 0 / 0.98);
+  background:
+    linear-gradient(135deg, oklch(1 0 0 / 0.98), oklch(0.965 0.012 235 / 0.96)),
+    radial-gradient(circle at 18% 0%, oklch(from var(--primary) l c h / 0.12), transparent 34%);
+}
+
+[data-theme="dark"] .navbar.scrolled {
+  background:
+    linear-gradient(135deg, oklch(0.095 0.022 250 / 0.98), oklch(0.15 0.03 238 / 0.97)),
+    radial-gradient(circle at 18% 0%, oklch(from var(--primary) l c h / 0.20), transparent 36%);
 }
 
 .navbar::after {
@@ -159,6 +171,7 @@
 /* Desktop: navbar-nav is an inline flex row; toggles/actions flow inline */
 .navbar-nav {
   display: flex;
+  flex-direction: row;
   align-items: center;
   gap: 4px;
 }
