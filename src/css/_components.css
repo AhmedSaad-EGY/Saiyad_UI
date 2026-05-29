@@ -1508,17 +1508,21 @@ tr:last-child td {
 }
 
 .modal {
+  display: block;
+  position: relative;
   background: var(--card-bg);
   border-radius: var(--radius-xl);
   padding: 32px;
   max-width: 500px;
   width: 90%;
+  height: auto;
   max-height: 90vh;
   overflow-y: auto;
   box-shadow: var(--shadow-lg);
   color: var(--text);
   animation: zoomIn 0.25s var(--ease-out);
   transition: background-color var(--theme-transition);
+  pointer-events: auto;
 }
 
 .modal-confirm {
@@ -1559,6 +1563,10 @@ tr:last-child td {
   gap: 12px;
   justify-content: flex-end;
   margin-top: 28px;
+}
+
+.modal-confirm .modal-actions {
+  justify-content: center;
 }
 
 /* ============================================================
