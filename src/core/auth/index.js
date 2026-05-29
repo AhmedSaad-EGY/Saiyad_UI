@@ -92,7 +92,19 @@ export function setCachedCartCount(n) {
   _cartCount = n;
 }
 
-export async function updateCartBadge(forceRefresh = false) {
+export function getCartItemCount(items = []) {
+  return items.reduce((sum, i) => sum + (parseInt(i.quantity, 10) || 1), 0);
+}
+
+export function syncCartBadgeCount(count) {
+  const badge = document.getElementById("cartBadge");
+  _cartCount = Math.max(0, parseInt(count, 10) || 0);
+  if (!badge) return;
+  badge.textContent = _cartCount;
+  badge.classList.toggle("d-none", _cartCount === 0 || !isAuthenticated());
+}
+
+export async function updateCartBadge(forceRefresh = true) {
   const badge = document.getElementById("cartBadge");
   if (!badge) return;
   if (!isAuthenticated()) {
@@ -107,11 +119,7 @@ export async function updateCartBadge(forceRefresh = false) {
   }
   try {
     const cart = await api.get("/cart");
-    const items = cart.items || [];
-    const count = items.reduce((sum, i) => sum + (i.quantity || 1), 0);
-    _cartCount = count;
-    badge.textContent = count;
-    badge.classList.toggle("d-none", count === 0);
+    syncCartBadgeCount(getCartItemCount(cart.items || []));
   } catch {
     badge.classList.add("d-none");
   }
@@ -129,8 +137,8 @@ export async function updateNotifBadge() {
     return;
   }
   try {
-    const data = await api.get("/notifications/unread-count");
-    const count = data.unreadCount ?? data.count ?? 0;
+    const data = await api.get("/Notifications/unread-count");
+    const count = getUnreadNotificationCount(data);
     if (count > 0) {
       badge.textContent = count;
       badge.classList.remove("d-none");
@@ -139,6 +147,19 @@ export async function updateNotifBadge() {
     if (!isAuthenticated()) stopNotifPolling();
     else    badge?.classList.add("d-none");
   }
+}
+
+export function getUnreadNotificationCount(data) {
+  if (typeof data === "number") return data;
+  return data?.unreadCount ?? data?.count ?? data?.data?.unreadCount ?? data?.data?.count ?? 0;
+}
+
+export function syncNotifBadgeCount(count) {
+  const badge = document.getElementById("notifBadge");
+  const safeCount = Math.max(0, parseInt(count, 10) || 0);
+  if (!badge || !isAuthenticated()) return;
+  badge.textContent = safeCount;
+  badge.classList.toggle("d-none", safeCount === 0);
 }
 
 export function startNotifPolling() {

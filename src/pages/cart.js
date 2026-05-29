@@ -1,6 +1,6 @@
 import { t } from '../core/i18n/index.js';
 import { api } from '../core/api/client.js';
-import { requireAuth, updateCartBadge } from '../core/auth/index.js';
+import { getCartItemCount, requireAuth, syncCartBadgeCount } from '../core/auth/index.js';
 import { navigate, registerRouteCleanup } from '../core/router/index.js';
 import { formatPrice } from '../core/utils/format.js';
 import { showConfirm, showToast } from '../core/utils/ui.js';
@@ -25,6 +25,7 @@ Alpine.data('cartPage', () => ({
       this.items = cart.items || [];
       this.empty = this.items.length === 0;
       this.computeTotal();
+      syncCartBadgeCount(getCartItemCount(this.items));
     } catch (e) {
       if (e.status === 401) { navigate('login'); return; }
       this.error = e.message || t('common.error');
@@ -51,7 +52,7 @@ Alpine.data('cartPage', () => ({
     this.empty = this.items.length === 0;
     this.computeTotal();
     animateCartTotal(prevTotal, this.total);
-    updateCartBadge();
+    syncCartBadgeCount(getCartItemCount(this.items));
     try {
       await api.delete(`/cart/items/${productId}`);
       this.refresh();
@@ -59,7 +60,7 @@ Alpine.data('cartPage', () => ({
       this.items = prevItems;
       this.empty = this.items.length === 0;
       this.computeTotal();
-      updateCartBadge();
+      syncCartBadgeCount(getCartItemCount(this.items));
       showToast(e.message, 'error');
     }
   },
@@ -73,6 +74,7 @@ Alpine.data('cartPage', () => ({
     item.quantity = parseInt(qty) || 1;
     this.computeTotal();
     animateCartTotal(prevTotal, this.total);
+    syncCartBadgeCount(getCartItemCount(this.items));
     try {
       await api.put(`/cart/items/${productId}`, { quantity: parseInt(qty) || 1 });
       this.refresh();
@@ -81,6 +83,7 @@ Alpine.data('cartPage', () => ({
       if (restored) restored.quantity = prevQty;
       this.items = prevItems;
       this.computeTotal();
+      syncCartBadgeCount(getCartItemCount(this.items));
       showToast(e.message, 'error');
     }
   },
@@ -94,7 +97,7 @@ Alpine.data('cartPage', () => ({
     this.empty = true;
     this.total = 0;
     animateCartTotal(prevTotal, 0);
-    updateCartBadge();
+    syncCartBadgeCount(0);
     try {
       await api.delete('/cart');
       showToast(t('cart.cleared'), 'success');
@@ -103,7 +106,7 @@ Alpine.data('cartPage', () => ({
       this.items = prevItems;
       this.empty = this.items.length === 0;
       this.computeTotal();
-      updateCartBadge();
+      syncCartBadgeCount(getCartItemCount(this.items));
       showToast(e.message, 'error');
     }
   },
@@ -114,6 +117,7 @@ Alpine.data('cartPage', () => ({
       this.items = cart.items || [];
       this.empty = this.items.length === 0;
       this.computeTotal();
+      syncCartBadgeCount(getCartItemCount(this.items));
     } catch { /* ignore */ }
   },
 

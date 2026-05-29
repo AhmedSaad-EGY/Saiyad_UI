@@ -1,7 +1,7 @@
 import Alpine from 'alpinejs';
 import { t } from '../core/i18n/index.js';
 import { api } from '../core/api/client.js';
-import { requireAuth, getUser, hasAnyRole, hasRole, updateNavbar, updateCartBadge, updateNotifBadge } from '../core/auth/index.js';
+import { requireAuth, getUser, hasAnyRole, hasRole, updateNavbar, updateCartBadge, syncNotifBadgeCount } from '../core/auth/index.js';
 import { registerRouteCleanup } from '../core/router/index.js';
 import { $$, showLoading, renderEmptyState, escapeHtml, observeAnimations } from '../core/utils/dom.js';
 import { manualPaginationHtml, wirePagination } from '../shared/components/pagination.js';
@@ -934,8 +934,9 @@ async function renderWishlist(content) {
 async function renderNotifications(content) {
   content.innerHTML = `<div class="card animate-on-scroll"><div class="card-header"><h3><i class="fas fa-bell"></i> ${t("dash.notifications")}</h3></div><div class="card-body"><div class="d-flex gap-2 mb-2"><button class="btn btn-sm btn-ghost" id="markAllRead"><i class="fas fa-check-double"></i> ${t("notif.markAllRead")}</button></div><div id="notifList"><i class="fas fa-spinner spinner"></i> ${t("common.loading")}</div></div></div>`;
   try {
-    const data = await api.get("/notifications");
-    const notifs = data.items || data.data || [];
+    const data = await api.get("/notifications", { pageSize: 50 });
+    const notifs = normalizeNotifications(data);
+    syncNotifBadgeCount(countUnreadNotifications(notifs));
     if (!notifs.length) {
       renderEmptyState(document.getElementById("notifList"), {
         icon: "fa-bell",
@@ -947,7 +948,7 @@ async function renderNotifications(content) {
     document.getElementById("notifList").innerHTML = notifs
       .map(
         (n) => `
-      <div class="notif-item ${n.isRead ? "" : "unread"}">
+      <div class="notif-item ${n.isRead ? "" : "unread"}" data-id="${escapeHtml(n.id)}">
         <div class="flex-grow-1">
           <strong>${escapeHtml(n.title)}</strong>
           <p class="text-muted small">${escapeHtml(n.message)}</p>
@@ -962,20 +963,20 @@ async function renderNotifications(content) {
     $$(".mark-read").forEach((btn) => {
       btn.addEventListener("click", async () => {
         try {
-          await api.put(`/notifications/${btn.dataset.id}/read`);
+          await markNotificationRead(btn.dataset.id);
           btn.closest(".notif-item").classList.remove("unread");
           btn.remove();
-          updateNotifBadge();
+          syncNotifBadgeCount(document.querySelectorAll("#notifList .notif-item.unread").length);
         } catch {}
       });
     });
 
     document.getElementById("markAllRead")?.addEventListener("click", async () => {
       try {
-        await api.put("/notifications/read-all");
+        await markAllNotificationsRead();
         document.querySelectorAll("#notifList .notif-item").forEach((el) => el.classList.remove("unread"));
         document.querySelectorAll("#notifList .mark-read").forEach((el) => el.remove());
-        updateNotifBadge();
+        syncNotifBadgeCount(0);
         showToast(t("notif.markedAllRead"), "success");
       } catch {}
     });
@@ -983,6 +984,48 @@ async function renderNotifications(content) {
   } catch (e) {
     document.getElementById("notifList").innerHTML =
       `<div class="alert alert-error" role="alert">${escapeHtml(e.message)}</div>`;
+  }
+}
+
+function normalizeNotifications(data) {
+  const source =
+    Array.isArray(data) ? data
+      : Array.isArray(data?.items) ? data.items
+        : Array.isArray(data?.data) ? data.data
+          : Array.isArray(data?.data?.items) ? data.data.items
+            : Array.isArray(data?.data?.data) ? data.data.data
+              : Array.isArray(data?.notifications) ? data.notifications
+                : Array.isArray(data?.results) ? data.results
+                  : Array.isArray(data?.value) ? data.value
+                    : [];
+
+  return source.map((n) => {
+    const id = n.id ?? n.notificationId ?? n.notificationID ?? "";
+    const isRead = Boolean(n.isRead ?? n.read ?? n.readAt ?? n.readOn ?? n.dateRead);
+    const title = n.title ?? n.subject ?? n.type ?? t("notif.title");
+    const message = n.message ?? n.body ?? n.content ?? n.description ?? "";
+    const createdAt = n.createdAt ?? n.createdOn ?? n.createdDate ?? n.dateCreated ?? n.timestamp ?? n.sentAt;
+    return { id, isRead, title, message, createdAt };
+  });
+}
+
+function countUnreadNotifications(notifs) {
+  return notifs.filter((n) => !n.isRead).length;
+}
+
+async function markNotificationRead(id) {
+  try {
+    await api.put(`/notifications/${id}/read`);
+  } catch {
+    await api.post(`/notifications/${id}/read`, {});
+  }
+}
+
+async function markAllNotificationsRead() {
+  try {
+    await api.put("/notifications/read-all");
+  } catch {
+    await api.post("/notifications/read-all", {});
   }
 }
 
