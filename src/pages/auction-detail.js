@@ -343,7 +343,7 @@ export default async function renderAuctionDetail(container, _route, params) {
       <!-- Error state -->
       <div x-show="!loading && error" class="empty-state">
         <div class="empty-state-visual"><i class="fas fa-gavel text-muted" style="font-size:3.5rem"></i></div>
-        <h3 x-text="t('common.loadFailed')"></h3>
+        <h3 x-text="$t('common.loadFailed')"></h3>
         <p x-text="error"></p>
         <button class="btn btn-primary mt-3" @click="retry()">${t('common.retry')}</button>
       </div>
@@ -379,7 +379,7 @@ export default async function renderAuctionDetail(container, _route, params) {
 
             <!-- Current bid with price flash -->
             <div class="current-bid">
-              <span x-text="t('auction.currentBid') + ': ' + formatPrice(currentBidValue)"></span>
+              <span x-text="$t('auction.currentBid') + ': ' + formatPrice(currentBidValue)"></span>
             </div>
 
             <!-- Status + countdown -->
@@ -426,27 +426,27 @@ export default async function renderAuctionDetail(container, _route, params) {
             <!-- Meta info -->
             <div class="detail-meta">
               <div class="detail-meta-item">
-                <strong x-text="t('auction.startingPrice') + ':'"></strong>
+                <strong x-text="$t('auction.startingPrice') + ':'"></strong>
                 <span x-text="formatPrice(auction.startingPrice)"></span>
               </div>
               <div class="detail-meta-item">
-                <strong x-text="t('auction.reservePrice') + ':'"></strong>
+                <strong x-text="$t('auction.reservePrice') + ':'"></strong>
                 <span x-text="auction.reservePrice ? formatPrice(auction.reservePrice) : t('common.N/A')"></span>
               </div>
               <div class="detail-meta-item">
-                <strong x-text="t('auction.minIncrement') + ':'"></strong>
+                <strong x-text="$t('auction.minIncrement') + ':'"></strong>
                 <span x-text="formatPrice(auction.minimumIncrement)"></span>
               </div>
               <div class="detail-meta-item">
-                <strong x-text="t('auction.totalBids') + ':'"></strong>
+                <strong x-text="$t('auction.totalBids') + ':'"></strong>
                 <span x-text="bidCount"></span>
               </div>
               <div class="detail-meta-item">
-                <strong x-text="t('auction.start') + ':'"></strong>
+                <strong x-text="$t('auction.start') + ':'"></strong>
                 <span x-text="formatDate(auction.startTime)"></span>
               </div>
               <div class="detail-meta-item">
-                <strong x-text="t('auction.end') + ':'"></strong>
+                <strong x-text="$t('auction.end') + ':'"></strong>
                 <span x-text="formatDate(auction.endTime)"></span>
               </div>
             </div>
@@ -467,7 +467,7 @@ export default async function renderAuctionDetail(container, _route, params) {
             <template x-if="auction.winnerUserId">
               <div class="alert alert-success">
                 <i class="fas fa-trophy"></i>
-                <span x-text="t('auction.winner') + ': ' + (auction.winnerName || 'User #' + auction.winnerUserId)"></span>
+                <span x-text="$t('auction.winner') + ': ' + (auction.winnerName || 'User #' + auction.winnerUserId)"></span>
               </div>
             </template>
 
@@ -483,7 +483,7 @@ export default async function renderAuctionDetail(container, _route, params) {
                       <button class="btn btn-primary" @click="placeBid()" :disabled="placingBid">
                         <i class="fas fa-gavel" x-show="!placingBid"></i>
                         <i class="fas fa-spinner spinner" x-show="placingBid" aria-hidden="true"></i>
-                        <span x-show="!placingBid" x-text="t('auction.placeBid')"></span>
+                        <span x-show="!placingBid" x-text="$t('auction.placeBid')"></span>
                         <span x-show="placingBid">${t('auction.placingBid')}</span>
                       </button>
                     </div>
@@ -513,7 +513,7 @@ export default async function renderAuctionDetail(container, _route, params) {
                       <label class="d-flex align-items-center gap-2" style="font-size:var(--text-sm);cursor:pointer">
                         <input type="checkbox" x-model="autoBidEnabled" :aria-label="t('auction.autoBid')" />
                         <i class="fas fa-robot" aria-hidden="true"></i>
-                        <span x-text="t('auction.autoBid')"></span>
+                        <span x-text="$t('auction.autoBid')"></span>
                       </label>
                       <div x-show="autoBidEnabled" class="flex-fill">
                         <input type="number" class="form-input form-control" x-model="autoBidMax" step="0.01" min="0"
@@ -536,11 +536,11 @@ export default async function renderAuctionDetail(container, _route, params) {
               <div class="alert alert-info mt-3">
                 <i class="fas fa-info-circle"></i>
                 <template x-if="isLoggedIn()">
-                  <span x-text="t('auction.bidCustomerOnly') || 'Only customers can place bids.'"></span>
+                  <span x-text="$t('auction.bidCustomerOnly') || 'Only customers can place bids.'"></span>
                 </template>
                 <template x-if="!isLoggedIn()">
                   <a href="#/login" class="text-reset text-decoration-underline">
-                    <span x-text="t('auction.loginToBid') || 'Login as a customer to place bids.'"></span>
+                    <span x-text="$t('auction.loginToBid') || 'Login as a customer to place bids.'"></span>
                   </a>
                 </template>
               </div>
@@ -548,7 +548,7 @@ export default async function renderAuctionDetail(container, _route, params) {
 
             <!-- Bid history -->
             <div class="mt-4">
-              <h3><span x-text="t('auction.bidHistory') + ' (' + bidCount + ')'"></span></h3>
+              <h3><span x-text="$t('auction.bidHistory') + ' (' + bidCount + ')'"></span></h3>
               <div class="bid-list" aria-live="polite" aria-atomic="true" aria-relevant="additions text">
                 <template x-if="bids.length">
                   <div>
@@ -571,7 +571,7 @@ export default async function renderAuctionDetail(container, _route, params) {
                 <template x-if="!bids.length">
                   <div class="empty-state">
                     <i class="fas fa-gavel"></i>
-                    <h3 x-text="t('auction.noBids')"></h3>
+                    <h3 x-text="$t('auction.noBids')"></h3>
                   </div>
                 </template>
               </div>
@@ -583,12 +583,12 @@ export default async function renderAuctionDetail(container, _route, params) {
         <template x-if="isActive && isCustomer()">
           <div class="mobile-sticky-bar">
             <div class="current-bid-mini">
-              <small x-text="t('auction.currentBid')"></small>
+              <small x-text="$t('auction.currentBid')"></small>
               <span x-text="formatPrice(currentBidValue)"></span>
             </div>
             <button class="btn btn-primary" @click="placeBid()" :disabled="placingBid">
               <i class="fas" :class="placingBid ? 'fa-spinner spinner' : 'fa-gavel'"></i>
-              <span x-text="t('auction.placeBid')"></span>
+              <span x-text="$t('auction.placeBid')"></span>
             </button>
           </div>
         </template>
