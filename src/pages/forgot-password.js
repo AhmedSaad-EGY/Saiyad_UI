@@ -259,13 +259,16 @@ export default function renderForgotPassword(container) {
           </div>
         </div>
       </div>`;
+      if (typeof Alpine.discoverUninitializedComponents === "function") {
+        Alpine.discoverUninitializedComponents(container);
+      } else if (typeof Alpine.mutateDom === "function") {
+        Alpine.mutateDom(() => {});
+      } else if (typeof Alpine.initTree === "function") {
+        Alpine.initTree(container);
+      }
     };
 
-    if (typeof Alpine.mutateDom === "function") {
-      Alpine.mutateDom(renderContent);
-    } else {
-      renderContent();
-    }
+    renderContent();
   }, 300);
 
   registerRouteCleanup(() => clearTimeout(renderTimer));
