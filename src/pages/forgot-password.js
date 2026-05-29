@@ -18,6 +18,7 @@ Alpine.data("forgotPwPage", () => ({
   savedCode: "",
   resendSeconds: 0,
   countdownInterval: null,
+  redirectTimer: null,
 
   get resendLabel() {
     const base = t("auth.resendCode");
@@ -143,7 +144,7 @@ Alpine.data("forgotPwPage", () => ({
         confirmPassword: this.confirmPassword,
       });
       this.step = "done";
-      setTimeout(() => navigate("login"), 2500);
+      this.redirectTimer = setTimeout(() => navigate("login"), 2500);
     } catch (err) {
       this.error = err.message;
     } finally {
@@ -180,13 +181,10 @@ export default function renderForgotPassword(container) {
         <div class="card">
           <div class="card-header">
           <h2>
-            <template x-if="step === 'email'"><i class="fas fa-unlock"></i></template>
-            <template x-if="step === 'code'"><i class="fas fa-shield-alt"></i></template>
-            <template x-if="step === 'password' || step === 'done'"><i class="fas fa-key"></i></template>
-            <template x-if="step === 'email'"> ${t("auth.forgotPassword")}</template>
-            <template x-if="step === 'code'"> ${t("auth.verificationCode")}</template>
-            <template x-if="step === 'password'"> ${t("auth.newPassword")}</template>
-            <template x-if="step === 'done'"><i class="fas fa-check-circle"></i> ${t("auth.passwordResetSuccess")}</template>
+            <span x-show="step === 'email'" x-cloak><i class="fas fa-unlock"></i> ${t("auth.forgotPassword")}</span>
+            <span x-show="step === 'code'" x-cloak><i class="fas fa-shield-alt"></i> ${t("auth.verificationCode")}</span>
+            <span x-show="step === 'password'" x-cloak><i class="fas fa-key"></i> ${t("auth.newPassword")}</span>
+            <span x-show="step === 'done'" x-cloak><i class="fas fa-check-circle"></i> ${t("auth.passwordResetSuccess")}</span>
           </h2>
           </div>
           <div class="card-body">
@@ -259,13 +257,7 @@ export default function renderForgotPassword(container) {
           </div>
         </div>
       </div>`;
-      if (typeof Alpine.discoverUninitializedComponents === "function") {
-        Alpine.discoverUninitializedComponents(container);
-      } else if (typeof Alpine.mutateDom === "function") {
-        Alpine.mutateDom(() => {});
-      } else if (typeof Alpine.initTree === "function") {
-        Alpine.initTree(container);
-      }
+      Alpine.initTree?.(container);
     };
 
     renderContent();
@@ -277,8 +269,9 @@ export default function renderForgotPassword(container) {
       container.querySelector('[x-data="forgotPwPage"]') ||
       container.querySelector("[x-data]");
     if (alpineEl) {
-      const cmp = Alpine.$data(alpineEl);
-      if (cmp.countdownInterval) clearInterval(cmp.countdownInterval);
+      const cmp = alpineEl._x_dataStack?.[0];
+      if (cmp?.countdownInterval) clearInterval(cmp.countdownInterval);
+      if (cmp?.redirectTimer) clearTimeout(cmp.redirectTimer);
     }
   });
 }
