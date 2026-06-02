@@ -161,6 +161,18 @@ document.addEventListener("keydown", (e) => {
   }
 });
 
+// Nav search form — submit navigates to products page with search query
+document.getElementById("navSearchForm")?.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const input = document.getElementById("navSearchInput");
+  if (!input) return;
+  const query = input.value.trim();
+  if (!query) return;
+  closeDrawer();
+  window.location.hash = `#/products?search=${encodeURIComponent(query)}`;
+  input.blur();
+});
+
 // Quick add to cart delegation
 document.addEventListener("click", async (e) => {
   const btn = e.target.closest(".quick-add-btn");
@@ -293,6 +305,10 @@ if (_sellLink) {
     _sellLink.setAttribute('aria-label', 'Go to your seller dashboard');
   }
 }
+
+// Dynamic copyright year
+const _cy = document.getElementById('copyrightYear');
+if (_cy) _cy.textContent = new Date().getFullYear();
 
 themeToggle.addEventListener("click", () => {
   const current = document.documentElement.getAttribute("data-theme");

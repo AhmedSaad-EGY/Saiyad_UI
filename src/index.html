@@ -50,7 +50,7 @@
           <a href="#/products" class="nav-link" data-i18n="nav.products">Products</a>
           <a href="#/auctions" class="nav-link" data-i18n="nav.auctions">Auctions</a>
           <a href="#/cart" class="nav-link cart-nav-link"> <span data-i18n="nav.cart">Cart</span>
-            <span id="cartBadge" class="badge d-none">0</span></a>
+            <span id="cartBadge" class="badge d-none" aria-label="Cart items count"></span></a>
           <div class="nav-toggles">
             <button class="toggle-btn" id="themeToggle" title="Toggle theme" aria-label="Toggle dark mode"><i
                 class="fas fa-moon"></i></button>
@@ -61,7 +61,7 @@
             <a href="#/register" class="btn btn-primary btn-sm" id="registerBtn" data-i18n="nav.register">Register</a>
             <a href="#/dashboard?tab=notifications" class="notif-bell d-none" id="notifBell" aria-label="Notifications">
               <i class="fas fa-bell" aria-hidden="true"></i>
-              <span id="notifBadge" class="badge d-none">0</span>
+              <span id="notifBadge" class="badge d-none" aria-label="Unread notifications count"></span>
             </a>
             <div class="dropdown d-none" id="userMenu">
               <button class="btn btn-ghost btn-sm dropdown-toggle" id="userDropdown">
@@ -91,6 +91,16 @@
             </div>
           </div>
         </div>
+        <form class="nav-search" id="navSearchForm" role="search" aria-label="Search Sayiad">
+          <input type="search" id="navSearchInput"
+                 class="nav-search__input"
+                 placeholder="Search fish, gear, auctions…"
+                 aria-label="Search fish, gear, auctions"
+                 autocomplete="off" maxlength="100" />
+          <button type="submit" class="nav-search__btn" aria-label="Search">
+            <i class="fas fa-search" aria-hidden="true"></i>
+          </button>
+        </form>
       </div>
       <button class="navbar-toggler" id="hamburger" type="button" aria-label="Toggle menu" aria-expanded="false">
         <span class="navbar-toggler-icon"><i class="fas fa-bars" aria-hidden="true"></i></span>
@@ -121,7 +131,7 @@
       </button>
     </div>
   </main>
-  <button id="backToTop" class="btn btn-primary back-to-top" aria-label="Back to top"><i class="fas fa-arrow-up"></i></button>
+  <button id="backToTop" class="btn btn-primary back-to-top hidden" aria-label="Back to top"><i class="fas fa-arrow-up"></i></button>
 
   <footer class="footer">
     <div class="container">
@@ -161,7 +171,7 @@
         </div>
       </div>
       <div class="footer-bottom">
-        <p>&copy; 2026 Sayiad. <span data-i18n="footer.allRights">All rights reserved.</span></p>
+        <p>&copy; <span id="copyrightYear">2026</span> Sayiad. <span data-i18n="footer.allRights">All rights reserved.</span></p>
         <p class="footer-made" data-i18n="footer.madeWith">Made for fishermen 🎣</p>
       </div>
     </div>

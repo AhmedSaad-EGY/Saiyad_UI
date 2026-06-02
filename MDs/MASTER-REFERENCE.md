@@ -412,15 +412,23 @@ MODERATOR_ROLES = [Auctioneer, Admin]                  # Review + Analytics
 - ✅ **TASK-H8 — viewport-fit + logo paths** — Added `viewport-fit=cover`, fixed `logo.png` → `/logo.png`. **Skipped** apple-touch-icon (needs USER-A2 file)
 - ✅ **TASK-H9 — Sell on Sayiad link** — Added `id="footerSellLink"`, auth-aware routing to dashboard for Fisherman/BaitSeller
 - ✅ **TASK-M1 — PWA Manifest** — Created `src/public/manifest.json`, linked in `index.html` with 4 PWA meta tags
+- ✅ **TASK-M2 — Badge defaults** — Removed "0" from cart + notif badges, added `aria-label`
+- ✅ **TASK-M3 — Empty states** — Added CSS; `renderEmptyState()` already existed, dashboard already used it
+- ✅ **TASK-M4 — Nav search** — Search form in drawer + CSS + submit handler navigating to `#/products?search=QUERY`
+- ✅ **TASK-M5 — Password strength** — Requirements list with live check icons + colored bar on register page
+- ✅ **TASK-M6 — Copyright year** — Dynamic via `new Date().getFullYear()`
+- ✅ **TASK-M7 — robots.txt** — Created in `src/public/robots.txt`
+- ✅ **TASK-M8 — Chevron rotation** — `#userDropdown[aria-expanded="true"] .fa-chevron-down` with 180° rotation
+- ✅ **TASK-M9 — Back-to-top hidden** — Added `hidden` class to back-to-top button
 - ✅ **ESLint — 2 remaining errors fixed** — `prefer-const` in auctions.js, `no-self-assign` in profile.js
 - ✅ **Bootstrap overrides cleanup** — Already done in prior session (verified)
 
 ### Immediate (Next)
-1. **Phase 3 — Continue** (M2: fix badge defaults, M3: empty states, M4: nav search, M5: password strength, M6: copyright year, M7: robots.txt, M8: chevron animation, M9: back-to-top hidden)
+1. **Phase 4 — Low Priority** (L1: WhatsApp link, L2: hreflang, L3: skip-link CSS, L4: unique titles, L5: focus styles)
 
 ### Short-term
-4. Follow TOUGH_CLEANUP_PLAN.md execution order (CSS → Core JS → Pages → Shared → Config)
-5. Standardize Bootstrap usage patterns across all 25 page modules
+2. Follow TOUGH_CLEANUP_PLAN.md execution order (CSS → Core JS → Pages → Shared → Config)
+3. Standardize Bootstrap usage patterns across all 25 page modules
 
 ---
 

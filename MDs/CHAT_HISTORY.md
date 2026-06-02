@@ -1581,4 +1581,62 @@ Verified the 28 unused component variable mappings mentioned in the audit were *
 
 ---
 
+## 42. PHASE 3 COMPLETE — TASKS M2–M9
+
+**Date**: June 3, 2026  
+**Action**: Completed all remaining Phase 3 (Medium Priority) tasks from the implementation plan.
+
+### Tasks Implemented
+
+| Task | Status | Files Changed | Details |
+|------|--------|---------------|---------|
+| **M2 — Badge defaults** | ✅ Done | 1 (`index.html`) | Removed "0" default text from cart + notif badges, added `aria-label` attributes |
+| **M3 — Empty states** | ✅ Already done | 1 (`style.css` — CSS added) | `renderEmptyState()` already existed in `dom.js` with SVG support; CSS added for `.empty-state`, `.empty-state-visual` (with `.float-anim`), typography. Dashboard already used it; products/auctions use Alpine `x-show` which is correct. |
+| **M4 — Nav search** | ✅ Done | 3 (`index.html`, `style.css`, `app.js`) | Search form in drawer, `.nav-search` pill styling with responsive breakpoints, submit handler navigates to `#/products?search=QUERY` |
+| **M5 — Password strength** | ✅ Done | 2 (`register.js`, `style.css`) | Replaced basic Alpine strength bar with `pw-strength` bar + 5-item requirements list (8+ chars, uppercase, lowercase, number, special char). Live `_checkPwStrength()` updates check icons (fa-circle→fa-check-circle), colors bar (red→orange→yellow→green), shows strength label. CSS: `.pw-strength`, `__track`, `__fill`, `__label`, `.pw-reqs` with transitions |
+| **M6 — Copyright year** | ✅ Done | 2 (`index.html`, `app.js`) | Wrapped year in `<span id="copyrightYear">`, dynamic setter via `new Date().getFullYear()` |
+| **M7 — robots.txt** | ✅ Done | 1 (`src/public/robots.txt` — new) | Standard robots.txt with disallow for private hash-routes + sitemap reference. Built in `dist/` at 222 bytes. |
+| **M8 — Chevron rotation** | ✅ Done | 1 (`style.css`) | `#userDropdown .fa-chevron-down` with `transition: transform .2s ease`. Trigger via `[aria-expanded="true"]` (fixed — original `.dropdown.show` would never match since JS toggles `.show` on `.dropdown-menu`, not parent `.dropdown`) |
+| **M9 — Back-to-top hidden** | ✅ Done | 1 (`index.html`) | Added `hidden` class to back-to-top button (starts invisible, shown on scroll past 400px via app.js `visible` class toggle) |
+
+### Bug Fixed During Implementation
+
+| Bug | Context | Root Cause | Fix |
+|-----|---------|------------|-----|
+| Chevron rotation would never activate | TASK-M8 CSS | `.dropdown.show` selector — JS toggles `.show` on `.dropdown-menu`, not parent `.dropdown` | Changed to `#userDropdown[aria-expanded="true"]` — button gets `aria-expanded` set by JS dropdowntoggle handler |
+
+### Files Changed (This Session)
+
+| File | Change |
+|------|--------|
+| `src/index.html` | M2 (badge defaults), M4 (nav search HTML), M6 (copyright span), M9 (back-to-top hidden) |
+| `src/css/style.css` | M3 (empty states CSS), M4 (nav search CSS), M5 (password strength CSS), M8 (chevron rotation CSS) |
+| `src/pages/register.js` | M5 — replaced basic Alpine strength meter with plan's pw-strength + pw-reqs HTML + `_checkPwStrength()` helper |
+| `src/core/app.js` | M4 (search submit handler), M6 (copyright year setter) |
+| `src/public/robots.txt` | **New** — M7 robots.txt |
+| `MDs/CHAT_HISTORY.md` | This section |
+| `MDs/MASTER-REFERENCE.md` | Marked M2–M9 done, updated Immediate Next |
+
+### Build Verification
+
+- `npm run build` — ✅ **0 errors, 0 warnings** (all tasks, every step)
+- Code review — ✅ All changes verified against plan
+
+### Phase 3 Complete Checklist
+
+```
+PHASE 3 — MEDIUM PRIORITY
+[x] TASK-M1  manifest.json created and linked
+[x] TASK-M2  Cart + notification badges emptied (no "0" default)
+[x] TASK-M3  Empty states system (CSS + renderEmptyState() already existed)
+[x] TASK-M4  Nav search bar added + products page reads ?search=
+[x] TASK-M5  Password strength meter + requirements list on register page
+[x] TASK-M6  Copyright year is dynamic
+[x] TASK-M7  robots.txt created
+[x] TASK-M8  Chevron rotation CSS (using aria-expanded, not .dropdown.show)
+[x] TASK-M9  Back-to-top hidden by default
+```
+
+---
+
 *End of chat history record. Update this file at the start of each session by appending new sections.*

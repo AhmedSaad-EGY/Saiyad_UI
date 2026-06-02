@@ -183,8 +183,17 @@ export default function renderRegister(container) {
               <input :type="showPassword ? 'text' : 'password'" class="form-input form-control" id="regPassword" name="password" x-model="password" @input="computeStrength()" placeholder="${t("auth.password")}" required autocomplete="new-password" minlength="8">
               <button type="button" class="toggle-password" @click="togglePw()" :aria-label="showPassword ? $t('auth.hidePassword') : $t('auth.showPassword')"><i :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i></button>
             </div>
-            <div class="password-strength"><div class="password-strength-bar" :class="'password-strength-bar ' + strengthCls"></div></div>
-            <div class="password-strength-text" x-text="strengthLabel"></div>
+            <div class="pw-strength" id="pwStrengthBar" aria-live="polite">
+              <div class="pw-strength__track"><div class="pw-strength__fill" id="pwFill"></div></div>
+              <span class="pw-strength__label" id="pwLabel"></span>
+            </div>
+            <ul class="pw-reqs" id="pwReqs" aria-label="Password requirements">
+              <li id="req-len"><i class="fas fa-circle" aria-hidden="true"></i> 8+ characters</li>
+              <li id="req-upper"><i class="fas fa-circle" aria-hidden="true"></i> Uppercase letter</li>
+              <li id="req-lower"><i class="fas fa-circle" aria-hidden="true"></i> Lowercase letter</li>
+              <li id="req-num"><i class="fas fa-circle" aria-hidden="true"></i> Number</li>
+              <li id="req-special"><i class="fas fa-circle" aria-hidden="true"></i> Special character</li>
+            </ul>
           </div>
           <div class="form-group">
             <label class="form-label" for="regConfirmPw">${t("auth.confirmPassword")}</label>
@@ -227,6 +236,35 @@ export default function renderRegister(container) {
         </div>
       </div>
     </div>`;
+
+  // Password strength live checker
+  const _pwInput = document.getElementById('regPassword');
+  if (_pwInput) _pwInput.addEventListener('input', () => _checkPwStrength(_pwInput.value));
+
+  function _checkPwStrength(pw) {
+    const checks = {
+      len:     pw.length >= 8,
+      upper:   /[A-Z]/.test(pw),
+      lower:   /[a-z]/.test(pw),
+      num:     /[0-9]/.test(pw),
+      special: /[@$!%*?&#^()_+\-={}|;<>?]/.test(pw)
+    };
+    const score  = Object.values(checks).filter(Boolean).length;
+    const colors = ['','#ef4444','#f97316','#eab308','#22c55e','#16a34a'];
+    const labels = ['','Very Weak','Weak','Fair','Strong','Very Strong'];
+
+    Object.entries(checks).forEach(([k,v]) => {
+      const li = document.getElementById('req-' + k);
+      if (!li) return;
+      li.style.color = v ? '#22c55e' : '';
+      li.querySelector('i').className = v ? 'fas fa-check-circle' : 'fas fa-circle';
+    });
+
+    const fill  = document.getElementById('pwFill');
+    const label = document.getElementById('pwLabel');
+    if (fill)  { fill.style.width = (score*20)+'%'; fill.style.background = colors[score]; }
+    if (label) { label.textContent = labels[score]; label.style.color = colors[score]; }
+  }
 
   // Legal link loading UX (vanilla, unchanged)
   document.querySelectorAll(".legal-link").forEach((link) => {
