@@ -59,6 +59,7 @@ Alpine.data('loginForm', () => ({
       localStorage.setItem('refreshToken', data.refreshToken);
       localStorage.setItem('user', JSON.stringify(data.user));
       ensureCsrfToken();
+      sessionStorage.removeItem('sayiadLoginFails');
       updateNavbar();
       navigate('');
     } catch (err) {
@@ -66,6 +67,30 @@ Alpine.data('loginForm', () => ({
         this.unverifiedEmail = this.email.trim();
       } else {
         this.error = err.message;
+        // Track failed attempts
+        let failCount = parseInt(sessionStorage.getItem('sayiadLoginFails') || '0') + 1;
+        sessionStorage.setItem('sayiadLoginFails', failCount);
+
+        if (failCount >= 5) {
+          const submitBtn = document.querySelector('#loginForm button[type="submit"], #loginSubmitBtn');
+          const lockMsg   = document.getElementById('loginLockMsg');
+          if (submitBtn) submitBtn.disabled = true;
+          let secs = 30;
+          if (lockMsg) {
+            lockMsg.classList.remove('hidden');
+            lockMsg.textContent = `Too many failed attempts. Wait ${secs} seconds.`;
+          }
+          const timer = setInterval(() => {
+            secs--;
+            if (lockMsg) lockMsg.textContent = `Too many failed attempts. Wait ${secs} seconds.`;
+            if (secs <= 0) {
+              clearInterval(timer);
+              sessionStorage.removeItem('sayiadLoginFails');
+              if (submitBtn) submitBtn.disabled = false;
+              if (lockMsg) lockMsg.classList.add('hidden');
+            }
+          }, 1000);
+        }
       }
     } finally {
       this.loading = false;
@@ -124,6 +149,7 @@ export default function renderLogin(container) {
               <a href="#/forgot-password" class="text-primary text-decoration-none" style="font-size:var(--text-xs)">${t('auth.forgotPassword')}</a>
             </div>
           </div>
+          <div id="loginLockMsg" class="field-error hidden" role="alert" aria-live="assertive"></div>
           <button type="submit" class="btn btn-primary w-100 btn-lg" :disabled="loading">
             <i class="fas fa-spinner spinner" x-show="loading" x-cloak></i>
             <span x-text="loading ? $t('auth.signingIn') : $t('auth.signIn')"></span>

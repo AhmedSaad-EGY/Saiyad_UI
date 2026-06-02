@@ -3,7 +3,7 @@ import { api } from '../core/api/client.js';
 import { isAuthenticated, getUser, hasAnyRole, requireAuth, updateCartBadge } from '../core/auth/index.js';
 import { SELLER_ROLES } from '../shared/constants/roles.js';
 import { router } from '../core/router/index.js';
-import { showError, showLoading, escapeHtml, progressiveImg, observeAnimations, fadeInContent, animate } from '../core/utils/dom.js';
+import { showError, showLoading, escapeHtml, progressiveImg, observeAnimations, fadeInContent, animate, safeSetHTML } from '../core/utils/dom.js';
 import { formatPrice, formatDate, statusClass, tStatus, tCondition, renderStars } from '../core/utils/format.js';
 import { renderProductCards, openLightbox, trackRecentlyViewed, showToast } from '../core/utils/ui.js';
 
@@ -175,9 +175,9 @@ export default async function renderProductDetail(container, route, params) {
       const pageSize = 5;
       const paginated = reviewsArr.slice(0, page * pageSize);
       if (paginated.length === 0) {
-        reviewsList.innerHTML = `<p class="text-muted text-center p-4">${t("review.noReviews")}</p>`;
+        safeSetHTML(reviewsList, `<p class="text-muted text-center p-4">${t("review.noReviews")}</p>`);
       } else {
-        reviewsList.innerHTML = paginated.map(r => `
+        safeSetHTML(reviewsList, paginated.map(r => `
           <div class="notif-item">
             <div class="flex-fill">
               <strong>${escapeHtml(r.userName || "User")}</strong>
@@ -186,7 +186,7 @@ export default async function renderProductDetail(container, route, params) {
               <small class="text-muted">${formatDate(r.createdAt)}</small>
             </div>
           </div>
-        `).join('');
+        `).join(''));
       }
       const loadMoreBtn = document.getElementById("reviewPagination");
       if (reviewsArr.length > page * pageSize) loadMoreBtn.classList.remove("d-none");
@@ -424,7 +424,7 @@ export default async function renderProductDetail(container, route, params) {
           close();
           router(); // Re-render page to show "View Auction" button
         } catch (err) {
-          alertDiv.innerHTML = `<div class="alert alert-error">${escapeHtml(err.message)}</div>`;
+          safeSetHTML(alertDiv, `<div class="alert alert-error">${escapeHtml(err.message)}</div>`);
         } finally {
           submit.disabled = false;
           submit.textContent = t("auctions.title");
@@ -518,18 +518,18 @@ export default async function renderProductDetail(container, route, params) {
             newReview.className = "notif-item";
             newReview.style.animation = "";
             animate(newReview, 'fadeInUp', { duration: '0.3s' });
-            newReview.innerHTML = `
+            safeSetHTML(newReview, `
               <div class="flex-fill">
                 <strong>${escapeHtml(user?.fullName || "You")}</strong>
                 <span class="text-warning">${renderStars(rating)}</span>
                 ${comment ? `<p class="mt-1" style="color:var(--text-secondary);font-size:0.9rem">
                   ${escapeHtml(comment)}</p>` : ""}
                 <small class="text-muted">${formatDate(new Date().toISOString())}</small>
-              </div>`;
+              </div>`);
             reviewsList.insertAdjacentElement("afterbegin", newReview);
           }
         } catch (err) {
-          alertDiv.innerHTML = `<div class="alert alert-error">${escapeHtml(err.message)}</div>`;
+          safeSetHTML(alertDiv, `<div class="alert alert-error">${escapeHtml(err.message)}</div>`);
         } finally {
           submit.disabled = false;
           submit.textContent = t("review.submit");

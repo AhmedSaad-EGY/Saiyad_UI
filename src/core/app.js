@@ -284,6 +284,16 @@ applyTheme(savedTheme);
 syncUserRoleAttribute();
 initHeroTilt();
 
+// Footer "Sell on Sayiad" — route sellers to dashboard
+const _sellLink = document.getElementById('footerSellLink');
+if (_sellLink) {
+  const _seller = getUser();
+  if (_seller && ['Fisherman', 'BaitSeller'].includes(_seller.role)) {
+    _sellLink.href = '#/dashboard';
+    _sellLink.setAttribute('aria-label', 'Go to your seller dashboard');
+  }
+}
+
 themeToggle.addEventListener("click", () => {
   const current = document.documentElement.getAttribute("data-theme");
   const next = current === "dark" ? "light" : "dark";

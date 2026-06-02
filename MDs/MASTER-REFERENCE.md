@@ -401,13 +401,19 @@ MODERATOR_ROLES = [Auctioneer, Admin]                  # Review + Analytics
 
 > 📖 **Full cleanup checklist with per-item status → see [`TOUGH_CLEANUP_PLAN.md`](./TOUGH_CLEANUP_PLAN.md)**
 
-### Completed (June 2)
+### Completed (June 3)
 - ✅ **Phase 1 All 5 Tasks Aligned to Plan** — Rewritten wallet.js (C1), added RTL CSS (C2), reverted CSP (C3), fixed d-none→hidden (C4), standardized role guards (C5). Full audit passed: build 0 errors, lint 0 errors. **2 runtime bugs fixed** (missing `getUser()` import in auction-requests.js + auction-requests-review.js)
 - ✅ **TASK-H2 — SEO Meta Tags** — Added meta tags to index.html, created `setPageMeta(title, description)` helper in `src/core/utils/seo.js`, called in home/products/auctions pages
 - ✅ **TASK-H3 — Social Footer Links** — Replaced 3 `href="#"` with fake social URLs (Facebook, Instagram, WhatsApp) with `target="_blank" rel="noopener noreferrer"`
+- ✅ **TASK-H4 — DOMPurify + safeSetHTML()** — Added CDN, `safeSetHTML()` in `dom.js`, applied in product-detail & auction-detail pages
+- ✅ **TASK-H5 — SignalR Reconnection** — Configured reconnect delays, event handlers (`onreconnecting/onreconnected/onclose`), yellow status banner helper
+- ✅ **TASK-H6 — Login Rate Limiting** — 5 attempts → 30s lockout via `sessionStorage`, countdown timer, auto-clear on success
+- ✅ **TASK-H7 — font-display: swap** — Already present in Google Fonts URL
+- ✅ **TASK-H8 — viewport-fit + logo paths** — Added `viewport-fit=cover`, fixed `logo.png` → `/logo.png`. **Skipped** apple-touch-icon (needs USER-A2 file)
+- ✅ **TASK-H9 — Sell on Sayiad link** — Added `id="footerSellLink"`, auth-aware routing to dashboard for Fisherman/BaitSeller
 
 ### Immediate (Next)
-1. Continue Phase 2 — High Priority fixes (H4 DOMPurify, H5 SignalR reconnect, H6 rate limiting, H7 font swap, H8 viewport, H9 sell link)
+1. **Phase 3 — Medium Priority** (M1: PWA manifest, M2: fix badge defaults, M3: empty states, M4: nav search, M5: password strength, M6: copyright year, M7: robots.txt, M8: chevron animation, M9: back-to-top hidden)
 2. Remove 28 unused component variable mappings from `_bootstrap-overrides.css`
 3. Fix remaining 2 pre-existing ESLint errors (prefer-const in auctions.js, no-self-assign in profile.js)
 

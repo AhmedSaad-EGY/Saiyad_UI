@@ -3,10 +3,10 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="theme-color" content="#f0f4f8" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#0b1120" media="(prefers-color-scheme: dark)">
-  <link rel="icon" href="logo.png" type="image/png">
+  <link rel="icon" href="/logo.png" type="image/png">
   <title>Sayiad - Fishing Marketplace & Auctions</title>
   <meta name="description"         content="Sayiad — Egypt's premier fishing marketplace. Buy fresh fish, seafood, and fishing equipment. Join live fish auctions online.">
   <meta property="og:site_name"    content="Sayiad">
@@ -36,7 +36,7 @@
   <nav class="navbar navbar-expand-lg">
     <div class="container">
       <a href="#/" class="navbar-brand" aria-label="Sayiad Home">
-        <img src="logo.png" alt="Sayiad" class="navbar-brand-img">
+        <img src="/logo.png" alt="Sayiad" class="navbar-brand-img">
         <span class="navbar-brand-text">Sayiad</span>
       </a>
       <div class="nav-drawer" id="navDrawer">
@@ -135,7 +135,7 @@
           <nav class="footer-links">
             <a href="#/products" class="footer-link" data-i18n="nav.products">Products</a>
             <a href="#/auctions" class="footer-link" data-i18n="nav.auctions">Auctions</a>
-            <a href="#/register" class="footer-link" data-i18n="footer.sellOnSayiad">Sell on Sayiad</a>
+            <a href="#/register" id="footerSellLink" class="footer-link" data-i18n="footer.sellOnSayiad">Sell on Sayiad</a>
           </nav>
         </div>
         <div class="col-12 col-md-3">
@@ -161,7 +161,7 @@
       </div>
     </div>
   </footer>
-  <script defer type="module" src="pages/wallet.js?v=20260517"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.5/purify.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
   <script type="module" src="/main.js"></script>
 </body>
