@@ -3,6 +3,8 @@ import { t } from '../core/i18n/index.js';
 import { api } from '../core/api/client.js';
 import { escapeHtml, observeAnimations, initPullToRefresh, initInfiniteScroll } from '../core/utils/dom.js';
 import { formatPrice } from '../core/utils/format.js';
+import { setPageMeta } from '../core/utils/seo.js';
+
 Alpine.data('productsPage', () => ({
   // Filter state
   search: '',
@@ -211,6 +213,7 @@ Alpine.data('productsPage', () => ({
 }));
 
 export default async function renderProducts(_container, _fullPath, params) {
+  setPageMeta('Fish & Seafood Products', 'Browse fresh fish and seafood on Sayiad marketplace.');
   _container.innerHTML = `
     <div x-data="productsPage" class="products-page-alpine" @keydown.escape.window="closeSearchOverlay(); filterSheetOpen = false">
       <div class="section-header"><h2><i class="fas fa-store"></i> ${t('products.title')}</h2></div>

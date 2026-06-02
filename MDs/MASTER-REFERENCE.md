@@ -403,9 +403,11 @@ MODERATOR_ROLES = [Auctioneer, Admin]                  # Review + Analytics
 
 ### Completed (June 2)
 - ✅ **Phase 1 Complete** — All 5 critical tasks handled (C1 wallet existed, C2 RTL existed, C3 security headers implemented, C4 skeleton implemented, C5 guards existed)
+- ✅ **TASK-H2 — SEO Meta Tags** — Added meta tags to index.html, created `setPageMeta(title, description)` helper in `src/core/utils/seo.js`, called in home/products/auctions pages
+- ✅ **TASK-H3 — Social Footer Links** — Replaced 3 `href="#"` with fake social URLs (Facebook, Instagram, WhatsApp) with `target="_blank" rel="noopener noreferrer"`
 
 ### Immediate (Next)
-1. Start Phase 2 — High Priority fixes (H2 SEO, H3 social links, H4 DOMPurify, H5 SignalR reconnect, H6 rate limiting, H8 viewport, H9 sell link)
+1. Continue Phase 2 — High Priority fixes (H4 DOMPurify, H5 SignalR reconnect, H6 rate limiting, H8 viewport, H9 sell link)
 2. Remove 28 unused component variable mappings from `_bootstrap-overrides.css`
 3. ❌ ~~Fix duplicate `@keyframes slideDown`~~ ✅ Already fixed — app.js no longer injects it
 

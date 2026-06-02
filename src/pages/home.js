@@ -6,6 +6,8 @@ import { ROLES, SELLER_ROLES } from '../shared/constants/roles.js';
 import { escapeHtml, observeAnimations, initPullToRefresh } from '../core/utils/dom.js';
 import { formatPrice, statusClass, tStatus } from '../core/utils/format.js';
 import { renderRecentlyViewed } from '../core/utils/ui.js';
+import { setPageMeta } from '../core/utils/seo.js';
+
 
 Alpine.data('homePage', () => ({
   loading: true,
@@ -122,6 +124,7 @@ Alpine.data('homePage', () => ({
 }));
 
 export default async function renderHome(container) {
+  setPageMeta('Home', "Egypt's premier fishing marketplace.");
   container.innerHTML = `
     <style>
       .hero {

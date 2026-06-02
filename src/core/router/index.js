@@ -167,10 +167,7 @@ export async function router(force = false) {
     const href = link.getAttribute('href');
     const isMatch = href === `#/${cleanPath}` || (cleanPath === '' && href === '#/');
     link.setAttribute('aria-current', isMatch ? 'page' : 'false');
-  });
-
-  if (_navTimer) clearTimeout(_navTimer);
-  _navTimer = setTimeout(async () => {
+  });    if (_navTimer) clearTimeout(_navTimer);    _navTimer = setTimeout(async () => {
     _navTimer = null;
     const { route: curRoute } = getRoute();
     if (routeKey !== (curRoute.includes("/") ? curRoute.split("/")[0] : curRoute)) return;

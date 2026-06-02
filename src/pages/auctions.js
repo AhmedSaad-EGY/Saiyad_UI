@@ -3,6 +3,8 @@ import { t } from '../core/i18n/index.js';
 import { api } from '../core/api/client.js';
 import { observeAnimations, initPullToRefresh, initInfiniteScroll } from '../core/utils/dom.js';
 import { formatPrice, statusClass, tStatus } from '../core/utils/format.js';
+import { setPageMeta } from '../core/utils/seo.js';
+
 
 Alpine.data('auctionsPage', () => ({
   search: '',
@@ -154,6 +156,7 @@ Alpine.data('auctionsPage', () => ({
 }));
 
 export default async function renderAuctions(_container, _fullPath, params) {
+  setPageMeta('Live Fish Auctions', 'Join live fish auctions on Sayiad. Bid on fresh catches.');
   _container.innerHTML = `
     <div x-data="auctionsPage" @keydown.escape.window="filterSheetOpen = false">
       <div class="section-header"><h2><i class="fas fa-gavel"></i> ${t("auctions.title")}</h2></div>
