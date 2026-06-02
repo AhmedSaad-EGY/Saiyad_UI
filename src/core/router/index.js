@@ -76,8 +76,8 @@ export async function router(force = false) {
   // Hide global skeleton and error on any route change
   const _sk = document.getElementById('globalSkeleton');
   const _ge = document.getElementById('globalError');
-  if (_sk) _sk.classList.add('d-none');
-  if (_ge) _ge.classList.add('d-none');
+  if (_sk) _sk.classList.add('hidden');
+  if (_ge) _ge.classList.add('hidden');
 
   const { route, params } = getRoute();
   const app = document.getElementById("app");

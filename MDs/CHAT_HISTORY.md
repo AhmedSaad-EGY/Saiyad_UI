@@ -1404,4 +1404,84 @@ All three include `target="_blank" rel="noopener noreferrer"`.
 
 ---
 
+## 39. PHASE 1 ALIGNMENT — ALL 5 TASKS MATCHED TO PLAN + AUDIT VERIFICATION
+
+**Date**: June 2, 2026  
+**Action**: Fully re-aligned all Phase 1 critical tasks to match IMPLEMENTATION_PLAN.md exactly. Ran comprehensive audit with build + lint verification.
+
+### TASK-C1 — Wallet Page Rewrite
+
+| File | Before | After |
+|------|--------|-------|
+| `src/pages/wallet.js` | Alpine.js `Alpine.data('walletPage', ...)` | Plan's exact `function initWalletPage()` with DOM manipulation, `getUser()` guard, `setPageMeta()`, wallet HTML template, event wiring, balance/transactions/deposit helpers, `escapeHTML()` |
+| `src/index.html` | Missing script tag | Added `<script defer type="module" src="pages/wallet.js?v=20260517">` |
+| `src/css/style.css` | No wallet CSS | Added wallet page CSS + `.hidden` utility class |
+
+**Build:** ✅ 0 errors
+
+### TASK-C2 — RTL CSS Added
+
+Added the plan's exact 8 `[dir="rtl"]` CSS rules at the end of `style.css`. No JavaScript changes needed — `applyLanguage()` in `app.js` and `setLanguage()` in `i18n/index.js` already correctly set `document.documentElement.lang` and `dir`.
+
+**Build:** ✅ 0 errors
+
+### TASK-C3 — CSP `style-src` Reverted
+
+Removed `cdnjs.cloudflare.com` from `style-src` in `vercel.json` CSP to match the plan exactly. Note: this will block Font Awesome and Animate.css CDN stylesheets.
+
+**Build:** ✅ 0 errors
+
+### TASK-C4 — `d-none` → `hidden`
+
+| File | Change |
+|------|--------|
+| `src/index.html` | `class="global-error d-none"` → `class="global-error hidden"` |
+| `src/core/router/index.js` | `.classList.add('d-none')` → `.classList.add('hidden')` for both skeleton and error |
+
+The `.hidden` class was provided by TASK-C1's CSS addition (`display: none !important`).
+
+**Build:** ✅ 0 errors
+
+### TASK-C5 — Role Guards Standardized
+
+Updated all 4 protected pages to use the plan's exact `getUser()` + hardcoded role string pattern:
+
+| File | Old Pattern | New Pattern (Plan) |
+|------|-------------|-------------------|
+| `admin.js` | `hasAnyRole(ROLES.ADMIN)` | `getUser()` + `_u.role !== 'Admin'` + `window.location.hash = '#/';` |
+| `auction-requests.js` | `hasAnyRole(...REQUESTER_ROLES)` | `getUser()` + `!['Auctioneer','Admin'].includes(_u.role)` + redirect |
+| `auction-requests-review.js` | `hasAnyRole(...MODERATOR_ROLES)` | `getUser()` + `!['Auctioneer','Admin'].includes(_u.role)` + redirect |
+| `auctioneer-analytics.js` | `hasAnyRole(...MODERATOR_ROLES)` | `getUser()` + `_u.role !== 'Auctioneer' && _u.role !== 'Admin'` + empty state |
+
+**Build:** ✅ 0 errors
+
+### Phase 1 Full Audit — Bugs Found & Fixed
+
+During the comprehensive audit (build + lint + code review against plan), 2 runtime bugs were found and fixed:
+
+| Bug | File | Issue | Fix |
+|-----|------|-------|-----|
+| 1 | `auction-requests.js` | `getUser()` used without import — **ReferenceError at runtime** | Added `import { getUser }`; removed unused `requireAuth`, `hasAnyRole`, `ROLES` imports |
+| 2 | `auction-requests-review.js` | `getUser()` used without import — **ReferenceError at runtime** | Added `import { getUser }`; removed unused `requireAuth`, `hasAnyRole`, `MODERATOR_ROLES` imports |
+
+### Verification Results
+
+| Check | Result |
+|-------|--------|
+| **Build** (`npm run build`) | ✅ 0 errors, 0 warnings |
+| **Lint** (`npx eslint src/`) | ✅ 0 errors from Phase 1 changes (2 pre-existing unrelated errors remain) |
+| **Code Review** | ✅ All 5 tasks match plan exactly |
+
+### Summary
+
+| Task | Status | Files Changed |
+|------|--------|---------------|
+| C1 — Wallet page rewritten | ✅ Plan match | 3 (wallet.js, index.html, style.css) |
+| C2 — RTL CSS added | ✅ Plan match | 1 (style.css) |
+| C3 — CSP reverted | ✅ Plan match | 1 (vercel.json) |
+| C4 — d-none → hidden | ✅ Plan match | 2 (index.html, router/index.js) |
+| C5 — Role guards standardized | ✅ Plan match | 4 (admin.js, auction-requests.js, auction-requests-review.js, auctioneer-analytics.js) |
+
+---
+
 *End of chat history record. Update this file at the start of each session by appending new sections.*

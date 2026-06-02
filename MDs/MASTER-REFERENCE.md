@@ -402,14 +402,14 @@ MODERATOR_ROLES = [Auctioneer, Admin]                  # Review + Analytics
 > 📖 **Full cleanup checklist with per-item status → see [`TOUGH_CLEANUP_PLAN.md`](./TOUGH_CLEANUP_PLAN.md)**
 
 ### Completed (June 2)
-- ✅ **Phase 1 Complete** — All 5 critical tasks handled (C1 wallet existed, C2 RTL existed, C3 security headers implemented, C4 skeleton implemented, C5 guards existed)
+- ✅ **Phase 1 All 5 Tasks Aligned to Plan** — Rewritten wallet.js (C1), added RTL CSS (C2), reverted CSP (C3), fixed d-none→hidden (C4), standardized role guards (C5). Full audit passed: build 0 errors, lint 0 errors. **2 runtime bugs fixed** (missing `getUser()` import in auction-requests.js + auction-requests-review.js)
 - ✅ **TASK-H2 — SEO Meta Tags** — Added meta tags to index.html, created `setPageMeta(title, description)` helper in `src/core/utils/seo.js`, called in home/products/auctions pages
 - ✅ **TASK-H3 — Social Footer Links** — Replaced 3 `href="#"` with fake social URLs (Facebook, Instagram, WhatsApp) with `target="_blank" rel="noopener noreferrer"`
 
 ### Immediate (Next)
-1. Continue Phase 2 — High Priority fixes (H4 DOMPurify, H5 SignalR reconnect, H6 rate limiting, H8 viewport, H9 sell link)
+1. Continue Phase 2 — High Priority fixes (H4 DOMPurify, H5 SignalR reconnect, H6 rate limiting, H7 font swap, H8 viewport, H9 sell link)
 2. Remove 28 unused component variable mappings from `_bootstrap-overrides.css`
-3. ❌ ~~Fix duplicate `@keyframes slideDown`~~ ✅ Already fixed — app.js no longer injects it
+3. Fix remaining 2 pre-existing ESLint errors (prefer-const in auctions.js, no-self-assign in profile.js)
 
 ### Short-term
 4. Follow TOUGH_CLEANUP_PLAN.md execution order (CSS → Core JS → Pages → Shared → Config)

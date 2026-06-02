@@ -1,18 +1,14 @@
 import { t } from '../core/i18n/index.js';
 import { api } from '../core/api/client.js';
-import { requireAuth, hasAnyRole } from '../core/auth/index.js';
-import { ROLES } from '../shared/constants/roles.js';
+import { getUser } from '../core/auth/index.js';
 import { escapeHtml } from '../core/utils/dom.js';
 import { statusClass } from '../core/utils/format.js';
 import { showToast } from '../core/utils/ui.js';
 import { validateForm, clearFieldError } from '../core/utils/validation.js';
 
 export default async function renderAuctionRequests(container) {
-  if (!(await requireAuth())) return;
-  if (!hasAnyRole(ROLES.FISHERMAN)) {
-    container.innerHTML = `<div class="empty-state"><i class="fas fa-gavel"></i><h3>${t("common.pageNotFound")}</h3></div>`;
-    return;
-  }
+  const _u = getUser();
+  if (!_u || !['Auctioneer','Admin'].includes(_u.role)) { window.location.hash = '#/'; return; }
 
   container.innerHTML = `
     <div class="section-header">

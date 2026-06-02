@@ -53,3 +53,40 @@
   min-height: 60vh; gap: 1rem; padding: 2rem;
 }
 .global-error > i { font-size: 3rem; opacity: .4; }
+
+/* ===================== WALLET PAGE ===================== */
+.wallet-page { padding: 2rem 1.5rem; max-width: 900px; margin: 0 auto; }
+.wallet-header { margin-bottom: 1.5rem; }
+.wallet-header h1 { font-size: 1.75rem; font-weight: 700; }
+.wallet-balance-card {
+  background: var(--card-bg, #1a2a4a);
+  border-radius: 16px; padding: 2rem;
+  display: flex; flex-direction: column; align-items: flex-start; gap: 0.5rem;
+  margin-bottom: 2rem; box-shadow: 0 4px 24px rgba(0,0,0,.12);
+}
+.wallet-balance-label { font-size: .875rem; opacity: .7; }
+.wallet-balance-amount { font-size: 2.5rem; font-weight: 700; letter-spacing: -.5px; }
+.wallet-balance-currency { font-size: .875rem; opacity: .7; margin-top: -.5rem; }
+.wallet-transactions-section h2 { font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem; }
+.tx-type { text-transform: capitalize; font-size: .8125rem; font-weight: 500;
+           padding: 2px 8px; border-radius: 4px; }
+.tx-positive { color: #22c55e; font-weight: 600; }
+.tx-negative { color: #ef4444; font-weight: 600; }
+.table-responsive { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.data-table { width: 100%; border-collapse: collapse; font-size: .875rem; }
+.data-table th { text-align: start; padding: .75rem 1rem; font-weight: 500; opacity: .7;
+                 border-bottom: 1px solid var(--border-color, #2a3a5a); }
+.data-table td { padding: .875rem 1rem; border-bottom: 1px solid var(--border-color, #1e2d4a); }
+
+/* ===================== HIDDEN UTILITY ===================== */
+.hidden { display: none !important; }
+
+/* ===================== RTL SUPPORT ===================== */
+[dir="rtl"] .nav-links        { flex-direction: row-reverse; }
+[dir="rtl"] .dropdown-menu    { left: auto; right: 0; }
+[dir="rtl"] .breadcrumb       { flex-direction: row-reverse; }
+[dir="rtl"] .card-meta        { flex-direction: row-reverse; }
+[dir="rtl"] .form-group label { text-align: right; }
+[dir="rtl"] .modal-header     { flex-direction: row-reverse; }
+[dir="rtl"] .toast            { left: 1rem; right: auto; }
+[dir="rtl"] .back-btn i       { transform: scaleX(-1); }

@@ -8,11 +8,8 @@ import { formatPrice, formatDate, statusClass, tStatus } from '../core/utils/for
 import { showConfirm, showToast } from '../core/utils/ui.js';
 
 export default async function renderAdmin(container) {
-  const user = getUser();
-  if (!user || !hasAnyRole(ROLES.ADMIN)) {
-    container.innerHTML = `<div class="empty-state"><i class="fas fa-shield-alt"></i><h3>${t("admin.noAccess")}</h3></div>`;
-    return;
-  }
+  const _u = getUser();
+  if (!_u || _u.role !== 'Admin') { window.location.hash = '#/'; return; }
 
   const tabs = [
     { id: "users", icon: "fa-users", label: t("admin.users") },

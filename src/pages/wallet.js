@@ -1,204 +1,229 @@
-import { t } from '../core/i18n/index.js';
+// pages/wallet.js — Sayiad Wallet Page
+// Following implementation plan TASK-C1 exactly.
+
 import { api } from '../core/api/client.js';
-import { requireAuth, getUser } from '../core/auth/index.js';
-import { escapeHtml, observeAnimations } from '../core/utils/dom.js';
-import Alpine from 'alpinejs';
+import { getUser } from '../core/auth/index.js';
+import { setPageMeta } from '../core/utils/seo.js';
+import { showToast } from '../core/utils/ui.js';
 
-Alpine.data('walletPage', () => ({
-  wallet: null,
-  currentPage: null,
-  depositAmount: 0,
-  depositMsg: '',
-  depositMsgClass: '',
-  depositing: false,
-  loading: true,
-  escapeHtml,
+function initWalletPage() {
+  const app = document.getElementById('app');
 
-  get depositError() {
-    if (this.depositAmount === '' || this.depositAmount == null) return '';
-    const amt = parseFloat(this.depositAmount);
-    if (isNaN(amt) || amt <= 0) return t('wallet.invalidAmount');
-    if (amt > 100000) return t('wallet.amountTooLarge');
-    const dec = this.depositAmount.toString().split('.')[1];
-    if (dec && dec.length > 2) return t('wallet.invalidDecimal');
-    return '';
-  },
+  // ── Role guard: must be logged in ──────────────────────────────────────────
+  const user = getUser();
+  if (!user) { window.location.hash = '#/login'; return; }
 
-  get isAdmin() {
-    const user = getUser();
-    return user && user.role === 'Admin';
-  },
+  setPageMeta('My Wallet', 'Manage your Sayiad wallet balance and transactions.');
 
-  async init() {
-    try {
-      this.wallet = await api.get("/wallet");
-      this.currentPage = await api.get("/wallet/transactions?page=1&pageSize=20");
-    } catch {
-      this.wallet = null;
-    } finally {
-      this.loading = false;
-      this.$nextTick(() => observeAnimations());
-    }
-  },
+  app.innerHTML = `
+    <section class="wallet-page" aria-label="Wallet">
+      <div class="container">
 
-  formatEGP(n) {
-    try { return new Intl.NumberFormat("en-EG", { style: "currency", currency: "EGP" }).format(n); }
-    catch { return `EGP ${  Number(n || 0).toFixed(2)}`; }
-  },
+        <header class="wallet-header">
+          <h1 data-i18n="wallet_title">My Wallet</h1>
+        </header>
 
-  formatDate(d) {
-    try { return new Date(d).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }); }
-    catch { return d; }
-  },
-
-  txnIcon(type) {
-    switch (type) {
-      case "Deposit": return "fa-arrow-down text-success";
-      case "Credit":  return "fa-arrow-down text-success";
-      case "Release": return "fa-undo text-info";
-      case "Hold":    return "fa-lock text-warning";
-      case "Debit":   return "fa-arrow-up text-danger";
-      case "Transfer": return "fa-exchange-alt text-primary";
-      case "PlatformFee": return "fa-percentage text-primary";
-      case "SubscriptionPayment": return "fa-crown text-warning";
-      case "AuctionPayment": return "fa-gavel text-danger";
-      case "AuctionPayout": return "fa-hand-holding-usd text-success";
-      default:        return "fa-circle text-muted";
-    }
-  },
-
-  txnLabel(type) {
-    const labels = {
-      "PlatformFee": t("wallet.platformFee"),
-      "SubscriptionPayment": t("wallet.subPayment"),
-      "AuctionPayment": t("wallet.auctionPayment"),
-      "AuctionPayout": t("wallet.auctionPayout"),
-    };
-    return labels[type] || type;
-  },
-
-  async submitDeposit() {
-    if (this.depositError) {
-      this.depositMsg = this.depositError;
-      this.depositMsgClass = "text-danger";
-      return;
-    }
-    const amount = parseFloat(this.depositAmount);
-    this.depositing = true;
-    this.depositMsg = "";
-    this.depositMsgClass = "";
-    try {
-      const updated = await api.post("/wallet/deposit", { amount });
-      this.wallet = updated;
-      this.depositAmount = 0;
-      this.depositMsg = t("wallet.depositSuccess");
-      this.depositMsgClass = "text-success";
-      await this.loadTransactions(1);
-    } catch (e) {
-      this.depositMsg = e.message || t("wallet.depositError");
-      this.depositMsgClass = "text-danger";
-    } finally {
-      this.depositing = false;
-    }
-  },
-
-  async loadTransactions(page) {
-    try {
-      this.currentPage = await api.get(`/wallet/transactions?page=${  page  }&pageSize=20`);
-    } catch {
-      this.currentPage = { items: [], totalPages: 0, page: 1 };
-    }
-  },
-}));
-
-export default async function renderWallet(container) {
-  if (!(await requireAuth())) return;
-
-  container.innerHTML = `
-    <div class="section-header"><h2><i class="fas fa-wallet"></i> ${t("wallet.title")}</h2></div>
-    <div x-data="walletPage">
-      <template x-if="loading">
-        <div class="skeleton-shimmer" style="padding:20px 0">
-          <div class="skeleton skeleton-title" style="width:20%"></div>
-          <div class="skeleton skeleton-text" style="width:40%;height:48px"></div>
-          <div class="skeleton skeleton-text" style="width:60%"></div>
-          <div style="margin-top:32px">
-            <div class="skeleton skeleton-title" style="width:25%"></div>
-            <div class="skeleton skeleton-text"></div>
-            <div class="skeleton skeleton-text"></div>
+        <div class="wallet-balance-card" id="walletBalanceCard">
+          <div class="wallet-balance-label" data-i18n="wallet_balance">Available Balance</div>
+          <div class="wallet-balance-amount" id="walletBalanceAmount" aria-live="polite">
+            <span aria-busy="true" data-i18n="loading">Loading…</span>
           </div>
+          <div class="wallet-balance-currency">EGP</div>
+          <button class="btn btn-primary" id="topUpBtn" data-i18n="wallet_topup">
+            <i class="fas fa-plus-circle" aria-hidden="true"></i> Top Up
+          </button>
         </div>
-      </template>
-      <div x-show="!loading && wallet" x-transition:enter="transition-fade" x-transition:enter-start="op-0" x-transition:enter-end="op-100">
-        <div>
-          <div class="wallet-container">
-            <div class="wallet-card glass-card card animate-on-scroll">
-              <div class="card-body">
-              <div class="wallet-balance-row">
-                <div class="wallet-balance-item">
-                  <span class="wallet-label">${t("wallet.balance")}</span>
-                  <span class="wallet-amount" x-text="wallet ? formatEGP(wallet.balance) : ''"></span>
-                </div>
-                <div class="wallet-balance-item">
-                  <span class="wallet-label">${t("wallet.held")}</span>
-                  <span class="wallet-amount wallet-held" x-text="wallet ? formatEGP(wallet.heldBalance) : ''"></span>
-                </div>
-                <div class="wallet-balance-item">
-                  <span class="wallet-label">${t("wallet.available")}</span>
-                  <span class="wallet-amount wallet-available" x-text="wallet ? formatEGP(wallet.availableBalance) : ''"></span>
-                </div>
-              </div>
-              <div class="wallet-deposit-row" x-show="!isAdmin">
-                <div style="display:flex;flex-direction:column;gap:4px">
-                  <div style="display:flex;gap:8px;align-items:center">
-                    <input type="number" x-model="depositAmount" class="form-control" :class="depositError ? 'is-invalid' : ''" placeholder="${t("wallet.enterAmount")}" min="1" step="0.01" style="max-width:200px">
-                    <button class="btn btn-primary" :disabled="depositing || !!depositError" @click.prevent="submitDeposit()"><i class="fas" :class="depositing ? 'fa-spinner spinner' : 'fa-plus'"></i> ${t("wallet.deposit")}</button>
-                  </div>
-                  <span x-show="depositError" x-text="depositError" class="mt-1 small text-danger"></span>
-                </div>
-              </div>
-              <div class="wallet-readonly-notice" x-show="isAdmin" style="padding:12px 0;opacity:0.8">
-                <i class="fas fa-info-circle"></i> ${t("wallet.readOnly")}
-              </div>
-              <div class="wallet-msg" :class="depositMsgClass" x-text="depositMsg" x-show="depositMsg"></div>
-              </div>
+
+        <section class="wallet-transactions-section" aria-labelledby="txHeading">
+          <h2 id="txHeading" data-i18n="wallet_history">Transaction History</h2>
+          <div id="walletTransactionsContainer" aria-live="polite" aria-busy="true">
+            <div class="loading-spinner" role="status" aria-label="Loading transactions">
+              <i class="fas fa-spinner fa-spin" aria-hidden="true"></i>
             </div>
-            <div class="section-header mt-5"><h3><i class="fas fa-list"></i> ${t("wallet.transactions")}</h3></div>
-            <template x-if="currentPage && currentPage.items && currentPage.items.length > 0">
-              <div class="wallet-txn-table animate-on-scroll">
-                <table class="table">
-                  <caption class="small text-muted" style="caption-side:bottom;margin-top:8px">${t("wallet.transactions")}</caption>
-                  <thead><tr><th scope="col">${t("wallet.date")}</th><th scope="col">${t("wallet.type")}</th><th scope="col">${t("wallet.description")}</th><th scope="col">${t("wallet.amount")}</th></tr></thead>
-                  <tbody>
-                    <template x-for="txn in currentPage.items" :key="txn.id">
-                      <tr>
-                        <td x-text="formatDate(txn.createdAt)"></td>
-                        <td><i class="fas" :class="txnIcon(txn.type)"></i> <span x-text="txnLabel(txn.type)"></span></td>
-                        <td x-text="escapeHtml(txn.description || '')"></td>
-                        <td :class="txn.amount >= 0 ? 'text-success' : 'text-danger'" x-text="formatEGP(txn.amount)"></td>
-                      </tr>
-                    </template>
-                  </tbody>
-                </table>
-                <div class="pagination d-flex gap-2 justify-content-center mt-3" x-show="currentPage.totalPages > 1">
-                  <template x-for="p in currentPage.totalPages" :key="p">
-                    <button class="btn btn-sm" :class="p === (currentPage.page || 1) ? 'btn-primary' : 'btn-outline'" @click="loadTransactions(p)" x-text="p"></button>
-                  </template>
-                </div>
-              </div>
-            </template>
-            <template x-if="currentPage && (!currentPage.items || currentPage.items.length === 0)">
-              <div class="empty-state mt-3">
-                <div class="empty-state-visual"><i class="fas fa-receipt fs-1 text-muted"></i></div>
-                <p class="text-muted m-0">${t("wallet.noTransactions")}</p>
-              </div>
-            </template>
+          </div>
+        </section>
+
+      </div>
+    </section>
+
+    <!-- ── Top-Up Modal ──────────────────────────────────────────────────── -->
+    <div class="modal-overlay hidden" id="topUpModalOverlay"
+         role="dialog" aria-modal="true" aria-labelledby="topUpModalTitle">
+      <div class="modal-box">
+        <div class="modal-header">
+          <h2 id="topUpModalTitle" data-i18n="wallet_topup_title">Top Up Wallet</h2>
+          <button class="modal-close-btn" id="topUpCloseBtn" aria-label="Close top up modal">
+            <i class="fas fa-times" aria-hidden="true"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="topUpAmount" data-i18n="wallet_amount_label">Amount (EGP)</label>
+            <input type="number" id="topUpAmount" min="10" max="50000"
+                   placeholder="Minimum EGP 10" class="form-control"
+                   aria-describedby="topUpAmountError" />
+            <span class="field-error hidden" id="topUpAmountError" role="alert"></span>
           </div>
         </div>
-      </template>
-      </div>
-      <div x-show="!loading && !wallet" x-transition:enter="transition-fade" x-transition:enter-start="op-0" x-transition:enter-end="op-100">
-        <div class="alert alert-danger"><i class="fas fa-exclamation-triangle"></i> ${t("wallet.loadError")}</div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" id="topUpCancelBtn" data-i18n="cancel">Cancel</button>
+          <button class="btn btn-primary"   id="topUpConfirmBtn" data-i18n="wallet_confirm_topup">
+            Confirm Top Up
+          </button>
+        </div>
       </div>
     </div>`;
+
+  // ── Wire events ─────────────────────────────────────────────────────────────
+  document.getElementById('topUpBtn').addEventListener('click', openTopUpModal);
+  document.getElementById('topUpCloseBtn').addEventListener('click', closeTopUpModal);
+  document.getElementById('topUpCancelBtn').addEventListener('click', closeTopUpModal);
+  document.getElementById('topUpConfirmBtn').addEventListener('click', handleTopUp);
+  document.getElementById('topUpModalOverlay').addEventListener('click', (e) => {
+    if (e.target === document.getElementById('topUpModalOverlay')) closeTopUpModal();
+  });
+
+  // ── Load data ────────────────────────────────────────────────────────────────
+  loadWalletBalance();
+  loadWalletTransactions();
 }
+
+// ── Helpers ──────────────────────────────────────────────────────────────────
+
+function openTopUpModal() {
+  const overlay = document.getElementById('topUpModalOverlay');
+  overlay.classList.remove('hidden');
+  document.getElementById('topUpAmount').focus();
+
+  // Close on Escape
+  function onEsc(e) {
+    if (e.key === 'Escape') { closeTopUpModal(); document.removeEventListener('keydown', onEsc); }
+  }
+  document.addEventListener('keydown', onEsc);
+}
+
+function closeTopUpModal() {
+  document.getElementById('topUpModalOverlay').classList.add('hidden');
+  document.getElementById('topUpAmount').value = '';
+  const errEl = document.getElementById('topUpAmountError');
+  if (errEl) { errEl.classList.add('hidden'); errEl.textContent = ''; }
+  const btn = document.getElementById('topUpConfirmBtn');
+  if (btn) { btn.disabled = false; btn.innerHTML = 'Confirm Top Up'; }
+}
+
+async function loadWalletBalance() {
+  try {
+    const res = await api.get('/wallet');
+    const amount = res?.balance ?? res?.amount ?? res?.data?.balance ?? 0;
+    document.getElementById('walletBalanceAmount').textContent =
+      Number(amount).toLocaleString('ar-EG', { minimumFractionDigits: 2 });
+  } catch {
+    document.getElementById('walletBalanceAmount').textContent = '—';
+    showToast('Failed to load balance. Please refresh.', 'error');
+  }
+}
+
+async function loadWalletTransactions() {
+  const container = document.getElementById('walletTransactionsContainer');
+  try {
+    const res = await api.get('/wallet/transactions', { page: 1, pageSize: 20 });
+    const txs = Array.isArray(res) ? res : (res?.data ?? res?.transactions ?? res?.items ?? []);
+
+    if (!txs.length) {
+      container.setAttribute('aria-busy', 'false');
+      container.innerHTML = `
+        <div class="empty-state" role="status">
+          <div class="empty-state__icon" aria-hidden="true"><i class="fas fa-receipt"></i></div>
+          <h3 class="empty-state__title" data-i18n="wallet_no_transactions">No transactions yet</h3>
+          <p class="empty-state__desc" data-i18n="wallet_no_transactions_desc">
+            Your transaction history will appear here.
+          </p>
+        </div>`;
+      return;
+    }
+
+    container.setAttribute('aria-busy', 'false');
+    container.innerHTML = `
+      <div class="table-responsive" role="region" aria-label="Transaction history" tabindex="0">
+        <table class="data-table">
+          <caption class="sr-only">Wallet transaction history</caption>
+          <thead>
+            <tr>
+              <th scope="col" data-i18n="wallet_col_date">Date</th>
+              <th scope="col" data-i18n="wallet_col_type">Type</th>
+              <th scope="col" data-i18n="wallet_col_desc">Description</th>
+              <th scope="col" data-i18n="wallet_col_amount">Amount (EGP)</th>
+              <th scope="col" data-i18n="wallet_col_status">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${txs.map(tx => `
+              <tr>
+                <td>${new Date(tx.date ?? tx.createdAt ?? tx.created_at).toLocaleDateString('en-EG')}</td>
+                <td><span class="tx-type tx-type-${(tx.type ?? 'other').toLowerCase()}">${escapeHTML(tx.type ?? '—')}</span></td>
+                <td>${escapeHTML(tx.description ?? tx.desc ?? '—')}</td>
+                <td class="${(tx.amount ?? 0) >= 0 ? 'tx-positive' : 'tx-negative'}">
+                  ${(tx.amount ?? 0) >= 0 ? '+' : ''}${Number(tx.amount ?? 0).toLocaleString('ar-EG', { minimumFractionDigits: 2 })}
+                </td>
+                <td><span class="status-badge status-${(tx.status ?? 'pending').toLowerCase()}">${escapeHTML(tx.status ?? 'Pending')}</span></td>
+              </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>`;
+  } catch {
+    container.innerHTML = `
+      <div class="error-state" role="alert">
+        <i class="fas fa-exclamation-circle" aria-hidden="true"></i>
+        <p data-i18n="wallet_load_error">Failed to load transactions. Please try again.</p>
+        <button class="btn btn-secondary" onclick="loadWalletTransactions()" data-i18n="retry">Retry</button>
+      </div>`;
+  }
+}
+
+async function handleTopUp() {
+  const input  = document.getElementById('topUpAmount');
+  const errEl  = document.getElementById('topUpAmountError');
+  const btn    = document.getElementById('topUpConfirmBtn');
+  const amount = parseFloat(input.value);
+
+  errEl.classList.add('hidden');
+  errEl.textContent = '';
+
+  if (!amount || isNaN(amount) || amount < 10) {
+    errEl.textContent = 'Please enter a valid amount (minimum EGP 10)';
+    errEl.classList.remove('hidden');
+    input.focus();
+    return;
+  }
+  if (amount > 50000) {
+    errEl.textContent = 'Maximum top-up is EGP 50,000';
+    errEl.classList.remove('hidden');
+    input.focus();
+    return;
+  }
+
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin" aria-hidden="true"></i> Processing…';
+
+  try {
+    await api.post('/wallet/deposit', { amount });
+    closeTopUpModal();
+    showToast('Wallet topped up successfully!', 'success');
+    loadWalletBalance();
+    loadWalletTransactions();
+  } catch (err) {
+    errEl.textContent = err?.message ?? 'Top up failed. Please try again.';
+    errEl.classList.remove('hidden');
+    btn.disabled = false;
+    btn.innerHTML = 'Confirm Top Up';
+  }
+}
+
+function escapeHTML(str) {
+  if (typeof str !== 'string') return '';
+  const d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
+}
+
+export default initWalletPage;
