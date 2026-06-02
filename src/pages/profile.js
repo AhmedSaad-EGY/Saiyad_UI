@@ -22,7 +22,7 @@ Alpine.data('profilePage', () => ({
     this.$nextTick(() => {
       // Trigger profile fill anim transition
       const fillEl = document.querySelector('.profile-completion-fill');
-      if (fillEl) fillEl.style.width = fillEl.style.width; // Trigger reflow/paint
+      if (fillEl) void fillEl.offsetHeight; // Trigger reflow/paint
       observeAnimations();
     });
   },

@@ -77,7 +77,7 @@ Alpine.data('auctionsPage', () => ({
         apiParams.endingSoon = true;
       }
 
-      let data = await api.get('/auctions', apiParams);
+      const data = await api.get('/auctions', apiParams);
       let items = data.items || data.data || [];
       if (this.endingSoonOnly) {
         // Fallback filter if API doesn't support endingSoon query param

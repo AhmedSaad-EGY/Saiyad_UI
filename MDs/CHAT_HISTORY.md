@@ -1536,4 +1536,49 @@ PHASE 2 — HIGH PRIORITY
 
 ---
 
+## 41. PHASE 3 START — TASK-M1 PWA MANIFEST + ESLINT FIXES
+
+**Date**: June 3, 2026  
+**Action**: Completed TASK-M1 (PWA manifest), fixed 2 pre-existing ESLint errors. Verified Bootstrap overrides cleanup was already done.
+
+### TASK-M1 — PWA Manifest
+
+| Step | File | Change |
+|------|------|--------|
+| **Step 1** | `src/public/manifest.json` | Created with full PWA manifest (name, short_name, icons, shortcuts for Products/Auctions) |
+| **Step 2** | `src/index.html` | Added `<link rel="manifest" href="/manifest.json">` + 4 PWA meta tags after favicon |
+
+**Note:** Moved from project root to `src/public/` after review flagged that Vite only processes files within `root: 'src'` — `src/public/` is the correct location (same pattern as `sw.js`).
+
+**Build:** `npm run build` — ✅ 0 errors. `manifest.json` confirmed in `dist/manifest.json`.
+
+### ESLint Errors Fixed
+
+| File | Error | Fix |
+|------|-------|-----|
+| `auctions.js:80` | `prefer-const` — `let data` never reassigned | `let` → `const` |
+| `profile.js:25` | `no-self-assign` — `fillEl.style.width = fillEl.style.width` | `void fillEl.offsetHeight` (standard reflow trigger) |
+
+**ESLint:** `npx eslint src/` — ✅ **0 errors across entire project**
+
+### Bootstrap Overrides Cleanup
+
+Verified the 28 unused component variable mappings mentioned in the audit were **already removed** from `_bootstrap-overrides.css` in a prior session. The file is clean.
+
+### Files Changed (This Session)
+
+| File | Change |
+|------|--------|
+| `src/public/manifest.json` | **New** — PWA manifest |
+| `src/index.html` | Added manifest link + 4 PWA meta tags |
+| `src/pages/auctions.js` | `let data` → `const data` (prefer-const) |
+| `src/pages/profile.js` | `fillEl.style.width = fillEl.style.width` → `void fillEl.offsetHeight` (no-self-assign) |
+
+### Build Verification
+
+- `npm run build` — ✅ **0 errors, 0 warnings**
+- `npx eslint src/` — ✅ **0 errors**
+
+---
+
 *End of chat history record. Update this file at the start of each session by appending new sections.*

@@ -411,11 +411,12 @@ MODERATOR_ROLES = [Auctioneer, Admin]                  # Review + Analytics
 - ✅ **TASK-H7 — font-display: swap** — Already present in Google Fonts URL
 - ✅ **TASK-H8 — viewport-fit + logo paths** — Added `viewport-fit=cover`, fixed `logo.png` → `/logo.png`. **Skipped** apple-touch-icon (needs USER-A2 file)
 - ✅ **TASK-H9 — Sell on Sayiad link** — Added `id="footerSellLink"`, auth-aware routing to dashboard for Fisherman/BaitSeller
+- ✅ **TASK-M1 — PWA Manifest** — Created `src/public/manifest.json`, linked in `index.html` with 4 PWA meta tags
+- ✅ **ESLint — 2 remaining errors fixed** — `prefer-const` in auctions.js, `no-self-assign` in profile.js
+- ✅ **Bootstrap overrides cleanup** — Already done in prior session (verified)
 
 ### Immediate (Next)
-1. **Phase 3 — Medium Priority** (M1: PWA manifest, M2: fix badge defaults, M3: empty states, M4: nav search, M5: password strength, M6: copyright year, M7: robots.txt, M8: chevron animation, M9: back-to-top hidden)
-2. Remove 28 unused component variable mappings from `_bootstrap-overrides.css`
-3. Fix remaining 2 pre-existing ESLint errors (prefer-const in auctions.js, no-self-assign in profile.js)
+1. **Phase 3 — Continue** (M2: fix badge defaults, M3: empty states, M4: nav search, M5: password strength, M6: copyright year, M7: robots.txt, M8: chevron animation, M9: back-to-top hidden)
 
 ### Short-term
 4. Follow TOUGH_CLEANUP_PLAN.md execution order (CSS → Core JS → Pages → Shared → Config)
