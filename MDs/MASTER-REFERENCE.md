@@ -401,13 +401,17 @@ MODERATOR_ROLES = [Auctioneer, Admin]                  # Review + Analytics
 
 > 📖 **Full cleanup checklist with per-item status → see [`TOUGH_CLEANUP_PLAN.md`](./TOUGH_CLEANUP_PLAN.md)**
 
+### Completed (June 2)
+- ✅ **Phase 1 Complete** — All 5 critical tasks handled (C1 wallet existed, C2 RTL existed, C3 security headers implemented, C4 skeleton implemented, C5 guards existed)
+
 ### Immediate (Next)
-1. Remove 28 unused component variable mappings from `_bootstrap-overrides.css`
-2. ❌ ~~Fix duplicate `@keyframes slideDown`~~ ✅ Already fixed — app.js no longer injects it
+1. Start Phase 2 — High Priority fixes (H2 SEO, H3 social links, H4 DOMPurify, H5 SignalR reconnect, H6 rate limiting, H8 viewport, H9 sell link)
+2. Remove 28 unused component variable mappings from `_bootstrap-overrides.css`
+3. ❌ ~~Fix duplicate `@keyframes slideDown`~~ ✅ Already fixed — app.js no longer injects it
 
 ### Short-term
-3. Follow TOUGH_CLEANUP_PLAN.md execution order (CSS → Core JS → Pages → Shared → Config)
-4. Standardize Bootstrap usage patterns across all 25 page modules
+4. Follow TOUGH_CLEANUP_PLAN.md execution order (CSS → Core JS → Pages → Shared → Config)
+5. Standardize Bootstrap usage patterns across all 25 page modules
 
 ---
 

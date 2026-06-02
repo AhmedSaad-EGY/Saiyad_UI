@@ -82,7 +82,28 @@
     <div class="nav-overlay" id="navOverlay"></div>
   </nav>
 
-  <main id="app" class="container main-content"></main>
+  <main id="app" class="container main-content">
+    <div id="globalSkeleton" class="global-skeleton" aria-busy="true"
+         aria-label="Loading page content" role="status">
+      <div class="gsk-bar gsk-bar--w60"></div>
+      <div class="gsk-bar gsk-bar--w40"></div>
+      <div class="gsk-cards">
+        <div class="gsk-card"></div>
+        <div class="gsk-card"></div>
+        <div class="gsk-card"></div>
+      </div>
+    </div>
+    <div id="globalError" class="global-error d-none" role="alert" aria-live="assertive">
+      <i class="fas fa-satellite-dish" aria-hidden="true"></i>
+      <h2 data-i18n="error_service_unavailable">Service Temporarily Unavailable</h2>
+      <p data-i18n="error_service_unavailable_desc">
+        We're having trouble connecting. Check your connection and try again.
+      </p>
+      <button class="btn btn-primary" onclick="window.location.reload()" data-i18n="retry">
+        Retry
+      </button>
+    </div>
+  </main>
   <button id="backToTop" class="btn btn-primary back-to-top" aria-label="Back to top"><i class="fas fa-arrow-up"></i></button>
 
   <footer class="footer">

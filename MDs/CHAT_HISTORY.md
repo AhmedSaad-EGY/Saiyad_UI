@@ -1306,4 +1306,62 @@ The code review flagged several issues that were fixed in a follow-up round:
 
 ---
 
+## 37. IMPLEMENTATION PLAN PHASE 1 — CRITICAL FIXES
+
+**Date**: June 2, 2026  
+**Action**: Started implementing the IMPLEMENTATION_PLAN.md — completed Phase 1 (Critical) tasks.
+
+### Context Gathered
+
+| Activity | Details |
+|----------|---------|
+| **Read all MDs files** | AUDIT_REPORT.md, CHAT_HISTORY.md, IMPLEMENTATION_PLAN.md, knowledge.md, MASTER-REFERENCE.md, user-role-flow.md |
+| **Explored Backend API** | Found WalletController.cs (GET /api/Wallet, POST /api/Wallet/deposit, GET /api/Wallet/transactions), AuthController with rate limiting, Program.cs with CORS + auth pipeline |
+| **Read key Frontend files** | index.html, router, auth, api client, i18n, dom utils, ui utils, routes, vercel.json, style.css |
+
+### Tasks Already Complete (No Work Needed)
+
+| Task | Reason |
+|------|--------|
+| **TASK-C1** (Wallet page) | `pages/wallet.js` already exists with full Alpine implementation |
+| **TASK-C2** (RTL fix) | `setLanguage()` in `i18n/index.js` already sets `document.documentElement.lang` + `dir` |
+| **TASK-C5** (Role guards) | All 4 protected pages already have role checks |
+| **TASK-H1** (Code splitting) | Router already uses dynamic `import()` via `routes` map |
+| **TASK-H7** (font-display: swap) | Already in Google Fonts URL |
+| **Backend B2/B3** | Rate limiting + CORS already configured in Program.cs |
+
+### Tasks Implemented
+
+#### TASK-C3 — Security Headers (vercel.json)
+- Added `"headers"` array with 6 headers:
+  - **Content-Security-Policy**: Restricts scripts to `'self'` + `cdnjs.cloudflare.com`, styles to `'self'` + `fonts.googleapis.com` + `cdnjs.cloudflare.com`, fonts to Google + cdnjs, images to `'self'` + `https:`, connects to API + WebSocket
+  - **X-Frame-Options: DENY** — clickjacking protection
+  - **X-Content-Type-Options: nosniff** — MIME sniffing
+  - **Referrer-Policy: strict-origin-when-cross-origin**
+  - **Permissions-Policy**: Disables camera, mic, geolocation
+  - **Strict-Transport-Security**: 1 year HSTS
+- **Bug caught & fixed**: CSP initially lacked `cdnjs.cloudflare.com` in `style-src` — would have blocked Font Awesome + Animate.css
+- Build: ✅ 0 errors
+
+#### TASK-C4 — Loading Skeleton & Global Error
+- **`src/index.html`**: Replaced empty `<main id="app">` with:
+  - `#globalSkeleton` — shimmer skeleton (2 bars + 3 cards)
+  - `#globalError` — error fallback (satellite icon + retry button)
+- **`src/css/style.css`**: Added `.global-skeleton`, `.gsk-*`, `@keyframes skShimmer`, `.global-error` styles
+- **`src/core/router/index.js`**: Added skeleton/error hiding via `d-none` at top of `router()` function
+- Build: ✅ 0 errors | Review: ✅ Clean
+
+### Summary
+
+| Task | Status | Files Changed |
+|------|--------|---------------|
+| C1 — Wallet page | ✅ Already existed | 0 |
+| C2 — RTL fix | ✅ Already done | 0 |
+| C3 — Security headers | ✅ Implemented | 1 (`vercel.json`) |
+| C4 — Loading skeleton | ✅ Implemented | 3 (index.html, style.css, router/index.js) |
+| C5 — Role guards | ✅ Already done | 0 |
+| **Build** | ✅ 0 errors | |
+
+---
+
 *End of chat history record. Update this file at the start of each session by appending new sections.*

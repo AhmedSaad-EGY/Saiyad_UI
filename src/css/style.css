@@ -16,3 +16,40 @@
 
 /* Bootstrap overrides — map our OKLCH tokens to Bootstrap CSS vars */
 @import '_bootstrap-overrides.css';
+
+/* ===================== GLOBAL SKELETON ===================== */
+.global-skeleton { padding: 2rem 1.5rem; max-width: 1200px; margin: 0 auto; }
+.gsk-bar {
+  height: 16px; border-radius: 8px; margin-bottom: 12px;
+  background: linear-gradient(90deg,
+    var(--border-color, #e0e0e0) 25%,
+    var(--card-bg,    #f5f5f5)   50%,
+    var(--border-color, #e0e0e0) 75%);
+  background-size: 200% 100%;
+  animation: skShimmer 1.5s infinite;
+}
+.gsk-bar--w60 { width: 60%; }
+.gsk-bar--w40 { width: 40%; }
+.gsk-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px,1fr));
+             gap: 1rem; margin-top: 1.5rem; }
+.gsk-card {
+  height: 200px; border-radius: 12px;
+  background: linear-gradient(90deg,
+    var(--border-color, #e0e0e0) 25%,
+    var(--card-bg,    #f5f5f5)   50%,
+    var(--border-color, #e0e0e0) 75%);
+  background-size: 200% 100%;
+  animation: skShimmer 1.5s infinite;
+}
+@keyframes skShimmer {
+  0%   { background-position:  200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ===================== GLOBAL ERROR ===================== */
+.global-error {
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; text-align: center;
+  min-height: 60vh; gap: 1rem; padding: 2rem;
+}
+.global-error > i { font-size: 3rem; opacity: .4; }
