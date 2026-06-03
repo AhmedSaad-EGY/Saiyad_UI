@@ -1641,22 +1641,22 @@ PHASE 2 — HIGH PRIORITY
 [x] TASK-H7  Register page rate limiting after 3 failures
 
 PHASE 3 — MEDIUM
-[ ] TASK-M1  Bidder IDs anonymized in auction history
-[ ] TASK-M2  Countdown timer wraps correctly at 320px and 375px
-[ ] TASK-M3  Touch swipe gesture for product detail image gallery
-[ ] TASK-M4  Wallet top-up "pending" notice until payment gateway is live
-[ ] TASK-M5  Vite manualChunks splits i18n, core, and all pages into separate chunks
-[ ] TASK-M6  Google Fonts loaded via preload + noscript instead of render-blocking stylesheet
+[x] TASK-M1  Bidder IDs anonymized in auction history
+[x] TASK-M2  Countdown timer wraps correctly at 320px and 375px
+[x] TASK-M3  Touch swipe gesture for product detail image gallery
+[x] TASK-M4  Wallet top-up "pending" notice until payment gateway is live
+[x] TASK-M5  Vite manualChunks splits i18n, core, and all pages into separate chunks
+[x] TASK-M6  Google Fonts loaded via preload + noscript instead of render-blocking stylesheet
 
 PHASE 4 — MOBILE POLISH
-[ ] TASK-P1  Bottom nav active state synced in router.js on every hashchange
-[ ] TASK-P2  Focus trap inside wallet modal (and all custom modals)
-[ ] TASK-P3  aria-label + aria-pressed on theme and language toggle buttons
+[x] TASK-P1  Bottom nav active state synced in router.js on every hashchange
+[x] TASK-P2  Focus trap inside wallet modal (and all custom modals)
+[x] TASK-P3  aria-label + aria-pressed on theme and language toggle buttons
 
 PHASE 5 — BACKEND
-[ ] TASK-B1  [Authorize(Roles=...)] on all role-sensitive endpoints
-[ ] TASK-B2  Rate limiting: 10/15min on login, 5/hour on register
-[ ] TASK-B3  CORS restricted to saiyad-eg.vercel.app only
+[x] TASK-B1  [Authorize(Roles=...)] on all role-sensitive endpoints
+[x] TASK-B2  Rate limiting: 10/15min on login, 5/hour on register
+[x] TASK-B3  CORS restricted to saiyad-eg.vercel.app only
 ```
 
 ---
