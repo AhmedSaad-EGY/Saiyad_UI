@@ -6,6 +6,7 @@ import { escapeHtml } from '../core/utils/dom.js';
 import { showFieldError, clearFieldError, clearAllFieldErrors } from '../core/utils/validation.js';
 import { formatPrice } from '../core/utils/format.js';
 import { triggerConfetti } from '../core/utils/ui.js';
+import { setPageMeta } from '../core/utils/seo.js';
 import Alpine from 'alpinejs';
 
 Alpine.data('checkoutPage', () => ({
@@ -30,6 +31,7 @@ Alpine.data('checkoutPage', () => ({
   clearFieldError,
 
   async init() {
+    setPageMeta("Checkout", undefined, true);
     try {
       const [cart, savedAddresses, walletData] = await Promise.all([
         api.get('/cart'),

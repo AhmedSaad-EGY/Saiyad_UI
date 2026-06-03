@@ -130,6 +130,7 @@ Alpine.data("registerForm", () => ({
       if (this.needsLicense) payload.licenseNumber = this.licenseNumber.trim();
 
       await api.post("/auth/register", payload);
+      sessionStorage.removeItem("sayiadRegFails");
       sessionStorage.setItem("pendingLoginEmail", this.email.trim());
       document.getElementById("registerForm").reset();
       this.strengthCls = "strength-empty";
@@ -138,6 +139,26 @@ Alpine.data("registerForm", () => ({
     } catch (err) {
       document.getElementById("registerAlert").innerHTML =
         `<div class="alert alert-error">${escapeHtml(err.message)}</div>`;
+      let regFails = parseInt(sessionStorage.getItem('sayiadRegFails') || '0') + 1;
+      sessionStorage.setItem('sayiadRegFails', regFails);
+      if (regFails >= 3) {
+        const submitBtn = document.getElementById('registerSubmitBtn')
+          || document.querySelector('#registerForm button[type="submit"]');
+        if (submitBtn) submitBtn.disabled = true;
+        let secs = 60;
+        const lockMsg = document.getElementById('registerLockMsg');
+        if (lockMsg) lockMsg.classList.remove('hidden');
+        const timer = setInterval(() => {
+          secs--;
+          if (lockMsg) lockMsg.textContent = `Too many attempts. Wait ${secs}s before trying again.`;
+          if (secs <= 0) {
+            clearInterval(timer);
+            sessionStorage.removeItem('sayiadRegFails');
+            if (submitBtn) submitBtn.disabled = false;
+            if (lockMsg) lockMsg.classList.add('hidden');
+          }
+        }, 1000);
+      }
     } finally {
       this.loading = false;
     }
@@ -225,7 +246,8 @@ export default function renderRegister(container) {
               </label>
             </div>
           </div>
-          <button type="submit" class="btn btn-primary w-100 btn-lg" :disabled="loading">
+          <div id="registerLockMsg" class="field-error hidden" role="alert" aria-live="assertive" style="margin-bottom:8px"></div>
+          <button type="submit" id="registerSubmitBtn" class="btn btn-primary w-100 btn-lg" :disabled="loading">
             <i class="fas fa-spinner spinner" x-show="loading" x-cloak></i>
             <span x-text="loading ? $t('auth.creatingAccount') : $t('auth.createAccount')"></span>
           </button>

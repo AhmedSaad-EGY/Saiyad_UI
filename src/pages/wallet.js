@@ -13,7 +13,7 @@ function initWalletPage() {
   const user = getUser();
   if (!user) { window.location.hash = '#/login'; return; }
 
-  setPageMeta('My Wallet', 'Manage your Sayiad wallet balance and transactions.');
+  setPageMeta('My Wallet', 'Manage your Sayiad wallet balance and transactions.', true);
 
   app.innerHTML = `
     <section class="wallet-page" aria-label="Wallet">

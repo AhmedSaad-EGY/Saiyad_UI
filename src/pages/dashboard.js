@@ -8,6 +8,7 @@ import { manualPaginationHtml, wirePagination } from '../shared/components/pagin
 import { validateForm, getPasswordStrength, clearFieldError } from '../core/utils/validation.js';
 import { formatPrice, formatDate, statusClass, tStatus } from '../core/utils/format.js';
 import { showConfirm, showToast } from '../core/utils/ui.js';
+import { setPageMeta } from '../core/utils/seo.js';
 import { ROLES, SELLER_ROLES, ECOMMERCE_ROLES, MODERATOR_ROLES } from '../shared/constants/roles.js';
 import renderAuctionRequests from './auction-requests.js';
 import renderAuctionRequestsReview from './auction-requests-review.js';
@@ -20,6 +21,7 @@ Alpine.data('dashboardPage', () => ({
   showTour: false,
 
   init() {
+    setPageMeta("Dashboard", undefined, true);
     const params = new URLSearchParams(location.hash.split('?')[1] || '');
     this.activeTab = params.get('tab') || 'overview';
     this.$nextTick(() => {

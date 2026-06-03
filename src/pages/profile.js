@@ -5,11 +5,13 @@ import { SELLER_ROLES } from '../shared/constants/roles.js';
 import { navigate } from '../core/router/index.js';
 import { escapeHtml, observeAnimations } from '../core/utils/dom.js';
 import { showToast } from '../core/utils/ui.js';
+import { setPageMeta } from '../core/utils/seo.js';
 import Alpine from 'alpinejs';
 
 Alpine.data('profilePage', () => ({
   stats: { orders: 0, wishlist: 0, notifs: 0 },
   init() {
+    setPageMeta("My Profile", undefined, true);
     Promise.allSettled([
       api.get('/orders', { page: 1, pageSize: 1 }),
       api.get('/wishlist', { page: 1, pageSize: 1 }),

@@ -326,6 +326,7 @@ ${p.primaryImageUrl ? `<img src="${escapeHtml(p.primaryImageUrl)}" id="mainImg" 
 ---
 
 **🔖 COMMIT — PHASE 1:**
+✅ **Done** — commit `27380f3`
 
 ```
 git add -A
@@ -1624,13 +1625,13 @@ git push
 
 ```
 PHASE 1 — CRITICAL
-[ ] TASK-C1  validateForm accepts both HTMLElement and string ID + array and object formats
-[ ] TASK-C2  Bid confirmation modal before placeBid() fires
-[ ] TASK-C3  sourcemap: false in vite.config.js
-[ ] TASK-C4  loading="lazy" + decoding="async" + fetchpriority="high" on product detail main img
+[x] TASK-C1  validateForm accepts both HTMLElement and string ID + array and object formats
+[x] TASK-C2  Bid confirmation modal before placeBid() fires
+[x] TASK-C3  sourcemap: false in vite.config.js
+[x] TASK-C4  loading="lazy" + decoding="async" + fetchpriority="high" on product detail main img
 
 PHASE 2 — HIGH PRIORITY
-[ ] TASK-H1  hreflang ar/en/x-default tags in index.html
+[x] TASK-H1  hreflang ar/en/x-default tags in index.html
 [ ] TASK-H2  noindex meta on cart, checkout, dashboard, profile, wallet, admin, shipping, orders
 [ ] TASK-H3  Styled offline page in sw.js
 [ ] TASK-H4  Hero 3D tilt disabled on touch/hover:none devices

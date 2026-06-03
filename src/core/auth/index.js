@@ -78,6 +78,13 @@ export function updateNavbar() {
     });
 
   updateCartBadge(false);
+  // Show/hide bottom nav account vs login link
+  const bnAccount = document.getElementById("bnAccount");
+  const bnLogin = document.getElementById("bnLogin");
+  const bnCart = document.querySelector("#bnCart");
+  if (bnAccount) bnAccount.classList.toggle("d-none", !authed);
+  if (bnLogin) bnLogin.classList.toggle("d-none", authed);
+  if (bnCart) bnCart.classList.toggle("d-none", !authed);
   if (authed) startNotifPolling();
   else stopNotifPolling();
 }
@@ -102,6 +109,11 @@ export function syncCartBadgeCount(count) {
   if (!badge) return;
   badge.textContent = _cartCount;
   badge.classList.toggle("d-none", _cartCount === 0 || !isAuthenticated());
+  const bnBadge = document.getElementById("bnCartBadge");
+  if (bnBadge) {
+    bnBadge.textContent = _cartCount;
+    bnBadge.classList.toggle("d-none", _cartCount === 0 || !isAuthenticated());
+  }
 }
 
 export async function updateCartBadge(forceRefresh = true) {

@@ -2,6 +2,7 @@ import { t } from '../core/i18n/index.js';
 import { api } from '../core/api/client.js';
 import { requireAuth } from '../core/auth/index.js';
 import { showConfirm, showToast } from '../core/utils/ui.js';
+import { setPageMeta } from '../core/utils/seo.js';
 import Alpine from 'alpinejs';
 
 Alpine.data('shippingPage', () => ({
@@ -13,6 +14,7 @@ Alpine.data('shippingPage', () => ({
   form: { fullName: '', phone: '', city: '', addressLine: '', postalCode: '' },
 
   async init() {
+    setPageMeta("My Addresses", undefined, true);
     await this.loadAddresses();
   },
 

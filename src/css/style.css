@@ -158,3 +158,82 @@
 [dir="rtl"] .modal-header     { flex-direction: row-reverse; }
 [dir="rtl"] .toast            { left: 1rem; right: auto; }
 [dir="rtl"] .back-btn i       { transform: scaleX(-1); }
+
+/* ===================== BOTTOM MOBILE NAV ===================== */
+.bottom-nav {
+  display: none; /* hidden on desktop */
+}
+@media (max-width: 991px) {
+  .bottom-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: calc(56px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    background: var(--nav-bg, rgba(255, 255, 255, 0.95));
+    border-top: 1px solid var(--border, rgba(0, 0, 0, 0.1));
+    z-index: 1000;
+    backdrop-filter: saturate(180%) blur(12px);
+    -webkit-backdrop-filter: saturate(180%) blur(12px);
+    box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.08);
+  }
+  [data-theme="dark"] .bottom-nav {
+    background: rgba(11, 17, 32, 0.95);
+    border-top-color: rgba(255, 255, 255, 0.08);
+  }
+  .bottom-nav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    text-decoration: none;
+    color: var(--text-muted, #6b7280);
+    font-size: 10px;
+    font-weight: 500;
+    padding: 6px 4px 0;
+    position: relative;
+    transition: color 0.15s;
+    min-height: 44px;
+    min-width: 44px;
+  }
+  .bottom-nav-item i {
+    font-size: 1.1rem;
+    transition: transform 0.15s;
+  }
+  .bottom-nav-item.active,
+  .bottom-nav-item[aria-current="page"] {
+    color: var(--primary, #0ea5e9);
+  }
+  .bottom-nav-item.active i {
+    transform: scale(1.15);
+  }
+  .bottom-nav-badge {
+    position: absolute;
+    top: 6px;
+    right: 18%;
+    background: var(--danger, #ef4444);
+    color: #fff;
+    font-size: 9px;
+    font-weight: 700;
+    min-width: 16px;
+    height: 16px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 4px;
+  }
+  /* Push main content up so bottom nav doesn't cover it */
+  .main-content {
+    padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px));
+  }
+}
+@media (min-width: 992px) {
+  .bottom-nav {
+    display: none !important;
+  }
+}

@@ -296,7 +296,7 @@ export default async function renderProducts(_container, _fullPath, params) {
       </div>
 
       <!-- Skeleton loading -->
-      <div x-show="loading" class="row row-cols-2 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4 skeleton-shimmer">
+      <div x-show="loading" class="row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4 skeleton-shimmer">
         <template x-for="i in 6" :key="i">
           <div class="product-card card pe-none">
             <div class="product-card-img skeleton-image-shim"></div>
@@ -317,7 +317,7 @@ export default async function renderProducts(_container, _fullPath, params) {
       </div>
 
       <!-- Product grid -->
-      <div x-show="!loading && !error && products.length" :class="isListView ? 'product-list-view d-flex flex-column gap-3' : 'row row-cols-2 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4'" id="productGrid">
+      <div x-show="!loading && !error && products.length" :class="isListView ? 'product-list-view d-flex flex-column gap-3' : 'row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4'" id="productGrid">
         <template x-for="(p, i) in products" :key="p.id">
           <a :href="'#/product-detail?id='+p.id" class="product-card card" :class="'animate-on-scroll stagger-' + Math.min(i + 1, 8)" :aria-label="escapeHtml(p.title || 'Product') + ' — ' + formatPrice(p.price)">
             <div class="product-card-img">

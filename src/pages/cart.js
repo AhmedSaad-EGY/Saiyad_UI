@@ -6,6 +6,7 @@ import { formatPrice } from '../core/utils/format.js';
 import { showConfirm, showToast } from '../core/utils/ui.js';
 import { animate } from '../core/utils/dom.js';
 import { createSwipeReveal } from '../core/utils/swipe.js';
+import { setPageMeta } from '../core/utils/seo.js';
 import Alpine from 'alpinejs';
 
 let _cartSwipeCleanup = null;
@@ -20,6 +21,7 @@ Alpine.data('cartPage', () => ({
   formatPrice,
 
   async init() {
+    setPageMeta("My Cart", undefined, true);
     try {
       const cart = await api.get('/cart');
       this.items = cart.items || [];

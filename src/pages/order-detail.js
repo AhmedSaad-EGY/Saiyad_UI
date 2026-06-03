@@ -5,6 +5,7 @@ import { navigate, registerRouteCleanup } from '../core/router/index.js';
 import { showLoading, escapeHtml, observeAnimations } from '../core/utils/dom.js';
 import { formatPrice, formatDate, statusClass, tStatus } from '../core/utils/format.js';
 import { showConfirm, showToast } from '../core/utils/ui.js';
+import { setPageMeta } from '../core/utils/seo.js';
 
 function getTimelineSteps(status) {
   const steps = [
@@ -33,6 +34,7 @@ export default async function renderOrderDetail(container) {
   const params = new URLSearchParams(location.hash.split('?')[1] || '');
   const orderId = params.get('id');
   if (!orderId) { navigate('dashboard?tab=orders'); return; }
+  setPageMeta("Order Details", undefined, true);
 
   showLoading(container);
 

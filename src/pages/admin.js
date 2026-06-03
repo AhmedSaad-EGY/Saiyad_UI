@@ -6,10 +6,12 @@ import { showLoading, showError, renderEmptyState, escapeHtml } from '../core/ut
 import { manualPaginationHtml, wirePagination } from '../shared/components/pagination.js';
 import { formatPrice, formatDate, statusClass, tStatus } from '../core/utils/format.js';
 import { showConfirm, showToast } from '../core/utils/ui.js';
+import { setPageMeta } from '../core/utils/seo.js';
 
 export default async function renderAdmin(container) {
   const _u = getUser();
   if (!_u || _u.role !== 'Admin') { window.location.hash = '#/'; return; }
+  setPageMeta("Admin Panel", undefined, true);
 
   const tabs = [
     { id: "users", icon: "fa-users", label: t("admin.users") },

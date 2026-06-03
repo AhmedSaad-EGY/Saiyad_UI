@@ -25,6 +25,13 @@
   <meta name="twitter:description" content="Egypt's premier fishing marketplace. Buy fresh fish and seafood or join live auctions.">
   <meta name="twitter:image"       content="https://saiyad-eg.vercel.app/logo.png">
   <link rel="canonical"            href="https://saiyad-eg.vercel.app">
+  <link rel="alternate" hreflang="ar" href="https://saiyad-eg.vercel.app" />
+  <link rel="alternate" hreflang="en" href="https://saiyad-eg.vercel.app" />
+  <link
+    rel="alternate"
+    hreflang="x-default"
+    href="https://saiyad-eg.vercel.app"
+  />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
@@ -132,6 +139,35 @@
     </div>
   </main>
   <button id="backToTop" class="btn btn-primary back-to-top hidden" aria-label="Back to top"><i class="fas fa-arrow-up"></i></button>
+
+  <!-- Mobile Bottom Navigation Bar — hidden on tablet/desktop via CSS -->
+  <nav class="bottom-nav" id="bottomNav" aria-label="Mobile navigation">
+    <a href="#/" class="bottom-nav-item" id="bnHome">
+      <i class="fas fa-home" aria-hidden="true"></i>
+      <span data-i18n="nav.home">Home</span>
+    </a>
+    <a href="#/products" class="bottom-nav-item" id="bnProducts">
+      <i class="fas fa-store" aria-hidden="true"></i>
+      <span data-i18n="nav.products">Products</span>
+    </a>
+    <a href="#/auctions" class="bottom-nav-item" id="bnAuctions">
+      <i class="fas fa-gavel" aria-hidden="true"></i>
+      <span data-i18n="nav.auctions">Auctions</span>
+    </a>
+    <a href="#/cart" class="bottom-nav-item" id="bnCart">
+      <i class="fas fa-shopping-cart" aria-hidden="true"></i>
+      <span data-i18n="nav.cart">Cart</span>
+      <span class="bottom-nav-badge d-none" id="bnCartBadge"></span>
+    </a>
+    <a href="#/dashboard" class="bottom-nav-item bottom-nav-account d-none" id="bnAccount">
+      <i class="fas fa-user" aria-hidden="true"></i>
+      <span data-i18n="nav.dashboard">Account</span>
+    </a>
+    <a href="#/login" class="bottom-nav-item" id="bnLogin">
+      <i class="fas fa-sign-in-alt" aria-hidden="true"></i>
+      <span data-i18n="nav.login">Login</span>
+    </a>
+  </nav>
 
   <footer class="footer">
     <div class="container">

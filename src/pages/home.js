@@ -25,27 +25,24 @@ Alpine.data('homePage', () => ({
   },
 
   handleHeroMouseMove(e) {
+    // Skip on touch devices or reduced-motion preference
+    if (window.matchMedia('(hover: none)').matches) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const hero = e.currentTarget;
     const rect = hero.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
-    
     const centerX = rect.width / 2;
     const centerY = rect.height / 2;
-    
-    // Smooth 3D tilt calculation (max 8 degrees)
     const rotateX = ((centerY - y) / centerY) * 8;
     const rotateY = ((x - centerX) / centerX) * 8;
-    
-    // Smooth parallax shifting
     const transX = ((x - centerX) / centerX) * 12;
     const transY = ((y - centerY) / centerY) * 12;
-    
     this.heroContentStyle = `transform: perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translate3d(${transX}px, ${transY}px, 15px); transition: transform 0.05s ease-out;`;
   },
 
   handleHeroMouseLeave() {
-    this.heroContentStyle = 'transform: perspective(1000px) rotateX(0deg) rotateY(0deg) translate3d(0, 0, 0); transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);';
+    this.heroContentStyle = 'transform: none; transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);';
   },
 
   async loadData() {
