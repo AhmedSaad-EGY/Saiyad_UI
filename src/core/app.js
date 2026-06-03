@@ -228,6 +228,10 @@ function applyTheme(theme) {
       ? '<i class="fas fa-sun"></i>'
       : '<i class="fas fa-moon"></i>';
   themeToggle.setAttribute("aria-pressed", theme === "dark" ? "true" : "false");
+  themeToggle.setAttribute(
+    "aria-label",
+    theme === "dark" ? "Switch to light mode" : "Toggle dark mode",
+  );
 }
 
 // Reduced motion toggle
@@ -335,6 +339,10 @@ function applyLanguage(lang) {
   document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
   langToggle.textContent = lang === "ar" ? "AR" : "EN";
   langToggle.setAttribute("aria-pressed", lang === "ar" ? "true" : "false");
+  langToggle.setAttribute(
+    "aria-label",
+    lang === "ar" ? "Switch to English" : "Switch to Arabic",
+  );
 }
 
 function handleLangChange(next) {
