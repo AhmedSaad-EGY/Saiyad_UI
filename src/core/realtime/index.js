@@ -107,7 +107,7 @@ function showSignalRBanner() {
     b.setAttribute('aria-live', 'polite');
     b.style.cssText = [
       'position:fixed','bottom:1rem','left:50%','transform:translateX(-50%)',
-      'background:#f59e0b','color:#000','padding:.5rem 1.25rem',
+      'background:var(--warning)','color:var(--text-inverse)','padding:.5rem 1.25rem',
       'border-radius:2rem','font-size:.875rem','font-weight:500',
       'z-index:9999','display:flex','align-items:center','gap:.5rem',
       'box-shadow:0 4px 12px rgba(0,0,0,.25)'

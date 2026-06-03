@@ -272,13 +272,13 @@ export default function renderRegister(container) {
       special: /[@$!%*?&#^()_+\-={}|;<>?]/.test(pw)
     };
     const score  = Object.values(checks).filter(Boolean).length;
-    const colors = ['','#ef4444','#f97316','#eab308','#22c55e','#16a34a'];
+    const colors = ['','var(--danger)','var(--warning)','var(--warning)','var(--success)','var(--success)'];
     const labels = ['','Very Weak','Weak','Fair','Strong','Very Strong'];
 
     Object.entries(checks).forEach(([k,v]) => {
       const li = document.getElementById('req-' + k);
       if (!li) return;
-      li.style.color = v ? '#22c55e' : '';
+      li.style.color = v ? 'var(--success)' : '';
       li.querySelector('i').className = v ? 'fas fa-check-circle' : 'fas fa-circle';
     });
 

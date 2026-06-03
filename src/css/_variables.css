@@ -176,7 +176,7 @@
 
   --text: oklch(0.96 0.005 245);
   --text-secondary: oklch(0.70 0.018 245);
-  --text-muted: oklch(0.52 0.016 245);
+  --text-muted: oklch(0.62 0.016 245);
   --text-inverse: oklch(0.18 0.02 240);
 
   --border: oklch(0.28 0.022 245);
