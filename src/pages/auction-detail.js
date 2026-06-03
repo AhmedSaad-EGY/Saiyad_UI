@@ -5,7 +5,7 @@ import { requireAuth, getUser } from '../core/auth/index.js';
 import { registerRouteCleanup, navigate } from '../core/router/index.js';
 import { formatPrice, formatDate, statusClass, tStatus } from '../core/utils/format.js';
 import { escapeHtml, observeAnimations, animate, safeSetHTML } from '../core/utils/dom.js';
-import { triggerConfetti, trackRecentlyViewed } from '../core/utils/ui.js';
+import { triggerConfetti, trackRecentlyViewed, showConfirm } from '../core/utils/ui.js';
 import { createScopedBus } from '../core/events/bus.js';
 import { joinAuctionGroup, leaveAuctionGroup } from '../core/realtime/index.js';
 
@@ -230,6 +230,14 @@ Alpine.data('auctionDetailPage', () => ({
       this.bidAlertType = 'error';
       return;
     }
+
+    // Confirm before placing irreversible bid
+    const confirmed = await showConfirm(
+      t('auction.confirmBidTitle') || 'Confirm Your Bid',
+      `${t('auction.confirmBidMsg') || 'Place a bid of'} ${formatPrice(amount)}? ${t('auction.bidIrreversible') || 'This cannot be undone.'}`,
+      { type: 'warning', confirmText: t('auction.placeBid') || 'Place Bid' }
+    );
+    if (!confirmed) return;
 
     this.placingBid = true;
     this.bidAlert = '';

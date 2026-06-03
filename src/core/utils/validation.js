@@ -47,37 +47,90 @@ export function getPasswordStrength(password) {
   return { score, label: "common.strong", class: "strong" };
 }
 
-export function validateForm(formId, rules) {
-  const form = document.getElementById(formId);
+export function validateForm(formIdOrEl, rules) {
+  // Accept either a string ID or a DOM element
+  const form = (typeof formIdOrEl === 'string')
+    ? document.getElementById(formIdOrEl)
+    : formIdOrEl;
   if (!form) return true;
   let valid = true;
   clearAllFieldErrors(form);
 
-  for (const [fieldId, checks] of Object.entries(rules)) {
-    const field = document.getElementById(fieldId);
-    if (!field) continue;
-    const value = (field.value || "").trim();
+  // Support both formats:
+  // Format A (object): { fieldId: [checks] }    ← used by standalone calls
+  // Format B (array):  [{ element, required, messages }]  ← used by register.js
+  const ruleEntries = Array.isArray(rules)
+    ? rules.map((r) => [r.element?.id || "", [r]])
+    : Object.entries(rules);
+
+  for (const [fieldId, checks] of ruleEntries) {
+    const field =
+      typeof fieldId === "string" && fieldId
+        ? form.querySelector(`#${fieldId}`) || document.getElementById(fieldId)
+        : null;
+    // For array format, the element is already in the check object
+    const resolvedField =
+      field || (Array.isArray(rules) ? checks[0]?.element : null);
+    if (!resolvedField) continue;
+    const value = (resolvedField.value || "").trim();
     for (const check of checks) {
       if (check.required && !value) {
-        showFieldError(field, check.message || t("validation.required"));
+        const msg =
+          check.message || check.messages?.required || t("validation.required");
+        showFieldError(resolvedField, msg);
         valid = false;
         break;
       }
-      if (
-        check.minLength != null &&
-        value.length < check.minLength
-      ) {
-        showFieldError(field, check.message || t("validation.minLength"));
+      if (check.minLength != null && value.length < check.minLength) {
+        const msg =
+          check.message || check.messages?.minLength || t("validation.minLength");
+        showFieldError(resolvedField, msg);
         valid = false;
         break;
       }
       if (check.pattern && !check.pattern.test(value)) {
-        showFieldError(field, check.message || t("validation.invalid"));
+        const msg =
+          check.message || check.messages?.pattern || t("validation.invalid");
+        showFieldError(resolvedField, msg);
+        valid = false;
+        break;
+      }
+      if (check.matches && check.matches.element) {
+        const matchVal = (check.matches.element.value || "").trim();
+        if (value !== matchVal) {
+          const msg = check.messages?.matches || t("validation.invalid");
+          showFieldError(resolvedField, msg);
+          valid = false;
+          break;
+        }
+      }
+      if (check.minAge != null) {
+        const age = calculateAge(value);
+        if (isNaN(age) || age < check.minAge) {
+          const msg =
+            check.messages?.minAge ||
+            `Must be at least ${check.minAge} years old`;
+          showFieldError(resolvedField, msg);
+          valid = false;
+          break;
+        }
+      }
+      if (check.phone && value && !/^[\+\d][\d\s\-\(\)]{6,}$/.test(value)) {
+        const msg = check.messages?.phone || t("validation.invalid");
+        showFieldError(resolvedField, msg);
+        valid = false;
+        break;
+      }
+      if (check.email && value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+        const msg = check.messages?.email || t("auth.invalidEmail");
+        showFieldError(resolvedField, msg);
         valid = false;
         break;
       }
       if (check.custom && !check.custom(value, form)) {
-        showFieldError(field, check.message || t("validation.invalid"));
+        const msg =
+          check.message || check.messages?.custom || t("validation.invalid");
+        showFieldError(resolvedField, msg);
         valid = false;
         break;
       }
