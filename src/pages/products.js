@@ -247,10 +247,10 @@ export default async function renderProducts(_container, _fullPath, params) {
         </div>
         <div class="d-flex gap-2 align-items-center">
           <button class="btn btn-outline btn-icon search-toggle-btn" @click="openSearchOverlay()" aria-label="${t('common.search')}"><i class="fas fa-search"></i></button>
-          <button class="btn btn-outline btn-icon filter-toggle-btn" @click="filterSheetOpen = true"><i class="fas fa-sliders-h"></i></button>
+          <button class="btn btn-outline btn-icon filter-toggle-btn" @click="filterSheetOpen = true" aria-label="${t('products.filters') || 'Open filters'}"><i class="fas fa-sliders-h"></i></button>
           <div class="d-none d-md-flex btn-group rounded-pill overflow-hidden border">
-            <button class="btn btn-sm px-3" :class="!isListView ? 'btn-primary' : 'btn-ghost'" @click="isListView = false" title="Grid View"><i class="fas fa-th-large"></i></button>
-            <button class="btn btn-sm px-3" :class="isListView ? 'btn-primary' : 'btn-ghost'" @click="isListView = true" title="List View"><i class="fas fa-list"></i></button>
+            <button class="btn btn-sm px-3" :class="!isListView ? 'btn-primary' : 'btn-ghost'" @click="isListView = false" aria-label="Grid View" title="Grid View"><i class="fas fa-th-large"></i></button>
+            <button class="btn btn-sm px-3" :class="isListView ? 'btn-primary' : 'btn-ghost'" @click="isListView = true" aria-label="List View" title="List View"><i class="fas fa-list"></i></button>
           </div>
         </div>
       </div>

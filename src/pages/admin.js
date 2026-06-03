@@ -586,8 +586,8 @@ export default async function renderAdmin(container) {
               <td>${p.maxAuctionRequestsPerMonth}</td>
               <td>${p.isActive ? '<span class="badge badge-success">Active</span>' : '<span class="badge badge-danger">Inactive</span>'}</td>
               <td>
-                <button class="btn btn-sm btn-outline edit-plan-btn" data-id="${p.id}" data-plan='${escapeHtml(JSON.stringify(p))}'><i class="fas fa-edit"></i></button>
-                <button class="btn btn-sm btn-danger delete-plan-btn" data-id="${p.id}" data-name="${escapeHtml(p.name)}"><i class="fas fa-trash"></i></button>
+                <button class="btn btn-sm btn-outline edit-plan-btn" aria-label="${t('common.edit') || 'Edit plan'}" data-id="${p.id}" data-plan='${escapeHtml(JSON.stringify(p))}'><i class="fas fa-edit"></i></button>
+                <button class="btn btn-sm btn-danger delete-plan-btn" aria-label="${t('common.delete') || 'Delete plan'}" data-id="${p.id}" data-name="${escapeHtml(p.name)}"><i class="fas fa-trash"></i></button>
               </td>
             </tr>`).join("")}
           </tbody>

@@ -272,3 +272,9 @@
     font-size: 1.25rem !important;
   }
 }
+
+/* ===================== MODAL FOCUS TRAP INDICATOR ===================== */
+.modal-overlay:not(.hidden) {
+  /* Prevent background scroll when modal open */
+  overflow: hidden;
+}

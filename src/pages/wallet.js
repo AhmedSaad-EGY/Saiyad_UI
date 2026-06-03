@@ -99,6 +99,33 @@ function openTopUpModal() {
   overlay.classList.remove('hidden');
   document.getElementById('topUpAmount').focus();
 
+  // Trap focus inside modal
+  const modal = document.querySelector(".modal-box");
+  if (modal) {
+    const focusable = modal.querySelectorAll(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+    );
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    function trapFocus(e) {
+      if (e.key !== "Tab") return;
+      if (e.shiftKey) {
+        if (document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        }
+      } else {
+        if (document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    }
+    modal._trapFocus = trapFocus;
+    modal.addEventListener("keydown", trapFocus);
+  }
+  document.body.style.overflow = "hidden";
+
   // Close on Escape
   function onEsc(e) {
     if (e.key === 'Escape') { closeTopUpModal(); document.removeEventListener('keydown', onEsc); }
@@ -107,6 +134,12 @@ function openTopUpModal() {
 }
 
 function closeTopUpModal() {
+  const modal = document.querySelector(".modal-box");
+  if (modal && modal._trapFocus) {
+    modal.removeEventListener("keydown", modal._trapFocus);
+    delete modal._trapFocus;
+  }
+  document.body.style.overflow = "";
   document.getElementById('topUpModalOverlay').classList.add('hidden');
   document.getElementById('topUpAmount').value = '';
   const errEl = document.getElementById('topUpAmountError');

@@ -174,7 +174,7 @@ export default async function renderAuctions(_container, _fullPath, params) {
             <span>${t("auction.endingSoon") || "Ending Soon (<24h)"}</span>
           </label>
         </div>
-        <button class="btn btn-outline filter-toggle-btn" @click="filterSheetOpen = true"><i class="fas fa-sliders-h"></i></button>
+        <button class="btn btn-outline filter-toggle-btn" @click="filterSheetOpen = true" aria-label="${t('products.filters') || 'Open filters'}"><i class="fas fa-sliders-h"></i></button>
       </div>
 
       <!-- Skeleton -->

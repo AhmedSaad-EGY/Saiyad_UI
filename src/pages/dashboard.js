@@ -956,7 +956,7 @@ async function renderNotifications(content) {
           <p class="text-muted small">${escapeHtml(n.message)}</p>
           <small class="text-muted">${formatDate(n.createdAt)}</small>
         </div>
-        ${!n.isRead ? `<button class="btn btn-sm btn-ghost mark-read" data-id="${n.id}"><i class="fas fa-check"></i></button>` : ""}
+        ${!n.isRead ? `<button class="btn btn-sm btn-ghost mark-read" aria-label="${t('notif.markAsRead') || 'Mark as read'}" data-id="${n.id}"><i class="fas fa-check"></i></button>` : ""}
       </div>
     `,
       )

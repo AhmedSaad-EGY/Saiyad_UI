@@ -58,7 +58,7 @@ export default async function renderProductDetail(container, route, params) {
         <div class="detail-info">
           <div class="d-flex justify-content-between align-items-start mb-2">
             <h1 class="mb-0" style="margin-right:12px">${escapeHtml(p.title)}</h1>
-            <button class="btn btn-ghost btn-icon btn-sm mt-1" id="shareBtn" title="${t('common.share') || 'Share'}"><i class="fas fa-share-alt"></i></button>
+            <button class="btn btn-ghost btn-icon btn-sm mt-1" id="shareBtn" aria-label="${t('common.share') || 'Share'}" title="${t('common.share') || 'Share'}"><i class="fas fa-share-alt"></i></button>
           </div>
           <div class="detail-price">${formatPrice(p.price)}</div>
           
