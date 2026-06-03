@@ -20,7 +20,7 @@
 /* ===================== GLOBAL SKELETON ===================== */
 .global-skeleton { padding: 2rem 1.5rem; max-width: 1200px; margin: 0 auto; }
 .gsk-bar {
-  height: 16px; border-radius: 8px; margin-bottom: 12px;
+  height: 16px; border-radius: var(--radius); margin-bottom: var(--space-3);
   background: linear-gradient(90deg,
     var(--border, #e0e0e0) 25%,
     var(--card-bg, #f5f5f5) 50%,
@@ -33,7 +33,7 @@
 .gsk-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px,1fr));
              gap: 1rem; margin-top: 1.5rem; }
 .gsk-card {
-  height: 200px; border-radius: 12px;
+  height: 200px; border-radius: var(--radius-md);
   background: linear-gradient(90deg,
     var(--border, #e0e0e0) 25%,
     var(--card-bg, #f5f5f5) 50%,
@@ -69,7 +69,7 @@
 .wallet-balance-currency { font-size: .875rem; opacity: .7; margin-top: -.5rem; }
 .wallet-transactions-section h2 { font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem; }
 .tx-type { text-transform: capitalize; font-size: .8125rem; font-weight: 500;
-           padding: 2px 8px; border-radius: 4px; }
+           padding: 2px var(--space-2); border-radius: var(--radius-sm); }
 .tx-positive { color: var(--success); font-weight: 600; }
 .tx-negative { color: var(--danger); font-weight: 600; }
 .table-responsive { overflow-x: auto; -webkit-overflow-scrolling: touch; }
@@ -128,12 +128,12 @@
 }
 
 /* ===================== PASSWORD STRENGTH ===================== */
-.pw-strength { margin-top: 8px; }
+.pw-strength { margin-top: var(--space-2); }
 .pw-strength__track { height: 4px; background: var(--border, #2a3a5a); border-radius: 2px; overflow: hidden; }
 .pw-strength__fill  { height: 100%; width: 0; border-radius: 2px; transition: width .3s, background .3s; }
 .pw-strength__label { font-size: .75rem; font-weight: 500; margin-top: 4px; display: block; }
-.pw-reqs { list-style: none; margin-top: 8px; padding: 0;
-           display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
+.pw-reqs { list-style: none; margin-top: var(--space-2); padding: 0;
+           display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-1); }
 .pw-reqs li { font-size: .75rem; display: flex; align-items: center; gap: 6px; opacity: .7; transition: color .2s, opacity .2s; }
 
 /* ===================== HIDDEN UTILITY ===================== */
@@ -221,7 +221,7 @@
     font-weight: 700;
     min-width: 16px;
     height: 16px;
-    border-radius: 8px;
+    border-radius: var(--radius);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -271,6 +271,9 @@
   .countdown-num {
     font-size: 1.25rem !important;
   }
+
+  .wallet-page { padding: 1.5rem 1rem; }
+  .wallet-balance-card { padding: 1.25rem; }
 }
 
 /* ===================== MODAL FOCUS TRAP INDICATOR ===================== */

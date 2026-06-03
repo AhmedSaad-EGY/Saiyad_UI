@@ -34,8 +34,8 @@ export function showToast(msg, type = "info") {
 
   toast.setAttribute("role", "alert");
   toast.style.cssText = `
-    padding: 16px 24px;
-    border-radius: 12px;
+    padding: var(--space-4) var(--space-6);
+    border-radius: var(--radius-md);
     color: white;
     font-weight: 600;
     font-size: 0.95rem;

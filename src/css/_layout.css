@@ -126,7 +126,7 @@
 .navbar-brand {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-2);
   flex-shrink: 0;
   transition: transform var(--transition);
   letter-spacing: -0.02em;
@@ -161,19 +161,27 @@
 
 /* Desktop: drawer is a horizontal row */
 .nav-drawer {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
   display: flex;
-  align-items: center;
-  gap: 12px;
+  flex-direction: column;
+  background: var(--nav-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  width: min(340px, 88vw);
+  padding: var(--space-6) var(--space-6);
+  gap: var(--space-3);
   flex: 1;
   justify-content: flex-end;
 }
 
 /* Desktop: navbar-nav is an inline flex row; toggles/actions flow inline */
 .navbar-nav {
+  list-style: none;
   display: flex;
-  flex-direction: row;
   align-items: center;
-  gap: 4px;
+  gap: var(--space-1);
 }
 
 /* Nav drawer overlay (mobile only) */
@@ -199,9 +207,10 @@
 }
 
 .nav-link {
-  text-decoration: none;
-  color: var(--text-secondary);
-  padding: 8px 14px;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
   border-radius: var(--radius);
   font-weight: 500;
   font-size: var(--text-sm);
@@ -243,7 +252,8 @@
 
 .nav-toggles {
   display: flex;
-  gap: 4px;
+  align-items: center;
+  gap: var(--space-1);
   align-items: center;
   flex-shrink: 0;
 }
@@ -287,7 +297,7 @@
    ============================================================ */
 .main-content {
   flex: 1;
-  padding: calc(60px + 36px) var(--space-6) 64px;
+  padding: calc(60px + var(--space-8)) var(--space-6) var(--space-16);
   padding-bottom: var(--space-16);
   animation: fadeIn 0.25s var(--ease-out);
   position: relative;
@@ -375,12 +385,12 @@ input[type="date"].form-input::-webkit-datetime-edit-year-field:focus {
   }
 
   .main-content {
-    padding: calc(60px + 28px) var(--space-5) var(--space-12);
+    padding: calc(60px + var(--space-6)) var(--space-5) var(--space-12);
     margin-inline: var(--space-3);
   }
 
-  .auth-page {
-    margin: 36px auto;
+.auth-page {
+  margin: var(--space-8) auto;
   }
 }
 
@@ -407,8 +417,8 @@ input[type="date"].form-input::-webkit-datetime-edit-year-field:focus {
   }
 
   .hero {
-    padding: 56px 20px;
-    margin-bottom: 32px;
+    padding: var(--space-12) var(--space-5);
+    margin-bottom: var(--space-8);
   }
 
   .dashboard-sidebar {
@@ -571,6 +581,10 @@ input[type="date"].form-input::-webkit-datetime-edit-year-field:focus {
   .auth-page .form-group {
     margin-bottom: var(--space-4);
   }
+
+  .not-found-page {
+    padding: var(--space-10) var(--space-4);
+  }
 }
 
 /* ============================================================
@@ -579,8 +593,8 @@ input[type="date"].form-input::-webkit-datetime-edit-year-field:focus {
 .breadcrumb {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 20px;
+  gap: var(--space-2);
+  margin-bottom: var(--space-5);
   font-size: var(--text-sm);
   color: var(--text-muted);
   flex-wrap: wrap;
@@ -617,8 +631,8 @@ input[type="date"].form-input::-webkit-datetime-edit-year-field:focus {
    ============================================================ */
 .back-to-top {
   position: fixed;
-  bottom: 24px;
-  inset-inline-end: 24px;
+  bottom: var(--space-6);
+  inset-inline-end: var(--space-6);
   z-index: 999;
   width: 44px;
   height: 44px;

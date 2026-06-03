@@ -117,7 +117,7 @@ export default async function renderShipping(container) {
             <!-- Live Location Map Preview -->
             <div class="form-group" x-show="form.city.trim()" x-transition x-cloak style="margin-top: 16px;">
               <label class="form-label text-primary"><i class="fas fa-map-marked-alt"></i> ${t('shipping.locationPreview') || 'Location Preview'}</label>
-              <div style="height: 180px; width: 100%; border-radius: 8px; overflow: hidden; border: 1px solid var(--border);">
+              <div style="height: 180px; width: 100%; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border);">
                 <iframe 
                   width="100%" 
                   height="100%" 

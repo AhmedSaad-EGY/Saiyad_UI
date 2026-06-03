@@ -177,9 +177,9 @@ export default async function renderDashboard(container, route, params) {
         width: 90%;
         background: var(--card-bg);
         border: 1px solid var(--border);
-        border-radius: 12px;
+        border-radius: var(--radius-md);
         box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-        padding: 24px;
+        padding: var(--space-6);
         transform: scale(1);
         transition: all 0.3s ease;
       }

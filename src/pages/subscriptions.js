@@ -72,7 +72,7 @@ export default async function renderSubscriptions(container) {
             const isPop = isPopularPlan(p.sortOrder);
             return `
             <div class="card" style="display:flex;flex-direction:column;position:relative;${isPop ? 'border:2px solid var(--primary)' : ''}">
-              ${isPop ? `<span class="position-absolute" style="top:-10px;right:16px;background:var(--primary);color:var(--text-inverse);padding:2px 12px;border-radius:20px;font-size:0.78rem;font-weight:600">${t("subscriptions.popular")}</span>` : ''}
+              ${isPop ? `<span class="position-absolute" style="top:-10px;right:16px;background:var(--primary);color:var(--text-inverse);padding:2px 12px;border-radius:var(--radius-xl);font-size:0.78rem;font-weight:600">${t("subscriptions.popular")}</span>` : ''}
               <div class="card-body" style="display:flex;flex-direction:column">
               <div class="text-center mb-3">
                 <i class="fas ${getPlanIcon(p.tier)} text-primary mb-2" style="font-size:2rem"></i>

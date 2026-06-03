@@ -483,7 +483,7 @@ export default async function renderAuctionDetail(container, _route, params) {
             <template x-if="isActive && isCustomer()">
               <div>
                 <div class="d-flex gap-3 flex-wrap mt-3">
-                  <div style="flex:1;min-width:200px">
+                  <div style="flex:1;min-width:140px">
                     <!-- Bid input + button -->
                     <div class="bid-input-group">
                       <input type="number" class="form-input form-control" x-model="bidAmount" step="0.01"

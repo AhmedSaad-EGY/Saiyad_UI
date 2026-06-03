@@ -84,7 +84,7 @@ export default async function renderProductDetail(container, route, params) {
                 <button type="button" class="qty-btn" id="qtyPlus" aria-label="Increase quantity">+</button>
               </div>
               <button class="btn btn-primary btn-lg" id="addToCartBtn"
-                ${!isAvailable ? "disabled" : ""} style="flex:1;min-width:160px">
+                ${!isAvailable ? "disabled" : ""} style="flex:1;min-width:140px">
                 <i class="fas fa-shopping-cart"></i> ${t("product.addToCart")}
               </button>
             </div>
