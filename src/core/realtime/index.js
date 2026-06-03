@@ -91,7 +91,6 @@ export function stopSignalR() {
     _connection = null;
     _connectionPromise = null;
     _joinedGroups.clear();
-    _onreconnectedHandler = null;
   }
 }
 
