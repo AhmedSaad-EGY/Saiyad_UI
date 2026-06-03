@@ -148,11 +148,11 @@
    ============================================================ */
 [data-theme="dark"] {
   --primary: oklch(0.72 0.17 250);
-  --primary-dark: oklch(0.80 0.14 250);
+  --primary-dark: oklch(0.60 0.19 250);
   --primary-light: oklch(0.24 0.08 250);
   --primary-ghost: oklch(0.72 0.17 250 / 0.12);
   --accent: oklch(0.72 0.17 50);
-  --accent-dark: oklch(0.80 0.14 50);
+  --accent-dark: oklch(0.60 0.19 50);
   --secondary: oklch(0.65 0.12 180);
   --success: oklch(0.75 0.15 145);
   --success-bg: oklch(0.22 0.06 145);

@@ -182,7 +182,7 @@
 }
 
 .text-info {
-  color: oklch(0.6 0.15 200) !important;
+  color: var(--info) !important;
 }
 
 .text-primary {
@@ -725,13 +725,13 @@
 .hero-actions .btn-primary {
   background: var(--accent);
   border-color: var(--accent);
-  box-shadow: 0 4px 20px oklch(0.65 0.19 48 / 0.45);
+  box-shadow: 0 4px 20px oklch(from var(--accent) l c h / 0.45);
 }
 
 .hero-actions .btn-primary:hover {
   background: var(--accent-dark);
   transform: translateY(-2px);
-  box-shadow: 0 8px 28px oklch(0.65 0.19 48 / 0.5);
+  box-shadow: 0 8px 28px oklch(from var(--accent) l c h / 0.5);
 }
 
 .hero-actions .btn-outline {
@@ -1441,49 +1441,49 @@ tr:last-child td {
    color (brighter) and the *-bg token (dark) as background.          */
 [data-theme="dark"] .status-available {
   background: var(--success-bg);
-  color: var(--success-border);
+  color: var(--success);
   border-color: var(--success);
 }
 
 [data-theme="dark"] .status-sold {
   background: var(--danger-bg);
-  color: var(--danger-border);
+  color: var(--danger);
   border-color: var(--danger);
 }
 
 [data-theme="dark"] .status-draft {
   background: var(--body-bg);
-  color: var(--text-muted);
+  color: var(--text-secondary);
   border-color: var(--border);
 }
 
 [data-theme="dark"] .status-active {
   background: var(--primary-light);
   color: var(--primary);
-  border-color: oklch(0.55 0.16 265);
+  border-color: var(--primary);
 }
 
 [data-theme="dark"] .status-finished {
   background: var(--warning-bg);
-  color: var(--warning-border);
+  color: var(--warning);
   border-color: var(--warning);
 }
 
 [data-theme="dark"] .status-pending {
   background: var(--warning-bg);
-  color: var(--warning-border);
+  color: var(--warning);
   border-color: var(--warning);
 }
 
 [data-theme="dark"] .status-paid {
   background: var(--success-bg);
-  color: var(--success-border);
+  color: var(--success);
   border-color: var(--success);
 }
 
 [data-theme="dark"] .status-shipped {
   background: var(--info-bg);
-  color: var(--info-border);
+  color: var(--info);
   border-color: var(--info);
 }
 

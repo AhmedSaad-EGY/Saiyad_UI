@@ -22,9 +22,9 @@
 .gsk-bar {
   height: 16px; border-radius: 8px; margin-bottom: 12px;
   background: linear-gradient(90deg,
-    var(--border-color, #e0e0e0) 25%,
-    var(--card-bg,    #f5f5f5)   50%,
-    var(--border-color, #e0e0e0) 75%);
+    var(--border, #e0e0e0) 25%,
+    var(--card-bg, #f5f5f5) 50%,
+    var(--border, #e0e0e0) 75%);
   background-size: 200% 100%;
   animation: skShimmer 1.5s infinite;
 }
@@ -35,9 +35,9 @@
 .gsk-card {
   height: 200px; border-radius: 12px;
   background: linear-gradient(90deg,
-    var(--border-color, #e0e0e0) 25%,
-    var(--card-bg,    #f5f5f5)   50%,
-    var(--border-color, #e0e0e0) 75%);
+    var(--border, #e0e0e0) 25%,
+    var(--card-bg, #f5f5f5) 50%,
+    var(--border, #e0e0e0) 75%);
   background-size: 200% 100%;
   animation: skShimmer 1.5s infinite;
 }
@@ -70,13 +70,13 @@
 .wallet-transactions-section h2 { font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem; }
 .tx-type { text-transform: capitalize; font-size: .8125rem; font-weight: 500;
            padding: 2px 8px; border-radius: 4px; }
-.tx-positive { color: #22c55e; font-weight: 600; }
-.tx-negative { color: #ef4444; font-weight: 600; }
+.tx-positive { color: var(--success); font-weight: 600; }
+.tx-negative { color: var(--danger); font-weight: 600; }
 .table-responsive { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 .data-table { width: 100%; border-collapse: collapse; font-size: .875rem; }
 .data-table th { text-align: start; padding: .75rem 1rem; font-weight: 500; opacity: .7;
-                 border-bottom: 1px solid var(--border-color, #2a3a5a); }
-.data-table td { padding: .875rem 1rem; border-bottom: 1px solid var(--border-color, #1e2d4a); }
+                 border-bottom: 1px solid var(--border, #2a3a5a); }
+.data-table td { padding: .875rem 1rem; border-bottom: 1px solid var(--border, #1e2d4a); }
 
 /* ===================== EMPTY STATES ===================== */
 .empty-state {
@@ -104,11 +104,11 @@
 .nav-search {
   display: flex; align-items: center; max-width: 280px; width: 100%;
   background: var(--input-bg, rgba(255,255,255,.07));
-  border: 1px solid var(--border-color, rgba(255,255,255,.1));
+  border: 1px solid var(--border, rgba(255,255,255,.1));
   border-radius: 2rem; overflow: hidden; transition: border-color .2s;
   margin: 0.5rem 1rem;
 }
-.nav-search:focus-within { border-color: var(--primary-color, #3b82f6); }
+.nav-search:focus-within { border-color: var(--primary, #3b82f6); }
 .nav-search__input {
   background: transparent; border: none; outline: none; color: inherit;
   padding: .4rem .875rem; font-size: .875rem; width: 100%; min-width: 0;
@@ -129,7 +129,7 @@
 
 /* ===================== PASSWORD STRENGTH ===================== */
 .pw-strength { margin-top: 8px; }
-.pw-strength__track { height: 4px; background: var(--border-color, #2a3a5a); border-radius: 2px; overflow: hidden; }
+.pw-strength__track { height: 4px; background: var(--border, #2a3a5a); border-radius: 2px; overflow: hidden; }
 .pw-strength__fill  { height: 100%; width: 0; border-radius: 2px; transition: width .3s, background .3s; }
 .pw-strength__label { font-size: .75rem; font-weight: 500; margin-top: 4px; display: block; }
 .pw-reqs { list-style: none; margin-top: 8px; padding: 0;
@@ -180,8 +180,8 @@
     box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.08);
   }
   [data-theme="dark"] .bottom-nav {
-    background: rgba(11, 17, 32, 0.95);
-    border-top-color: rgba(255, 255, 255, 0.08);
+    background: var(--nav-bg);
+    border-top-color: var(--border);
   }
   .bottom-nav-item {
     flex: 1;
