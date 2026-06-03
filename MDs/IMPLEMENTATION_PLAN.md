@@ -927,6 +927,7 @@ sessionStorage.removeItem("sayiadRegFails");
 ---
 
 **🔖 COMMIT — PHASE 2:**
+✅ **Done** — commit `c88f53b`
 
 ```
 git add -A
@@ -1632,12 +1633,12 @@ PHASE 1 — CRITICAL
 
 PHASE 2 — HIGH PRIORITY
 [x] TASK-H1  hreflang ar/en/x-default tags in index.html
-[ ] TASK-H2  noindex meta on cart, checkout, dashboard, profile, wallet, admin, shipping, orders
-[ ] TASK-H3  Styled offline page in sw.js
-[ ] TASK-H4  Hero 3D tilt disabled on touch/hover:none devices
-[ ] TASK-H5  Product grid: row-cols-1 on <576px, row-cols-sm-2 at 576px+
-[ ] TASK-H6  Bottom mobile navigation bar (≤991px only)
-[ ] TASK-H7  Register page rate limiting after 3 failures
+[x] TASK-H2  noindex meta on cart, checkout, dashboard, profile, wallet, admin, shipping, orders
+[x] TASK-H3  Styled offline page in sw.js
+[x] TASK-H4  Hero 3D tilt disabled on touch/hover:none devices
+[x] TASK-H5  Product grid: row-cols-1 on <576px, row-cols-sm-2 at 576px+
+[x] TASK-H6  Bottom mobile navigation bar (≤991px only)
+[x] TASK-H7  Register page rate limiting after 3 failures
 
 PHASE 3 — MEDIUM
 [ ] TASK-M1  Bidder IDs anonymized in auction history

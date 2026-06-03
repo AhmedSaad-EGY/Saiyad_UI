@@ -30,8 +30,21 @@ export default defineConfig({
     sourcemap: false,
     rollupOptions: {
       output: {
-        manualChunks: {
-          'vendor-alpine': ['alpinejs'],
+        manualChunks(id) {
+          // Vendor chunks
+          if (id.includes('node_modules/alpinejs')) return 'vendor-alpine';
+          if (id.includes('node_modules/bootstrap')) return 'vendor-bootstrap';
+
+          // Core app chunks (loaded on every page)
+          if (id.includes('/src/core/i18n/')) return 'core-i18n';
+          if (id.includes('/src/core/api/') || id.includes('/src/core/auth/') ||
+              id.includes('/src/core/router/') || id.includes('/src/core/events/')) {
+            return 'core-app';
+          }
+
+          // Page chunks (loaded only when route is visited)
+          const pageMatch = id.match(/\/src\/pages\/([^/]+)\.js$/);
+          if (pageMatch) return `page-${pageMatch[1]}`;
         },
       },
     },

@@ -259,6 +259,34 @@ export default async function renderProductDetail(container, route, params) {
       mainImgWrap.addEventListener("click", () => openLightbox(allImages, 0));
     }
 
+    // Mobile swipe support for image gallery
+    (function initGallerySwipe() {
+      const wrap = document.getElementById("mainImageWrap");
+      if (!wrap) return;
+      let startX = 0, startY = 0;
+      wrap.addEventListener("touchstart", (e) => {
+        startX = e.touches[0].clientX;
+        startY = e.touches[0].clientY;
+      }, { passive: true });
+      wrap.addEventListener("touchend", (e) => {
+        const dx = e.changedTouches[0].clientX - startX;
+        const dy = e.changedTouches[0].clientY - startY;
+        if (Math.abs(dx) < 40 || Math.abs(dy) > Math.abs(dx)) return;
+        const currentSrc = document.getElementById("mainImg")?.src;
+        const currentIndex = currentSrc ? allImages.findIndex(img => currentSrc.includes(encodeURIComponent(img.split('/').pop() || img))) : -1;
+        const active = currentIndex >= 0 ? currentIndex : 0;
+        const next = dx < 0 ? Math.min(active + 1, allImages.length - 1) : Math.max(active - 1, 0);
+        if (next !== active) {
+          const mainImg = document.getElementById("mainImg");
+          if (mainImg) {
+            mainImg.src = allImages[next];
+            const magLens = document.getElementById("magLens");
+            if (magLens) magLens.style.backgroundImage = `url('${escapeHtml(allImages[next])}')`;
+          }
+        }
+      }, { passive: true });
+    })();
+
     // Similar products
     (async () => {
       try {

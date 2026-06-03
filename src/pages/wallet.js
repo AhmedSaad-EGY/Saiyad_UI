@@ -32,6 +32,10 @@ function initWalletPage() {
           <button class="btn btn-primary" id="topUpBtn" data-i18n="wallet_topup">
             <i class="fas fa-plus-circle" aria-hidden="true"></i> Top Up
           </button>
+          <p class="wallet-payment-note" style="font-size:0.75rem;opacity:0.55;margin-top:0.5rem">
+            <i class="fas fa-info-circle" aria-hidden="true"></i>
+            <span data-i18n="wallet_payment_note">Top-up requests are processed manually within 24 hours.</span>
+          </p>
         </div>
 
         <section class="wallet-transactions-section" aria-labelledby="txHeading">
@@ -206,6 +210,9 @@ async function handleTopUp() {
   btn.innerHTML = '<i class="fas fa-spinner fa-spin" aria-hidden="true"></i> Processing…';
 
   try {
+    // PAYMENT GATEWAY NOTE: Until Fawry/InstaPay is integrated,
+    // top-up is handled as a manual/admin-credited operation.
+    // The button will show a pending confirmation instead of instant credit.
     await api.post('/wallet/deposit', { amount });
     closeTopUpModal();
     showToast('Wallet topped up successfully!', 'success');

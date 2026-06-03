@@ -201,7 +201,7 @@ Alpine.data('auctionDetailPage', () => ({
     if (bidEl) animate(bidEl, 'bounceIn', { duration: '0.6s' });
 
     const bidEntry = {
-      userName: bid.userName || bid.bidderName || bid.fullName || (bid.bidderId ? `User #${bid.bidderId}` : 'User'),
+      userName: bid.userName || bid.bidderName || bid.fullName || t('auction.anonymousBidder') || 'Bidder',
       createdAt: bid.createdAt || bid.created_at || new Date().toISOString(),
       amount: newVal || 0,
       isAutoBid: bid.isAutoBid || false,

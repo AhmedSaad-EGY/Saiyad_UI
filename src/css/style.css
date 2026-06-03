@@ -237,3 +237,38 @@
     display: none !important;
   }
 }
+
+/* ===================== AUCTION COUNTDOWN — MOBILE ===================== */
+.countdown-timer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+  align-items: center;
+}
+.countdown-unit {
+  min-width: 52px;
+  text-align: center;
+}
+@media (max-width: 375px) {
+  .countdown-unit {
+    min-width: 44px;
+  }
+  .countdown-num {
+    font-size: 1.5rem !important;
+  }
+  .countdown-lbl {
+    font-size: 0.625rem !important;
+  }
+}
+@media (max-width: 320px) {
+  .countdown-timer {
+    gap: 0.25rem;
+  }
+  .countdown-unit {
+    min-width: 36px;
+  }
+  .countdown-num {
+    font-size: 1.25rem !important;
+  }
+}
