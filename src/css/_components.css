@@ -2538,8 +2538,13 @@ tr:last-child td {
   -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-lg);
-  padding: var(--space-5);
+  padding: var(--space-6) var(--space-5);
   text-align: center;
+  min-height: 140px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   transition: transform var(--duration-normal) var(--ease-out),
     box-shadow var(--duration-normal) var(--ease-out);
 }
@@ -2550,14 +2555,14 @@ tr:last-child td {
 }
 
 .profile-stat-card i {
-  font-size: 1.5rem;
+  font-size: 1.75rem;
   color: var(--primary);
   margin-bottom: var(--space-2);
   display: block;
 }
 
 .profile-stat-num {
-  font-size: var(--text-2xl);
+  font-size: var(--text-3xl);
   font-weight: var(--weight-bold);
   color: var(--text);
   line-height: 1;
@@ -2568,7 +2573,7 @@ tr:last-child td {
   font-size: var(--text-xs);
   color: var(--text-muted);
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
 }
 
 .profile-quick-links {
@@ -2584,18 +2589,21 @@ tr:last-child td {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-4);
+  justify-content: center;
+  gap: var(--space-3);
+  padding: var(--space-6) var(--space-4);
+  min-height: 120px;
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   color: var(--text-secondary);
   text-decoration: none;
   font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
   transition: all var(--duration-normal) var(--ease-out);
 }
 
 .profile-link-card i {
-  font-size: 1.4rem;
+  font-size: 1.75rem;
   color: var(--primary);
 }
 
@@ -2628,11 +2636,23 @@ tr:last-child td {
   }
 
   .profile-stat-card {
-    padding: var(--space-3);
+    padding: var(--space-4) var(--space-3);
+    min-height: 110px;
   }
 
   .profile-stat-num {
-    font-size: var(--text-xl);
+    font-size: var(--text-2xl);
+  }
+
+  .profile-link-card {
+    padding: var(--space-4) var(--space-3);
+    min-height: 100px;
+    gap: var(--space-2);
+    font-size: var(--text-xs);
+  }
+
+  .profile-link-card i {
+    font-size: 1.4rem;
   }
 }
 
