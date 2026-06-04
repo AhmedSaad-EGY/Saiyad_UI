@@ -342,7 +342,8 @@ export default async function renderProductDetail(container, route, params) {
           showToast(t("product.addedToCart"), "success");
           updateCartBadge();
         } catch (e) {
-          showToast(e.message, "error");
+          const msg = e.status === 400 ? t('cart.insufficientStock', { stock: p.stockQuantity || 0 }) : e.message;
+          showToast(msg, "error");
         } finally {
           btn.disabled = false;
           btn.innerHTML = `<i class="fas fa-shopping-cart" aria-hidden="true"></i> ${t("product.addToCart")}`;
