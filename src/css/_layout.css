@@ -630,7 +630,7 @@ body.nav-open .navbar { pointer-events: all; }
    ============================================================ */
 .main-content {
   flex: 1;
-  padding: calc(60px + var(--space-8)) 0 var(--space-16);
+  padding: calc(60px + var(--space-8)) var(--space-6) var(--space-16);
   animation: fadeIn 0.25s var(--ease-out);
   position: relative;
   z-index: 1;
@@ -836,13 +836,13 @@ input[type="date"].form-input::-webkit-datetime-edit-year-field:focus {
    ============================================================ */
 @media (max-width: 1024px) {
   .container { padding: 0 var(--space-5); }
-  .main-content { padding: calc(60px + var(--space-6)) 0 var(--space-12); }
+  .main-content { padding: calc(60px + var(--space-6)) var(--space-5) var(--space-12); }
   .auth-page { margin: var(--space-8) auto; }
 }
 
 @media (max-width: 768px) {
   .container { padding: 0 var(--space-4); }
-  .main-content { padding: calc(60px + var(--space-5)) 0 var(--space-10); }
+  .main-content { padding: calc(60px + var(--space-5)) var(--space-4) var(--space-10); }
   .auth-page { margin: 28px auto; }
   .hero h1 { font-size: 2rem; }
   .hero p  { font-size: 1rem; }
