@@ -134,9 +134,6 @@ export function showConfirm(title, message, options = {}) {
 
     document.body.appendChild(overlay);
     animate(overlay, 'fadeIn', { duration: '0.2s' });
-    const modalEl = overlay.querySelector('.modal-confirm');
-    if (modalEl) animate(modalEl, 'zoomIn', { duration: '0.25s' });
-
     setTimeout(() => {
       const proceedBtn = overlay.querySelector("#confirmProceed");
       proceedBtn?.focus();
