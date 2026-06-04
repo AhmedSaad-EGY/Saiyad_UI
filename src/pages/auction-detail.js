@@ -357,7 +357,8 @@ export default async function renderAuctionDetail(container, _route, params) {
       </div>
 
       <!-- Content -->
-      <div x-show="!loading && !error && auction">
+      <template x-if="!loading && !error && auction">
+        <div>
         <!-- Breadcrumb -->
         <nav class="breadcrumb" aria-label="Breadcrumb">
           <a href="#/">${t("nav.home")}</a>
@@ -600,7 +601,7 @@ export default async function renderAuctionDetail(container, _route, params) {
             </button>
           </div>
         </template>
-      </div>
+      </div></template>
     </div>
   `;
 }
