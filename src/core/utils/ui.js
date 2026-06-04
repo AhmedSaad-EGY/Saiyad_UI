@@ -380,6 +380,7 @@ export function trackRecentlyViewed(id, title, image, price, type = "product") {
 }
 
 export function renderRecentlyViewed(container) {
+  if (!container) return;
   const viewed = JSON.parse(localStorage.getItem("sayiad_recent") || "[]");
   if (!viewed.length) return;
   container.innerHTML = `
