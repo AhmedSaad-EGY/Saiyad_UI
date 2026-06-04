@@ -1,8 +1,8 @@
 import { t } from '../core/i18n/index.js';
 import { api } from '../core/api/client.js';
 import { isAuthenticated, getUser } from '../core/auth/index.js';
-import { SELLER_ROLES, ECOMMERCE_ROLES } from '../shared/constants/roles.js';
-import { hasAnyRole } from '../core/auth/index.js';
+import { ROLES, SELLER_ROLES, ECOMMERCE_ROLES } from '../shared/constants/roles.js';
+import { hasAnyRole, hasRole } from '../core/auth/index.js';
 import { navigate } from '../core/router/index.js';
 import { escapeHtml, observeAnimations } from '../core/utils/dom.js';
 import { showToast } from '../core/utils/ui.js';
@@ -10,7 +10,7 @@ import { setPageMeta } from '../core/utils/seo.js';
 import Alpine from 'alpinejs';
 
 Alpine.data('profilePage', () => ({
-  stats: { orders: 0, wishlist: 0, notifs: 0 },
+  stats: { orders: 0, wishlist: 0, notifs: 0, auctions: 0, pendingRequests: 0 },
   init() {
     setPageMeta("My Profile", undefined, true);
     const promises = [];
@@ -19,11 +19,25 @@ Alpine.data('profilePage', () => ({
       promises.push(api.get('/wishlist', { page: 1, pageSize: 1 }));
     }
     promises.push(api.get('/notifications/unread-count'));
+    if (hasRole(ROLES.AUCTIONEER)) {
+      promises.push(api.get('/auctions/dashboard'));
+    }
     Promise.allSettled(promises).then((results) => {
-      const [orders, wishlist, notifs] = promises.length === 3 ? results : [null, null, results[0]];
+      const hasEcom = hasAnyRole(ECOMMERCE_ROLES);
+      const isAuctioneer = hasRole(ROLES.AUCTIONEER);
+      let offset = 0;
+      if (hasEcom) offset = 2;
+      const orders = results[0];
+      const wishlist = results[1];
+      const notifs = results[offset];
+      const auctionData = results[offset + 1];
       if (orders?.status === 'fulfilled') this.animateValue('orders', parseInt(orders.value?.totalCount ?? 0, 10));
       if (wishlist?.status === 'fulfilled') this.animateValue('wishlist', parseInt(wishlist.value?.totalCount ?? 0, 10));
       if (notifs?.status === 'fulfilled') this.animateValue('notifs', parseInt(notifs.value?.count ?? 0, 10));
+      if (auctionData?.status === 'fulfilled') {
+        this.animateValue('auctions', parseInt(auctionData.value?.activeAuctions ?? 0, 10));
+        this.animateValue('pendingRequests', parseInt(auctionData.value?.pendingRequests ?? 0, 10));
+      }
     });
     this.$nextTick(() => {
       // Trigger profile fill anim transition
@@ -86,6 +100,7 @@ Alpine.data('profilePage', () => ({
   },
 
   isECommerce() { return hasAnyRole(ECOMMERCE_ROLES); },
+  isAuctioneer() { return hasRole(ROLES.AUCTIONEER); },
 }));
 
 export default async function renderUserProfile(container) {
@@ -148,6 +163,20 @@ export default async function renderUserProfile(container) {
             <div class="profile-stat-label">${t('dash.wishlist')}</div>
           </div>
         </div>
+        <div class="col-sm-4" x-show="isAuctioneer()">
+          <div class="profile-stat-card">
+            <i class="fas fa-gavel" aria-hidden="true"></i>
+            <div class="profile-stat-num" x-text="stats.auctions">—</div>
+            <div class="profile-stat-label">${t('home.activeAuctions')}</div>
+          </div>
+        </div>
+        <div class="col-sm-4" x-show="isAuctioneer()">
+          <div class="profile-stat-card">
+            <i class="fas fa-file-export" aria-hidden="true"></i>
+            <div class="profile-stat-num" x-text="stats.pendingRequests">—</div>
+            <div class="profile-stat-label">${t('auctionRequests.title')}</div>
+          </div>
+        </div>
         <div class="col-sm-4">
           <div class="profile-stat-card">
             <i class="fas fa-bell" aria-hidden="true"></i>
@@ -168,6 +197,10 @@ export default async function renderUserProfile(container) {
             <a href="#/dashboard?tab=orders" class="profile-link-card"><i class="fas fa-shopping-bag" aria-hidden="true"></i><span>${t('dash.orders')}</span></a>
             <a href="#/dashboard?tab=wishlist" class="profile-link-card"><i class="fas fa-heart" aria-hidden="true"></i><span>${t('dash.wishlist')}</span></a>
             <a href="#/shipping" class="profile-link-card"><i class="fas fa-map-marker-alt" aria-hidden="true"></i><span>${t('dash.addresses')}</span></a>
+          ` : ''}
+          ${user?.role === ROLES.AUCTIONEER ? `
+            <a href="#/dashboard?tab=auctions" class="profile-link-card"><i class="fas fa-gavel" aria-hidden="true"></i><span>${t('dash.auctions')}</span></a>
+            <a href="#/dashboard?tab=auctioneer-analytics" class="profile-link-card"><i class="fas fa-chart-bar" aria-hidden="true"></i><span>${t('analytics.title')}</span></a>
           ` : ''}
           <a href="#/dashboard?tab=notifications" class="profile-link-card"><i class="fas fa-bell" aria-hidden="true"></i><span>${t('dash.notifications')}</span></a>
           ${SELLER_ROLES.includes(user?.role) ? `
