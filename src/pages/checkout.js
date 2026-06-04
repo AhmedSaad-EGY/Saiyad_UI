@@ -179,7 +179,6 @@ export default async function renderCheckout(container) {
           </div>
         </div>
       </div>
-      </div>
       <div x-show="!loading && items.length > 0 && !orderSuccess" x-transition:enter="transition-fade" x-transition:enter-start="op-0" x-transition:enter-end="op-100">
         <div>
           <div class="section-header text-center d-block border-0 pb-0">
@@ -202,7 +201,7 @@ export default async function renderCheckout(container) {
                 </div>
                 <div class="card-body">
                 <template x-for="item in items" :key="item.productId">
-                  <div class="d-flex justify-content-between" class="py-2" style="border-bottom:1px solid var(--border)">
+                    <div class="d-flex justify-content-between py-2" style="border-bottom:1px solid var(--border)">
                     <span><span x-text="item.productTitle || ('Product #' + item.productId)"></span> <small class="text-muted" x-text="' x' + (item.quantity || 1)"></small></span>
                     <span class="fw-semibold" x-text="formatPrice((item.product?.price || item.unitPrice || item.price || 0) * (item.quantity || 1))"></span>
                   </div>
@@ -279,9 +278,7 @@ export default async function renderCheckout(container) {
                   </div>
                 </form>
               </div>
-              </div>
             </div>
-              </div>
               
               <div class="card mt-4 mb-4">
                 <div class="card-header">
