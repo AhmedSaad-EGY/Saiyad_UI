@@ -550,6 +550,7 @@ export const translations = {
     "auctionRequestsReview.actions": "Actions",
 
     // Auctioneer Analytics
+    "analytics.statusDistribution": "Auctions Distribution",
     "analytics.title": "Auctioneer Analytics",
     "analytics.totalAuctions": "Total Auctions",
     "analytics.activeAuctions": "Active Auctions",
@@ -651,6 +652,85 @@ export const translations = {
     "footer.allRights": "All rights reserved.",
     "footer.madeWith": "Made for fishermen 🎣",
     "footer.copyright": "\u00a9 2026 Sayiad. All rights reserved.",
+
+    // Admin
+    "admin.activeAuctions": "Active Auctions",
+    "admin.createFirstCategory": "Create your first category to organize products.",
+    "admin.noCategories": "No categories found",
+    "admin.noFees": "No fee transactions yet",
+    "admin.noReports": "No reports found",
+    "admin.noUsers": "No users found",
+    "admin.totalRevenue": "Total Revenue",
+    "admin.totalUsers": "Total Users",
+
+    // Auction
+    "auction.anonymousBidder": "Anonymous Bidder",
+    "auction.autoBidMaxPlaceholder": "Max bid amount",
+    "auction.bidIrreversible": "This cannot be undone.",
+    "auction.confirmBidMsg": "Place a bid of",
+    "auction.confirmBidTitle": "Confirm Your Bid",
+
+    // Auctions
+    "auctions.status": "Status",
+
+    // Cart
+    "cart.continueShopping": "Continue Shopping",
+
+    // Common
+    "common.edit": "Edit",
+    "common.finish": "Finish",
+    "common.processing": "Processing\u2026",
+    "common.share": "Share",
+    "common.showResults": "Show Results",
+    "common.step": "Step",
+    "common.loadMore": "Load More",
+    "common.noDescription": "No description provided",
+    "common.viewProfile": "View Profile",
+
+    // Notifications
+    "notif.markAsRead": "Mark as read",
+
+    // Order
+    "order.confirmed": "Confirmed",
+    "order.delivered": "Delivered",
+    "order.method": "Method",
+    "order.paymentInfo": "Payment",
+    "order.processing": "Processing",
+    "order.reorder": "Shop Again",
+    "order.shipped": "Shipped",
+    "order.shippingInfo": "Shipping",
+    "order.tax": "Tax",
+    "order.track": "View Order Details",
+
+    // Products
+    "products.category": "Category",
+    "products.condition": "Condition",
+
+    // Profile
+    "profile.completion": "Profile Completion",
+
+    // Shipping
+    "shipping.editAddress": "Edit Address",
+    "shipping.locationPreview": "Location Preview",
+    "shipping.updated": "Address updated successfully",
+
+    // Subscriptions
+    "subscriptions.noPlans": "No plans found",
+    "subscriptions.noPlansDesc": "Subscription plans are not available at the moment.",
+
+    // Tour
+    "tour.navDesc": "Navigate seamlessly between your overview, products, order tracking, and profile.",
+    "tour.navTitle": "Dashboard Navigation",
+    "tour.ordersDesc": "Monitor your transactions, purchase records, and shipping updates dynamically.",
+    "tour.ordersTitle": "Track Orders",
+    "tour.productsDesc": "Fisherman and sellers can easily publish or update listed catch and auction items here.",
+    "tour.productsTitle": "Manage Listings",
+    "tour.welcomeToSayiad": "Ready to use Sayiad! Enjoy your experience.",
+
+    // Validation
+    "validation.invalid": "Invalid value",
+    "validation.minLength": "Value is too short",
+    "validation.required": "This field is required",
   },
 
   ar: {
@@ -1204,6 +1284,7 @@ export const translations = {
     "auctionRequestsReview.actions": "الإجراءات",
 
     // Auctioneer Analytics
+    "analytics.statusDistribution": "توزيع المزادات",
     "analytics.title": "تحليلات المزادات",
     "analytics.totalAuctions": "إجمالي المزادات",
     "analytics.activeAuctions": "المزادات النشطة",
@@ -1304,6 +1385,85 @@ export const translations = {
     "footer.allRights": "جميع الحقوق محفوظة.",
     "footer.madeWith": "صنع للصيادين 🎣",
     "footer.copyright": "\u00a9 2026 صياد. جميع الحقوق محفوظة.",
+
+    // Admin
+    "admin.activeAuctions": "المزادات النشطة",
+    "admin.createFirstCategory": "أنشئ فئتك الأولى لتنظيم المنتجات",
+    "admin.noCategories": "لم يتم العثور على فئات",
+    "admin.noFees": "لا توجد معاملات رسوم بعد",
+    "admin.noReports": "لم يتم العثور على تقارير",
+    "admin.noUsers": "لم يتم العثور على مستخدمين",
+    "admin.totalRevenue": "إجمالي الإيرادات",
+    "admin.totalUsers": "إجمالي المستخدمين",
+
+    // Auction
+    "auction.anonymousBidder": "مزايد مجهول",
+    "auction.autoBidMaxPlaceholder": "الحد الأقصى للمزايدة",
+    "auction.bidIrreversible": "لا يمكن التراجع عن هذا",
+    "auction.confirmBidMsg": "وضع مزايدة بقيمة",
+    "auction.confirmBidTitle": "تأكيد المزايدة",
+
+    // Auctions
+    "auctions.status": "الحالة",
+
+    // Cart
+    "cart.continueShopping": "مواصلة التسوق",
+
+    // Common
+    "common.edit": "تعديل",
+    "common.finish": "إنهاء",
+    "common.processing": "جارٍ المعالجة\u2026",
+    "common.share": "مشاركة",
+    "common.showResults": "عرض النتائج",
+    "common.step": "خطوة",
+    "common.loadMore": "تحميل المزيد",
+    "common.noDescription": "لا يوجد وصف",
+    "common.viewProfile": "عرض الملف الشخصي",
+
+    // Notifications
+    "notif.markAsRead": "تحديد كمقروء",
+
+    // Order
+    "order.confirmed": "مؤكد",
+    "order.delivered": "تم التوصيل",
+    "order.method": "طريقة الدفع",
+    "order.paymentInfo": "معلومات الدفع",
+    "order.processing": "قيد المعالجة",
+    "order.reorder": "تسوق مرة أخرى",
+    "order.shipped": "تم الشحن",
+    "order.shippingInfo": "معلومات الشحن",
+    "order.tax": "الضريبة",
+    "order.track": "تفاصيل الطلب",
+
+    // Products
+    "products.category": "الفئة",
+    "products.condition": "الحالة",
+
+    // Profile
+    "profile.completion": "اكتمال الملف الشخصي",
+
+    // Shipping
+    "shipping.editAddress": "تعديل العنوان",
+    "shipping.locationPreview": "معاينة الموقع",
+    "shipping.updated": "تم تحديث العنوان بنجاح",
+
+    // Subscriptions
+    "subscriptions.noPlans": "لم يتم العثور على خطط",
+    "subscriptions.noPlansDesc": "خطط الاشتراك غير متوفرة حالياً",
+
+    // Tour
+    "tour.navDesc": "تنقل بسلاسة بين النظرة العامة والمنتجات وتتبع الطلبات والملف الشخصي",
+    "tour.navTitle": "التنقل في لوحة التحكم",
+    "tour.ordersDesc": "تابع معاملاتك وسجلات الشراء وتحديثات الشحن بشكل ديناميكي",
+    "tour.ordersTitle": "تتبع الطلبات",
+    "tour.productsDesc": "يمكن للصيادين والبائعين نشر أو تحديث العناصر المدرجة بسهولة هنا",
+    "tour.productsTitle": "إدارة القوائم",
+    "tour.welcomeToSayiad": "جاهز لاستخدام صياد! استمتع بتجربتك",
+
+    // Validation
+    "validation.invalid": "قيمة غير صالحة",
+    "validation.minLength": "القيمة قصيرة جداً",
+    "validation.required": "هذا الحقل مطلوب",
   },
 };
 

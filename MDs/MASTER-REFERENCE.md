@@ -437,6 +437,10 @@ MODERATOR_ROLES = [Auctioneer, Admin]                  # Review + Analytics
 - ✅ **June 4: Upload limit 500KB → 5MB** — Increased frontend validation and updated EN/AR i18n toast messages | Build: ✅
 - ✅ **June 4: Backend upload 500 fix** — Changed `UploadController.cs` to copy `IFormFile` into `MemoryStream` once, avoiding double-read stream issue between `IsValidImageBytes` and Cloudinary upload | Build: ✅ 0 errors
 - ✅ **June 4: Auction-requests-review page polish** — Added pagination (prev/next), loading spinner on re-fetch, moved drawer inline styles to CSS with `.drawer-open` class toggling, RTL support, mobile full-width; removed duplicate `.form-control` and `novalidate` | Build: ✅
+- ✅ **June 4: Product images backend fix** — Added 3× `.Include(p => p.Images)` in `ProductRepository.cs` (`GetAllAsync`, `GetByIdAsync`, `GetSellerProductsAsync`) — `primaryImageUrl` was always `null` | Build: ✅ | Commit: `f409400`
+- ✅ **June 4: Cart backend — StockQuantity DTO + accumulated stock check** — Added `StockQuantity` to `CartItemResponse`; fixed `AddItemAsync` to sum existing + new quantity before stock comparison (prevents bypassing by adding repeatedly) | Build: ✅ | Commit: `a91bbc6`
+- ✅ **June 4: Cart frontend — qty-btn-group, stock-aware disable, i18n, CSS** — Replaced `<input type="number">` with `qty-btn-group` (± buttons); `+` disabled when `quantity >= stockQuantity`; "MAX" label at stock limit; localized `cart.insufficientStock` toast on 400 | Build: ✅ | Commits: `862ae8f`, `d8bc92c`
+- ✅ **June 4: Product-detail localized stock error toast** — `addToCart` handler shows `cart.insufficientStock` on 400 instead of raw error | Build: ✅ | Commit: `d8bc92c`
 
 ### Immediate (Next)
 1. **Phase 4 — Low Priority** (L1: WhatsApp link, L2: hreflang, L3: skip-link CSS, L4: unique titles, L5: focus styles)
@@ -446,5 +450,28 @@ MODERATOR_ROLES = [Auctioneer, Admin]                  # Review + Analytics
 3. Standardize Bootstrap usage patterns across all 25 page modules
 
 ---
+
+### Backend Files Modified (This Session)
+
+| File | Change |
+|------|--------|
+| `Sayiad.Data/Repository/ProductRepo/ProductRepository.cs` | 3× `.Include(p => p.Images)` added |
+| `Sayiad.Domain/Dtos/CartDtos/CartDto.cs` | `StockQuantity` added to `CartItemResponse` |
+| `Sayiad.Domain/Managers/CartManager.cs` | Accumulated stock check in `AddItemAsync`; `StockQuantity` in `MapToResponse` |
+
+### Cart DTO (API Response)
+```json
+{
+  "items": [{
+    "productId": 1,
+    "quantity": 2,
+    "stockQuantity": 10,
+    "unitPrice": 150.00,
+    "productTitle": "Nile Tilapia",
+    "productImageUrl": "https://..."
+  }],
+  "total": 300.00
+}
+```
 
 *Keep this file updated! Mark tasks as `[x]` when completed.*

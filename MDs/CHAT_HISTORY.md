@@ -1783,4 +1783,39 @@ Changed stat card columns from `col-sm-4` (fixed 4-col grid that left gaps when 
 
 ---
 
+## 50. CART POLISH — QTY BTN GROUP, STOCK-AWARE DISABLE, I18N, CSS
+
+**Date**: June 4, 2026  
+**Action**: Full cart page polish: replaced `<input type="number">` with +/- buttons, stock-aware disabled state, localized error handling, product-images backend fix.
+
+### Product Images Fix (Backend)
+
+| File | Change |
+|------|--------|
+| `Sayiad.Data/Repository/ProductRepo/ProductRepository.cs` | Added 3× `.Include(p => p.Images)` in `GetAllAsync`, `GetByIdAsync`, `GetSellerProductsAsync` — `primaryImageUrl` was always `null` |
+
+**Backend commit**: `f409400` | **Build**: ✅ 0 errors
+
+### Cart Backend Changes
+
+| File | Change |
+|------|--------|
+| `Sayiad.Domain/Dtos/CartDtos/CartDto.cs` | Added `StockQuantity` to `CartItemResponse` |
+| `Sayiad.Domain/Managers/CartManager.cs` | `AddItemAsync`: sums existing + new quantity before stock comparison (prevents bypassing by adding repeatedly); `MapToResponse` populates `StockQuantity` |
+
+**Backend commit**: `a91bbc6` | **Build**: ✅ 0 errors
+
+### Frontend Changes
+
+| # | File | Change |
+|---|------|--------|
+| 1 | `src/core/i18n/index.js` | Added EN/AR keys: `cart.insufficientStock` ("Only {stock} available"/"متوفر {stock} فقط"), `cart.maxReached` ("MAX"/"الحد الأقصى") |
+| 2 | `src/css/_components.css` | Added `.qty-btn:disabled` (opacity 0.35, cursor not-allowed, pointer-events: none); added `.cart-max-label` (positioned below qty, danger color, uppercase) |
+| 3 | `src/pages/cart.js` | Replaced `<input type="number">` with `qty-btn-group` (± buttons); `+` button disabled when `item.quantity >= item.stockQuantity`; "MAX" label shown at stock limit; `updateQty` shows localized `cart.insufficientStock` toast on 400 |
+| 4 | `src/pages/product-detail.js` | `addToCart` catch block shows localized `cart.insufficientStock` toast on 400 (same pattern as cart page) |
+
+**Frontend commits**: `862ae8f`, `d8bc92c` | **Build**: ✅ 0 errors | **Pushed**: Both repos
+
+---
+
 *End of chat history record. Update this file at the start of each session by appending new sections.*
