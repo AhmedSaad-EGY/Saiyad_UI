@@ -26,22 +26,28 @@ export default async function renderAdmin(container) {
   let activeTab = "users";
 
   container.innerHTML = `
-    <div class="section-header"><h2><i class="fas fa-shield-alt" aria-hidden="true"></i> ${t("admin.title")}</h2></div>
-    <div class="stats-overview d-flex gap-3 mb-4 flex-wrap animate-on-scroll">
-      <div class="card p-3 flex-grow-1" style="min-width: 200px">
-        <div class="text-muted"><i class="fas fa-users text-primary" aria-hidden="true"></i> ${t("admin.totalUsers") || "Total Users"}</div>
-        <div class="fs-2 fw-bold mt-2">1,245</div>
+    <div class="section-header animate__animated animate__fadeInUp"><h2><i class="fas fa-shield-alt" aria-hidden="true"></i> ${t("admin.title")}</h2></div>
+    <div class="row g-3 mb-4 animate-on-scroll">
+      <div class="col-sm-4">
+        <div class="card card-sm text-center p-3">
+          <div class="text-muted"><i class="fas fa-users text-primary" aria-hidden="true"></i> ${t("admin.totalUsers") || "Total Users"}</div>
+          <div class="fs-2 fw-bold mt-2">1,245</div>
+        </div>
       </div>
-      <div class="card p-3 flex-grow-1" style="min-width: 200px">
-        <div class="text-muted"><i class="fas fa-chart-line text-success" aria-hidden="true"></i> ${t("admin.totalRevenue") || "Total Revenue"}</div>
-        <div class="fs-2 fw-bold mt-2">$45,230</div>
+      <div class="col-sm-4">
+        <div class="card card-sm text-center p-3">
+          <div class="text-muted"><i class="fas fa-chart-line text-success" aria-hidden="true"></i> ${t("admin.totalRevenue") || "Total Revenue"}</div>
+          <div class="fs-2 fw-bold mt-2">$45,230</div>
+        </div>
       </div>
-      <div class="card p-3 flex-grow-1" style="min-width: 200px">
-        <div class="text-muted"><i class="fas fa-gavel text-warning" aria-hidden="true"></i> ${t("admin.activeAuctions") || "Active Auctions"}</div>
-        <div class="fs-2 fw-bold mt-2">112</div>
+      <div class="col-sm-4">
+        <div class="card card-sm text-center p-3">
+          <div class="text-muted"><i class="fas fa-gavel text-warning" aria-hidden="true"></i> ${t("admin.activeAuctions") || "Active Auctions"}</div>
+          <div class="fs-2 fw-bold mt-2">112</div>
+        </div>
       </div>
     </div>
-    <div class="tabs nav nav-tabs" id="adminTabs">${tabs.map((t) => `<button class="tab ${t.id === activeTab ? "active" : ""}" data-tab="${t.id}"><i class="fas ${t.icon}" aria-hidden="true"></i> ${t.label}</button>`).join("")}</div>
+    <div class="tabs nav nav-tabs mb-4" id="adminTabs">${tabs.map((t) => `<button class="tab ${t.id === activeTab ? "active" : ""}" data-tab="${t.id}"><i class="fas ${t.icon}" aria-hidden="true"></i> ${t.label}</button>`).join("")}</div>
     <div id="adminContent"></div>`;
 
   const content = document.getElementById("adminContent");

@@ -206,7 +206,7 @@ export default async function renderCart(container) {
       </template>
       <div x-show="!loading && empty" x-transition:enter="transition-fade" x-transition:enter-start="op-0" x-transition:enter-end="op-100">
         <div>
-          <div class="section-header"><h2><i class="fas fa-shopping-cart" aria-hidden="true"></i> ${t('cart.title')}</h2></div>
+          <div class="section-header animate__animated animate__fadeInUp"><h2><i class="fas fa-shopping-cart" aria-hidden="true"></i> ${t('cart.title')}</h2></div>
           <div class="empty-state">
             <i class="fas fa-shopping-cart mb-3 text-muted" style="font-size:3.5rem" aria-hidden="true"></i>
             <h3>${t('cart.empty')}</h3>
@@ -217,7 +217,7 @@ export default async function renderCart(container) {
       </div>
       <div x-show="!loading && error" x-transition:enter="transition-fade" x-transition:enter-start="op-0" x-transition:enter-end="op-100">
         <div>
-          <div class="section-header"><h2><i class="fas fa-shopping-cart" aria-hidden="true"></i> ${t('cart.title')}</h2></div>
+          <div class="section-header animate__animated animate__fadeInUp"><h2><i class="fas fa-shopping-cart" aria-hidden="true"></i> ${t('cart.title')}</h2></div>
           <div class="empty-state">
             <i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
             <h3 x-text="error"></h3>
@@ -227,7 +227,7 @@ export default async function renderCart(container) {
       </div>
       <div x-show="!loading && !empty && !error" x-transition:enter="transition-fade" x-transition:enter-start="op-0" x-transition:enter-end="op-100">
         <div>
-          <div class="section-header">
+          <div class="section-header animate__animated animate__fadeInUp">
             <h2><i class="fas fa-shopping-cart" aria-hidden="true"></i> ${t('cart.title')}</h2>
             <button class="btn btn-danger btn-sm" @click="clearCart()"><i class="fas fa-trash-alt" aria-hidden="true"></i> ${t('cart.clear')}</button>
           </div>
@@ -280,7 +280,7 @@ export default async function renderCart(container) {
               </tbody>
             </table>
           </div>
-          <div class="cart-footer">
+          <div class="cart-footer mb-4">
             <div class="cart-total">${t('cart.total')}: <span class="cart-total-amount" id="cartTotalDisplay" x-text="formatPrice(total)"></span></div>
             <a href="#/checkout" class="btn btn-primary btn-lg"><i class="fas fa-credit-card" aria-hidden="true"></i> ${t('cart.checkout')}</a>
           </div>

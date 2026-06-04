@@ -519,6 +519,7 @@ setupGlobalErrorHandlers();
     </div>
   `;
   document.body.appendChild(overlay);
+  animate(overlay, 'fadeIn', { duration: '0.25s' });
   overlay.querySelector(".tour-next").addEventListener("click", () => {
     step++;
     if (step >= steps.length) {

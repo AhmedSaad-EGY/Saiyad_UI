@@ -117,7 +117,7 @@ export default async function renderUserProfile(container) {
       </div>
 
       <!-- Profile Completion Tracker -->
-      <div class="profile-completion animate-on-scroll mt-3">
+      <div class="profile-completion animate__animated animate__fadeIn mt-4 mb-3">
         <div class="profile-completion-header">
           <span><i class="fas fa-id-card" aria-hidden="true"></i> ${t('profile.completion') || 'Profile Completion'}</span>
           <span class="fw-bold text-primary">${completionPercent}%</span>

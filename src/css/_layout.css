@@ -562,7 +562,7 @@ body.nav-open .navbar { pointer-events: all; }
     min-width: 210px;
     z-index: 1001;
     padding: 6px 0;
-    animation: fadeInDown 0.15s var(--ease-out);
+
   }
   [dir="rtl"] .nav-drawer .dropdown-menu { inset-inline-end: auto; inset-inline-start: 0; }
   .nav-drawer .dropdown-item {
@@ -600,7 +600,7 @@ body.nav-open .navbar { pointer-events: all; }
   border: 2px solid var(--nav-bg);
   transition: transform var(--duration-fast) var(--ease-out);
 }
-.badge:not(.d-none) { animation: bounceIn 0.35s; }
+.badge:not(.d-none) { }
 
 /* Chevron animation */
 #userDropdown .fa-chevron-down,
@@ -616,7 +616,6 @@ body.nav-open .navbar { pointer-events: all; }
 .main-content {
   flex: 1;
   padding: calc(60px + var(--space-8)) var(--space-6) var(--space-16);
-  animation: fadeIn 0.25s;
   position: relative;
   z-index: 1;
 }

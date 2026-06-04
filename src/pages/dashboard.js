@@ -266,7 +266,7 @@ export default async function renderDashboard(container, route, params) {
 
 async function renderOverview(content, user) {
   content.innerHTML = `
-    <div class="card animate-on-scroll">
+    <div class="card animate-on-scroll mb-4">
       <div class="card-header">
         <h3><i class="fas fa-tachometer-alt" aria-hidden="true"></i> ${t("dash.overview")}</h3>
       </div>

@@ -172,7 +172,7 @@ export default function renderRegister(container) {
   }
 
   container.innerHTML = `
-    <div x-data="registerForm" class="auth-page">
+    <div x-data="registerForm" class="auth-page animate__animated animate__fadeIn">
       <div class="card">
         <div class="card-header">
           <h2><i class="fas fa-user-plus" aria-hidden="true"></i> ${t("auth.register")}</h2>

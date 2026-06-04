@@ -2,6 +2,7 @@ import { api } from '../api/client.js';
 import { on, emit } from '../events/bus.js';
 import { extractClaim } from '../../shared/helpers/index.js';
 import { clearCsrfToken } from '../utils/csrf.js';
+import { animate } from '../utils/dom.js';
 
 export function getUser() {
   try {
@@ -109,6 +110,7 @@ export function syncCartBadgeCount(count) {
   if (!badge) return;
   badge.textContent = _cartCount;
   badge.classList.toggle("d-none", _cartCount === 0 || !isAuthenticated());
+  if (_cartCount > 0) animate(badge, 'bounceIn', { duration: '0.35s' });
   const bnBadge = document.getElementById("bnCartBadge");
   if (bnBadge) {
     bnBadge.textContent = _cartCount;
@@ -152,9 +154,10 @@ export async function updateNotifBadge() {
     const data = await api.get("/Notifications/unread-count");
     const count = getUnreadNotificationCount(data);
     if (count > 0) {
-      badge.textContent = count;
-      badge.classList.remove("d-none");
-    } else    badge?.classList.add("d-none");
+  badge.textContent = count;
+  badge.classList.remove("d-none");
+  if (count > 0) animate(badge, 'bounceIn', { duration: '0.35s' });
+} else    badge?.classList.add("d-none");
   } catch {
     if (!isAuthenticated()) stopNotifPolling();
     else    badge?.classList.add("d-none");

@@ -216,7 +216,7 @@ export default async function renderProducts(_container, _fullPath, params) {
   setPageMeta('Fish & Seafood Products', 'Browse fresh fish and seafood on Sayiad marketplace.');
   _container.innerHTML = `
     <div x-data="productsPage" class="products-page-alpine" @keydown.escape.window="closeSearchOverlay(); filterSheetOpen = false">
-      <div class="section-header"><h2><i class="fas fa-store" aria-hidden="true"></i> ${t('products.title')}</h2></div>
+      <div class="section-header animate__animated animate__fadeInUp"><h2><i class="fas fa-store" aria-hidden="true"></i> ${t('products.title')}</h2></div>
       <div class="search-bar">
         <input type="text" class="form-input form-control" x-model="search" @input.debounce.400ms="reload()" placeholder="${t('products.search')}" />
         <div class="desktop-filters">
@@ -256,7 +256,7 @@ export default async function renderProducts(_container, _fullPath, params) {
       </div>
 
       <!-- Active Filter Chips -->
-      <div x-show="hasActiveFilters()" class="filter-chips" x-cloak>
+      <div x-show="hasActiveFilters()" class="filter-chips animate__animated animate__fadeIn" x-cloak>
         <template x-if="search">
           <span class="filter-chip" @click="removeFilter('search')">
             <i class="fas fa-search" aria-hidden="true"></i> <span x-text="'&quot;' + search + '&quot;'"></span> <i class="fas fa-times" aria-hidden="true"></i>
@@ -369,7 +369,7 @@ export default async function renderProducts(_container, _fullPath, params) {
       </div>
 
       <!-- Mobile filter bottom sheet -->
-      <div x-show="filterSheetOpen" class="filter-sheet-overlay show" @click.self="filterSheetOpen = false">
+      <div x-show="filterSheetOpen" x-transition:enter.duration.300ms.opacity class="filter-sheet-overlay show" @click.self="filterSheetOpen = false">
         <div class="filter-sheet">
           <div class="filter-sheet-header">
             <h3>${t('products.filters')}</h3>

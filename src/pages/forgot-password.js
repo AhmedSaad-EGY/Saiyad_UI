@@ -177,7 +177,7 @@ export default function renderForgotPassword(container) {
 
     const renderContent = () => {
       container.innerHTML = `
-      <div x-data="forgotPwPage" class="auth-page">
+      <div x-data="forgotPwPage" class="auth-page animate__animated animate__fadeIn">
         <div class="card">
           <div class="card-header">
           <h2>

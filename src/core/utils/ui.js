@@ -133,6 +133,9 @@ export function showConfirm(title, message, options = {}) {
     });
 
     document.body.appendChild(overlay);
+    animate(overlay, 'fadeIn', { duration: '0.2s' });
+    const modalEl = overlay.querySelector('.modal-confirm');
+    if (modalEl) animate(modalEl, 'zoomIn', { duration: '0.25s' });
 
     setTimeout(() => {
       const proceedBtn = overlay.querySelector("#confirmProceed");
@@ -284,6 +287,9 @@ export function openQuickView(product) {
   document.addEventListener("keydown", onQuickViewKey);
   document.addEventListener("keydown", focusTrap);
   document.body.appendChild(overlay);
+  animate(overlay, 'fadeIn', { duration: '0.2s' });
+  const qvModal = overlay.querySelector('.modal');
+  if (qvModal) animate(qvModal, 'zoomIn', { duration: '0.25s' });
   requestAnimationFrame(() => { const f = overlay.querySelector('a, button, input, select, textarea, [tabindex]:not([tabindex="-1"])'); if (f) f.focus(); });
 }
 
@@ -354,6 +360,9 @@ export function openLightbox(images, startIndex = 0) {
 
   render();
   document.body.appendChild(lb);
+  animate(lb, 'fadeIn', { duration: '0.2s' });
+  const img = lb.querySelector('.lightbox-img');
+  if (img) animate(img, 'zoomIn', { duration: '0.3s' });
   document.addEventListener("keydown", onKey);
   document.addEventListener("keydown", lightboxFocusTrap);
   lb.addEventListener("click", (e) => {

@@ -88,7 +88,7 @@ export default function renderResetPassword(container) {
   const renderTimer = setTimeout(() => {
     const renderContent = () => {
       container.innerHTML = `
-      <div x-data="resetPwForm" class="auth-page">
+      <div x-data="resetPwForm" class="auth-page animate__animated animate__fadeIn">
         <div class="card">
           <div class="card-header">
             <h2><i class="fas fa-key" aria-hidden="true"></i> ${t("auth.resetPassword")}</h2>

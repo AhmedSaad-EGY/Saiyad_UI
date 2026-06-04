@@ -22,7 +22,7 @@ Backend API: `https://sayiad.runasp.net/api`
 - **Entry:** `src/index.html` → single `<script type="module" src="/main.js">`
 - **Core (framework-agnostic):** `src/core/` — api, auth, router, realtime (SignalR), i18n, events (EventBus), stores (Alpine), utils
 - **Pages (25 route handlers):** `src/pages/` — lazy-loaded via dynamic `import()`
-- **Shared:** `src/shared/` — constants (roles, route manifest), helpers (errors), components (Alpine modal, toast, pagination)
+- **Shared:** `src/shared/` — constants (roles, route manifest), helpers (errors), components (Alpine modal, pagination)
 - **Styles:** `src/css/` — 8 partials imported by `style.css` (variables, base, layout, components, animations, rtl, bootstrap-overrides) + Bootstrap 5.3 CSS
 - **UI framework:** Bootstrap 5.3.8 installed via npm, imported in `style.css` first (base layer), then custom styles, then `_bootstrap-overrides.css` maps OKLCH tokens → Bootstrap CSS vars
 - **Router:** Hash-based (`#/path`), 25 routes, role-gated guards (`ECOMMERCE_ROLES`, `SELLER_ROLES` constants in `src/shared/constants/routes.js`), dynamic imports
@@ -39,8 +39,10 @@ Backend API: `https://sayiad.runasp.net/api`
 ## Conventions
 
 - **CSS:** OKLCH design tokens (`--primary: oklch(0.55 0.22 265)`), BEM-inspired classes, logical properties for RTL
-- **Animations:** Animate.css 4.1 (CDN) for all decorative entry/attention animations. `animate(el, 'fadeIn', opts)` utility in `dom.js` applies Animate.css classes with auto-cleanup. Custom keyframes retained only for functional animations (skeleton, spinner, ripple, pulse) and subtle offset animations where Animate.css 100%-height transforms would break the design (slideUp 20px, slideDown 12px, scaleIn 0.94). All other keyframes (`fadeIn`, `fadeInUp`, `bounceIn`, `shake`, etc.) are provided by Animate.css CDN.
+- **Animations:** Animate.css 4.1 (CDN) for ALL animations. `animate(el, 'fadeIn', opts)` utility in `dom.js` applies Animate.css classes with auto-cleanup. Zero custom `@keyframes` remain. All animation is powered by Animate.css via CSS classes (`animate__animated animate__{name}`) or the `animate()` JS utility.
+  - **June 4 migration scope:** Removed 30+ `animation:` CSS property declarations from `_components.css` and `_layout.css`. Added `animate__fadeIn` to all 4 auth pages. Added `animate()` calls for dynamic elements (lightbox, modals, badges, tour overlay, filter sheets). Replaced `.order-timeline-step.active` pulse, `.countdown-unit.urgent` pulse, `.badge` bounceIn, `.lightbox.show` fadeIn, `.modal-overlay.show` fadeIn, and `.filter-sheet` fadeInUp — all now use Animate.css via `animate()` utility or Alpine `x-transition`.
 - **Scroll animations:** `observeAnimations()` in `dom.js` uses IntersectionObserver to apply Animate.css `fadeInUp` via `animate()`; stagger delay managed via CSS `nth-child` with `.stagger-1` through `.stagger-8`.
+
 - **JS:** ES2022+, `async/await`, module-scoped exports
 - **Alpine:** `x-data` components with `x-model`, `x-show`, `x-for`, `@click` — template functions exposed in `data()` return
 - **Bootstrap:** Gradual migration — Bootstrap classes used alongside existing custom CSS. `_bootstrap-overrides.css` maps project OKLCH tokens to `--bs-*` CSS variables
@@ -57,8 +59,8 @@ Backend API: `https://sayiad.runasp.net/api`
 - **No test runner** — manual testing only; must check all 25 routes after changes
 - **Service worker:** Cache version is **auto-versioned** via `__SW_VERSION__` placeholder in `sw.js` — Vite plugin injects a build timestamp on every `npm run build`. Do NOT manually edit the version string.
 - **Bootstrap class conflicts:** Existing custom `.card` and `.btn` styles override Bootstrap's (correct cascade: Bootstrap first, custom overrides second). During migration, watch for partial Bootstrap styling on elements that mix classes.
-- **Layout CSS audit (_layout.css):** All keyframes (`ping`, `fishSwim`, `navWave`) and classes are actively referenced. No unused code found in `_layout.css`. The `.auth-page .card` padding at 480px breakpoint is inert due to Bootstrap `:has()` override — pending cleanup.
-- **Keyframes removal:** `priceFlash` and `shake` removed from `_components.css`. Both were unused — Animate.css CDN provides equivalent animations.
+- **Layout CSS audit (_layout.css):** Zero custom `@keyframes` remain. All animations are handled by Animate.css CDN. The `.auth-page .card` padding at 480px breakpoint is inert due to Bootstrap `:has()` override — pending cleanup.
+- **Keyframes removal (complete):** All custom `@keyframes` have been removed from `_components.css`, `_layout.css`, and `_animations.css`. Every animation is now powered by Animate.css 4.1 CDN. The `animate()` utility in `dom.js` provides the JS API for dynamic elements. All `animation:` CSS property declarations removed and replaced with Animate.css classes (`animate__animated animate__{name}`) or `animate()` JS calls.
 - **Card hover specificity:** Product cards use `.product-card.card:hover` (specificity 0-3-0) to override Bootstrap's `.card:hover` (0-1-0) and maintain `translateY(-5px)`. Touch device overrides also use `.product-card.card:hover` to correctly suppress hover transforms.
 - **Card sub-component migration:** Cards using `.card-header`/`.card-body`/`.card-footer` get `padding: 0` on the outer `.card` (via `:has()` selector), with spacing handled entirely by the sub-component padding. Bare `.card` elements (without sub-components) keep `padding: 24px`. The `:has()` pseudo-class is supported in Chrome 105+, Firefox 121+, Safari 15.4+.
 - **CSS variable hygiene:** `_variables.css` was audited for unused custom properties. 11 unused props were removed (May 28). Run a codebase-wide search for any `var(--*)` before adding new CSS variables — if unused, they bloat the bundle.
@@ -68,6 +70,8 @@ Backend API: `https://sayiad.runasp.net/api`
   - **profile-links-grid (profile.js):** `.profile-links-grid gap-3` → `row row-cols-2 row-cols-sm-3 row-cols-md-4 g-3 mt-3`. `mt-3` matches original `margin-top: var(--space-4)` (16px).
   - Page layouts (checkout, dashboard, product-detail, auction-detail) use `.row.g-5`/`.g-3` with responsive column classes (`col-lg-6`, `col-md-3`, `col-md-9`, `col-sm-4`, `col-sm-6`).
   - All stale custom grid CSS removed from `_components.css` and `_layout.css`.
+- **Card spacing conventions (June 4, 2026):** Cards that sit outside Bootstrap grid rows use explicit `mb-4`/`mt-4` Bootstrap margin classes rather than implicit CSS sibling selectors. `.product-card-grid` has `margin-block: var(--space-4) var(--space-8)` (top increased from `var(--space-2)` to `var(--space-4)`). The last grid on each page gets `margin-bottom: var(--space-10)` for proper page-end spacing. General `.card + .card` sibling rules are avoided — they cause double-spacing with existing manual margins.
+
 - **Bootstrap `--bs-` variable naming:** Bootstrap 5.3 uses `--bs-*` CSS variables only for component-level custom properties (e.g., `--bs-modal-bg`, `--bs-card-bg`). Not all Sass variables have CSS variable equivalents — for example, `$input-bg` does NOT become `--bs-input-bg`. Always verify against Bootstrap's source CSS before adding `--bs-*` mappings.
 - **`showToast` lives in** `src/core/utils/ui.js` (not app.js) — it was moved to break a circular dep
 - **Circular deps:** `api/client.js` emits `auth:session-expired` event instead of importing auth/router directly
@@ -78,3 +82,7 @@ Backend API: `https://sayiad.runasp.net/api`
 - **`data-user-role`** attribute on `<html>` drives gold seller theme in CSS
 - **All product/auction images** should use `loading="lazy"` — check product-detail main image, seller avatar
 - **RTL audit:** After any CSS changes, test with Arabic (`dir="rtl"`) — logical properties handle most cases
+
+## Dead code removal (June 4, 2026)
+- Removed `shared/components/toast.js` — unused Alpine toast component; vanilla `showToast()` in `ui.js` handles all toast notifications.
+- Removed `shared/components/index.js` — unused `registerAlpineComponents()` that registered an unused `walletCard` Alpine component.

@@ -2,7 +2,7 @@
 
 > **Project**: Egypt's premier fishing marketplace & live auction platform  
 > **Stack**: Vanilla JS SPA + Alpine.js 3.14.8 + Bootstrap 5.3 + Animate.css 4.1 + Vite 6 + SignalR + i18n (EN/AR)  
-> **Last Updated**: May 28, 2026  
+> **Last Updated**: June 4, 2026  
 > **Purpose**: Single entry point — each section links to the deeper doc it summarizes
 
 ---
@@ -84,7 +84,7 @@ src/
 ├── shared/
 │   ├── constants/routes.js # ROLES, routeGuards, routes, routeTitleKeys
 │   ├── helpers/errors.js   # Error boundary with fallback UI
-│   └── components/         # modal.js, pagination.js, toast.js
+│   └── components/         # modal.js, pagination.js
 ├── css/                    # 8 partials → style.css (+ Bootstrap)
 ├── public/sw.js            # Service worker (auto-versioned via build)
 └── features/               # checkout/helpers.js, subscriptions/helpers.js
@@ -422,6 +422,11 @@ MODERATOR_ROLES = [Auctioneer, Admin]                  # Review + Analytics
 - ✅ **TASK-M9 — Back-to-top hidden** — Added `hidden` class to back-to-top button
 - ✅ **ESLint — 2 remaining errors fixed** — `prefer-const` in auctions.js, `no-self-assign` in profile.js
 - ✅ **Bootstrap overrides cleanup** — Already done in prior session (verified)
+- ✅ **June 4: Card margin fixes** — Increased `.product-card-grid` top margin (`var(--space-2)` → `var(--space-4)`), added `margin-bottom: var(--space-10)` to last grid. Added `mb-4`/`mt-4` spacing classes to dashboard, admin, auctioneer-analytics, profile, cart, checkout. Fixed broken `.grid-4`/`.grid-2` in auctioneer-analytics → Bootstrap `row g-3`. | Build: ✅ | Review: ✅
+- ✅ **June 4: Animate.css full migration** — Removed remaining 28 `animation:` CSS property declarations from `_components.css` + 3 from `_layout.css`. Added `animate__fadeIn` to all auth pages. Added `animate()` calls for lightbox, modals, badges, tour overlay, filter sheets. | Build: ✅ | Review: ✅
+- ✅ **June 4: Custom @keyframes audit** — Verified zero `@keyframes` remain in all CSS files. All confirmed removed by earlier cleanup. | Build: ✅
+- ✅ **June 4: Dead code removal** — Removed `shared/components/toast.js` (unused Alpine toast) and `shared/components/index.js` (unused walletCard). Cleaned up `alpine.js` import. | Build: ✅ 114 modules | Review: ✅
+- ✅ **June 4: Docs updated** — `knowledge.md` and `MASTER-REFERENCE.md` updated with all June 4 changes.
 
 ### Immediate (Next)
 1. **Phase 4 — Low Priority** (L1: WhatsApp link, L2: hreflang, L3: skip-link CSS, L4: unique titles, L5: focus styles)

@@ -170,7 +170,7 @@ export default async function renderCheckout(container) {
       </template>
       <div x-show="!loading && items.length === 0" x-transition:enter="transition-fade" x-transition:enter-start="op-0" x-transition:enter-end="op-100">
         <div>
-          <div class="section-header"><h2><i class="fas fa-credit-card" aria-hidden="true"></i> ${t('cart.checkout')}</h2></div>
+          <div class="section-header animate__animated animate__fadeInUp"><h2><i class="fas fa-credit-card" aria-hidden="true"></i> ${t('cart.checkout')}</h2></div>
           <div class="empty-state">
             <i class="fas fa-shopping-cart text-muted mb-4" style="font-size:3.5rem" aria-hidden="true"></i>
             <h3>${t('cart.empty')}</h3>
@@ -283,7 +283,7 @@ export default async function renderCheckout(container) {
             </div>
               </div>
               
-              <div class="card mt-4">
+              <div class="card mt-4 mb-4">
                 <div class="card-header">
                   <h3 class="mb-0">${t('cart.paymentMethod')}</h3>
                 </div>
@@ -366,8 +366,8 @@ export default async function renderCheckout(container) {
       
       <!-- Success View -->
       <div x-show="orderSuccess" style="display:none" x-transition:enter="transition-fade" x-transition:enter-start="op-0" x-transition:enter-end="op-100">
-        <div class="order-success">
-          <div class="order-success-icon"><i class="fas fa-check" aria-hidden="true"></i></div>
+        <div class="order-success animate__animated animate__fadeIn">
+          <div class="order-success-icon animate__animated animate__bounceIn"><i class="fas fa-check" aria-hidden="true"></i></div>
           <h2>${t('cart.orderSuccess') || 'Order Placed Successfully!'}</h2>
           <p>${t('cart.orderSuccessDesc') || 'Thank you for your purchase. Your order has been received and is being processed.'}</p>
           <div class="d-flex justify-content-center gap-3 mt-5">

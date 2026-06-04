@@ -8,9 +8,6 @@ import { showToast } from '../utils/ui.js';
 import { escapeHtml } from '../utils/dom.js';
 import '../../shared/components/modal.js';
 import '../../shared/components/pagination.js';
-import { registerAlpineComponents } from '../../shared/components/index.js';
-
-registerAlpineComponents();
 
 Alpine.magic('t', () => t);
 Alpine.magic('formatPrice', () => formatPrice);

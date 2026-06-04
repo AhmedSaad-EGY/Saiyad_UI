@@ -429,6 +429,7 @@ export default async function renderProductDetail(container, route, params) {
         </div>`;
       overlay.addEventListener("click", (e) => { if (e.target === overlay) close(); });
       document.body.appendChild(overlay);
+      animate(overlay, 'fadeIn', { duration: '0.2s' });
       function close() { overlay.remove(); document.removeEventListener("keydown", onKey); if (prevFocus?.focus) prevFocus.focus(); }
       function onKey(e) { if (e.key === "Escape") close(); }
       document.addEventListener("keydown", onKey);

@@ -159,7 +159,7 @@ export default async function renderAuctions(_container, _fullPath, params) {
   setPageMeta('Live Fish Auctions', 'Join live fish auctions on Sayiad. Bid on fresh catches.');
   _container.innerHTML = `
     <div x-data="auctionsPage" @keydown.escape.window="filterSheetOpen = false">
-      <div class="section-header"><h2><i class="fas fa-gavel" aria-hidden="true"></i> ${t("auctions.title")}</h2></div>
+      <div class="section-header animate__animated animate__fadeInUp"><h2><i class="fas fa-gavel" aria-hidden="true"></i> ${t("auctions.title")}</h2></div>
       <div class="search-bar">
         <input type="text" class="form-input form-control" x-model="search" @input.debounce.400ms="reload()" placeholder="${t("auctions.search")}" />
         <div class="desktop-filters">
@@ -256,7 +256,7 @@ export default async function renderAuctions(_container, _fullPath, params) {
       <div id="auctionSentinel" x-show="!loading && auctions.length && totalPages > 1" style="height:1px;width:100%"></div>
 
       <!-- Mobile filter bottom sheet -->
-      <div x-show="filterSheetOpen" class="filter-sheet-overlay show" @click.self="filterSheetOpen = false">
+      <div x-show="filterSheetOpen" x-transition:enter.duration.300ms.opacity class="filter-sheet-overlay show" @click.self="filterSheetOpen = false">
         <div class="filter-sheet">
           <div class="filter-sheet-header">
             <h3>${t('products.filters')}</h3>

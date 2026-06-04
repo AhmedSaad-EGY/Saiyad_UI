@@ -138,7 +138,6 @@
   min-width: 210px;
   z-index: 1001;
   padding: 6px 0;
-  animation: fadeInDown 0.15s var(--ease-out);
   transition: background-color var(--theme-transition), border-color var(--theme-transition);
   transform-origin: top center;
 }
@@ -261,6 +260,8 @@
 .card:not(:has(.card-header)):not(:has(.card-body)):not(:has(.card-footer)) {
   padding: 24px;
 }
+
+
 
 /* Cards using Bootstrap sub-component structure — outer padding removed */
 .card:has(.card-header),
@@ -464,7 +465,6 @@
   color: var(--danger);
   font-size: 0.82rem;
   margin-top: 4px;
-  animation: fadeInDown 0.2s ease;
 }
 
 /* Micro-interactions */
@@ -487,10 +487,9 @@
   transform: scale(1.12);
 }
 
-/* Heart beat on wishlist toggle */
+/* Heart beat on wishlist toggle (uses Animate.css via animate() utility in JS) */
 .wishlist-active i,
 .fa-heart.wishlist-active {
-  animation: heartBeat 0.6s;
   color: var(--danger) !important;
 }
 
@@ -513,7 +512,6 @@
   background: oklch(0 0 0 / 0.92);
   align-items: center;
   justify-content: center;
-  animation: fadeIn 0.15s;
 }
 
 .lightbox.show {
@@ -525,7 +523,6 @@
   max-height: 82vh;
   border-radius: var(--radius-md);
   object-fit: contain;
-  animation: zoomIn 0.25s;
   box-shadow: 0 8px 40px oklch(0 0 0 / 0.5);
 }
 
@@ -745,7 +742,12 @@
 /* .product-grid migrated to Bootstrap .row + row-cols-* classes */
 
 .product-card-grid {
-  margin-block: var(--space-2) var(--space-8);
+  margin-block: var(--space-4) var(--space-8);
+}
+
+/* Extra bottom margin for the last grid on a page */
+.product-card-grid:last-child {
+  margin-bottom: var(--space-10);
 }
 
 .product-card {
@@ -820,9 +822,8 @@
   letter-spacing: 0.02em;
 }
 
-/* Urgent auction */
+/* Urgent auction (pulse provided by Animate.css via animate__infinite on element) */
 .auction-urgent {
-  animation: pulse 2s infinite;
   border-color: var(--danger) !important;
 }
 
@@ -838,7 +839,6 @@
   font-weight: 700;
   padding: 2px 8px;
   border-radius: var(--radius-full);
-  animation: pulse 1.2s infinite;
   margin-inline-start: 6px;
   vertical-align: middle;
   box-shadow: 0 0 12px var(--urgency);
@@ -879,7 +879,6 @@
 .countdown-unit.urgent {
   background: var(--danger-bg);
   border-color: var(--danger-border);
-  animation: pulse 1.2s infinite;
 }
 
 .countdown-num {
@@ -1109,7 +1108,6 @@
 .auth-page {
   max-width: 420px;
   margin: 48px auto;
-  animation: fadeIn 0.5s;
   padding-inline: var(--space-4);
 }
 
@@ -1254,8 +1252,13 @@
   gap: var(--space-3);
   flex-wrap: nowrap;
   overflow: visible;
-  animation: fadeInUp 0.5s;
   padding-bottom: var(--space-1);
+}
+
+/* Section header used inside card wrappers */
+.card .section-header {
+  margin-bottom: var(--space-4);
+  padding-bottom: 0;
 }
 
 .section-header h2 {
@@ -1510,7 +1513,6 @@ tr:last-child td {
   justify-content: center;
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
-  animation: fadeIn 0.15s var(--ease-out);
 }
 
 .modal-overlay.show {
@@ -1528,7 +1530,6 @@ tr:last-child td {
   overflow-y: auto;
   box-shadow: var(--shadow-lg);
   color: var(--text);
-  animation: zoomIn 0.25s var(--ease-out);
   transition: background-color var(--theme-transition);
   pointer-events: auto;
 }
@@ -1667,7 +1668,6 @@ tr:last-child td {
   display: flex;
   flex-direction: column;
   box-shadow: 0 -8px 32px oklch(0 0 0 / 0.15);
-  animation: fadeInUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   color: var(--text);
 }
 
@@ -1986,7 +1986,6 @@ tr:last-child td {
   background: var(--card-bg);
   flex-direction: column;
   padding: 20px 24px;
-  animation: fadeInDown 0.2s ease;
 }
 
 .search-overlay.open {
@@ -2686,7 +2685,6 @@ tr:last-child td {
   height: 16px;
   font-size: 0.55rem;
   padding: 0 4px;
-  animation: bounceIn 0.35s var(--ease-bounce);
 }
 
 [dir="rtl"] .notif-bell .badge {
@@ -2883,9 +2881,7 @@ tr:last-child td {
   background: var(--success-bg);
 }
 
-.verify-overlay-card.verified .verify-overlay-icon i {
-  animation: bounceIn 0.5s;
-}
+
 
 .verify-overlay-card h3 {
   font-size: var(--text-xl);
@@ -3112,7 +3108,6 @@ tr.bid-highlight {
   display: flex;
   align-items: center;
   justify-content: center;
-  animation: fadeIn 0.3s ease;
 }
 
 .tour-card {
@@ -3185,7 +3180,6 @@ tr.bid-highlight {
   padding: var(--space-1);
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
-  animation: fadeInUp 0.4s var(--ease-bounce);
 }
 
 .cart-table {
@@ -3301,7 +3295,6 @@ tr.bid-highlight {
   background: var(--card-bg);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  animation: fadeInUp 0.5s var(--ease-bounce);
 }
 
 .cart-total {
@@ -3352,7 +3345,6 @@ tr.bid-highlight {
     grid-template-columns: 1fr auto;
     gap: var(--space-2) var(--space-4);
     align-items: center;
-    animation: fadeInUp 0.35s var(--ease-bounce);
     transition: border-color var(--duration-fast) var(--ease-out), box-shadow var(--duration-fast) var(--ease-out);
   }
 
@@ -3711,7 +3703,6 @@ tr.bid-highlight {
   background: var(--primary);
   border-color: var(--primary);
   color: var(--text-inverse);
-  animation: pulse 2s ease-in-out infinite;
 }
 
 .order-timeline-label {
@@ -3869,7 +3860,6 @@ tr.bid-highlight {
   -webkit-backdrop-filter: blur(12px);
   gap: var(--space-3);
   align-items: center;
-  animation: slideInUp 0.3s;
 }
 
 @media (max-width: 768px) {
@@ -4041,7 +4031,6 @@ tr.bid-highlight {
 .countdown-unit.critical {
   background: var(--danger);
   border-color: var(--danger);
-  animation: pulse 0.6s infinite;
 }
 
 .countdown-unit.critical .countdown-num {
@@ -4108,7 +4097,6 @@ tr.bid-highlight {
 .order-success {
   text-align: center;
   padding: var(--space-12) var(--space-6);
-  animation: fadeIn 0.5s var(--ease-out);
 }
 
 .order-success-icon {
@@ -4122,7 +4110,6 @@ tr.bid-highlight {
   margin: 0 auto var(--space-6);
   font-size: 2rem;
   color: var(--success);
-  animation: bounceIn 0.6s var(--ease-bounce);
 }
 
 .order-success h2 {
@@ -4147,7 +4134,6 @@ tr.bid-highlight {
   flex-wrap: wrap;
   gap: var(--space-2);
   margin-bottom: var(--space-4);
-  animation: fadeIn 0.3s var(--ease-out);
 }
 
 .filter-chip {
@@ -4209,7 +4195,6 @@ tr.bid-highlight {
   border-radius: var(--radius);
   padding: var(--space-4);
   margin-bottom: var(--space-4);
-  animation: fadeIn 0.4s var(--ease-out);
 }
 
 .profile-completion-header {

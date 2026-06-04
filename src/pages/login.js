@@ -117,7 +117,7 @@ export default function renderLogin(container) {
   }
 
   container.innerHTML = `
-    <div x-data="loginForm" class="auth-page">
+    <div x-data="loginForm" class="auth-page animate__animated animate__fadeIn">
       <div class="card">
         <div class="card-header">
           <h2><i class="fas fa-sign-in-alt" aria-hidden="true"></i> ${t('auth.login')}</h2>
