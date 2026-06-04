@@ -17,10 +17,8 @@ window.addEventListener("scroll", () => {
       const btt = document.getElementById("backToTop");
       if (btt) {
         const show = window.scrollY > 400;
-        btt.style.display = show ? "flex" : "none";
-        // Next frame: add visible for CSS transition
         if (show) requestAnimationFrame(() => btt.classList.add("visible"));
-        else btt.classList.remove("visible");
+        else { btt.classList.remove("visible"); }
       }
       scrollTicking = false;
     });

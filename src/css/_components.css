@@ -3163,10 +3163,9 @@ tr.bid-highlight {
   background: var(--success-bg);
 }
 
-/* Scroll to top reset on nav — ensure backToTop hidden initially on each page */
-#backToTop.visible {
-  opacity: 1;
-  visibility: visible;
+/* Scroll to top reset on nav — reset visible state before each page transition */
+#backToTop {
+  display: flex;
 }
 
 /* Tour overlay */
