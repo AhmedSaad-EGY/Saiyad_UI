@@ -3,6 +3,8 @@ import { on, emit } from '../events/bus.js';
 import { extractClaim } from '../../shared/helpers/index.js';
 import { clearCsrfToken } from '../utils/csrf.js';
 import { animate } from '../utils/dom.js';
+import { showToast } from '../utils/ui.js';
+import { t } from '../i18n/index.js';
 
 export function getUser() {
   try {
@@ -204,6 +206,7 @@ export async function logout() {
   localStorage.removeItem("user");
   clearCsrfToken();
   updateNavbar();
+  showToast(t("auth.loggedOut"), "success");
   emit('auth:logged-out');
 }
 

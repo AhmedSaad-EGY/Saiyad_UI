@@ -1098,9 +1098,9 @@ function renderProfile(content, user) {
         });
         localStorage.setItem("user", JSON.stringify(data.user || data));
         updateNavbar();
-        alertDiv.innerHTML = `<div class="alert alert-success" role="alert">${t("dash.profileUpdated")}</div>`;
+        showToast(t("dash.profileUpdated"), "success");
       } catch (err) {
-        alertDiv.innerHTML = `<div class="alert alert-error" role="alert">${escapeHtml(err.message)}</div>`;
+        showToast(err.message, "error");
       } finally {
         submit.disabled = false;
         submit.textContent = t("dash.updateProfile");
@@ -1188,10 +1188,10 @@ function renderChangePassword(content) {
           currentPassword: oldInput.value,
           newPassword: newInput.value,
         });
-        alertDiv.innerHTML = `<div class="alert alert-success" role="alert">${t("dash.passwordChanged")}</div>`;
+        showToast(t("dash.passwordChanged"), "success");
         document.getElementById("passwordForm").reset();
       } catch (err) {
-        alertDiv.innerHTML = `<div class="alert alert-error" role="alert">${escapeHtml(err.message)}</div>`;
+        showToast(err.message, "error");
       } finally {
         submit.disabled = false;
         submit.textContent = t("dash.changePwBtn");

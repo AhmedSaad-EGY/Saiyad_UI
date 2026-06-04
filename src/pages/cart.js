@@ -57,6 +57,7 @@ Alpine.data('cartPage', () => ({
     syncCartBadgeCount(getCartItemCount(this.items));
     try {
       await api.delete(`/cart/items/${productId}`);
+      showToast(t('cart.itemRemoved'), 'success');
       this.refresh();
     } catch (e) {
       this.items = prevItems;

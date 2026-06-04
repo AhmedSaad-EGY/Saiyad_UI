@@ -66,6 +66,7 @@ export const translations = {
     "auth.registerSuccess":
       "Account created! Check your email to verify before logging in.",
     "auth.loginSuccess": "Login successful!",
+    "auth.loggedOut": "Logged out successfully.",
     "auth.showPassword": "Show password",
     "auth.hidePassword": "Hide password",
     "auth.confirmPassword": "Confirm Password",
@@ -223,6 +224,7 @@ export const translations = {
     "cart.emptyDesc": "Browse products to add items to your cart.",
     "cart.browseProducts": "Browse Products",
     "cart.cleared": "Cart cleared!",
+    "cart.itemRemoved": "Item removed from cart.",
     "cart.placeOrder": "Place Order",
     "cart.insufficientWallet": "Insufficient wallet balance. Please deposit funds first.",
     "cart.placingOrder": "Placing Order...",
@@ -711,6 +713,7 @@ export const translations = {
     "auth.registerSuccess":
       "تم إنشاء الحساب! تحقق من بريدك الإلكتروني للتحقق قبل تسجيل الدخول.",
     "auth.loginSuccess": "تم تسجيل الدخول بنجاح!",
+    "auth.loggedOut": "تم تسجيل الخروج بنجاح.",
     "auth.showPassword": "إظهار كلمة المرور",
     "auth.hidePassword": "إخفاء كلمة المرور",
     "auth.confirmPassword": "تأكيد كلمة المرور",
@@ -868,6 +871,7 @@ export const translations = {
     "cart.emptyDesc": "تصفح المنتجات لإضافة عناصر إلى عربة التسوق.",
     "cart.browseProducts": "تصفح المنتجات",
     "cart.cleared": "تم تفريغ العربة!",
+    "cart.itemRemoved": "تم إزالة العنصر من العربة.",
     "cart.placeOrder": "تقديم الطلب",
     "cart.insufficientWallet": "رصيد المحفظة غير كافٍ. يرجى إيداع الأموال أولاً.",
     "cart.placingOrder": "جاري تقديم الطلب...",

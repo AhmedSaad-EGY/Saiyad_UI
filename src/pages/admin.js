@@ -148,6 +148,7 @@ export default async function renderAdmin(container) {
           btn.disabled = true;
           try {
             await api.patch(`/users/${btn.dataset.userId}/toggle-status`);
+            showToast(t("admin.userToggled"), "success");
             loadUsers();
           } catch (e) {
             showToast(e.message, "error");
