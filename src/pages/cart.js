@@ -87,7 +87,8 @@ Alpine.data('cartPage', () => ({
       this.items = prevItems;
       this.computeTotal();
       syncCartBadgeCount(getCartItemCount(this.items));
-      showToast(e.message, 'error');
+      const msg = e.status === 400 ? t('cart.insufficientStock', { stock: item.stockQuantity || 0 }) : e.message;
+      showToast(msg, 'error');
     }
   },
 
@@ -266,9 +267,19 @@ export default async function renderCart(container) {
                     </td>
                     <td class="cart-price-cell" x-text="formatPrice(item.unitPrice || item.price || 0)"></td>
                     <td class="cart-qty-cell">
-                      <input type="number" class="form-input cart-qty-input"
-                             :value="item.quantity || 1" min="1"
-                             @change="updateQty(item.productId, $event.target.value)">
+                      <div class="qty-btn-group">
+                        <button type="button" class="qty-btn"
+                                @click="updateQty(item.productId, (item.quantity || 1) - 1)"
+                                :disabled="(item.quantity || 1) <= 1">−</button>
+                        <input type="text" class="cart-qty-input"
+                               :value="item.quantity || 1" readonly
+                               aria-label="${t('cart.quantity')}">
+                        <button type="button" class="qty-btn"
+                                @click="updateQty(item.productId, (item.quantity || 1) + 1)"
+                                :disabled="item.stockQuantity != null && (item.quantity || 1) >= item.stockQuantity">+</button>
+                      </div>
+                      <span x-show="item.stockQuantity != null && (item.quantity || 1) >= item.stockQuantity"
+                            class="cart-max-label" x-text="'${t('cart.maxReached')}'"></span>
                     </td>
                     <td class="cart-subtotal-cell" x-text="formatPrice((item.unitPrice || item.price || 0) * (item.quantity || 1))"></td>
                     <td class="cart-remove-cell">

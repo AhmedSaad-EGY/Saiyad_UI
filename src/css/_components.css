@@ -3127,6 +3127,12 @@ tr:last-child td {
   background: var(--primary-light);
 }
 
+.qty-btn-group .qty-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
 .qty-btn-group .cart-qty-input {
   width: 48px;
   text-align: center;
@@ -3146,6 +3152,24 @@ tr:last-child td {
 .qty-btn-group .cart-qty-input::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
+}
+
+/* Max stock reached label in cart */
+.cart-qty-cell {
+  position: relative;
+}
+.cart-max-label {
+  position: absolute;
+  inset-block-end: -5px;
+  inset-inline-start: 50%;
+  transform: translateX(-50%);
+  font-size: 9px;
+  line-height: 1;
+  color: var(--danger);
+  font-weight: 700;
+  white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 /* Touch-friendly select (44px min height) */

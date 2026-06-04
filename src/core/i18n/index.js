@@ -242,6 +242,8 @@ export const translations = {
     "cart.removeItemTitle": "Remove Item",
     "cart.clearConfirm": "Are you sure you want to clear your entire cart?",
     "cart.orderError": "Failed to place order",
+    "cart.insufficientStock": "Only {stock} available",
+    "cart.maxReached": "MAX",
 
     // Dashboard
     "dash.overview": "Overview",
@@ -888,6 +890,8 @@ export const translations = {
     "cart.removeItemTitle": "إزالة العنصر",
     "cart.clearConfirm": "هل أنت متأكد من رغبتك في إفراغ سلة التسوق بالكامل؟",
     "cart.orderError": "فشل تقديم الطلب",
+    "cart.insufficientStock": "متوفر {stock} فقط",
+    "cart.maxReached": "الحد الأقصى",
 
     // Dashboard
     "dash.overview": "نظرة عامة",
