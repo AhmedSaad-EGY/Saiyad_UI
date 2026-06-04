@@ -149,42 +149,41 @@ export default async function renderUserProfile(container) {
       </div>
 
       <div class="row g-3 animate-on-scroll stagger-1" id="profileStats">
-        <div class="col-sm-4" x-show="isECommerce()">
+        <div class="col-sm" x-show="isECommerce()">
           <div class="profile-stat-card">
             <i class="fas fa-box" aria-hidden="true"></i>
             <div class="profile-stat-num" x-text="stats.orders">—</div>
             <div class="profile-stat-label">${t('dash.orders')}</div>
           </div>
         </div>
-        <div class="col-sm-4" x-show="isECommerce()">
+        <div class="col-sm" x-show="isECommerce()">
           <div class="profile-stat-card">
             <i class="fas fa-heart" aria-hidden="true"></i>
             <div class="profile-stat-num" x-text="stats.wishlist">—</div>
             <div class="profile-stat-label">${t('dash.wishlist')}</div>
           </div>
         </div>
-        <div class="col-sm-4" x-show="isAuctioneer()">
+        <div class="col-sm" x-show="isAuctioneer()">
           <div class="profile-stat-card">
             <i class="fas fa-gavel" aria-hidden="true"></i>
             <div class="profile-stat-num" x-text="stats.auctions">—</div>
             <div class="profile-stat-label">${t('home.activeAuctions')}</div>
           </div>
         </div>
-        <div class="col-sm-4" x-show="isAuctioneer()">
+        <div class="col-sm" x-show="isAuctioneer()">
           <div class="profile-stat-card">
             <i class="fas fa-file-export" aria-hidden="true"></i>
             <div class="profile-stat-num" x-text="stats.pendingRequests">—</div>
             <div class="profile-stat-label">${t('auctionRequests.title')}</div>
           </div>
         </div>
-        <div class="col-sm-4">
+        <div class="col-sm">
           <div class="profile-stat-card">
             <i class="fas fa-bell" aria-hidden="true"></i>
             <div class="profile-stat-num" x-text="stats.notifs">—</div>
             <div class="profile-stat-label">${t('dash.notifications')}</div>
           </div>
         </div>
-      </div>
       </div>
 
       <div class="profile-quick-links card animate-on-scroll stagger-2">
