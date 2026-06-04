@@ -422,6 +422,8 @@ export const translations = {
     "order.date": "Date",
     "order.buyer": "Buyer",
     "order.seller": "Seller",
+    "order.summary": "Order Summary",
+    "order.shipping": "Shipping",
     "order.quantity": "Qty",
     "order.price": "Price",
     "order.subtotal": "Subtotal",
@@ -496,6 +498,9 @@ export const translations = {
     "common.status": "Status",
     "common.actions": "Actions",
     "common.view": "View",
+    "common.free": "Free",
+    "common.secureCheckout": "Secure Checkout",
+    "common.easyReturns": "Easy Returns",
     "auth.loginRequired": "Please log in to continue.",
 
     // Auction Requests
@@ -1071,6 +1076,8 @@ export const translations = {
     "order.date": "التاريخ",
     "order.buyer": "المشتري",
     "order.seller": "البائع",
+    "order.summary": "ملخص الطلب",
+    "order.shipping": "الشحن",
     "order.quantity": "الكمية",
     "order.price": "السعر",
     "order.subtotal": "المجموع الفرعي",
@@ -1145,6 +1152,9 @@ export const translations = {
     "common.status": "الحالة",
     "common.actions": "الإجراءات",
     "common.view": "عرض",
+    "common.free": "مجاني",
+    "common.secureCheckout": "دفع آمن",
+    "common.easyReturns": "إرجاع سهل",
     "auth.loginRequired": "يرجى تسجيل الدخول للمتابعة.",
 
     // Auction Requests
