@@ -220,35 +220,6 @@ function applyTheme(theme) {
   }
 }
 
-// Reduced motion toggle
-(function initMotionToggle() {
-  const saved = localStorage.getItem("sayiad_reduced_motion");
-  if (saved === "true") {
-    document.documentElement.classList.add("reduce-motion");
-  }
-  const themeBtn = document.getElementById("themeToggle");
-  if (themeBtn && !document.getElementById("motionToggle")) {
-    const btn = document.createElement("button");
-    btn.id = "motionToggle";
-    btn.className = "toggle-btn";
-    btn.title = "Toggle animations";
-    btn.setAttribute("aria-label", "Toggle reduced motion");
-    btn.setAttribute("aria-pressed", saved === "true" ? "true" : "false");
-    btn.innerHTML = saved === "true"
-      ? '<i class="fas fa-pause-circle"></i>'
-      : '<i class="fas fa-play-circle"></i>';
-    themeBtn.parentNode.insertBefore(btn, themeBtn.nextSibling);
-    btn.addEventListener("click", () => {
-      const next = !document.documentElement.classList.toggle("reduce-motion");
-      localStorage.setItem("sayiad_reduced_motion", next);
-      btn.setAttribute("aria-pressed", next ? "true" : "false");
-      btn.innerHTML = next
-        ? '<i class="fas fa-pause-circle"></i>'
-        : '<i class="fas fa-play-circle"></i>';
-    });
-  }
-})();
-
 function initHeroTilt() {
   const hero = document.querySelector(".hero");
   const content = document.querySelector(".hero-content");

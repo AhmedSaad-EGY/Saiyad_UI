@@ -2992,45 +2992,6 @@ tr:last-child td {
   border-radius: 2px;
 }
 
-/* ============================================================
-   UI/UX ENHANCEMENTS (May 2026)
-   ============================================================ */
-
-/* Reduce motion override — manual toggle */
-.reduce-motion *,
-.reduce-motion *::before,
-.reduce-motion *::after {
-  animation-duration: 0.01ms !important;
-  animation-iteration-count: 1 !important;
-  transition-duration: 0.01ms !important;
-}
-
-.reduce-motion .animate-on-scroll {
-  opacity: 1 !important;
-  transform: none !important;
-  transition: none !important;
-}
-
-/* Motion toggle in top navbar */
-#motionToggle {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 44px;
-  border: none;
-  background: transparent;
-  color: var(--text-secondary);
-  font-size: 1rem;
-  cursor: pointer;
-  border-radius: var(--radius-md);
-  transition: background var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out);
-}
-
-#motionToggle:hover {
-  background: var(--primary-ghost);
-  color: var(--primary);
-}
 
 /* Quick-add cart button on product cards */
 .quick-add-btn {

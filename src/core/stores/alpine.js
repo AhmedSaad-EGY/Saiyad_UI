@@ -37,15 +37,11 @@ Alpine.store('cart', {
 Alpine.store('ui', {
   theme: localStorage.getItem('sayiad_theme') || 'light',
   lang: localStorage.getItem('sayiad_lang') || 'en',
-  reducedMotion: localStorage.getItem('sayiad_reduced_motion') === 'true',
   toggleTheme() {
     this.theme = this.theme === 'dark' ? 'light' : 'dark';
   },
   toggleLang() {
     this.lang = this.lang === 'en' ? 'ar' : 'en';
-  },
-  toggleMotion() {
-    this.reducedMotion = !this.reducedMotion;
   },
 });
 
