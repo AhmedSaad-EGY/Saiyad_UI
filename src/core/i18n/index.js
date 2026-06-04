@@ -275,7 +275,7 @@ export const translations = {
     "dash.date": "Date",
     "dash.view": "View",
     "dash.myProducts": "My Products",
-    "profile.imageTooLarge": "Image must be under 500 KB.",
+    "profile.imageTooLarge": "Image must be under 5 MB.",
     "profile.uploadNoUrl": "Upload did not return a URL.",
     "profile.photoUpdated": "Profile photo updated!",
 
@@ -921,7 +921,7 @@ export const translations = {
     "dash.date": "التاريخ",
     "dash.view": "عرض",
     "dash.myProducts": "منتجاتي",
-    "profile.imageTooLarge": "يجب أن تكون الصورة أقل من 500 كيلوبايت.",
+    "profile.imageTooLarge": "يجب أن تكون الصورة أقل من 5 ميجابايت.",
     "profile.uploadNoUrl": "الرفع لم يُرجع رابطًا.",
     "profile.photoUpdated": "تم تحديث الصورة الشخصية!",
 

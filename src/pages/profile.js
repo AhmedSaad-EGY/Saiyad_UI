@@ -74,7 +74,7 @@ Alpine.data('profilePage', () => ({
   async handleFile(e) {
     const file = e.target.files[0];
     if (!file) return;
-    if (file.size > 500_000) {
+    if (file.size > 5_000_000) {
       showToast(t('profile.imageTooLarge'), 'error');
       e.target.value = '';
       return;
