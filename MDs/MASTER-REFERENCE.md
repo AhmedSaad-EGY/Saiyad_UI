@@ -134,7 +134,7 @@ Defined in `src/shared/constants/roles.js`:
 ```javascript
 ROLES = { ADMIN, CUSTOMER, FISHERMAN, BAIT_SELLER, AUCTIONEER }
 SELLER_ROLES = [Fisherman, BaitSeller]               # Product CRUD
-ECOMMERCE_ROLES = [Customer, Fisherman, BaitSeller, Auctioneer]  # Cart/Orders/Checkout
+ECOMMERCE_ROLES = [Customer, Fisherman, BaitSeller]  # Cart/Orders/Checkout
 MODERATOR_ROLES = [Auctioneer, Admin]                  # Review + Analytics
 ```
 
@@ -427,6 +427,15 @@ MODERATOR_ROLES = [Auctioneer, Admin]                  # Review + Analytics
 - ✅ **June 4: Custom @keyframes audit** — Verified zero `@keyframes` remain in all CSS files. All confirmed removed by earlier cleanup. | Build: ✅
 - ✅ **June 4: Dead code removal** — Removed `shared/components/toast.js` (unused Alpine toast) and `shared/components/index.js` (unused walletCard). Cleaned up `alpine.js` import. | Build: ✅ 114 modules | Review: ✅
 - ✅ **June 4: Docs updated** — `knowledge.md` and `MASTER-REFERENCE.md` updated with all June 4 changes.
+- ✅ **June 4: showConfirm modal fix** — Added `display: block; position: relative;` to `.modal` CSS to override Bootstrap's `display: none` | Build: ✅
+- ✅ **June 4: Auction-requests Fisherman redirect** — Fixed guard from `!['Auctioneer','Admin'].includes(_u.role)` to `_u.role !== ROLES.FISHERMAN` | Build: ✅
+- ✅ **June 4: Alpine null error on auction detail** — Replaced `x-show` with `template x-if` to prevent expression evaluation on null `auction` | Build: ✅
+- ✅ **June 4: Auctioneer e-commerce hiding** — Removed Auctioneer from ECOMMERCE_ROLES; gated cart/wishlist/orders API calls; hidden e-commerce nav links for Auctioneer across navbar, bottom-nav, dropdown, footer, profile page | Build: ✅
+- ✅ **June 4: Profile page Auctioneer polish** — Added Auctioneer-specific stats (active auctions, pending requests) and quick links (Auctions dashboard, Analytics) via `/auctions/dashboard` API | Build: ✅
+- ✅ **June 4: Profile card sizing & spacing** — Increased padding (20→24px), icon sizes (1.5→1.75rem), stat number 24→30px; added min-height + flex centering to stat/link cards; mobile values adjusted | Build: ✅
+- ✅ **June 4: Profile page DOM + grid fix** — Removed stray `</div>` breaking DOM; changed stat columns `col-sm-4` → `col-sm` (auto-equal) to prevent gaps from hidden `x-show` items; added `max-width: 320px; margin-inline: auto` to stat cards | Build: ✅
+- ✅ **June 4: Upload limit 500KB → 5MB** — Increased frontend validation and updated EN/AR i18n toast messages | Build: ✅
+- ✅ **June 4: Backend upload 500 fix** — Changed `UploadController.cs` to copy `IFormFile` into `MemoryStream` once, avoiding double-read stream issue between `IsValidImageBytes` and Cloudinary upload | Build: ✅ 0 errors
 
 ### Immediate (Next)
 1. **Phase 4 — Low Priority** (L1: WhatsApp link, L2: hreflang, L3: skip-link CSS, L4: unique titles, L5: focus styles)

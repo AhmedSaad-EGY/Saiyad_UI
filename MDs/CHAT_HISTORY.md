@@ -1639,4 +1639,117 @@ PHASE 3 — MEDIUM PRIORITY
 
 ---
 
+## 43. FIX 24 — SHOWCONFIRM MODAL NOT APPEARING (BLACK SCREEN ONLY)
+
+**Date**: June 4, 2026  
+**File**: `src/css/_components.css`  
+**Root cause**: Bootstrap 5 `.modal { display: none; }` loaded after the custom `.modal` rule, overriding it. The modal backdrop rendered but the modal dialog stayed hidden.
+
+**Fix**: Added `display: block; position: relative;` explicitly to the custom `.modal` rule at `_components.css:1522`.
+
+**Build**: ✅ 0 errors
+
+---
+
+## 44. FIX 25 — AUCTION-REQUESTS FISHERMAN REDIRECT
+
+**Date**: June 4, 2026  
+**File**: `src/pages/auction-requests.js`  
+**Root cause**: Role guard was `!['Auctioneer','Admin'].includes(_u.role)` — a copy-paste from the review page. Fishermen were blocked instead of allowed.
+
+**Fix**: Changed to `_u.role !== ROLES.FISHERMAN` at line 11.
+
+**Build**: ✅ 0 errors
+
+---
+
+## 45. FIX 26 — ALPINE NULL ERROR ON AUCTION DETAIL
+
+**Date**: June 4, 2026  
+**File**: `src/pages/auction-detail.js`  
+**Root cause**: `<div x-show="!loading && !error && auction">` — Alpine evaluates expressions immediately. When `auction` is `null` (data not yet loaded), property access on `auction` throws a TypeError.
+
+**Fix**: Replaced with `<template x-if="!loading && !error && auction"><div>...</div></template>` at line 360. `x-if` defers rendering until the condition is true, preventing expression evaluation on null data.
+
+**Build**: ✅ 0 errors
+
+---
+
+## 46. FIX 27 — AUCTIONEER E-COMMERCE LINK HIDING
+
+**Date**: June 4, 2026  
+**Files**: Multiple
+
+| # | File | Change |
+|---|------|--------|
+| 1 | `src/shared/constants/roles.js` | `ECOMMERCE_ROLES` — removed `Auctioneer` from array (was `[Customer, Fisherman, BaitSeller, Auctioneer]`) |
+| 2 | `src/core/auth/index.js` | `updateNavbar()` — desktop cart link (`.cart-nav-link`), bottom-nav cart (`#bnCart`), footer shipping link toggled via `!isEcom` |
+| 3 | `src/pages/profile.js` | Stats cards + quick links conditionally rendered via `x-show="isECommerce()"` / `ECOMMERCE_ROLES.includes(user?.role)` ternary |
+| 4 | `src/index.html` | Removed `Auctioneer` from `data-roles` on My Orders and Wishlist dropdown items |
+| 5 | `src/core/auth/index.js` | `updateCartBadge` cart API call gated behind `hasAnyRole(ECOMMERCE_ROLES)` |
+
+**Also blocked**: Backend Cart/Orders/Wishlist controllers already reject Auctioneer via `[Authorize(Roles = "Customer,Fisherman,BaitSeller")]` — source of the 403 errors before the frontend fix.
+
+**Build**: ✅ 0 errors | **Commit**: `7937213`
+
+---
+
+## 47. FIX 28 — PROFILE PAGE POLISH FOR AUCTIONEER
+
+**Date**: June 4, 2026  
+**File**: `src/pages/profile.js`
+
+### Changes
+
+| Aspect | Before | After |
+|--------|--------|-------|
+| **Imports** | `SELLER_ROLES, ECOMMERCE_ROLES`, `hasAnyRole` | Added `ROLES`, `hasRole` |
+| **Stats object** | `{ orders, wishlist, notifs }` | Added `auctions`, `pendingRequests` |
+| **API calls** | Orders + Wishlist (ecom) + Notifs | Added `/auctions/dashboard` for Auctioneer |
+| **Stat cards** | 3 generic cards | Role-aware: e-commerce cards gated, Auctioneer cards for active auctions + pending requests |
+| **Quick links** | `user?.role !== 'Admin'` | `ECOMMERCE_ROLES.includes(user?.role)` for e-com links; `user?.role === ROLES.AUCTIONEER` for Auctions + Analytics links |
+
+**Build**: ✅ 0 errors | **Commit**: `a083876`
+
+---
+
+## 48. FIX 29 — PROFILE CARD SIZING, SPACING & BUG FIXES
+
+**Date**: June 4, 2026  
+**Action**: Fixed profile stat/link card sizing & spacing, DOM structure, grid layout, upload limit + backend 500.
+
+### Profile Card CSS (`_components.css`)
+
+| Element | Before | After |
+|---------|--------|-------|
+| `.profile-stat-card` padding | `var(--space-5)` (20px) | `var(--space-6) var(--space-5)` (24px top/bottom) |
+| `.profile-stat-card` layout | no flex | `min-height: 140px; display: flex; flex-direction: column; align-items: center; justify-content: center; max-width: 320px; margin-inline: auto;` |
+| `.profile-stat-card i` | 1.5rem | 1.75rem |
+| `.profile-stat-num` | `--text-2xl` (24px) | `--text-3xl` (30px) |
+| `.profile-link-card` padding | `var(--space-4)` (16px) | `var(--space-6) var(--space-4)` (24px top/bottom) |
+| `.profile-link-card` layout | gap 8px | `min-height: 120px; justify-content: center; gap: var(--space-3)` (12px) |
+| `.profile-link-card i` | 1.4rem | 1.75rem |
+| `.profile-link-card` font | no weight | `font-weight: var(--weight-medium)` |
+
+### DOM Structure Fix
+
+**Extra `</div>` removed** — was prematurely closing `.profile-page` div, breaking the DOM tree for the quick-links section.
+
+### Grid Layout Fix
+
+Changed stat card columns from `col-sm-4` (fixed 4-col grid that left gaps when `x-show` hid items) to `col-sm` (auto-equal division among visible items).
+
+### Upload Fixes
+
+| Change | Frontend | Backend |
+|--------|----------|---------|
+| File size limit | `500_000` → `5_000_000` (matches backend) | Already 5MB |
+| i18n EN | `"under 500 KB"` → `"under 5 MB"` | — |
+| i18n AR | `أقل من 500 كيلوبايت` → `أقل من 5 ميجابايت` | — |
+| 500 error fix | — | `UploadController.cs`: Changed to copy `IFormFile` → `MemoryStream` once, use it for both `IsValidImageBytes` + Cloudinary upload. Fixes `BinaryReader` disposing the underlying stream before the second read. |
+
+**Build**: ✅ 0 errors | **Frontend commit**: `d17f070`, `79a4a09`, `bcb45c0` | **Backend commit**: `a3ae892`
+
+---
+
 *End of chat history record. Update this file at the start of each session by appending new sections.*
