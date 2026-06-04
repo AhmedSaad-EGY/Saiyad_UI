@@ -13,7 +13,7 @@ export const routeGuards = {
   'auction-requests': (user) => !!user && user.role === ROLES.FISHERMAN,
   'auction-requests-review': (user) => !!user && MODERATOR_ROLES.includes(user.role),
   'auctioneer-analytics': (user) => !!user && MODERATOR_ROLES.includes(user.role),
-  'subscriptions': (user) => !!user && ECOMMERCE_ROLES.includes(user.role),
+  'subscriptions': (user) => !!user && (ECOMMERCE_ROLES.includes(user.role) || user.role === ROLES.AUCTIONEER),
   'wallet': (user) => !!user,
 };
 

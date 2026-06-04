@@ -1,7 +1,8 @@
 import { t } from '../core/i18n/index.js';
 import { api } from '../core/api/client.js';
 import { isAuthenticated, getUser } from '../core/auth/index.js';
-import { SELLER_ROLES } from '../shared/constants/roles.js';
+import { SELLER_ROLES, ECOMMERCE_ROLES } from '../shared/constants/roles.js';
+import { hasAnyRole } from '../core/auth/index.js';
 import { navigate } from '../core/router/index.js';
 import { escapeHtml, observeAnimations } from '../core/utils/dom.js';
 import { showToast } from '../core/utils/ui.js';
@@ -12,14 +13,17 @@ Alpine.data('profilePage', () => ({
   stats: { orders: 0, wishlist: 0, notifs: 0 },
   init() {
     setPageMeta("My Profile", undefined, true);
-    Promise.allSettled([
-      api.get('/orders', { page: 1, pageSize: 1 }),
-      api.get('/wishlist', { page: 1, pageSize: 1 }),
-      api.get('/notifications/unread-count'),
-    ]).then(([orders, wishlist, notifs]) => {
-      if (orders.status === 'fulfilled') this.animateValue('orders', parseInt(orders.value?.totalCount ?? 0, 10));
-      if (wishlist.status === 'fulfilled') this.animateValue('wishlist', parseInt(wishlist.value?.totalCount ?? 0, 10));
-      if (notifs.status === 'fulfilled') this.animateValue('notifs', parseInt(notifs.value?.count ?? 0, 10));
+    const promises = [];
+    if (hasAnyRole(ECOMMERCE_ROLES)) {
+      promises.push(api.get('/orders', { page: 1, pageSize: 1 }));
+      promises.push(api.get('/wishlist', { page: 1, pageSize: 1 }));
+    }
+    promises.push(api.get('/notifications/unread-count'));
+    Promise.allSettled(promises).then((results) => {
+      const [orders, wishlist, notifs] = promises.length === 3 ? results : [null, null, results[0]];
+      if (orders?.status === 'fulfilled') this.animateValue('orders', parseInt(orders.value?.totalCount ?? 0, 10));
+      if (wishlist?.status === 'fulfilled') this.animateValue('wishlist', parseInt(wishlist.value?.totalCount ?? 0, 10));
+      if (notifs?.status === 'fulfilled') this.animateValue('notifs', parseInt(notifs.value?.count ?? 0, 10));
     });
     this.$nextTick(() => {
       // Trigger profile fill anim transition

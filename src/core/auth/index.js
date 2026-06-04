@@ -1,6 +1,7 @@
 import { api } from '../api/client.js';
 import { on, emit } from '../events/bus.js';
 import { extractClaim } from '../../shared/helpers/index.js';
+import { ECOMMERCE_ROLES } from '../../shared/constants/roles.js';
 import { clearCsrfToken } from '../utils/csrf.js';
 import { animate } from '../utils/dom.js';
 import { showToast } from '../utils/ui.js';
@@ -133,6 +134,7 @@ export async function updateCartBadge(forceRefresh = true) {
     badge.classList.toggle("d-none", _cartCount === 0);
     return;
   }
+  if (!hasAnyRole(ECOMMERCE_ROLES)) { badge.classList.add("d-none"); _cartCount = null; return; }
   try {
     const cart = await api.get("/cart");
     syncCartBadgeCount(getCartItemCount(cart.items || []));
