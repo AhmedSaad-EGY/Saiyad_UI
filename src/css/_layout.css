@@ -38,16 +38,16 @@
   box-shadow: var(--shadow-md);
   border-bottom-color: transparent;
   background:
-    linear-gradient(135deg, oklch(1 0 0 / 0.90), oklch(0.96 0.012 235 / 0.88)),
-    radial-gradient(circle at 18% 0%, oklch(from var(--primary) l c h / 0.06), transparent 34%);
+    linear-gradient(135deg, oklch(1 0 0 / 0.82), oklch(0.96 0.012 235 / 0.78)),
+    radial-gradient(circle at 18% 0%, oklch(from var(--primary) l c h / 0.04), transparent 34%);
   backdrop-filter: var(--glass-blur-light);
   -webkit-backdrop-filter: var(--glass-blur-light);
 }
 
 [data-theme="dark"] .navbar.scrolled {
   background:
-    linear-gradient(135deg, oklch(0.105 0.022 250 / 0.90), oklch(0.16 0.028 238 / 0.88)),
-    radial-gradient(circle at 18% 0%, oklch(from var(--primary) l c h / 0.12), transparent 36%);
+    linear-gradient(135deg, oklch(0.105 0.022 250 / 0.82), oklch(0.16 0.028 238 / 0.78)),
+    radial-gradient(circle at 18% 0%, oklch(from var(--primary) l c h / 0.08), transparent 36%);
 }
 
 /* Decorative wave underline when scrolled */
