@@ -615,16 +615,23 @@ body.nav-open .navbar { pointer-events: all; }
    ============================================================ */
 .main-content {
   flex: 1;
-  margin: calc(60px + var(--space-4)) var(--space-6) var(--space-8);
-  padding: var(--space-8);
+  margin: calc(60px + var(--space-4)) var(--space-6) var(--space-10);
+  padding: var(--space-10);
   position: relative;
   z-index: 1;
-  background: var(--glass-bg-strong);
+  background: var(--card-bg-glass);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-xl);
   box-shadow: var(--glass-shadow);
+}
+
+@media (min-width: 768px) {
+  .main-content {
+    margin-left: auto;
+    margin-right: auto;
+  }
 }
 
 /* ============================================================
