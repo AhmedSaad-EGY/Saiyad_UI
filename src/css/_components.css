@@ -1520,6 +1520,8 @@ tr:last-child td {
 }
 
 .modal {
+  display: block;
+  position: relative;
   background: var(--card-bg);
   border-radius: var(--radius-xl);
   padding: var(--space-8);
