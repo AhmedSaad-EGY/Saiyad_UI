@@ -377,4 +377,10 @@ export default async function renderCheckout(container) {
         </div>
       </div>
     </div>`;
+  // Ensure Alpine initializes the newly injected markup
+  if (typeof Alpine.discoverUninitializedComponents === 'function') {
+    Alpine.discoverUninitializedComponents(container);
+  } else if (typeof Alpine.initTree === 'function') {
+    Alpine.initTree(container);
+  }
 }
