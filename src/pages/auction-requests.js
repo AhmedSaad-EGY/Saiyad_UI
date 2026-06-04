@@ -5,10 +5,11 @@ import { escapeHtml } from '../core/utils/dom.js';
 import { statusClass } from '../core/utils/format.js';
 import { showToast } from '../core/utils/ui.js';
 import { validateForm, clearFieldError } from '../core/utils/validation.js';
+import { ROLES } from '../shared/constants/roles.js';
 
 export default async function renderAuctionRequests(container) {
   const _u = getUser();
-  if (!_u || !['Auctioneer','Admin'].includes(_u.role)) { window.location.hash = '#/'; return; }
+  if (!_u || _u.role !== ROLES.FISHERMAN) { window.location.hash = '#/'; return; }
 
   container.innerHTML = `
     <div class="section-header">
