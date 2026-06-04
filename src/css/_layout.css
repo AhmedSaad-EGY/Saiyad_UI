@@ -40,6 +40,8 @@
   background:
     linear-gradient(135deg, oklch(1 0 0 / 0.98), oklch(0.965 0.012 235 / 0.96)),
     radial-gradient(circle at 18% 0%, oklch(from var(--primary) l c h / 0.12), transparent 34%);
+  backdrop-filter: var(--glass-blur-light);
+  -webkit-backdrop-filter: var(--glass-blur-light);
 }
 
 [data-theme="dark"] .navbar.scrolled {
@@ -615,7 +617,7 @@ body.nav-open .navbar { pointer-events: all; }
    ============================================================ */
 .main-content {
   flex: 1;
-  margin: calc(60px + var(--space-4)) var(--space-6) var(--space-10);
+  margin: 60px var(--space-6) var(--space-10);
   padding: var(--space-10);
   position: relative;
   z-index: 1;
@@ -623,7 +625,7 @@ body.nav-open .navbar { pointer-events: all; }
   backdrop-filter: var(--glass-blur-light);
   -webkit-backdrop-filter: var(--glass-blur-light);
   border: 1px solid var(--glass-border);
-  border-radius: var(--radius-xl);
+  border-radius: 0 0 var(--radius-xl) var(--radius-xl);
   box-shadow: var(--glass-shadow);
 }
 
