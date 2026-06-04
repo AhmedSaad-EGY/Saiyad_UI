@@ -1519,6 +1519,51 @@ tr:last-child td {
   display: flex;
 }
 
+.drawer-overlay {
+  justify-content: flex-end;
+  align-items: stretch;
+}
+
+.drawer-content {
+  position: fixed;
+  top: 0;
+  right: -100%;
+  width: 100%;
+  max-width: 500px;
+  height: 100vh;
+  background: var(--background);
+  border-left: 1px solid var(--border);
+  border-radius: 0;
+  display: flex;
+  flex-direction: column;
+  transition: right 0.3s ease-out;
+  box-shadow: -5px 0 25px rgba(0, 0, 0, 0.15);
+  z-index: 1050;
+}
+
+.drawer-content.drawer-open {
+  right: 0;
+}
+
+[dir="rtl"] .drawer-content {
+  right: auto;
+  left: -100%;
+  border-left: none;
+  border-right: 1px solid var(--border);
+  box-shadow: 5px 0 25px rgba(0, 0, 0, 0.15);
+}
+
+[dir="rtl"] .drawer-content.drawer-open {
+  left: 0;
+  right: auto;
+}
+
+@media (max-width: 540px) {
+  .drawer-content {
+    max-width: 100%;
+  }
+}
+
 .modal {
   display: block;
   position: relative;
