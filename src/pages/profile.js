@@ -84,6 +84,8 @@ Alpine.data('profilePage', () => ({
       showToast(err.message, 'error');
     }
   },
+
+  isECommerce() { return hasAnyRole(ECOMMERCE_ROLES); },
 }));
 
 export default async function renderUserProfile(container) {
@@ -132,14 +134,14 @@ export default async function renderUserProfile(container) {
       </div>
 
       <div class="row g-3 animate-on-scroll stagger-1" id="profileStats">
-        <div class="col-sm-4">
+        <div class="col-sm-4" x-show="isECommerce()">
           <div class="profile-stat-card">
             <i class="fas fa-box" aria-hidden="true"></i>
             <div class="profile-stat-num" x-text="stats.orders">—</div>
             <div class="profile-stat-label">${t('dash.orders')}</div>
           </div>
         </div>
-        <div class="col-sm-4">
+        <div class="col-sm-4" x-show="isECommerce()">
           <div class="profile-stat-card">
             <i class="fas fa-heart" aria-hidden="true"></i>
             <div class="profile-stat-num" x-text="stats.wishlist">—</div>
@@ -162,7 +164,7 @@ export default async function renderUserProfile(container) {
         </div>
         <div class="card-body">
         <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 g-3 mt-3">
-          ${user?.role !== 'Admin' ? `
+          ${ECOMMERCE_ROLES.includes(user?.role) ? `
             <a href="#/dashboard?tab=orders" class="profile-link-card"><i class="fas fa-shopping-bag" aria-hidden="true"></i><span>${t('dash.orders')}</span></a>
             <a href="#/dashboard?tab=wishlist" class="profile-link-card"><i class="fas fa-heart" aria-hidden="true"></i><span>${t('dash.wishlist')}</span></a>
             <a href="#/shipping" class="profile-link-card"><i class="fas fa-map-marker-alt" aria-hidden="true"></i><span>${t('dash.addresses')}</span></a>

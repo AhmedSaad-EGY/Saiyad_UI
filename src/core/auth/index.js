@@ -86,9 +86,16 @@ export function updateNavbar() {
   const bnAccount = document.getElementById("bnAccount");
   const bnLogin = document.getElementById("bnLogin");
   const bnCart = document.querySelector("#bnCart");
+  const isEcom = authed && hasAnyRole(ECOMMERCE_ROLES);
   if (bnAccount) bnAccount.classList.toggle("d-none", !authed);
   if (bnLogin) bnLogin.classList.toggle("d-none", authed);
-  if (bnCart) bnCart.classList.toggle("d-none", !authed);
+  if (bnCart) bnCart.classList.toggle("d-none", !isEcom);
+  // Hide desktop cart link for non-ecommerce roles
+  const cartLink = document.querySelector(".cart-nav-link");
+  if (cartLink) cartLink.classList.toggle("d-none", !isEcom);
+  // Hide footer shipping link for non-ecommerce roles
+  const footerShipping = document.querySelector('.footer-link[href="#/shipping"]');
+  if (footerShipping) footerShipping.classList.toggle("d-none", !isEcom);
   if (authed) startNotifPolling();
   else stopNotifPolling();
 }
