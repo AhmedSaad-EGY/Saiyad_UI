@@ -133,17 +133,6 @@ export function renderEmptyState(
       ${cta}
     </div>`;
 
-  const wrap = document.getElementById(wrapId);
-  if (wrap) {
-    const visualEl = wrap.querySelector(".empty-state-visual");
-    wrap.addEventListener("mouseenter", () =>
-      visualEl?.classList.add("float-anim"),
-    );
-    wrap.addEventListener("mouseleave", () =>
-      visualEl?.classList.remove("float-anim"),
-    );
-  }
-
   if (actionFn)
     document.getElementById(btnId)?.addEventListener("click", actionFn);
 }
@@ -262,8 +251,7 @@ function getStaggerDelay(el) {
 
 export function fadeInContent(el) {
   if (!el) return;
-  el.classList.add('content-fade');
-  el.addEventListener('animationend', () => el.classList.remove('content-fade'), { once: true });
+  animate(el, 'fadeIn', { duration: '0.35s' });
 }
 
 export function initPullToRefresh({ onRefresh, threshold = 80, indicatorId = 'ptr-indicator' } = {}) {

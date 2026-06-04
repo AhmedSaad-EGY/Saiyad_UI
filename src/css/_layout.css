@@ -71,7 +71,6 @@
 }
 .navbar.scrolled::after {
   opacity: 0.4;
-  animation: navWave 2.5s linear infinite;
 }
 
 /* Navbar inner layout */
@@ -343,7 +342,6 @@
   height: 8px;
   background: var(--danger);
   border-radius: 50%;
-  animation: ping 1.5s ease-in-out infinite;
 }
 
 /* ── User Dropdown (mobile drawer: static panel) ────────────── */
@@ -412,16 +410,6 @@ body.nav-open { overflow: hidden; }
 body.nav-open #app,
 body.nav-open footer { pointer-events: none; }
 body.nav-open .navbar { pointer-events: all; }
-
-/* Staggered animation on drawer open */
-.nav-drawer.open .nav-link {
-  animation: drawerItemIn 0.28s var(--ease-out) both;
-}
-.nav-drawer.open .navbar-nav .nav-link:nth-child(1) { animation-delay: 0.04s; }
-.nav-drawer.open .navbar-nav .nav-link:nth-child(2) { animation-delay: 0.08s; }
-.nav-drawer.open .navbar-nav .nav-link:nth-child(3) { animation-delay: 0.12s; }
-.nav-drawer.open .navbar-nav .nav-link:nth-child(4) { animation-delay: 0.16s; }
-[dir="rtl"] .nav-drawer.open .nav-link { animation-name: drawerItemInRtl; }
 
 /* ============================================================
    DESKTOP NAVBAR OVERRIDE (≥ 769px)
@@ -590,9 +578,6 @@ body.nav-open .navbar { pointer-events: all; }
   [dir="rtl"] .nav-drawer .dropdown-item:hover { border-inline-end-color: var(--primary); }
   .nav-drawer .dropdown-divider { margin: 5px 0; }
 
-  /* Desktop: no stagger animation */
-  .nav-drawer .nav-link { animation: none !important; }
-
   /* Desktop: overlay hidden */
   .nav-overlay { display: none !important; }
 }
@@ -615,7 +600,7 @@ body.nav-open .navbar { pointer-events: all; }
   border: 2px solid var(--nav-bg);
   transition: transform var(--duration-fast) var(--ease-out);
 }
-.badge:not(.d-none) { animation: bounceIn 0.35s var(--ease-bounce); }
+.badge:not(.d-none) { animation: bounceIn 0.35s; }
 
 /* Chevron animation */
 #userDropdown .fa-chevron-down,
@@ -631,7 +616,7 @@ body.nav-open .navbar { pointer-events: all; }
 .main-content {
   flex: 1;
   padding: calc(60px + var(--space-8)) var(--space-6) var(--space-16);
-  animation: fadeIn 0.25s var(--ease-out);
+  animation: fadeIn 0.25s;
   position: relative;
   z-index: 1;
 }
@@ -695,12 +680,6 @@ body.nav-open .navbar { pointer-events: all; }
   font-size: 5rem;
   color: var(--primary);
   margin-bottom: var(--space-4);
-  animation: fishSwim 3s ease-in-out infinite;
-}
-@keyframes fishSwim {
-  0%, 100% { transform: translateX(0) rotate(0deg); }
-  25%       { transform: translateX(20px) rotate(5deg); }
-  75%       { transform: translateX(-20px) rotate(-5deg); }
 }
 .not-found-page h1 {
   font-size: clamp(4rem, 10vw, 8rem);
@@ -826,11 +805,6 @@ input[type="date"].form-input::-webkit-datetime-edit-year-field:focus {
 /* ============================================================
    PING ANIMATION (notification dot)
    ============================================================ */
-@keyframes ping {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50%       { opacity: 0.6; transform: scale(1.4); }
-}
-
 /* ============================================================
    RESPONSIVE — Container & Layout
    ============================================================ */

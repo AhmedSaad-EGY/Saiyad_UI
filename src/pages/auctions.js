@@ -219,7 +219,7 @@ export default async function renderAuctions(_container, _fullPath, params) {
                 <span>
                   <i class="fas fa-hourglass-half" aria-hidden="true"></i>
                   <span x-text="timeLeft(a.endTime).finished ? '${t('auction.ended') || 'Ended'}' : timeLeft(a.endTime).timeStr"></span>
-                  <span x-show="timeLeft(a.endTime).urgent && !timeLeft(a.endTime).finished" class="ending-soon-badge" style="animation:pulse 1s infinite">${t("auction.endingSoon")}</span>
+                  <span x-show="timeLeft(a.endTime).urgent && !timeLeft(a.endTime).finished" class="ending-soon-badge animate__animated animate__pulse animate__infinite">${t("auction.endingSoon")}</span>
                 </span>
                 <span class="status" :class="statusClass(a.status)" x-text="tStatus(a.status)"></span>
               </div>

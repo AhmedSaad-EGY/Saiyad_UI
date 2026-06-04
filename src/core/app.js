@@ -309,8 +309,7 @@ themeToggle?.addEventListener("click", () => {
   document.documentElement.classList.add("theme-transitioning");
   applyTheme(next);
 
-  themeToggle.classList.add("theme-spin");
-  setTimeout(() => themeToggle.classList.remove("theme-spin"), 400);
+  animate(themeToggle, "rotateIn", { duration: "0.4s" });
 
   setTimeout(
     () => document.documentElement.classList.remove("theme-transitioning"),
@@ -356,21 +355,6 @@ applyLanguage(initialLang);
 langToggle?.addEventListener("click", () => {
   const current = getCurrentLang();
   handleLangChange(current === "en" ? "ar" : "en");
-});
-
-// Ripple effect
-document.addEventListener("click", (e) => {
-  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-  const btn = e.target.closest(".btn:not(.btn-ghost):not(.btn-icon)");
-  if (!btn) return;
-  const rect = btn.getBoundingClientRect();
-  const size = Math.max(rect.width, rect.height);
-  const x = e.clientX - rect.left - size / 2;
-  const y = e.clientY - rect.top - size / 2;
-  const ripple = document.createElement("span");
-  ripple.style.cssText = `position:absolute;width:${size}px;height:${size}px;left:${x}px;top:${y}px;border-radius:50%;background:rgba(255,255,255,0.18);transform:scale(0);animation:ripple 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;pointer-events:none`;
-  btn.appendChild(ripple);
-  setTimeout(() => ripple.remove(), 600);
 });
 
 // Focus visible

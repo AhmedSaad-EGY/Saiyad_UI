@@ -46,7 +46,7 @@ export function handleApiError(err) {
 export function showErrorFallback(container, message) {
   container.innerHTML = `
     <div class="d-flex flex-column align-items-center justify-content-center text-center py-5 px-3 min-vh-50">
-      <div class="mb-3 text-muted" style="font-size:3.5rem;animation:fishSwimSmall 2s ease-in-out infinite">
+      <div class="mb-3 text-muted animate__animated animate__pulse animate__infinite" style="font-size:3.5rem">
         <i class="fas fa-fish" aria-hidden="true"></i>
       </div>
       <h2 class="mb-2" style="font-size:1.5rem">${t('common.somethingWentWrong') || 'Something went wrong'}</h2>

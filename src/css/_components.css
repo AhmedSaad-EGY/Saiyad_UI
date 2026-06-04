@@ -243,10 +243,6 @@
   display: inline-block;
 }
 
-#themeToggle.theme-spin i {
-  transform: rotate(360deg);
-}
-
 /* ============================================================
    CARDS — Bootstrap-powered (base styles via CSS vars)
    ============================================================ */
@@ -488,13 +484,13 @@
 }
 
 .btn-primary:not(:disabled):hover i {
-  animation: iconBounce 0.4s var(--ease-bounce);
+  transform: scale(1.12);
 }
 
 /* Heart beat on wishlist toggle */
 .wishlist-active i,
 .fa-heart.wishlist-active {
-  animation: heartBeat 0.6s var(--ease-bounce);
+  animation: heartBeat 0.6s;
   color: var(--danger) !important;
 }
 
@@ -517,7 +513,7 @@
   background: oklch(0 0 0 / 0.92);
   align-items: center;
   justify-content: center;
-  animation: fadeIn 0.15s var(--ease-out);
+  animation: fadeIn 0.15s;
 }
 
 .lightbox.show {
@@ -529,7 +525,7 @@
   max-height: 82vh;
   border-radius: var(--radius-md);
   object-fit: contain;
-  animation: zoomIn 0.25s var(--ease-out);
+  animation: zoomIn 0.25s;
   box-shadow: 0 8px 40px oklch(0 0 0 / 0.5);
 }
 
@@ -658,11 +654,6 @@
 
 [data-theme="dark"] .product-card.card:hover .product-card-img::after {
   background: oklch(0% 0 0 / 0.15);
-}
-
-/* Floating animation for decorative elements */
-.float-anim {
-  animation: float 3s ease-in-out infinite;
 }
 
 /* ============================================================
@@ -831,7 +822,7 @@
 
 /* Urgent auction */
 .auction-urgent {
-  animation: urgentPulse 2s ease-in-out infinite;
+  animation: pulse 2s infinite;
   border-color: var(--danger) !important;
 }
 
@@ -847,7 +838,7 @@
   font-weight: 700;
   padding: 2px 8px;
   border-radius: var(--radius-full);
-  animation: endingSoonPulse 1.2s ease-in-out infinite;
+  animation: pulse 1.2s infinite;
   margin-inline-start: 6px;
   vertical-align: middle;
   box-shadow: 0 0 12px var(--urgency);
@@ -861,9 +852,15 @@
   position: absolute;
   inset: 0;
   background: var(--gold-shimmer);
-  transform: translateX(-100%);
-  animation: luxuryShimmer 3s infinite;
+  opacity: 0;
+  transition: opacity var(--transition);
   pointer-events: none;
+}
+
+[data-user-role="Fisherman"] .btn-primary:hover::after,
+[data-user-role="BaitSeller"] .btn-primary:hover::after,
+[data-user-role="Auctioneer"] .btn-primary:hover::after {
+  opacity: 1;
 }
 
 /* Countdown unit blocks */
@@ -1112,7 +1109,7 @@
 .auth-page {
   max-width: 420px;
   margin: 48px auto;
-  animation: fadeIn 0.5s var(--ease-out);
+  animation: fadeIn 0.5s;
   padding-inline: var(--space-4);
 }
 
@@ -1243,7 +1240,7 @@
 }
 
 .spinner {
-  animation: spin 0.8s linear infinite;
+  display: inline-block;
 }
 
 /* ============================================================
@@ -1257,7 +1254,7 @@
   gap: var(--space-3);
   flex-wrap: nowrap;
   overflow: visible;
-  animation: fadeInUp 0.5s var(--ease-bounce);
+  animation: fadeInUp 0.5s;
   padding-bottom: var(--space-1);
 }
 
@@ -2880,16 +2877,14 @@ tr:last-child td {
   margin: 0 auto 20px;
   font-size: 2rem;
   color: var(--primary);
-  animation: envelopeFloat 2s ease-in-out infinite;
 }
 
 .verify-overlay-card.verified .verify-overlay-icon {
-  animation: none;
   background: var(--success-bg);
 }
 
 .verify-overlay-card.verified .verify-overlay-icon i {
-  animation: iconVerified 0.5s var(--ease-bounce);
+  animation: bounceIn 0.5s;
 }
 
 .verify-overlay-card h3 {
@@ -2918,7 +2913,7 @@ tr:last-child td {
   height: 10px;
   border-radius: 50%;
   background: var(--primary);
-  animation: dotPulse 1.4s ease-in-out infinite both;
+  opacity: 0.7;
 }
 
 .confetti-particle {
@@ -2929,7 +2924,6 @@ tr:last-child td {
   z-index: 10000;
   pointer-events: none;
   border-radius: 2px;
-  animation: confettiFall linear forwards;
 }
 
 /* ============================================================
@@ -3100,7 +3094,7 @@ tr:last-child td {
 
 /* Bid history row highlight animation */
 tr.bid-highlight {
-  animation: bidHighlight 2s ease forwards;
+  background: var(--success-bg);
 }
 
 /* Scroll to top reset on nav — ensure backToTop hidden initially on each page */
@@ -3556,7 +3550,7 @@ tr.bid-highlight {
 }
 
 .ptr-indicator.ptr-refreshing .ptr-spinner i {
-  animation: spin 0.8s linear infinite;
+  opacity: 0.7;
 }
 
 .ptr-indicator.ptr-refreshing .ptr-text {
@@ -3875,7 +3869,7 @@ tr.bid-highlight {
   -webkit-backdrop-filter: blur(12px);
   gap: var(--space-3);
   align-items: center;
-  animation: slideUp 0.3s var(--ease-out);
+  animation: slideInUp 0.3s;
 }
 
 @media (max-width: 768px) {
