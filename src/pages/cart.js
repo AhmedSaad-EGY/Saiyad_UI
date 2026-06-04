@@ -149,7 +149,7 @@ Alpine.data('cartPage', () => ({
         if (!deleteEl) {
           deleteEl = document.createElement('div');
           deleteEl.className = 'cart-swipe-delete';
-          deleteEl.innerHTML = '<i class="fas fa-trash-alt"></i>';
+          deleteEl.innerHTML = '<i class="fas fa-trash-alt" aria-hidden="true"></i>';
           row.appendChild(deleteEl);
           row.style.position = 'relative';
           row.style.overflow = 'hidden';
@@ -202,24 +202,24 @@ export default async function renderCart(container) {
   container.innerHTML = `
     <div x-data="cartPage">
       <template x-if="loading">
-        <div><i class="fas fa-spinner spinner"></i> ${t('common.loading')}</div>
+        <div><i class="fas fa-spinner spinner" aria-hidden="true"></i> ${t('common.loading')}</div>
       </template>
       <div x-show="!loading && empty" x-transition:enter="transition-fade" x-transition:enter-start="op-0" x-transition:enter-end="op-100">
         <div>
-          <div class="section-header"><h2><i class="fas fa-shopping-cart"></i> ${t('cart.title')}</h2></div>
+          <div class="section-header"><h2><i class="fas fa-shopping-cart" aria-hidden="true"></i> ${t('cart.title')}</h2></div>
           <div class="empty-state">
-            <i class="fas fa-shopping-cart mb-3 text-muted" style="font-size:3.5rem"></i>
+            <i class="fas fa-shopping-cart mb-3 text-muted" style="font-size:3.5rem" aria-hidden="true"></i>
             <h3>${t('cart.empty')}</h3>
             <p class="text-muted mb-4">${t('cart.emptyDesc')}</p>
-            <a href="#/products" class="btn btn-primary"><i class="fas fa-store"></i> ${t('cart.browseProducts')}</a>
+            <a href="#/products" class="btn btn-primary"><i class="fas fa-store" aria-hidden="true"></i> ${t('cart.browseProducts')}</a>
           </div>
         </div>
       </div>
       <div x-show="!loading && error" x-transition:enter="transition-fade" x-transition:enter-start="op-0" x-transition:enter-end="op-100">
         <div>
-          <div class="section-header"><h2><i class="fas fa-shopping-cart"></i> ${t('cart.title')}</h2></div>
+          <div class="section-header"><h2><i class="fas fa-shopping-cart" aria-hidden="true"></i> ${t('cart.title')}</h2></div>
           <div class="empty-state">
-            <i class="fas fa-exclamation-triangle"></i>
+            <i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
             <h3 x-text="error"></h3>
             <button class="btn btn-primary" @click="init()">${t('common.retry')}</button>
           </div>
@@ -228,8 +228,8 @@ export default async function renderCart(container) {
       <div x-show="!loading && !empty && !error" x-transition:enter="transition-fade" x-transition:enter-start="op-0" x-transition:enter-end="op-100">
         <div>
           <div class="section-header">
-            <h2><i class="fas fa-shopping-cart"></i> ${t('cart.title')}</h2>
-            <button class="btn btn-danger btn-sm" @click="clearCart()"><i class="fas fa-trash-alt"></i> ${t('cart.clear')}</button>
+            <h2><i class="fas fa-shopping-cart" aria-hidden="true"></i> ${t('cart.title')}</h2>
+            <button class="btn btn-danger btn-sm" @click="clearCart()"><i class="fas fa-trash-alt" aria-hidden="true"></i> ${t('cart.clear')}</button>
           </div>
           <div class="cart-table-wrapper">
             <table class="cart-table table">
@@ -257,7 +257,7 @@ export default async function renderCart(container) {
                         </template>
                         <template x-if="!(item.productImageUrl || item.imageUrl)">
                           <div class="d-flex align-items-center justify-content-center flex-shrink-0 rounded-2" style="width:48px;height:48px;background:var(--body-bg);border:1px solid var(--border)">
-                            <i class="fas fa-image text-muted fs-6"></i>
+                            <i class="fas fa-image text-muted fs-6" aria-hidden="true"></i>
                           </div>
                         </template>
                         <span x-text="item.productTitle || ('Product #' + item.productId)"></span>
@@ -272,7 +272,7 @@ export default async function renderCart(container) {
                     <td class="cart-subtotal-cell" x-text="formatPrice((item.unitPrice || item.price || 0) * (item.quantity || 1))"></td>
                     <td class="cart-remove-cell">
                       <button class="btn btn-ghost btn-icon remove-item text-danger" @click="removeItem(item.productId)" :aria-label="$t('common.remove')">
-                        <i class="fas fa-times"></i>
+                        <i class="fas fa-times" aria-hidden="true"></i>
                       </button>
                     </td>
                   </tr>
@@ -282,11 +282,11 @@ export default async function renderCart(container) {
           </div>
           <div class="cart-footer">
             <div class="cart-total">${t('cart.total')}: <span class="cart-total-amount" id="cartTotalDisplay" x-text="formatPrice(total)"></span></div>
-            <a href="#/checkout" class="btn btn-primary btn-lg"><i class="fas fa-credit-card"></i> ${t('cart.checkout')}</a>
+            <a href="#/checkout" class="btn btn-primary btn-lg"><i class="fas fa-credit-card" aria-hidden="true"></i> ${t('cart.checkout')}</a>
           </div>
           <div class="cart-floating-bar" id="cartFloatingBar" aria-hidden="true">
             <div class="cart-total">${t('cart.total')}: <span class="cart-total-amount" id="cartTotalFloating" x-text="formatPrice(total)"></span></div>
-            <a href="#/checkout" class="btn btn-primary"><i class="fas fa-credit-card"></i> ${t('cart.checkout')}</a>
+            <a href="#/checkout" class="btn btn-primary"><i class="fas fa-credit-card" aria-hidden="true"></i> ${t('cart.checkout')}</a>
           </div>
         </div>
       </div>

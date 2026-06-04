@@ -73,7 +73,7 @@ Alpine.data('profilePage', () => ({
       localStorage.setItem('user', JSON.stringify(updated));
       const avatar = document.getElementById('profileAvatar');
       if (avatar) {
-        avatar.innerHTML = `<span class="avatar-overlay"><i class="fas fa-camera"></i></span><img src="${  imageUrl  }" alt="" loading="lazy">`;
+        avatar.innerHTML = `<span class="avatar-overlay"><i class="fas fa-camera" aria-hidden="true"></i></span><img src="${  imageUrl  }" alt="" loading="lazy">`;
       }
       showToast(t('profile.photoUpdated'), 'success');
     } catch (err) {
@@ -100,26 +100,26 @@ export default async function renderUserProfile(container) {
       <div class="profile-hero card animate-on-scroll">
         <div class="card-body d-flex align-items-center gap-4 flex-wrap">
         <div class="profile-avatar" id="profileAvatar" @click="triggerUpload()" title="Click to upload photo">
-          <span class="avatar-overlay"><i class="fas fa-camera"></i></span>
-          ${user?.profileImageUrl ? `<img src="${user.profileImageUrl}" alt="" loading="lazy">` : '<i class="fas fa-user"></i>'}
+          <span class="avatar-overlay"><i class="fas fa-camera" aria-hidden="true"></i></span>
+          ${user?.profileImageUrl ? `<img src="${user.profileImageUrl}" alt="" loading="lazy">` : '<i class="fas fa-user" aria-hidden="true"></i>'}
         </div>
         <input type="file" id="profileAvatarInput" accept="image/jpeg,image/png,image/webp" @change="handleFile($event)" class="d-none">
         <div class="profile-hero-info">
           <h1 class="profile-name">${escapeHtml(user?.fullName || t('dash.profile'))}</h1>
-          <p class="profile-email"><i class="fas fa-envelope"></i> ${escapeHtml(user?.email || '')}</p>
-          ${user?.phone ? `<p class="profile-phone"><i class="fas fa-phone"></i> ${  escapeHtml(user.phone)  }</p>` : ''}
+          <p class="profile-email"><i class="fas fa-envelope" aria-hidden="true"></i> ${escapeHtml(user?.email || '')}</p>
+          ${user?.phone ? `<p class="profile-phone"><i class="fas fa-phone" aria-hidden="true"></i> ${  escapeHtml(user.phone)  }</p>` : ''}
           <span class="profile-role-badge">${escapeHtml(user?.role || 'Customer')}</span>
         </div>
         <div class="profile-hero-actions">
-          <a href="#/dashboard?tab=profile" class="btn btn-outline btn-sm"><i class="fas fa-edit"></i> ${t('dash.updateProfile')}</a>
-          <a href="#/dashboard?tab=password" class="btn btn-ghost btn-sm"><i class="fas fa-lock"></i> ${t('dash.changePassword')}</a>
+          <a href="#/dashboard?tab=profile" class="btn btn-outline btn-sm"><i class="fas fa-edit" aria-hidden="true"></i> ${t('dash.updateProfile')}</a>
+          <a href="#/dashboard?tab=password" class="btn btn-ghost btn-sm"><i class="fas fa-lock" aria-hidden="true"></i> ${t('dash.changePassword')}</a>
         </div>
       </div>
 
       <!-- Profile Completion Tracker -->
       <div class="profile-completion animate-on-scroll mt-3">
         <div class="profile-completion-header">
-          <span><i class="fas fa-id-card"></i> ${t('profile.completion') || 'Profile Completion'}</span>
+          <span><i class="fas fa-id-card" aria-hidden="true"></i> ${t('profile.completion') || 'Profile Completion'}</span>
           <span class="fw-bold text-primary">${completionPercent}%</span>
         </div>
         <div class="profile-completion-bar">
@@ -130,21 +130,21 @@ export default async function renderUserProfile(container) {
       <div class="row g-3 animate-on-scroll stagger-1" id="profileStats">
         <div class="col-sm-4">
           <div class="profile-stat-card">
-            <i class="fas fa-box"></i>
+            <i class="fas fa-box" aria-hidden="true"></i>
             <div class="profile-stat-num" x-text="stats.orders">—</div>
             <div class="profile-stat-label">${t('dash.orders')}</div>
           </div>
         </div>
         <div class="col-sm-4">
           <div class="profile-stat-card">
-            <i class="fas fa-heart"></i>
+            <i class="fas fa-heart" aria-hidden="true"></i>
             <div class="profile-stat-num" x-text="stats.wishlist">—</div>
             <div class="profile-stat-label">${t('dash.wishlist')}</div>
           </div>
         </div>
         <div class="col-sm-4">
           <div class="profile-stat-card">
-            <i class="fas fa-bell"></i>
+            <i class="fas fa-bell" aria-hidden="true"></i>
             <div class="profile-stat-num" x-text="stats.notifs">—</div>
             <div class="profile-stat-label">${t('dash.notifications')}</div>
           </div>
@@ -159,14 +159,14 @@ export default async function renderUserProfile(container) {
         <div class="card-body">
         <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 g-3 mt-3">
           ${user?.role !== 'Admin' ? `
-            <a href="#/dashboard?tab=orders" class="profile-link-card"><i class="fas fa-shopping-bag"></i><span>${t('dash.orders')}</span></a>
-            <a href="#/dashboard?tab=wishlist" class="profile-link-card"><i class="fas fa-heart"></i><span>${t('dash.wishlist')}</span></a>
-            <a href="#/shipping" class="profile-link-card"><i class="fas fa-map-marker-alt"></i><span>${t('dash.addresses')}</span></a>
+            <a href="#/dashboard?tab=orders" class="profile-link-card"><i class="fas fa-shopping-bag" aria-hidden="true"></i><span>${t('dash.orders')}</span></a>
+            <a href="#/dashboard?tab=wishlist" class="profile-link-card"><i class="fas fa-heart" aria-hidden="true"></i><span>${t('dash.wishlist')}</span></a>
+            <a href="#/shipping" class="profile-link-card"><i class="fas fa-map-marker-alt" aria-hidden="true"></i><span>${t('dash.addresses')}</span></a>
           ` : ''}
-          <a href="#/dashboard?tab=notifications" class="profile-link-card"><i class="fas fa-bell"></i><span>${t('dash.notifications')}</span></a>
+          <a href="#/dashboard?tab=notifications" class="profile-link-card"><i class="fas fa-bell" aria-hidden="true"></i><span>${t('dash.notifications')}</span></a>
           ${SELLER_ROLES.includes(user?.role) ? `
-            <a href="#/dashboard?tab=products" class="profile-link-card"><i class="fas fa-store"></i><span>${t('dash.myProducts')}</span></a>
-            <a href="#/dashboard?tab=overview" class="profile-link-card"><i class="fas fa-chart-line"></i><span>${t('dash.sellerDashboard')}</span></a>
+            <a href="#/dashboard?tab=products" class="profile-link-card"><i class="fas fa-store" aria-hidden="true"></i><span>${t('dash.myProducts')}</span></a>
+            <a href="#/dashboard?tab=overview" class="profile-link-card"><i class="fas fa-chart-line" aria-hidden="true"></i><span>${t('dash.sellerDashboard')}</span></a>
           ` : ''}
         </div>
         </div>

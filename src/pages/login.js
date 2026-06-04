@@ -76,13 +76,14 @@ Alpine.data('loginForm', () => ({
           const lockMsg   = document.getElementById('loginLockMsg');
           if (submitBtn) submitBtn.disabled = true;
           let secs = 30;
+          const lockText = () => t('auth.tooManyAttempts', { secs }) || `Too many failed attempts. Wait ${secs} seconds.`;
           if (lockMsg) {
             lockMsg.classList.remove('hidden');
-            lockMsg.textContent = `Too many failed attempts. Wait ${secs} seconds.`;
+            lockMsg.textContent = lockText();
           }
           const timer = setInterval(() => {
             secs--;
-            if (lockMsg) lockMsg.textContent = `Too many failed attempts. Wait ${secs} seconds.`;
+            if (lockMsg) lockMsg.textContent = lockText();
             if (secs <= 0) {
               clearInterval(timer);
               sessionStorage.removeItem('sayiadLoginFails');
@@ -119,45 +120,61 @@ export default function renderLogin(container) {
     <div x-data="loginForm" class="auth-page">
       <div class="card">
         <div class="card-header">
-          <h2><i class="fas fa-sign-in-alt"></i> ${t('auth.login')}</h2>
+          <h2><i class="fas fa-sign-in-alt" aria-hidden="true"></i> ${t('auth.login')}</h2>
         </div>
         <div class="card-body">
-        <div x-show="error" x-text="error" class="alert alert-error" role="alert" x-cloak></div>
-        <div x-show="unverifiedEmail" x-cloak>
-          <div class="alert alert-warning text-center" role="alert">
-            <i class="fas fa-envelope mb-2 fs-1 d-block"></i>
-            <strong>${t('auth.emailNotVerified') || 'Email not verified.'}</strong>
-            <p class="my-2" style="font-size:var(--text-sm)">${t('auth.checkInbox') || 'Please check your inbox and click the verification link.'}</p>
-            <button class="btn btn-primary btn-sm mt-1" x-ref="resendBtn" @click="resendVerification()">
-              <i class="fas fa-paper-plane"></i> ${t('auth.resendVerification') || 'Resend Verification'}
+          <div x-show="error" x-text="error" class="alert alert-error mb-3" role="alert" aria-live="assertive" x-cloak></div>
+          <div x-show="unverifiedEmail" x-cloak>
+            <div class="alert alert-warning text-center mb-3" role="alert">
+              <i class="fas fa-envelope mb-2 fs-1 d-block" aria-hidden="true"></i>
+              <strong>${t('auth.emailNotVerified') || 'Email not verified.'}</strong>
+              <p class="my-2" style="font-size:var(--text-sm)">${t('auth.checkInbox') || 'Please check your inbox and click the verification link.'}</p>
+              <button class="btn btn-primary btn-sm mt-1" x-ref="resendBtn" @click="resendVerification()">
+                <i class="fas fa-paper-plane" aria-hidden="true"></i>
+                ${t('auth.resendVerification') || 'Resend Verification'}
+              </button>
+              <p class="mt-2" style="font-size:var(--text-xs);opacity:0.7">
+                <i class="fas fa-clock" aria-hidden="true"></i>
+                ${t('auth.checkSpam') || "Didn't get it? Check your spam folder."}
+              </p>
+            </div>
+          </div>
+          <form id="loginForm" @submit.prevent="submit()" novalidate>
+            <div class="form-group">
+              <label class="form-label" for="loginEmail">${t('auth.email')}</label>
+              <input type="email" class="form-input form-control" id="loginEmail" name="email"
+                x-model="email" @input="clearError(); clearFieldError($el)"
+                placeholder="your@email.com" required autocomplete="email" inputmode="email">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="loginPassword">${t('auth.password')}</label>
+              <div class="password-wrapper">
+                <input :type="showPassword ? 'text' : 'password'" class="form-input form-control"
+                  id="loginPassword" name="password" x-model="password"
+                  @input="clearError(); clearFieldError($el)"
+                  placeholder="${t('auth.password')}" required autocomplete="current-password" minlength="6">
+                <button type="button" class="toggle-password" @click="togglePw()"
+                  :aria-label="showPassword ? $t('auth.hidePassword') : $t('auth.showPassword')">
+                  <i :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'" aria-hidden="true"></i>
+                </button>
+              </div>
+              <div class="text-end mt-1">
+                <a href="#/forgot-password" class="text-primary text-decoration-none" style="font-size:var(--text-xs)">
+                  ${t('auth.forgotPassword')}
+                </a>
+              </div>
+            </div>
+            <div id="loginLockMsg" class="field-error hidden" role="alert" aria-live="assertive"></div>
+            <button type="submit" id="loginSubmitBtn" class="btn btn-primary w-100 btn-lg mt-1" :disabled="loading">
+              <i class="fas fa-spinner spinner" x-show="loading" x-cloak aria-hidden="true"></i>
+              <span x-text="loading ? $t('auth.signingIn') : $t('auth.signIn')"></span>
             </button>
-            <p class="mt-2" style="font-size:var(--text-xs);opacity:0.7"><i class="fas fa-clock"></i> ${t('auth.checkSpam') || "Didn't get it? Check your spam folder."}</p>
-          </div>
-        </div>
-        <form @submit.prevent="submit()" novalidate>
-          <div class="form-group">
-            <label class="form-label" for="loginEmail">${t('auth.email')}</label>
-            <input type="email" class="form-input form-control" id="loginEmail" name="email" x-model="email" @input="clearError(); clearFieldError($el)" placeholder="your@email.com" required autocomplete="email" inputmode="email">
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="loginPassword">${t('auth.password')}</label>
-            <div class="password-wrapper">
-              <input :type="showPassword ? 'text' : 'password'" class="form-input form-control" id="loginPassword" name="password" x-model="password" @input="clearError(); clearFieldError($el)" placeholder="${t('auth.password')}" required autocomplete="current-password" minlength="6">
-              <button type="button" class="toggle-password" @click="togglePw()" :aria-label="showPassword ? $t('auth.hidePassword') : $t('auth.showPassword')"><i :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i></button>
-            </div>
-            <div class="text-end mt-1">
-              <a href="#/forgot-password" class="text-primary text-decoration-none" style="font-size:var(--text-xs)">${t('auth.forgotPassword')}</a>
-            </div>
-          </div>
-          <div id="loginLockMsg" class="field-error hidden" role="alert" aria-live="assertive"></div>
-          <button type="submit" class="btn btn-primary w-100 btn-lg" :disabled="loading">
-            <i class="fas fa-spinner spinner" x-show="loading" x-cloak></i>
-            <span x-text="loading ? $t('auth.signingIn') : $t('auth.signIn')"></span>
-          </button>
-        </form>
+          </form>
         </div>
         <div class="card-footer">
-          <div class="auth-footer">${t('auth.noAccount')} <a href="#/register">${t('auth.register')}</a></div>
+          <div class="auth-footer">
+            ${t('auth.noAccount')} <a href="#/register">${t('auth.register')}</a>
+          </div>
         </div>
       </div>
     </div>`;

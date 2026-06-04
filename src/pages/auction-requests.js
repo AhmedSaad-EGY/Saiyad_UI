@@ -12,11 +12,11 @@ export default async function renderAuctionRequests(container) {
 
   container.innerHTML = `
     <div class="section-header">
-      <h2><i class="fas fa-gavel"></i> ${t("auctionRequests.title")}</h2>
-      <button class="btn btn-primary" id="newRequestBtn"><i class="fas fa-plus"></i> ${t("auctionRequests.requestAuction")}</button>
+      <h2><i class="fas fa-gavel" aria-hidden="true"></i> ${t("auctionRequests.title")}</h2>
+      <button class="btn btn-primary" id="newRequestBtn"><i class="fas fa-plus" aria-hidden="true"></i> ${t("auctionRequests.requestAuction")}</button>
     </div>
     <div id="auctionAlert"></div>
-    <div id="auctionReqContent"><i class="fas fa-spinner spinner"></i> ${t("common.loading")}</div>`;
+    <div id="auctionReqContent"><i class="fas fa-spinner spinner" aria-hidden="true"></i> ${t("common.loading")}</div>`;
 
   document.getElementById("newRequestBtn").addEventListener("click", () => {
     showForm(null);
@@ -30,13 +30,13 @@ export default async function renderAuctionRequests(container) {
       const res = await api.get("/auctions/requests/my", { page: 1, pageSize: 50 });
       const items = res?.items || res?.data || [];
       if (!items || items.length === 0) {
-        content.innerHTML = `<div class="empty-state"><i class="fas fa-gavel"></i><h3>${t("auctionRequests.noRequests")}</h3><p>${t("auctionRequests.noRequestsDesc")}</p><button class="btn btn-primary" id="emptyRequestBtn"><i class="fas fa-plus"></i> ${t("auctionRequests.requestAuction")}</button></div>`;
+        content.innerHTML = `<div class="empty-state"><i class="fas fa-gavel" aria-hidden="true"></i><h3>${t("auctionRequests.noRequests")}</h3><p>${t("auctionRequests.noRequestsDesc")}</p><button class="btn btn-primary" id="emptyRequestBtn"><i class="fas fa-plus" aria-hidden="true"></i> ${t("auctionRequests.requestAuction")}</button></div>`;
         document.getElementById("emptyRequestBtn")?.addEventListener("click", () => showForm(null));
         return;
       }
       content.innerHTML = `<div class="table-responsive"><table class="table"><thead><tr><th>${t("auctionRequests.productTitle")}</th><th>${t("auctionRequests.fishType")}</th><th>${t("auctionRequests.quantityKg")}</th><th>${t("auctionRequests.estimatedValue")}</th><th>${t("auctionRequests.status")}</th><th>${t("auctionRequests.createdAt")}</th>${t("auctionRequests.rejectionReason") ? `<th>${  t("auctionRequests.rejectionReason")  }</th>` : ''}</tr></thead><tbody>${items.map(r => `<tr><td>${escapeHtml(r.productTitle)}</td><td>${escapeHtml(r.fishType)}</td><td>${r.quantityKg}</td><td>${r.estimatedValue}</td><td><span class="${statusClass(r.status)}">${t(`auctionRequests.${  r.status.toLowerCase()}`)}</span></td><td>${new Date(r.createdAt).toLocaleDateString()}</td><td>${r.status === 'Rejected' ? escapeHtml(r.rejectionReason || '-') : '-'}</td></tr>`).join("")}</tbody></table></div>`;
     } catch (err) {
-      content.innerHTML = `<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><h3>${t("common.error")}</h3><p>${escapeHtml(err.message)}</p></div>`;
+      content.innerHTML = `<div class="empty-state"><i class="fas fa-exclamation-triangle" aria-hidden="true"></i><h3>${t("common.error")}</h3><p>${escapeHtml(err.message)}</p></div>`;
     }
   }
 
@@ -91,7 +91,7 @@ export default async function renderAuctionRequests(container) {
 
       const submit = document.getElementById("arSubmit");
       submit.disabled = true;
-      submit.innerHTML = `<i class="fas fa-spinner spinner"></i> ${t("auctionRequests.submitting")}`;
+      submit.innerHTML = `<i class="fas fa-spinner spinner" aria-hidden="true"></i> ${t("auctionRequests.submitting")}`;
       const body = {
         productTitle: titleIn.value.trim(),
         productDescription: document.getElementById("arDescription").value.trim(),

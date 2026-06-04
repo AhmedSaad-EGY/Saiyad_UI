@@ -7,13 +7,13 @@ import { formatPrice, formatDate, statusClass, tStatus } from '../core/utils/for
 export default async function renderAuctioneerAnalytics(container) {
   const _u = getUser();
   if (!_u || (_u.role !== 'Auctioneer' && _u.role !== 'Admin')) {
-    container.innerHTML = `<div class="empty-state"><i class="fas fa-chart-bar"></i><h3>${t("common.pageNotFound")}</h3></div>`;
+    container.innerHTML = `<div class="empty-state"><i class="fas fa-chart-bar" aria-hidden="true"></i><h3>${t("common.pageNotFound")}</h3></div>`;
     return;
   }
 
   container.innerHTML = `
-    <div class="section-header"><h2><i class="fas fa-chart-bar"></i> ${t("analytics.title")}</h2></div>
-    <div id="analyticsContent"><i class="fas fa-spinner spinner"></i> ${t("common.loading")}</div>`;
+    <div class="section-header"><h2><i class="fas fa-chart-bar" aria-hidden="true"></i> ${t("analytics.title")}</h2></div>
+    <div id="analyticsContent"><i class="fas fa-spinner spinner" aria-hidden="true"></i> ${t("common.loading")}</div>`;
 
   const content = document.getElementById("analyticsContent");
   try {
@@ -32,28 +32,28 @@ export default async function renderAuctioneerAnalytics(container) {
       <div class="grid grid-4 mb-4">
         <div class="card text-center animate-on-scroll stagger-1">
           <div class="card-body">
-          <i class="fas fa-gavel fs-3 text-primary mb-2"></i>
+          <i class="fas fa-gavel fs-3 text-primary mb-2" aria-hidden="true"></i>
           <div class="fs-2 fw-bold text-gradient">${dash.totalAuctions ?? 0}</div>
           <div class="text-muted small">${t("analytics.totalAuctions")}</div>
           </div>
         </div>
         <div class="card text-center animate-on-scroll stagger-2">
           <div class="card-body">
-          <i class="fas fa-play-circle fs-3 text-success mb-2"></i>
+          <i class="fas fa-play-circle fs-3 text-success mb-2" aria-hidden="true"></i>
           <div class="fs-2 fw-bold text-success">${dash.activeAuctions ?? 0}</div>
           <div class="text-muted small">${t("analytics.activeAuctions")}</div>
           </div>
         </div>
         <div class="card text-center animate-on-scroll stagger-3">
           <div class="card-body">
-          <i class="fas fa-check-circle fs-3 text-warning mb-2"></i>
+          <i class="fas fa-check-circle fs-3 text-warning mb-2" aria-hidden="true"></i>
           <div class="fs-2 fw-bold text-warning">${dash.finishedAuctions ?? 0}</div>
           <div class="text-muted small">${t("analytics.finishedAuctions")}</div>
           </div>
         </div>
         <div class="card text-center animate-on-scroll stagger-4">
           <div class="card-body">
-          <i class="fas fa-hand-pointer fs-3 text-info mb-2"></i>
+          <i class="fas fa-hand-pointer fs-3 text-info mb-2" aria-hidden="true"></i>
           <div class="fs-2 fw-bold text-info">${dash.totalBids ?? 0}</div>
           <div class="text-muted small">${t("analytics.totalBids")}</div>
           </div>
@@ -62,14 +62,14 @@ export default async function renderAuctioneerAnalytics(container) {
       <div class="grid grid-2 mb-4">
         <div class="card text-center animate-on-scroll stagger-1">
           <div class="card-body">
-          <i class="fas fa-money-bill-wave fs-3 text-success mb-2"></i>
+          <i class="fas fa-money-bill-wave fs-3 text-success mb-2" aria-hidden="true"></i>
           <div class="fs-2 fw-bold text-success">${dash.totalRevenue != null ? formatPrice(dash.totalRevenue) : formatPrice(0)}</div>
           <div class="text-muted small">${t("analytics.totalRevenue")}</div>
           </div>
         </div>
         <div class="card text-center border-start border-3 animate-on-scroll stagger-2" style="border-color:var(--primary)">
           <div class="card-body">
-          <i class="fas fa-percentage fs-3 text-primary mb-2"></i>
+          <i class="fas fa-percentage fs-3 text-primary mb-2" aria-hidden="true"></i>
           <div class="fs-2 fw-bold text-primary">${formatPrice(totalFees)}</div>
           <div class="text-muted small">${t("analytics.totalFees")}</div>
           <small class="text-muted d-block mt-1">${wallet ? `${formatPrice(wallet.availableBalance)  } ${  t("analytics.availableInWallet")}` : ""}</small>
@@ -80,7 +80,7 @@ export default async function renderAuctioneerAnalytics(container) {
       <!-- Live CSS Bar Chart: Auctions Status Split -->
       <div class="card mb-4 animate-on-scroll stagger-3">
         <div class="card-header border-bottom-0 pb-0">
-          <h3 class="mb-0"><i class="fas fa-chart-bar text-primary"></i> ${t("analytics.statusDistribution") || "Auctions Distribution"}</h3>
+          <h3 class="mb-0"><i class="fas fa-chart-bar text-primary" aria-hidden="true"></i> ${t("analytics.statusDistribution") || "Auctions Distribution"}</h3>
         </div>
         <div class="card-body">
           <div class="d-flex flex-column gap-3">
@@ -124,6 +124,6 @@ export default async function renderAuctioneerAnalytics(container) {
       </div>
       </div>` : ''}`;
   } catch (err) {
-    content.innerHTML = `<div class="empty-state"><i class="fas fa-chart-bar"></i><h3>${t("analytics.noData")}</h3><p>${escapeHtml(err.message)}</p></div>`;
+    content.innerHTML = `<div class="empty-state"><i class="fas fa-chart-bar" aria-hidden="true"></i><h3>${t("analytics.noData")}</h3><p>${escapeHtml(err.message)}</p></div>`;
   }
 }

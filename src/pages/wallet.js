@@ -5,6 +5,7 @@ import { api } from '../core/api/client.js';
 import { getUser } from '../core/auth/index.js';
 import { setPageMeta } from '../core/utils/seo.js';
 import { showToast } from '../core/utils/ui.js';
+import { t } from '../core/i18n/index.js';
 
 function initWalletPage() {
   const app = document.getElementById('app');
@@ -13,7 +14,7 @@ function initWalletPage() {
   const user = getUser();
   if (!user) { window.location.hash = '#/login'; return; }
 
-  setPageMeta('My Wallet', 'Manage your Sayiad wallet balance and transactions.', true);
+  setPageMeta(t('wallet.title') || 'My Wallet', t('wallet.metaDesc') || 'Manage your Sayiad wallet balance and transactions.', true);
 
   app.innerHTML = `
     <section class="wallet-page" aria-label="Wallet">
@@ -51,9 +52,9 @@ function initWalletPage() {
     </section>
 
     <!-- ── Top-Up Modal ──────────────────────────────────────────────────── -->
-    <div class="modal-overlay hidden" id="topUpModalOverlay"
+    <div class="modal-overlay" id="topUpModalOverlay"
          role="dialog" aria-modal="true" aria-labelledby="topUpModalTitle">
-      <div class="modal-box">
+      <div class="modal modal-confirm">
         <div class="modal-header">
           <h2 id="topUpModalTitle" data-i18n="wallet_topup_title">Top Up Wallet</h2>
           <button class="modal-close-btn" id="topUpCloseBtn" aria-label="Close top up modal">
@@ -96,11 +97,12 @@ function initWalletPage() {
 
 function openTopUpModal() {
   const overlay = document.getElementById('topUpModalOverlay');
-  overlay.classList.remove('hidden');
+  overlay.classList.add('show');
+  document.body.classList.add('modal-open');
   document.getElementById('topUpAmount').focus();
 
   // Trap focus inside modal
-  const modal = document.querySelector(".modal-box");
+  const modal = document.querySelector("#topUpModalOverlay .modal");
   if (modal) {
     const focusable = modal.querySelectorAll(
       'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
@@ -134,18 +136,19 @@ function openTopUpModal() {
 }
 
 function closeTopUpModal() {
-  const modal = document.querySelector(".modal-box");
+  const modal = document.querySelector("#topUpModalOverlay .modal");
   if (modal && modal._trapFocus) {
     modal.removeEventListener("keydown", modal._trapFocus);
     delete modal._trapFocus;
   }
   document.body.style.overflow = "";
-  document.getElementById('topUpModalOverlay').classList.add('hidden');
+  document.getElementById('topUpModalOverlay').classList.remove('show');
+  document.body.classList.remove('modal-open');
   document.getElementById('topUpAmount').value = '';
   const errEl = document.getElementById('topUpAmountError');
   if (errEl) { errEl.classList.add('hidden'); errEl.textContent = ''; }
   const btn = document.getElementById('topUpConfirmBtn');
-  if (btn) { btn.disabled = false; btn.innerHTML = 'Confirm Top Up'; }
+  if (btn) { btn.disabled = false; btn.innerHTML = t('wallet.confirmTopUp') || 'Confirm Top Up'; }
 }
 
 async function loadWalletBalance() {
@@ -170,7 +173,7 @@ async function loadWalletTransactions() {
       container.setAttribute('aria-busy', 'false');
       container.innerHTML = `
         <div class="empty-state" role="status">
-          <div class="empty-state__icon" aria-hidden="true"><i class="fas fa-receipt"></i></div>
+          <div class="empty-state__icon" aria-hidden="true"><i class="fas fa-receipt" aria-hidden="true"></i></div>
           <h3 class="empty-state__title" data-i18n="wallet_no_transactions">No transactions yet</h3>
           <p class="empty-state__desc" data-i18n="wallet_no_transactions_desc">
             Your transaction history will appear here.
@@ -227,20 +230,20 @@ async function handleTopUp() {
   errEl.textContent = '';
 
   if (!amount || isNaN(amount) || amount < 10) {
-    errEl.textContent = 'Please enter a valid amount (minimum EGP 10)';
+    errEl.textContent = t('wallet.minAmountError') || 'Please enter a valid amount (minimum EGP 10)';
     errEl.classList.remove('hidden');
     input.focus();
     return;
   }
   if (amount > 50000) {
-    errEl.textContent = 'Maximum top-up is EGP 50,000';
+    errEl.textContent = t('wallet.maxAmountError') || 'Maximum top-up is EGP 50,000';
     errEl.classList.remove('hidden');
     input.focus();
     return;
   }
 
   btn.disabled = true;
-  btn.innerHTML = '<i class="fas fa-spinner fa-spin" aria-hidden="true"></i> Processing…';
+  btn.innerHTML = `<i class="fas fa-spinner fa-spin" aria-hidden="true"></i> ${t('common.processing') || 'Processing…'}`;
 
   try {
     // PAYMENT GATEWAY NOTE: Until Fawry/InstaPay is integrated,
@@ -248,14 +251,14 @@ async function handleTopUp() {
     // The button will show a pending confirmation instead of instant credit.
     await api.post('/wallet/deposit', { amount });
     closeTopUpModal();
-    showToast('Wallet topped up successfully!', 'success');
+    showToast(t('wallet.topUpSuccess') || 'Wallet topped up successfully!', 'success');
     loadWalletBalance();
     loadWalletTransactions();
   } catch (err) {
-    errEl.textContent = err?.message ?? 'Top up failed. Please try again.';
+    errEl.textContent = err?.message ?? (t('wallet.topUpFailed') || 'Top up failed. Please try again.');
     errEl.classList.remove('hidden');
     btn.disabled = false;
-    btn.innerHTML = 'Confirm Top Up';
+    btn.innerHTML = t('wallet.confirmTopUp') || 'Confirm Top Up';
   }
 }
 

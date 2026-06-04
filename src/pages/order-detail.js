@@ -46,8 +46,8 @@ export default async function renderOrderDetail(container) {
 
     container.innerHTML = `
       <div class="section-header">
-        <h2><i class="fas fa-file-invoice"></i> ${t('order.title')} #${order.id}</h2>
-        <a href="#/dashboard?tab=orders" class="btn btn-ghost btn-sm"><i class="fas fa-arrow-left"></i> ${t('order.backToOrders')}</a>
+        <h2><i class="fas fa-file-invoice" aria-hidden="true"></i> ${t('order.title')} #${order.id}</h2>
+        <a href="#/dashboard?tab=orders" class="btn btn-ghost btn-sm"><i class="fas fa-arrow-left" aria-hidden="true"></i> ${t('order.backToOrders')}</a>
       </div>
 
       <!-- Order Timeline -->
@@ -58,7 +58,7 @@ export default async function renderOrderDetail(container) {
             ${timelineSteps.map(step => `
               <div class="order-timeline-step ${step.cls}" role="listitem">
                 <div class="order-timeline-icon">
-                  <i class="fas ${step.cls === 'completed' ? 'fa-check' : step.icon}"></i>
+                  <i class="fas ${step.cls === 'completed' ? 'fa-check' : step.icon}" aria-hidden="true"></i>
                 </div>
                 <span class="order-timeline-label">${step.label}</span>
               </div>
@@ -67,7 +67,7 @@ export default async function renderOrderDetail(container) {
         </div>
       </div>
       ` : `
-      <div class="alert alert-error mb-4"><i class="fas fa-times-circle"></i> ${t('order.cancelled') || 'This order has been cancelled.'}</div>
+      <div class="alert alert-error mb-4"><i class="fas fa-times-circle" aria-hidden="true"></i> ${t('order.cancelled') || 'This order has been cancelled.'}</div>
       `}
 
       <div class="row g-4">
@@ -76,7 +76,7 @@ export default async function renderOrderDetail(container) {
           <!-- Order Items -->
           <div class="card mb-4 animate-on-scroll">
             <div class="card-header">
-              <h3 class="mb-0"><i class="fas fa-box"></i> ${t('order.items')} (${items.length})</h3>
+              <h3 class="mb-0"><i class="fas fa-box" aria-hidden="true"></i> ${t('order.items')} (${items.length})</h3>
             </div>
             <div class="card-body">
               <div class="table-wrapper">
@@ -89,7 +89,7 @@ export default async function renderOrderDetail(container) {
                           <div class="d-flex align-items-center gap-3">
                             ${item.productImageUrl || item.imageUrl
                               ? `<img src="${item.productImageUrl || item.imageUrl}" alt="${escapeHtml(item.productTitle || '')}" style="width:48px;height:48px;object-fit:cover;border-radius:var(--radius);border:1px solid var(--border)" loading="lazy">`
-                              : `<div style="width:48px;height:48px;display:flex;align-items:center;justify-content:center;background:var(--body-bg);border-radius:var(--radius);color:var(--text-muted)"><i class="fas fa-image"></i></div>`
+                              : `<div style="width:48px;height:48px;display:flex;align-items:center;justify-content:center;background:var(--body-bg);border-radius:var(--radius);color:var(--text-muted)"><i class="fas fa-image" aria-hidden="true"></i></div>`
                             }
                             <a href="#/product-detail?id=${item.productId}" class="text-reset text-decoration-none fw-medium">${escapeHtml(item.productTitle || 'Product')}</a>
                           </div>
@@ -110,7 +110,7 @@ export default async function renderOrderDetail(container) {
           <div class="row g-4">
             <div class="col-md-6">
               <div class="card animate-on-scroll stagger-1">
-                <div class="card-header"><h3 class="mb-0"><i class="fas fa-truck"></i> ${t('order.shippingInfo') || 'Shipping'}</h3></div>
+                <div class="card-header"><h3 class="mb-0"><i class="fas fa-truck" aria-hidden="true"></i> ${t('order.shippingInfo') || 'Shipping'}</h3></div>
                 <div class="card-body">
                   <p class="mb-1"><strong>${escapeHtml(order.shippingAddress?.fullName || order.buyerName || 'N/A')}</strong></p>
                   <p class="text-muted small mb-1">${escapeHtml(order.shippingAddress?.addressLine || order.address || '-')}</p>
@@ -121,7 +121,7 @@ export default async function renderOrderDetail(container) {
             </div>
             <div class="col-md-6">
               <div class="card animate-on-scroll stagger-2">
-                <div class="card-header"><h3 class="mb-0"><i class="fas fa-credit-card"></i> ${t('order.paymentInfo') || 'Payment'}</h3></div>
+                <div class="card-header"><h3 class="mb-0"><i class="fas fa-credit-card" aria-hidden="true"></i> ${t('order.paymentInfo') || 'Payment'}</h3></div>
                 <div class="card-body">
                   <p class="mb-1"><strong>${t('order.method') || 'Method'}:</strong> ${escapeHtml(order.paymentMethod || 'Wallet')}</p>
                   <p class="mb-1"><strong>${t('order.date')}:</strong> ${formatDate(order.createdAt)}</p>
@@ -136,7 +136,7 @@ export default async function renderOrderDetail(container) {
         <div class="col-lg-4">
           <div class="checkout-sidebar">
             <div class="card mb-4 animate-on-scroll">
-              <div class="card-header"><h3 class="mb-0"><i class="fas fa-receipt"></i> ${t('order.summary') || 'Summary'}</h3></div>
+              <div class="card-header"><h3 class="mb-0"><i class="fas fa-receipt" aria-hidden="true"></i> ${t('order.summary') || 'Summary'}</h3></div>
               <div class="card-body">
                 <div class="d-flex justify-content-between mb-2">
                   <span class="text-muted">${t('cart.subtotal') || 'Subtotal'}</span>
@@ -161,9 +161,9 @@ export default async function renderOrderDetail(container) {
             <!-- Quick Actions -->
             <div class="d-flex flex-column gap-2 animate-on-scroll stagger-3">
               ${order.status === 'Pending' || order.status === 'Confirmed' ? `
-                <button class="btn btn-outline-danger w-100" id="cancelOrderBtn"><i class="fas fa-times"></i> ${t('order.cancel')}</button>
+                <button class="btn btn-outline-danger w-100" id="cancelOrderBtn"><i class="fas fa-times" aria-hidden="true"></i> ${t('order.cancel')}</button>
               ` : ''}
-              <a href="#/products" class="btn btn-primary w-100"><i class="fas fa-redo"></i> ${t('order.reorder') || 'Shop Again'}</a>
+              <a href="#/products" class="btn btn-primary w-100"><i class="fas fa-redo" aria-hidden="true"></i> ${t('order.reorder') || 'Shop Again'}</a>
             </div>
             <div id="cancelOrderResult" class="mt-3"></div>
           </div>
@@ -182,7 +182,7 @@ export default async function renderOrderDetail(container) {
         );
         if (!ok) return;
         cancelBtn.disabled = true;
-        cancelBtn.innerHTML = `<i class="fas fa-spinner spinner"></i> ${t("order.cancelling")}`;
+        cancelBtn.innerHTML = `<i class="fas fa-spinner spinner" aria-hidden="true"></i> ${t("order.cancelling")}`;
         try {
           await api.put(`/orders/${orderId}/cancel`);
           showToast(t("order.cancelled"), "success");
@@ -191,11 +191,11 @@ export default async function renderOrderDetail(container) {
         } catch (err) {
           document.getElementById("cancelOrderResult").innerHTML = `<div class="alert alert-error">${err.message || t("order.cancelError")}</div>`;
           cancelBtn.disabled = false;
-          cancelBtn.innerHTML = `<i class="fas fa-times"></i> ${t("order.cancel")}`;
+          cancelBtn.innerHTML = `<i class="fas fa-times" aria-hidden="true"></i> ${t("order.cancel")}`;
         }
       });
     }
   } catch {
-    container.innerHTML = `<div class="empty-state"><i class="fas fa-file-invoice"></i><h3>${t('order.notFound')}</h3><a href="#/dashboard?tab=orders" class="btn btn-primary mt-3">${t('order.backToOrders')}</a></div>`;
+    container.innerHTML = `<div class="empty-state"><i class="fas fa-file-invoice" aria-hidden="true"></i><h3>${t('order.notFound')}</h3><a href="#/dashboard?tab=orders" class="btn btn-primary mt-3">${t('order.backToOrders')}</a></div>`;
   }
 }

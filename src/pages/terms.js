@@ -26,7 +26,7 @@ export default async function renderTerms(container) {
     <div class="legal-page">
       <div class="legal-hero animate-on-scroll">
         <div class="legal-hero-icon">
-          <i class="fas fa-file-contract"></i>
+          <i class="fas fa-file-contract" aria-hidden="true"></i>
         </div>
         <h1>${t('auth.termsAndConditions')}</h1>
         <p class="legal-hero-sub">${isAr
@@ -110,11 +110,11 @@ export default async function renderTerms(container) {
 
       <div class="legal-footer animate-on-scroll">
         <a href="#/privacy" class="btn btn-outline">
-          <i class="fas fa-user-shield"></i>
+          <i class="fas fa-user-shield" aria-hidden="true"></i>
           ${t('auth.privacyPolicy')}
         </a>
         <a href="#/" class="btn btn-primary">
-          <i class="fas fa-home"></i>
+          <i class="fas fa-home" aria-hidden="true"></i>
           ${t('common.goHome')}
         </a>
       </div>

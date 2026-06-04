@@ -17,7 +17,7 @@ export default async function renderSellerProfile(container) {
         <div class="card mx-auto" style="max-width:600px">
           <div class="card-body">
           <div class="text-center mb-4">
-            <i class="fas fa-store mb-2 fs-1 text-primary"></i>
+            <i class="fas fa-store mb-2 fs-1 text-primary" aria-hidden="true"></i>
             <h2>${escapeHtml(profile.storeName)}</h2>
             ${profile.description ? `<p style="color:var(--text-secondary)">${escapeHtml(profile.description)}</p>` : ''}
           </div>
@@ -26,9 +26,9 @@ export default async function renderSellerProfile(container) {
             <span><strong>${t('seller.totalSales')}:</strong> ${profile.totalSales || 0}</span>
           </div>
           <div class="pt-3" style="border-top:1px solid var(--border);color:var(--text-secondary);font-size:0.88rem">
-            ${profile.contactEmail ? `<p><i class="fas fa-envelope"></i> ${escapeHtml(profile.contactEmail)}</p>` : ''}
-            ${profile.contactPhone ? `<p><i class="fas fa-phone"></i> ${escapeHtml(profile.contactPhone)}</p>` : ''}
-            ${profile.location ? `<p><i class="fas fa-map-marker-alt"></i> ${escapeHtml(profile.location)}</p>` : ''}
+            ${profile.contactEmail ? `<p><i class="fas fa-envelope" aria-hidden="true"></i> ${escapeHtml(profile.contactEmail)}</p>` : ''}
+            ${profile.contactPhone ? `<p><i class="fas fa-phone" aria-hidden="true"></i> ${escapeHtml(profile.contactPhone)}</p>` : ''}
+            ${profile.location ? `<p><i class="fas fa-map-marker-alt" aria-hidden="true"></i> ${escapeHtml(profile.location)}</p>` : ''}
           </div>
         </div>
         </div>`;
@@ -46,7 +46,7 @@ export default async function renderSellerProfile(container) {
         productsSection.style.marginTop = "32px";
         productsSection.innerHTML = `
           <div class="section-header">
-            <h3><i class="fas fa-tag"></i> ${t("seller.listings") || "Products"}</h3>
+            <h3><i class="fas fa-tag" aria-hidden="true"></i> ${t("seller.listings") || "Products"}</h3>
           </div>
           <div class="row row-cols-2 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4" id="sellerProductGrid"></div>
         `;
@@ -59,14 +59,14 @@ export default async function renderSellerProfile(container) {
       }
     } catch {}
     } catch {
-      container.innerHTML = `<div class="empty-state"><i class="fas fa-store"></i><h3>${t('seller.notFound')}</h3></div>`;
+      container.innerHTML = `<div class="empty-state"><i class="fas fa-store" aria-hidden="true"></i><h3>${t('seller.notFound')}</h3></div>`;
     }
     return;
   }
 
   if (!await requireAuth()) return;
   if (!hasAnyRole(...(SELLER_ROLES))) {
-    container.innerHTML = `<div class="empty-state"><i class="fas fa-store"></i><h3>${t('seller.noProfile')}</h3></div>`;
+    container.innerHTML = `<div class="empty-state"><i class="fas fa-store" aria-hidden="true"></i><h3>${t('seller.noProfile')}</h3></div>`;
     return;
   }
 
@@ -82,7 +82,7 @@ export default async function renderSellerProfile(container) {
   function renderForm(profile) {
     const isNew = !profile;
     container.innerHTML = `
-      <div class="section-header"><h2><i class="fas fa-store"></i> ${isNew ? t('seller.create') : t('seller.myProfile')}</h2></div>
+      <div class="section-header"><h2><i class="fas fa-store" aria-hidden="true"></i> ${isNew ? t('seller.create') : t('seller.myProfile')}</h2></div>
       <div id="sellerAlert"></div>
       <div class="card" style="max-width:520px">
         <div class="card-body">
@@ -101,7 +101,7 @@ export default async function renderSellerProfile(container) {
       e.preventDefault();
       const submit = document.getElementById('sellerSubmit');
       submit.disabled = true;
-      submit.innerHTML = `<i class="fas fa-spinner spinner"></i> ${t('seller.saving')}`;
+      submit.innerHTML = `<i class="fas fa-spinner spinner" aria-hidden="true"></i> ${t('seller.saving')}`;
       const body = {
         storeName: document.getElementById('sStoreName').value.trim(),
         description: document.getElementById('sDescription').value.trim(),

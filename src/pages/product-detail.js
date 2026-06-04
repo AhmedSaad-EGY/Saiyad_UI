@@ -50,15 +50,15 @@ export default async function renderProductDetail(container, route, params) {
       <div class="row g-5">
         <div class="col-lg-6">
           <div class="detail-image p-0 image-magnifier-wrap" id="mainImageWrap">
-            ${p.primaryImageUrl ? `<img src="${escapeHtml(p.primaryImageUrl)}" id="mainImg" alt="${escapeHtml(p.title)}" style="width:100%;height:100%;object-fit:cover" loading="lazy" decoding="async" fetchpriority="high"><div class="magnifier-lens" id="magLens"></div>` : '<i class="fas fa-image"></i>'}
-            <div class="rounded-circle d-flex align-items-center justify-content-center" style="position:absolute;bottom:12px;right:12px;background:rgba(0,0,0,0.5);color:#fff;width:36px;height:36px;pointer-events:none"><i class="fas fa-search-plus"></i></div>
+            ${p.primaryImageUrl ? `<img src="${escapeHtml(p.primaryImageUrl)}" id="mainImg" alt="${escapeHtml(p.title)}" style="width:100%;height:100%;object-fit:cover" loading="lazy" decoding="async" fetchpriority="high"><div class="magnifier-lens" id="magLens"></div>` : '<i class="fas fa-image" aria-hidden="true"></i>'}
+            <div class="rounded-circle d-flex align-items-center justify-content-center" style="position:absolute;bottom:12px;right:12px;background:rgba(0,0,0,0.5);color:#fff;width:36px;height:36px;pointer-events:none"><i class="fas fa-search-plus" aria-hidden="true"></i></div>
           </div>
         </div>
         <div class="col-lg-6">
         <div class="detail-info">
           <div class="d-flex justify-content-between align-items-start mb-2">
             <h1 class="mb-0" style="margin-right:12px">${escapeHtml(p.title)}</h1>
-            <button class="btn btn-ghost btn-icon btn-sm mt-1" id="shareBtn" aria-label="${t('common.share') || 'Share'}" title="${t('common.share') || 'Share'}"><i class="fas fa-share-alt"></i></button>
+            <button class="btn btn-ghost btn-icon btn-sm mt-1" id="shareBtn" aria-label="${t('common.share') || 'Share'}" title="${t('common.share') || 'Share'}"><i class="fas fa-share-alt" aria-hidden="true"></i></button>
           </div>
           <div class="detail-price">${formatPrice(p.price)}</div>
           
@@ -85,7 +85,7 @@ export default async function renderProductDetail(container, route, params) {
               </div>
               <button class="btn btn-primary btn-lg" id="addToCartBtn"
                 ${!isAvailable ? "disabled" : ""} style="flex:1;min-width:140px">
-                <i class="fas fa-shopping-cart"></i> ${t("product.addToCart")}
+                <i class="fas fa-shopping-cart" aria-hidden="true"></i> ${t("product.addToCart")}
               </button>
             </div>
             <button class="btn ${isWishlisted ? 'btn-danger' : 'btn-outline'} btn-lg"
@@ -95,8 +95,8 @@ export default async function renderProductDetail(container, route, params) {
               <i class="${isWishlisted ? 'fas' : 'far'} fa-heart"></i>
               ${isWishlisted ? (t('product.removeFromWishlist') || 'Wishlisted') : t("product.wishlist")}
             </button>
-            ${p.isAuctioned && p.auctionId ? `<a href="#/auction-detail?id=${p.auctionId}" class="btn btn-success btn-lg"><i class="fas fa-gavel"></i> ${t("product.viewAuction")}</a>` : !p.isAuctioned && getUser()?.id === p.sellerId && hasAnyRole(...(SELLER_ROLES)) ? `<button class="btn btn-primary btn-lg" id="startAuctionBtn"><i class="fas fa-gavel"></i> ${t("auction.startAuction")}</button>` : ""}
-            ${p.sellerId ? `<a href="#/seller-profile?userId=${p.sellerId}" class="btn btn-outline btn-lg"><i class="fas fa-envelope"></i> ${t("product.contactSeller")}</a>` : ""}
+            ${p.isAuctioned && p.auctionId ? `<a href="#/auction-detail?id=${p.auctionId}" class="btn btn-success btn-lg"><i class="fas fa-gavel" aria-hidden="true"></i> ${t("product.viewAuction")}</a>` : !p.isAuctioned && getUser()?.id === p.sellerId && hasAnyRole(...(SELLER_ROLES)) ? `<button class="btn btn-primary btn-lg" id="startAuctionBtn"><i class="fas fa-gavel" aria-hidden="true"></i> ${t("auction.startAuction")}</button>` : ""}
+            ${p.sellerId ? `<a href="#/seller-profile?userId=${p.sellerId}" class="btn btn-outline btn-lg"><i class="fas fa-envelope" aria-hidden="true"></i> ${t("product.contactSeller")}</a>` : ""}
           </div>
           
           <!-- Seller info card -->
@@ -105,15 +105,15 @@ export default async function renderProductDetail(container, route, params) {
             <div class="seller-avatar">${escapeHtml(p.sellerName || '?').charAt(0).toUpperCase()}</div>
             <div class="seller-info-details">
               <div class="seller-info-name">${escapeHtml(p.sellerName || t("common.N/A"))}</div>
-              <div class="seller-info-meta"><i class="fas fa-store"></i> ${t('common.viewProfile') || 'View Profile'}</div>
+              <div class="seller-info-meta"><i class="fas fa-store" aria-hidden="true"></i> ${t('common.viewProfile') || 'View Profile'}</div>
             </div>
-            <i class="fas fa-chevron-${getCurrentLang() === 'ar' ? 'left' : 'right'} text-muted"></i>
+            <i class="fas fa-chevron-${getCurrentLang() === 'ar' ? 'left' : 'right'} text-muted" aria-hidden="true"></i>
           </a>` : ""}
 
           <!-- Reviews section -->
           <div class="mt-4 pt-4" style="border-top:1px solid var(--border)" id="reviewsSection">
             <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
-              <h3><i class="fas fa-star text-warning"></i> ${t("review.title")} ${avgRating ? `(${renderStars(avgRating)} ${avgRating.toFixed(1)})` : ""}</h3>
+              <h3><i class="fas fa-star text-warning" aria-hidden="true"></i> ${t("review.title")} ${avgRating ? `(${renderStars(avgRating)} ${avgRating.toFixed(1)})` : ""}</h3>
               <div class="d-flex gap-2">
                 <select id="reviewSort" class="form-select form-select-sm" style="width:130px;height:34px;font-size:0.85rem">
                   <option value="newest">${t("products.newest") || 'Newest'}</option>
@@ -139,7 +139,7 @@ export default async function renderProductDetail(container, route, params) {
                 <label class="form-label">${t("review.comment")}</label>
                 <textarea class="form-textarea form-control" id="reviewComment" rows="3" placeholder="${t("review.rateProduct")}" style="resize:vertical"></textarea>
               </div>
-              <button class="btn btn-primary btn-sm" id="reviewSubmit"><i class="fas fa-paper-plane"></i> ${t("review.submit")}</button>
+              <button class="btn btn-primary btn-sm" id="reviewSubmit"><i class="fas fa-paper-plane" aria-hidden="true"></i> ${t("review.submit")}</button>
             </div>
             `
                 : `<p class="text-muted small"><a href="#/login" class="text-primary">${t("auth.login")}</a> ${t("review.title")}</p>`
@@ -159,7 +159,7 @@ export default async function renderProductDetail(container, route, params) {
           <span>${formatPrice(p.price)}</span>
         </div>
         <button class="btn btn-primary" id="mobileAddToCartBtn" ${!isAvailable ? "disabled" : ""}>
-          <i class="fas fa-shopping-cart"></i> ${t("product.addToCart")}
+          <i class="fas fa-shopping-cart" aria-hidden="true"></i> ${t("product.addToCart")}
         </button>
       </div>
     </div>
@@ -298,7 +298,7 @@ export default async function renderProductDetail(container, route, params) {
         if (items.length) {
           const section = document.createElement("div");
           section.classList.add("mt-5");
-          section.innerHTML = `<div class="section-header"><h2><i class="fas fa-layer-group"></i> ${t("products.similar")}</h2></div><div class="row row-cols-2 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4" id="similarGrid"></div>`;
+          section.innerHTML = `<div class="section-header"><h2><i class="fas fa-layer-group" aria-hidden="true"></i> ${t("products.similar")}</h2></div><div class="row row-cols-2 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4" id="similarGrid"></div>`;
           container.appendChild(section);
           const grid = document.getElementById("similarGrid");
           renderProductCards(
@@ -333,7 +333,7 @@ export default async function renderProductDetail(container, route, params) {
         const btn = document.getElementById(btnId);
         if (!btn) return;
         btn.disabled = true;
-        btn.innerHTML = `<i class="fas fa-spinner spinner"></i> ${t("common.loading")}`;
+        btn.innerHTML = `<i class="fas fa-spinner spinner" aria-hidden="true"></i> ${t("common.loading")}`;
         try {
           await api.post("/cart/items", {
             productId: p.id,
@@ -345,7 +345,7 @@ export default async function renderProductDetail(container, route, params) {
           showToast(e.message, "error");
         } finally {
           btn.disabled = false;
-          btn.innerHTML = `<i class="fas fa-shopping-cart"></i> ${t("product.addToCart")}`;
+          btn.innerHTML = `<i class="fas fa-shopping-cart" aria-hidden="true"></i> ${t("product.addToCart")}`;
         }
       };
 
@@ -402,7 +402,7 @@ export default async function renderProductDetail(container, route, params) {
       overlay.setAttribute("aria-label", "Start Auction");
       overlay.innerHTML = `
         <div class="modal" onclick="event.stopPropagation()" style="max-width:460px">
-          <h3><i class="fas fa-gavel"></i> ${t("auctions.title")} — ${escapeHtml(p.title)}</h3>
+          <h3><i class="fas fa-gavel" aria-hidden="true"></i> ${t("auctions.title")} — ${escapeHtml(p.title)}</h3>
           <div id="auctionModalAlert"></div>
           <form id="auctionModalForm" novalidate>
             <div class="form-group">
@@ -423,7 +423,7 @@ export default async function renderProductDetail(container, route, params) {
             </div>
             <div class="modal-actions">
               <button type="button" class="btn btn-ghost" id="auctionModalCancel">${t("common.cancel") || "Cancel"}</button>
-              <button type="submit" class="btn btn-primary" id="auctionModalSubmit"><i class="fas fa-gavel"></i> ${t("auctions.title")}</button>
+              <button type="submit" class="btn btn-primary" id="auctionModalSubmit"><i class="fas fa-gavel" aria-hidden="true"></i> ${t("auctions.title")}</button>
             </div>
           </form>
         </div>`;
@@ -439,7 +439,7 @@ export default async function renderProductDetail(container, route, params) {
         const alertDiv = document.getElementById("auctionModalAlert");
         alertDiv.innerHTML = "";
         submit.disabled = true;
-        submit.innerHTML = `<i class="fas fa-spinner spinner"></i> ${t("auction.placingBid")}`;
+        submit.innerHTML = `<i class="fas fa-spinner spinner" aria-hidden="true"></i> ${t("auction.placingBid")}`;
         try {
           await api.post("/auctions", {
             productId: p.id,
@@ -524,7 +524,7 @@ export default async function renderProductDetail(container, route, params) {
           return;
         }
         submit.disabled = true;
-        submit.innerHTML = `<i class="fas fa-spinner spinner"></i> ${t("review.submitting")}`;
+        submit.innerHTML = `<i class="fas fa-spinner spinner" aria-hidden="true"></i> ${t("review.submitting")}`;
         try {
           await api.post("/reviews", { productId: p.id, rating, comment });
           showToast(t("review.submitted"), "success");

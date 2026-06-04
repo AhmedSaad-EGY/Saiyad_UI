@@ -13,6 +13,7 @@ export const translations = {
     "nav.myProducts": "My Products",
     "nav.wishlist": "Wishlist",
     "nav.logout": "Logout",
+    "nav.searchPlaceholder": "Search fish, gear, auctions\u2026",
 
     // Home
     "tour.welcome": "Browse premium fishing gear from top brands. Find rods, reels, bait, and more.",
@@ -92,6 +93,7 @@ export const translations = {
     "auth.privacyPolicy": "Privacy Policy",
     "auth.termsRequired": "Please accept the terms and conditions.",
     "auth.forgotPassword": "Forgot Password?",
+    "auth.tooManyAttempts": "Too many failed attempts. Wait {secs} seconds.",
     "auth.sendResetLink": "Send Reset Link",
     "auth.sendingResetLink": "Sending reset link...",
     "auth.resetLinkSent": "Password reset link has been sent to your email.",
@@ -587,6 +589,12 @@ export const translations = {
     "wallet.auctionPayment": "Auction Payment",
     "wallet.auctionPayout": "Auction Payout",
     "wallet.readOnly": "Wallet is in read-only mode",
+    "wallet.metaDesc": "Manage your Sayiad wallet balance and transactions.",
+    "wallet.minAmountError": "Please enter a valid amount (minimum EGP 10)",
+    "wallet.maxAmountError": "Maximum top-up is EGP 50,000",
+    "wallet.topUpSuccess": "Wallet topped up successfully!",
+    "wallet.topUpFailed": "Top up failed. Please try again.",
+    "wallet.confirmTopUp": "Confirm Top Up",
 
     // Subscriptions
     "subscriptions.title": "Subscription Plans",
@@ -650,6 +658,7 @@ export const translations = {
     "nav.myProducts": "منتجاتي",
     "nav.wishlist": "المفضلة",
     "nav.logout": "تسجيل الخروج",
+    "nav.searchPlaceholder": "ابحث عن سمك، معدات، مزادات\u2026",
 
     // Home
     "tour.welcome": "تصفح أدوات الصيد الفاخرة من أفضل العلامات التجارية. ابحث عن القضبان، البكرات، الطُعم، والمزيد.",
@@ -728,6 +737,7 @@ export const translations = {
     "auth.privacyPolicy": "سياسة الخصوصية",
     "auth.termsRequired": "يرجى الموافقة على الشروط والأحكام.",
     "auth.forgotPassword": "نسيت كلمة المرور؟",
+    "auth.tooManyAttempts": "محاولات فاشلة كثيرة. انتظر {secs} ثوانٍ.",
     "auth.sendResetLink": "إرسال رابط إعادة التعيين",
     "auth.sendingResetLink": "جارٍ إرسال الرابط...",
     "auth.resetLinkSent":
@@ -1219,6 +1229,12 @@ export const translations = {
     "wallet.amount": "المبلغ",
     "wallet.noTransactions": "لا توجد معاملات بعد",
     "wallet.loadError": "فشل تحميل بيانات المحفظة.",
+    "wallet.metaDesc": "إدارة رصيد وسجل معاملات محفظتك في صياد.",
+    "wallet.minAmountError": "الرجاء إدخال مبلغ صحيح (الحد الأدنى 10 جنيه)",
+    "wallet.maxAmountError": "الحد الأقصى للشحن 50,000 جنيه",
+    "wallet.topUpSuccess": "تم شحن المحفظة بنجاح!",
+    "wallet.topUpFailed": "فشل الشحن. حاول مرة أخرى.",
+    "wallet.confirmTopUp": "تأكيد الشحن",
     "wallet.platformFee": "رسوم المنصة",
     "wallet.subPayment": "اشتراك",
     "wallet.auctionPayment": "دفعة مزاد",

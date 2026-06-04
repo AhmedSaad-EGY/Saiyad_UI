@@ -7,28 +7,7 @@ import { router, goBack } from './router/index.js';
 import { createSwipeGesture } from './utils/swipe.js';
 import { setupGlobalErrorHandlers } from '../shared/helpers/errors.js';
 
-// Inject minimal required global styles
-const injectedStyles = document.createElement("style");
-injectedStyles.textContent = `
-  .empty-state-visual {
-    transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-    display: inline-block;
-    will-change: transform;
-  }
-  .empty-state:hover .empty-state-visual {
-    transform: scale(1.1);
-  }
-  .empty-state-visual svg, .empty-state-visual i, .empty-state-visual img {
-    filter: drop-shadow(0 0 0 transparent);
-    transition: filter 0.4s ease;
-  }
-  .empty-state:hover .empty-state-visual svg, .empty-state:hover .empty-state-visual i, .empty-state:hover .empty-state-visual img {
-    filter: drop-shadow(0 15px 30px var(--primary-shadow, rgba(14, 165, 233, 0.3)));
-  }
-`;
-document.head.appendChild(injectedStyles);
-
-// Navbar scroll effect
+// Navbar scroll effect + back-to-top visibility
 let scrollTicking = false;
 window.addEventListener("scroll", () => {
   if (!scrollTicking) {
@@ -36,7 +15,13 @@ window.addEventListener("scroll", () => {
       const navbar = document.querySelector(".navbar");
       if (navbar) navbar.classList.toggle("scrolled", window.scrollY > 20);
       const btt = document.getElementById("backToTop");
-      if (btt) btt.classList.toggle("visible", window.scrollY > 400);
+      if (btt) {
+        const show = window.scrollY > 400;
+        btt.style.display = show ? "flex" : "none";
+        // Next frame: add visible for CSS transition
+        if (show) requestAnimationFrame(() => btt.classList.add("visible"));
+        else btt.classList.remove("visible");
+      }
       scrollTicking = false;
     });
     scrollTicking = true;
@@ -212,9 +197,10 @@ document.querySelectorAll(".nav-link").forEach((link) => {
 let prevWidth = window.innerWidth;
 window.addEventListener("resize", () => {
   const width = window.innerWidth;
+  // Close drawer when viewport expands to desktop (>768px)
   if (prevWidth <= 768 && width > 768) closeDrawer();
   prevWidth = width;
-});
+}, { passive: true });
 
 // Theme toggle
 const themeToggle = document.getElementById("themeToggle");
@@ -223,15 +209,17 @@ const savedTheme = localStorage.getItem("sayiad_theme") || "light";
 function applyTheme(theme) {
   document.documentElement.setAttribute("data-theme", theme);
   localStorage.setItem("sayiad_theme", theme);
-  themeToggle.innerHTML =
-    theme === "dark"
-      ? '<i class="fas fa-sun"></i>'
-      : '<i class="fas fa-moon"></i>';
-  themeToggle.setAttribute("aria-pressed", theme === "dark" ? "true" : "false");
-  themeToggle.setAttribute(
-    "aria-label",
-    theme === "dark" ? "Switch to light mode" : "Toggle dark mode",
-  );
+  if (themeToggle) {
+    themeToggle.innerHTML =
+      theme === "dark"
+        ? '<i class="fas fa-sun" aria-hidden="true"></i>'
+        : '<i class="fas fa-moon" aria-hidden="true"></i>';
+    themeToggle.setAttribute("aria-pressed", theme === "dark" ? "true" : "false");
+    themeToggle.setAttribute(
+      "aria-label",
+      theme === "dark" ? "Switch to light mode" : "Toggle dark mode",
+    );
+  }
 }
 
 // Reduced motion toggle
@@ -314,7 +302,7 @@ if (_sellLink) {
 const _cy = document.getElementById('copyrightYear');
 if (_cy) _cy.textContent = new Date().getFullYear();
 
-themeToggle.addEventListener("click", () => {
+themeToggle?.addEventListener("click", () => {
   const current = document.documentElement.getAttribute("data-theme");
   const next = current === "dark" ? "light" : "dark";
 
@@ -337,12 +325,14 @@ const initialLang = getCurrentLang();
 function applyLanguage(lang) {
   document.documentElement.lang = lang;
   document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
-  langToggle.textContent = lang === "ar" ? "AR" : "EN";
-  langToggle.setAttribute("aria-pressed", lang === "ar" ? "true" : "false");
-  langToggle.setAttribute(
-    "aria-label",
-    lang === "ar" ? "Switch to English" : "Switch to Arabic",
-  );
+  if (langToggle) {
+    langToggle.textContent = lang === "ar" ? "AR" : "EN";
+    langToggle.setAttribute("aria-pressed", lang === "ar" ? "true" : "false");
+    langToggle.setAttribute(
+      "aria-label",
+      lang === "ar" ? "Switch to English" : "Switch to Arabic",
+    );
+  }
 }
 
 function handleLangChange(next) {
@@ -363,7 +353,7 @@ function handleLangChange(next) {
 
 applyLanguage(initialLang);
 
-langToggle.addEventListener("click", () => {
+langToggle?.addEventListener("click", () => {
   const current = getCurrentLang();
   handleLangChange(current === "en" ? "ar" : "en");
 });

@@ -159,7 +159,7 @@ export default async function renderAuctions(_container, _fullPath, params) {
   setPageMeta('Live Fish Auctions', 'Join live fish auctions on Sayiad. Bid on fresh catches.');
   _container.innerHTML = `
     <div x-data="auctionsPage" @keydown.escape.window="filterSheetOpen = false">
-      <div class="section-header"><h2><i class="fas fa-gavel"></i> ${t("auctions.title")}</h2></div>
+      <div class="section-header"><h2><i class="fas fa-gavel" aria-hidden="true"></i> ${t("auctions.title")}</h2></div>
       <div class="search-bar">
         <input type="text" class="form-input form-control" x-model="search" @input.debounce.400ms="reload()" placeholder="${t("auctions.search")}" />
         <div class="desktop-filters">
@@ -174,7 +174,7 @@ export default async function renderAuctions(_container, _fullPath, params) {
             <span>${t("auction.endingSoon") || "Ending Soon (<24h)"}</span>
           </label>
         </div>
-        <button class="btn btn-outline filter-toggle-btn" @click="filterSheetOpen = true" aria-label="${t('products.filters') || 'Open filters'}"><i class="fas fa-sliders-h"></i></button>
+        <button class="btn btn-outline filter-toggle-btn" @click="filterSheetOpen = true" aria-label="${t('products.filters') || 'Open filters'}"><i class="fas fa-sliders-h" aria-hidden="true"></i></button>
       </div>
 
       <!-- Skeleton -->
@@ -192,7 +192,7 @@ export default async function renderAuctions(_container, _fullPath, params) {
 
       <!-- Error -->
       <div x-show="!loading && error" class="empty-state">
-        <div class="empty-state-visual"><i class="fas fa-exclamation-triangle text-muted" style="font-size:3.5rem"></i></div>
+        <div class="empty-state-visual"><i class="fas fa-exclamation-triangle text-muted" style="font-size:3.5rem" aria-hidden="true"></i></div>
         <h3>${t("auctions.loadError")}</h3>
         <p x-text="error"></p>
         <button class="btn btn-primary mt-3" @click="reload()">${t('common.retry')}</button>
@@ -205,7 +205,7 @@ export default async function renderAuctions(_container, _fullPath, params) {
             <!-- Popular/Ending Soon Badge Overlay -->
             <template x-if="a.bidCount >= 5 || timeLeft(a.endTime).urgent">
               <div class="ribbon-badge" style="position:absolute;top:10px;left:10px;background:var(--primary);color:#fff;font-size:0.75rem;padding:2px 8px;border-radius:var(--radius-full);z-index:2;font-weight:bold;box-shadow:0 2px 4px rgba(0,0,0,0.2)">
-                <i class="fas fa-fire"></i> HOT
+                <i class="fas fa-fire" aria-hidden="true"></i> HOT
               </div>
             </template>
             <div class="product-card-img">
@@ -234,7 +234,7 @@ export default async function renderAuctions(_container, _fullPath, params) {
 
       <!-- Empty -->
       <div x-show="!loading && !error && !auctions.length" class="empty-state">
-        <div class="empty-state-visual"><i class="fas fa-gavel text-muted" style="font-size:3.5rem"></i></div>
+        <div class="empty-state-visual"><i class="fas fa-gavel text-muted" style="font-size:3.5rem" aria-hidden="true"></i></div>
         <h3>${t("home.noAuctions")}</h3>
         <p>${t("auctions.noAuctionsDesc")}</p>
         <button class="btn btn-primary mt-3" @click="resetFilters()">${t('common.clearFilters')}</button>
@@ -260,7 +260,7 @@ export default async function renderAuctions(_container, _fullPath, params) {
         <div class="filter-sheet">
           <div class="filter-sheet-header">
             <h3>${t('products.filters')}</h3>
-            <button class="btn btn-ghost btn-icon" @click="filterSheetOpen = false" aria-label="${t('common.close')}"><i class="fas fa-times"></i></button>
+            <button class="btn btn-ghost btn-icon" @click="filterSheetOpen = false" aria-label="${t('common.close')}"><i class="fas fa-times" aria-hidden="true"></i></button>
           </div>
           <div class="filter-sheet-body">
             <div class="form-group">
@@ -279,7 +279,7 @@ export default async function renderAuctions(_container, _fullPath, params) {
           </div>
           <div class="filter-sheet-footer">
             <button class="btn btn-ghost" @click="resetFilters(); filterSheetOpen = false">${t('common.clearFilters')}</button>
-            <button class="btn btn-primary" @click="applyMobileFilters()"><i class="fas fa-check"></i> ${t('common.showResults') || 'Show Results'}</button>
+            <button class="btn btn-primary" @click="applyMobileFilters()"><i class="fas fa-check" aria-hidden="true"></i> ${t('common.showResults') || 'Show Results'}</button>
           </div>
         </div>
       </div>

@@ -181,10 +181,10 @@ export default function renderForgotPassword(container) {
         <div class="card">
           <div class="card-header">
           <h2>
-            <span x-show="step === 'email'" x-cloak><i class="fas fa-unlock"></i> ${t("auth.forgotPassword")}</span>
-            <span x-show="step === 'code'" x-cloak><i class="fas fa-shield-alt"></i> ${t("auth.verificationCode")}</span>
-            <span x-show="step === 'password'" x-cloak><i class="fas fa-key"></i> ${t("auth.newPassword")}</span>
-            <span x-show="step === 'done'" x-cloak><i class="fas fa-check-circle"></i> ${t("auth.passwordResetSuccess")}</span>
+            <span x-show="step === 'email'" x-cloak><i class="fas fa-unlock" aria-hidden="true"></i> ${t("auth.forgotPassword")}</span>
+            <span x-show="step === 'code'" x-cloak><i class="fas fa-shield-alt" aria-hidden="true"></i> ${t("auth.verificationCode")}</span>
+            <span x-show="step === 'password'" x-cloak><i class="fas fa-key" aria-hidden="true"></i> ${t("auth.newPassword")}</span>
+            <span x-show="step === 'done'" x-cloak><i class="fas fa-check-circle" aria-hidden="true"></i> ${t("auth.passwordResetSuccess")}</span>
           </h2>
           </div>
           <div class="card-body">
@@ -206,7 +206,7 @@ export default function renderForgotPassword(container) {
           <template x-if="step === 'code'">
             <form @submit.prevent="step2()" novalidate>
               <div class="alert alert-success mb-3">
-                <i class="fas fa-envelope"></i> ${t("auth.resetLinkSent")}
+                <i class="fas fa-envelope" aria-hidden="true"></i> ${t("auth.resetLinkSent")}
               </div>
               <div class="form-group">
                 <label class="form-label" for="forgotCode">${t("auth.verificationCode")}</label>
@@ -218,7 +218,7 @@ export default function renderForgotPassword(container) {
               </button>
               <div style="margin-top:12px">
                 <button type="button" class="btn btn-ghost w-100" @click="handleResend()" :disabled="resendSeconds > 0" x-text="resendLabel"></button>
-                <button type="button" class="btn btn-ghost w-100 mt-1" @click="backToEmail()"><i class="fas fa-arrow-left"></i> ${t("common.back")}</button>
+                <button type="button" class="btn btn-ghost w-100 mt-1" @click="backToEmail()"><i class="fas fa-arrow-left" aria-hidden="true"></i> ${t("common.back")}</button>
               </div>
             </form>
           </template>
@@ -242,13 +242,13 @@ export default function renderForgotPassword(container) {
                 <span x-text="loading ? $t('auth.updatingPassword') : $t('auth.resetPassword')"></span>
               </button>
               <div style="margin-top:12px">
-                <button type="button" class="btn btn-ghost w-100" @click="backToCode()"><i class="fas fa-arrow-left"></i> ${t("common.back")}</button>
+                <button type="button" class="btn btn-ghost w-100" @click="backToCode()"><i class="fas fa-arrow-left" aria-hidden="true"></i> ${t("common.back")}</button>
               </div>
             </form>
           </template>
 
           <template x-if="step === 'done'">
-            <div class="alert alert-success"><i class="fas fa-check-circle"></i> ${t("auth.passwordResetSuccess")}</div>
+            <div class="alert alert-success"><i class="fas fa-check-circle" aria-hidden="true"></i> ${t("auth.passwordResetSuccess")}</div>
           </template>
 
           </div>

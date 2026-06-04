@@ -350,7 +350,7 @@ export default async function renderAuctionDetail(container, _route, params) {
 
       <!-- Error state -->
       <div x-show="!loading && error" class="empty-state">
-        <div class="empty-state-visual"><i class="fas fa-gavel text-muted" style="font-size:3.5rem"></i></div>
+        <div class="empty-state-visual"><i class="fas fa-gavel text-muted" style="font-size:3.5rem" aria-hidden="true"></i></div>
         <h3 x-text="$t('common.loadFailed')"></h3>
         <p x-text="error"></p>
         <button class="btn btn-primary mt-3" @click="retry()">${t('common.retry')}</button>
@@ -375,7 +375,7 @@ export default async function renderAuctionDetail(container, _route, params) {
                 <img :src="auction.productImageUrl" :alt="auction.productTitle || 'Auction Item'" loading="lazy" style="width:100%;height:100%;object-fit:cover">
               </template>
               <template x-if="!auction.productImageUrl">
-                <i class="fas fa-gavel"></i>
+                <i class="fas fa-gavel" aria-hidden="true"></i>
               </template>
             </div>
           </div>
@@ -426,7 +426,7 @@ export default async function renderAuctionDetail(container, _route, params) {
               <!-- Ended display -->
               <div x-show="ended || (!isActive && !ended)" class="mt-2">
                 <span class="text-danger fw-semibold">
-                  <i class="fas fa-times-circle"></i> ${t('auction.ended')}
+                  <i class="fas fa-times-circle" aria-hidden="true"></i> ${t('auction.ended')}
                 </span>
               </div>
             </div>
@@ -467,14 +467,14 @@ export default async function renderAuctionDetail(container, _route, params) {
                   <div class="seller-info-name" x-text="auction.sellerName || auction.auctioneerName"></div>
                   <div class="seller-info-meta"><i class="fas fa-store" aria-hidden="true"></i> ${t('common.viewProfile') || 'View Profile'}</div>
                 </div>
-                <i class="fas fa-chevron-${getCurrentLang() === 'ar' ? 'left' : 'right'} text-muted"></i>
+                <i class="fas fa-chevron-${getCurrentLang() === 'ar' ? 'left' : 'right'} text-muted" aria-hidden="true"></i>
               </a>
             </template>
 
             <!-- Winner announcement -->
             <template x-if="auction.winnerUserId">
               <div class="alert alert-success">
-                <i class="fas fa-trophy"></i>
+                <i class="fas fa-trophy" aria-hidden="true"></i>
                 <span x-text="$t('auction.winner') + ': ' + (auction.winnerName || 'User #' + auction.winnerUserId)"></span>
               </div>
             </template>
@@ -489,7 +489,7 @@ export default async function renderAuctionDetail(container, _route, params) {
                       <input type="number" class="form-input form-control" x-model="bidAmount" step="0.01"
                              :placeholder="t('auction.placeBid') + ' (' + formatPrice(minBid) + ')'" />
                       <button class="btn btn-primary" @click="placeBid()" :disabled="placingBid">
-                        <i class="fas fa-gavel" x-show="!placingBid"></i>
+                        <i class="fas fa-gavel" x-show="!placingBid" aria-hidden="true"></i>
                         <i class="fas fa-spinner spinner" x-show="placingBid" aria-hidden="true"></i>
                         <span x-show="!placingBid" x-text="$t('auction.placeBid')"></span>
                         <span x-show="placingBid">${t('auction.placingBid')}</span>
@@ -542,7 +542,7 @@ export default async function renderAuctionDetail(container, _route, params) {
             <!-- Non-customer message (active auction) -->
             <template x-if="isActive && !isCustomer()">
               <div class="alert alert-info mt-3">
-                <i class="fas fa-info-circle"></i>
+                <i class="fas fa-info-circle" aria-hidden="true"></i>
                 <template x-if="isLoggedIn()">
                   <span x-text="$t('auction.bidCustomerOnly') || 'Only customers can place bids.'"></span>
                 </template>
@@ -569,7 +569,7 @@ export default async function renderAuctionDetail(container, _route, params) {
                         <span class="fw-bold text-success">
                           <span x-text="formatPrice(b.amount)"></span>
                           <template x-if="b.isAutoBid">
-                            <i class="fas fa-robot" :title="t('auction.autoBid')"></i>
+                            <i class="fas fa-robot" :title="t('auction.autoBid')" aria-hidden="true"></i>
                           </template>
                         </span>
                       </div>
@@ -578,7 +578,7 @@ export default async function renderAuctionDetail(container, _route, params) {
                 </template>
                 <template x-if="!bids.length">
                   <div class="empty-state">
-                    <i class="fas fa-gavel"></i>
+                    <i class="fas fa-gavel" aria-hidden="true"></i>
                     <h3 x-text="$t('auction.noBids')"></h3>
                   </div>
                 </template>
@@ -595,7 +595,7 @@ export default async function renderAuctionDetail(container, _route, params) {
               <span x-text="formatPrice(currentBidValue)"></span>
             </div>
             <button class="btn btn-primary" @click="placeBid()" :disabled="placingBid">
-              <i class="fas" :class="placingBid ? 'fa-spinner spinner' : 'fa-gavel'"></i>
+              <i class="fas" :class="placingBid ? 'fa-spinner spinner' : 'fa-gavel'" aria-hidden="true"></i>
               <span x-text="$t('auction.placeBid')"></span>
             </button>
           </div>

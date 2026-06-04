@@ -26,22 +26,22 @@ export default async function renderAdmin(container) {
   let activeTab = "users";
 
   container.innerHTML = `
-    <div class="section-header"><h2><i class="fas fa-shield-alt"></i> ${t("admin.title")}</h2></div>
+    <div class="section-header"><h2><i class="fas fa-shield-alt" aria-hidden="true"></i> ${t("admin.title")}</h2></div>
     <div class="stats-overview d-flex gap-3 mb-4 flex-wrap animate-on-scroll">
       <div class="card p-3 flex-grow-1" style="min-width: 200px">
-        <div class="text-muted"><i class="fas fa-users text-primary"></i> ${t("admin.totalUsers") || "Total Users"}</div>
+        <div class="text-muted"><i class="fas fa-users text-primary" aria-hidden="true"></i> ${t("admin.totalUsers") || "Total Users"}</div>
         <div class="fs-2 fw-bold mt-2">1,245</div>
       </div>
       <div class="card p-3 flex-grow-1" style="min-width: 200px">
-        <div class="text-muted"><i class="fas fa-chart-line text-success"></i> ${t("admin.totalRevenue") || "Total Revenue"}</div>
+        <div class="text-muted"><i class="fas fa-chart-line text-success" aria-hidden="true"></i> ${t("admin.totalRevenue") || "Total Revenue"}</div>
         <div class="fs-2 fw-bold mt-2">$45,230</div>
       </div>
       <div class="card p-3 flex-grow-1" style="min-width: 200px">
-        <div class="text-muted"><i class="fas fa-gavel text-warning"></i> ${t("admin.activeAuctions") || "Active Auctions"}</div>
+        <div class="text-muted"><i class="fas fa-gavel text-warning" aria-hidden="true"></i> ${t("admin.activeAuctions") || "Active Auctions"}</div>
         <div class="fs-2 fw-bold mt-2">112</div>
       </div>
     </div>
-    <div class="tabs nav nav-tabs" id="adminTabs">${tabs.map((t) => `<button class="tab ${t.id === activeTab ? "active" : ""}" data-tab="${t.id}"><i class="fas ${t.icon}"></i> ${t.label}</button>`).join("")}</div>
+    <div class="tabs nav nav-tabs" id="adminTabs">${tabs.map((t) => `<button class="tab ${t.id === activeTab ? "active" : ""}" data-tab="${t.id}"><i class="fas ${t.icon}" aria-hidden="true"></i> ${t.label}</button>`).join("")}</div>
     <div id="adminContent"></div>`;
 
   const content = document.getElementById("adminContent");
@@ -86,7 +86,7 @@ export default async function renderAdmin(container) {
     const panel = document.getElementById("usersPanel");
     if (!panel) return;
     panel.innerHTML = `<div class="p-4 text-center">
-      <i class="fas fa-spinner spinner"></i> ${t("common.loading")}</div>`;
+      <i class="fas fa-spinner spinner" aria-hidden="true"></i> ${t("common.loading")}</div>`;
     try {
       const data = await api.get("/users", { page: _usersPage, pageSize: _usersPageSize });
       const users = data.items || data.data || [];
@@ -211,7 +211,7 @@ export default async function renderAdmin(container) {
     const panel = document.getElementById("productsPanel");
     if (!panel) return;
     panel.innerHTML = `<div class="p-4 text-center">
-      <i class="fas fa-spinner spinner"></i> ${t("common.loading")}</div>`;
+      <i class="fas fa-spinner spinner" aria-hidden="true"></i> ${t("common.loading")}</div>`;
     try {
       const data = await api.get("/products", { page: _productsPage, pageSize: _productsPageSize });
       const products = data.items || data.data || [];
@@ -270,7 +270,7 @@ export default async function renderAdmin(container) {
           if (!select) return;
           btn.disabled = true;
           const oldText = btn.textContent;
-          btn.innerHTML = `<i class="fas fa-spinner spinner"></i>`;
+          btn.innerHTML = `<i class="fas fa-spinner spinner" aria-hidden="true"></i>`;
           try {
             await api.patch(`/products/${btn.dataset.productId}/status`, {
               status: select.value,
@@ -296,7 +296,7 @@ export default async function renderAdmin(container) {
     const panel = document.getElementById("ordersPanel");
     if (!panel) return;
     panel.innerHTML = `<div class="p-4 text-center">
-      <i class="fas fa-spinner spinner"></i> ${t("common.loading")}</div>`;
+      <i class="fas fa-spinner spinner" aria-hidden="true"></i> ${t("common.loading")}</div>`;
     try {
       const data = await api.get("/orders", { page: _ordersPage, pageSize: _ordersPageSize });
       const orders = data.items || data.data || [];
@@ -355,7 +355,7 @@ export default async function renderAdmin(container) {
 
       if (!cats.length) {
         content.innerHTML = `
-          <div class="mb-3"><button class="btn btn-primary btn-sm" id="showAddCat"><i class="fas fa-plus"></i> ${t("admin.addCategory")}</button></div>
+          <div class="mb-3"><button class="btn btn-primary btn-sm" id="showAddCat"><i class="fas fa-plus" aria-hidden="true"></i> ${t("admin.addCategory")}</button></div>
         <div id="addCatForm" class="d-none card card-sm mb-3" style="max-width:400px">
           <form id="catForm" novalidate>
               <div class="form-group"><label class="form-label">${t("admin.categoryName")}</label><input type="text" class="form-input form-control" id="catName" required></div>
@@ -364,7 +364,7 @@ export default async function renderAdmin(container) {
             </form>
           </div>
           <div class="empty-state mt-2">
-            <div class="empty-state-visual"><i class="fas fa-tags text-muted" style="font-size:2rem"></i></div>
+            <div class="empty-state-visual"><i class="fas fa-tags text-muted" style="font-size:2rem" aria-hidden="true"></i></div>
             <h3>${t("admin.noCategories") || "No categories found"}</h3>
             <p class="text-muted">${t("admin.createFirstCategory") || "Create your first category to organize products."}</p>
           </div>`;
@@ -388,7 +388,7 @@ export default async function renderAdmin(container) {
       }
 
       content.innerHTML = `
-        <div class="mb-3"><button class="btn btn-primary btn-sm" id="showAddCat"><i class="fas fa-plus"></i> ${t("admin.addCategory")}</button></div>
+        <div class="mb-3"><button class="btn btn-primary btn-sm" id="showAddCat"><i class="fas fa-plus" aria-hidden="true"></i> ${t("admin.addCategory")}</button></div>
         <div id="addCatForm" class="d-none card card-sm mb-3" style="max-width:400px">
           <form id="catForm" novalidate>
             <div class="form-group"><label class="form-label">${t("admin.categoryName")}</label><input type="text" class="form-input form-control" id="catName" required></div>
@@ -403,7 +403,7 @@ export default async function renderAdmin(container) {
             .map(
               (c) => `
             <tr><td>${c.id}</td><td>${escapeHtml(c.name)}</td><td>${escapeHtml(c.description || "-")}</td>
-            <td><button class="btn btn-sm btn-danger delete-cat" data-id="${c.id}" aria-label="${t("admin.categoryDeleted")}"><i class="fas fa-trash"></i></button></td></tr>`,
+            <td><button class="btn btn-sm btn-danger delete-cat" data-id="${c.id}" aria-label="${t("admin.categoryDeleted")}"><i class="fas fa-trash" aria-hidden="true"></i></button></td></tr>`,
             )
             .join("")}
           </tbody>
@@ -537,7 +537,7 @@ export default async function renderAdmin(container) {
                 </tr>
               `              ).join("") : `<tr><td colspan="6" class="text-center p-4 text-muted">
                 <div class="empty-state-inline">
-                  <i class="fas fa-chart-line mb-2 opacity-50" style="font-size:2rem"></i>
+                  <i class="fas fa-chart-line mb-2 opacity-50" style="font-size:2rem" aria-hidden="true"></i>
                   <p class="mb-0">${t("admin.noFees") || "No fee transactions yet"}</p>
                 </div>
               </td></tr>`}
@@ -552,7 +552,7 @@ export default async function renderAdmin(container) {
   async function loadPlans() {
     const panel = document.getElementById("plansPanel");
     if (!panel) return;
-    panel.innerHTML = `<div class="p-4 text-center"><i class="fas fa-spinner spinner"></i> ${t("common.loading")}</div>`;
+    panel.innerHTML = `<div class="p-4 text-center"><i class="fas fa-spinner spinner" aria-hidden="true"></i> ${t("common.loading")}</div>`;
 
     try {
       const plans = await api.get("/subscriptionplans");
@@ -567,7 +567,7 @@ export default async function renderAdmin(container) {
 
       panel.innerHTML = `
         <div class="mb-3">
-          <button class="btn btn-primary" id="addPlanBtn"><i class="fas fa-plus"></i> ${t("admin.addPlan") || "Add Plan"}</button>
+          <button class="btn btn-primary" id="addPlanBtn"><i class="fas fa-plus" aria-hidden="true"></i> ${t("admin.addPlan") || "Add Plan"}</button>
         </div>
         <div class="table-responsive"><table class="table">
           <caption class="text-muted mt-2" style="caption-side:bottom;font-size:0.78rem">${t("admin.plans")}</caption>
@@ -586,8 +586,8 @@ export default async function renderAdmin(container) {
               <td>${p.maxAuctionRequestsPerMonth}</td>
               <td>${p.isActive ? '<span class="badge badge-success">Active</span>' : '<span class="badge badge-danger">Inactive</span>'}</td>
               <td>
-                <button class="btn btn-sm btn-outline edit-plan-btn" aria-label="${t('common.edit') || 'Edit plan'}" data-id="${p.id}" data-plan='${escapeHtml(JSON.stringify(p))}'><i class="fas fa-edit"></i></button>
-                <button class="btn btn-sm btn-danger delete-plan-btn" aria-label="${t('common.delete') || 'Delete plan'}" data-id="${p.id}" data-name="${escapeHtml(p.name)}"><i class="fas fa-trash"></i></button>
+                <button class="btn btn-sm btn-outline edit-plan-btn" aria-label="${t('common.edit') || 'Edit plan'}" data-id="${p.id}" data-plan='${escapeHtml(JSON.stringify(p))}'><i class="fas fa-edit" aria-hidden="true"></i></button>
+                <button class="btn btn-sm btn-danger delete-plan-btn" aria-label="${t('common.delete') || 'Delete plan'}" data-id="${p.id}" data-name="${escapeHtml(p.name)}"><i class="fas fa-trash" aria-hidden="true"></i></button>
               </td>
             </tr>`).join("")}
           </tbody>

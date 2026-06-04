@@ -91,12 +91,12 @@ export default function renderResetPassword(container) {
       <div x-data="resetPwForm" class="auth-page">
         <div class="card">
           <div class="card-header">
-            <h2><i class="fas fa-key"></i> ${t("auth.resetPassword")}</h2>
+            <h2><i class="fas fa-key" aria-hidden="true"></i> ${t("auth.resetPassword")}</h2>
           </div>
           <div class="card-body">
           <div x-show="error" class="alert alert-error" x-text="error" x-cloak></div>
           <div x-show="success" class="alert alert-success" x-cloak>
-            <i class="fas fa-check-circle"></i> ${t("auth.passwordResetSuccess")}
+            <i class="fas fa-check-circle" aria-hidden="true"></i> ${t("auth.passwordResetSuccess")}
           </div>
           <form @submit.prevent="submit()" x-show="!success" novalidate>
             <div class="form-group">

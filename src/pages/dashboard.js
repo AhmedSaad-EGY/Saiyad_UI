@@ -201,7 +201,7 @@ export default async function renderDashboard(container, route, params) {
                  class="dash-link"
                  :class="{ active: activeTab === '${tabItem.id}' }"
                  @click.prevent="switchTab('${tabItem.id}')">
-                <i class="fas ${tabItem.icon}"></i> ${tabItem.label}
+                <i class="fas ${tabItem.icon}" aria-hidden="true"></i> ${tabItem.label}
               </a>
             `).join('')}
           </div>
@@ -226,7 +226,7 @@ export default async function renderDashboard(container, route, params) {
              :class="{ active: activeTab === '${tabItem.id}' }"
              @click.prevent="switchTab('${tabItem.id}')"
              title="${tabItem.label}">
-            <i class="fas ${tabItem.icon}"></i><span>${tabItem.label}</span>
+            <i class="fas ${tabItem.icon}" aria-hidden="true"></i><span>${tabItem.label}</span>
           </a>
         `).join('')}
       </div>
@@ -236,7 +236,7 @@ export default async function renderDashboard(container, route, params) {
         <div class="tour-modal animate-on-scroll">
           <div class="d-flex justify-content-between align-items-center mb-3">
             <h4 class="m-0 text-primary" style="display:flex;align-items:center;gap:8px">
-              <i class="fas fa-compass"></i>
+              <i class="fas fa-compass" aria-hidden="true"></i>
               <span x-text="getTourSteps()[tourStep].title"></span>
             </h4>
             <button class="btn btn-close" style="font-size:1.5rem;background:transparent;border:none;color:var(--text-muted);cursor:pointer" @click="endTour()">&times;</button>
@@ -268,7 +268,7 @@ async function renderOverview(content, user) {
   content.innerHTML = `
     <div class="card animate-on-scroll">
       <div class="card-header">
-        <h3><i class="fas fa-tachometer-alt"></i> ${t("dash.overview")}</h3>
+        <h3><i class="fas fa-tachometer-alt" aria-hidden="true"></i> ${t("dash.overview")}</h3>
       </div>
       <div class="card-body">
         <p class="text-muted mt-1">${t("dash.welcome")}, <strong>${escapeHtml(user?.fullName || "User")}</strong>!</p>
@@ -277,10 +277,10 @@ async function renderOverview(content, user) {
     </div>
     <div class="row g-3 mt-3">
       <div class="col-sm-6">
-        <div class="card animate-on-scroll stagger-1" id="dashOrders"><i class="fas fa-spinner spinner"></i> ${t("common.loading")}</div>
+        <div class="card animate-on-scroll stagger-1" id="dashOrders"><i class="fas fa-spinner spinner" aria-hidden="true"></i> ${t("common.loading")}</div>
       </div>
       <div class="col-sm-6">
-        <div class="card animate-on-scroll stagger-2" id="dashProducts"><i class="fas fa-spinner spinner"></i> ${t("common.loading")}</div>
+        <div class="card animate-on-scroll stagger-2" id="dashProducts"><i class="fas fa-spinner spinner" aria-hidden="true"></i> ${t("common.loading")}</div>
       </div>
     </div>
   `;
@@ -289,7 +289,7 @@ async function renderOverview(content, user) {
   try {
     const orders = await api.get("/orders", { pageSize: 1 });
     document.getElementById("dashOrders").innerHTML =
-      `<h3><i class="fas fa-box"></i> ${t("dash.orders")}</h3><p class="fs-2 fw-bold text-primary">${orders.totalCount || orders.total || 0}</p><p class="text-muted">${t("dash.totalOrders")}</p>`;
+      `<h3><i class="fas fa-box" aria-hidden="true"></i> ${t("dash.orders")}</h3><p class="fs-2 fw-bold text-primary">${orders.totalCount || orders.total || 0}</p><p class="text-muted">${t("dash.totalOrders")}</p>`;
   } catch {
     document.getElementById("dashOrders").innerHTML =
       `<div class="alert alert-info" role="alert">${t("common.error")}</div>`;
@@ -311,13 +311,13 @@ async function renderOverview(content, user) {
         banner.className = "alert alert-info animate-on-scroll d-flex align-items-center gap-3 flex-wrap mb-3";
         banner.setAttribute("role", "status");
         banner.innerHTML = `
-          <i class="fas fa-store fs-5 flex-shrink-0"></i>
+          <i class="fas fa-store fs-5 flex-shrink-0" aria-hidden="true"></i>
           <span class="flex-fill">
             <strong>${t("seller.setupRequired") || "Set up your seller profile"}</strong> —
             ${t("seller.setupDesc") || "Complete your seller profile before listing products."}
           </span>
           <a href="#/seller-profile" class="btn btn-primary btn-sm">
-            ${t("seller.create") || "Set up profile"} <i class="fas fa-arrow-right"></i>
+            ${t("seller.create") || "Set up profile"} <i class="fas fa-arrow-right" aria-hidden="true"></i>
           </a>`;
         overviewEl.prepend(banner);
       }
@@ -328,19 +328,19 @@ async function renderOverview(content, user) {
     try {
       const products = await api.get("/products/my", { pageSize: 1 });
       document.getElementById("dashProducts").innerHTML =
-        `<h3><i class="fas fa-tag"></i> ${t("dash.products")}</h3><p class="fs-2 fw-bold text-primary">${products.totalCount || products.total || 0}</p><p class="text-muted">${t("dash.yourProducts")}</p>`;
+        `<h3><i class="fas fa-tag" aria-hidden="true"></i> ${t("dash.products")}</h3><p class="fs-2 fw-bold text-primary">${products.totalCount || products.total || 0}</p><p class="text-muted">${t("dash.yourProducts")}</p>`;
     } catch (e) {
       document.getElementById("dashProducts").innerHTML =
-        `<div class="card text-center p-4"><h3><i class="fas fa-tag"></i> ${t("dash.products")}</h3><p class="text-muted mt-2">${t("dash.productsNotAvailable")}</p></div>`;
+        `<div class="card text-center p-4"><h3><i class="fas fa-tag" aria-hidden="true"></i> ${t("dash.products")}</h3><p class="text-muted mt-2">${t("dash.productsNotAvailable")}</p></div>`;
     }
   } else {
     document.getElementById("dashProducts").innerHTML =
-      `<div class="card text-center p-4"><h3><i class="fas fa-tag"></i> ${t("dash.products")}</h3><p class="text-muted mt-2">${t("dash.productsNotAvailable")}</p></div>`;
+      `<div class="card text-center p-4"><h3><i class="fas fa-tag" aria-hidden="true"></i> ${t("dash.products")}</h3><p class="text-muted mt-2">${t("dash.productsNotAvailable")}</p></div>`;
   }
 }
 
 async function renderOrders(content) {
-  content.innerHTML = `<div class="card"><div class="card-header"><h3><i class="fas fa-box"></i> ${t("dash.orders")}</h3></div><div class="card-body"><div id="ordersList"><i class="fas fa-spinner spinner"></i> ${t("common.loading")}</div></div></div>`;
+  content.innerHTML = `<div class="card"><div class="card-header"><h3><i class="fas fa-box" aria-hidden="true"></i> ${t("dash.orders")}</h3></div><div class="card-body"><div id="ordersList"><i class="fas fa-spinner spinner" aria-hidden="true"></i> ${t("common.loading")}</div></div></div>`;
 
   let page = 1;
   const pageSize = 10;
@@ -408,7 +408,7 @@ async function renderOrders(content) {
           );
           if (!ok) return;
           btn.disabled = true;
-          btn.innerHTML = `<i class="fas fa-spinner spinner"></i> ${t("order.cancelling")}`;
+          btn.innerHTML = `<i class="fas fa-spinner spinner" aria-hidden="true"></i> ${t("order.cancelling")}`;
           try {
             await api.put(`/orders/${orderId}/cancel`);
             showToast(t("order.cancelled"), "success");
@@ -433,8 +433,8 @@ async function renderMyProducts(content) {
   let editingProductId = null;
   content.innerHTML = `
     <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-      <h3><i class="fas fa-tag"></i> ${t("dash.products")}</h3>
-      <button class="btn btn-primary btn-sm" id="showProductForm"><i class="fas fa-plus"></i> ${t("product.create")}</button>
+      <h3><i class="fas fa-tag" aria-hidden="true"></i> ${t("dash.products")}</h3>
+      <button class="btn btn-primary btn-sm" id="showProductForm"><i class="fas fa-plus" aria-hidden="true"></i> ${t("product.create")}</button>
     </div>
     <div id="productFormContainer" class="d-none card card-sm mb-3" style="max-width:500px">
       <h4 class="mb-2">${t("product.create")}</h4>
@@ -484,7 +484,7 @@ async function renderMyProducts(content) {
       const draftBanner = document.createElement("div");
       draftBanner.className = "alert alert-info d-flex justify-content-between align-items-center mb-3";
       draftBanner.innerHTML = `
-        <span><i class="fas fa-history"></i> ${t("product.draftRestored")}</span>
+        <span><i class="fas fa-history" aria-hidden="true"></i> ${t("product.draftRestored")}</span>
         <button class="btn btn-ghost btn-sm" id="discardDraftBtn">${t("product.discardDraft")}</button>
       `;
       const form = document.getElementById("productFormContainer");
@@ -537,7 +537,7 @@ async function renderMyProducts(content) {
       e.preventDefault();
       const submit = document.getElementById("prodSubmit");
       submit.disabled = true;
-      submit.innerHTML = `<i class="fas fa-spinner spinner"></i> ${t("product.saving")}`;
+      submit.innerHTML = `<i class="fas fa-spinner spinner" aria-hidden="true"></i> ${t("product.saving")}`;
       const alertDiv = document.getElementById("productAlert");
       alertDiv.innerHTML = "";
       try {
@@ -644,9 +644,9 @@ async function renderMyProducts(content) {
               <td>${p.stockQuantity ?? "-"}</td>
               <td class="d-flex gap-1 flex-nowrap">
                 <a href="#/product-detail?id=${p.id}" class="btn btn-outline btn-sm">${t("dash.view")}</a>
-                <button class="btn btn-ghost btn-sm edit-product-btn" data-product-id="${p.id}"><i class="fas fa-pen"></i> ${t("product.edit")}</button>
-                <button class="btn btn-ghost btn-sm delete-product-btn text-danger" data-product-id="${p.id}"><i class="fas fa-trash"></i> ${t("common.delete")}</button>
-                ${!p.isAuctioned && sellerRoles ? `<button class="btn btn-primary btn-sm start-auction-btn" data-product-id="${p.id}" data-product-title="${escapeHtml(p.title)}" aria-label="${t("auction.startAuction")}"><i class="fas fa-gavel"></i></button>` : ""}
+                <button class="btn btn-ghost btn-sm edit-product-btn" data-product-id="${p.id}"><i class="fas fa-pen" aria-hidden="true"></i> ${t("product.edit")}</button>
+                <button class="btn btn-ghost btn-sm delete-product-btn text-danger" data-product-id="${p.id}"><i class="fas fa-trash" aria-hidden="true"></i> ${t("common.delete")}</button>
+                ${!p.isAuctioned && sellerRoles ? `<button class="btn btn-primary btn-sm start-auction-btn" data-product-id="${p.id}" data-product-title="${escapeHtml(p.title)}" aria-label="${t("auction.startAuction")}"><i class="fas fa-gavel" aria-hidden="true"></i></button>` : ""}
               </td>
             </tr>
           `,
@@ -708,7 +708,7 @@ async function renderMyProducts(content) {
     });
   } catch (e) {
     document.getElementById("myProductsList").innerHTML =
-      `<div class="card text-center p-4"><h3><i class="fas fa-tag"></i> ${t("dash.products")}</h3><p class="text-muted mt-2">${t("dash.productsNotAvailable")}</p></div>`;
+      `<div class="card text-center p-4"><h3><i class="fas fa-tag" aria-hidden="true"></i> ${t("dash.products")}</h3><p class="text-muted mt-2">${t("dash.productsNotAvailable")}</p></div>`;
   }
 }
 
@@ -729,7 +729,7 @@ function showAuctionModal(productId, productTitle) {
 
   overlay.innerHTML = `
     <div class="modal" onclick="event.stopPropagation()" style="max-width:460px">
-      <h3><i class="fas fa-gavel"></i> ${t("auctions.title")}${productTitle ? ` — ${escapeHtml(productTitle)}` : ""}</h3>
+      <h3><i class="fas fa-gavel" aria-hidden="true"></i> ${t("auctions.title")}${productTitle ? ` — ${escapeHtml(productTitle)}` : ""}</h3>
       <div id="auctionModalAlert"></div>
       <form id="auctionModalForm" novalidate>
         ${needsProductPicker ? `
@@ -757,7 +757,7 @@ function showAuctionModal(productId, productTitle) {
         </div>
         <div class="modal-actions">
           <button type="button" class="btn btn-ghost" id="auctionModalCancel">${t("common.cancel") || "Cancel"}</button>
-          <button type="submit" class="btn btn-primary" id="auctionModalSubmit"><i class="fas fa-gavel"></i> ${t("auctions.title")}</button>
+          <button type="submit" class="btn btn-primary" id="auctionModalSubmit"><i class="fas fa-gavel" aria-hidden="true"></i> ${t("auctions.title")}</button>
         </div>
       </form>
     </div>
@@ -795,7 +795,7 @@ function showAuctionModal(productId, productTitle) {
     const alertDiv = document.getElementById("auctionModalAlert");
     alertDiv.innerHTML = "";
     submit.disabled = true;
-    submit.innerHTML = `<i class="fas fa-spinner spinner"></i> ${t("auction.placingBid")}`;
+    submit.innerHTML = `<i class="fas fa-spinner spinner" aria-hidden="true"></i> ${t("auction.placingBid")}`;
 
     try {
       const selectedId = needsProductPicker
@@ -827,16 +827,16 @@ function showAuctionModal(productId, productTitle) {
 async function renderDashAuctions(content) {
   content.innerHTML = `
     <div class="card text-center p-4">
-      <h3><i class="fas fa-gavel"></i> ${t("dash.auctions")}</h3>
+      <h3><i class="fas fa-gavel" aria-hidden="true"></i> ${t("dash.auctions")}</h3>
       <p class="text-muted mb-3">${t("auction.startNew") || "Start a new auction for any product"}</p>
-      <button class="btn btn-primary" id="createNewAuctionBtn"><i class="fas fa-plus"></i> ${t("auctions.title") || "Create Auction"}</button>
+      <button class="btn btn-primary" id="createNewAuctionBtn"><i class="fas fa-plus" aria-hidden="true"></i> ${t("auctions.title") || "Create Auction"}</button>
     </div>
   `;
   document.getElementById("createNewAuctionBtn").addEventListener("click", () => showAuctionModal());
 }
 
 async function renderWishlist(content) {
-  content.innerHTML = `<div class="card"><div class="card-header"><h3><i class="fas fa-heart"></i> ${t("dash.wishlist")}</h3></div><div class="card-body"><div id="wishlistItems"><i class="fas fa-spinner spinner"></i> ${t("common.loading")}</div></div></div>`;
+  content.innerHTML = `<div class="card"><div class="card-header"><h3><i class="fas fa-heart" aria-hidden="true"></i> ${t("dash.wishlist")}</h3></div><div class="card-body"><div id="wishlistItems"><i class="fas fa-spinner spinner" aria-hidden="true"></i> ${t("common.loading")}</div></div></div>`;
   try {
       const data = await api.get("/wishlist", { pageSize: 50 });
     const items = data.items || data.data || data;
@@ -863,16 +863,16 @@ async function renderWishlist(content) {
                 <div class="d-flex gap-2 flex-wrap">
                   <a href="#/product-detail?id=${w.productId}"
                      class="btn btn-outline btn-sm">
-                    <i class="fas fa-eye"></i> ${t("common.view") || "View"}
+                    <i class="fas fa-eye" aria-hidden="true"></i> ${t("common.view") || "View"}
                   </a>
                   <button class="btn btn-primary btn-sm add-wishlist-to-cart"
                     data-product-id="${w.productId}"
                     aria-label="${t('product.addToCart')}">
-                    <i class="fas fa-cart-plus"></i>
+                    <i class="fas fa-cart-plus" aria-hidden="true"></i>
                   </button>
                   <button class="btn btn-ghost btn-sm remove-wishlist"
                     data-id="${w.productId}" aria-label="${t('common.remove')}">
-                    <i class="fas fa-trash text-danger"></i>
+                    <i class="fas fa-trash text-danger" aria-hidden="true"></i>
                   </button>
                 </div>
               </td>
@@ -905,7 +905,7 @@ async function renderWishlist(content) {
     content.querySelectorAll(".add-wishlist-to-cart").forEach((btn) => {
       btn.addEventListener("click", async () => {
         btn.disabled = true;
-        btn.innerHTML = `<i class="fas fa-spinner spinner"></i>`;
+        btn.innerHTML = `<i class="fas fa-spinner spinner" aria-hidden="true"></i>`;
         try {
           await api.post("/cart/items", {
             productId: parseInt(btn.dataset.productId),
@@ -913,15 +913,15 @@ async function renderWishlist(content) {
           });
           showToast(t("product.addedToCart"), "success");
           updateCartBadge();
-          btn.innerHTML = `<i class="fas fa-check"></i>`;
+          btn.innerHTML = `<i class="fas fa-check" aria-hidden="true"></i>`;
           setTimeout(() => {
             btn.disabled = false;
-            btn.innerHTML = `<i class="fas fa-cart-plus"></i>`;
+            btn.innerHTML = `<i class="fas fa-cart-plus" aria-hidden="true"></i>`;
           }, 1500);
         } catch (e) {
           showToast(e.message, "error");
           btn.disabled = false;
-          btn.innerHTML = `<i class="fas fa-cart-plus"></i>`;
+          btn.innerHTML = `<i class="fas fa-cart-plus" aria-hidden="true"></i>`;
         }
       });
     });
@@ -934,7 +934,7 @@ async function renderWishlist(content) {
 }
 
 async function renderNotifications(content) {
-  content.innerHTML = `<div class="card animate-on-scroll"><div class="card-header"><h3><i class="fas fa-bell"></i> ${t("dash.notifications")}</h3></div><div class="card-body"><div class="d-flex gap-2 mb-2"><button class="btn btn-sm btn-ghost" id="markAllRead"><i class="fas fa-check-double"></i> ${t("notif.markAllRead")}</button></div><div id="notifList"><i class="fas fa-spinner spinner"></i> ${t("common.loading")}</div></div></div>`;
+  content.innerHTML = `<div class="card animate-on-scroll"><div class="card-header"><h3><i class="fas fa-bell" aria-hidden="true"></i> ${t("dash.notifications")}</h3></div><div class="card-body"><div class="d-flex gap-2 mb-2"><button class="btn btn-sm btn-ghost" id="markAllRead"><i class="fas fa-check-double" aria-hidden="true"></i> ${t("notif.markAllRead")}</button></div><div id="notifList"><i class="fas fa-spinner spinner" aria-hidden="true"></i> ${t("common.loading")}</div></div></div>`;
   try {
     const data = await api.get("/notifications", { pageSize: 50 });
     const notifs = normalizeNotifications(data);
@@ -956,7 +956,7 @@ async function renderNotifications(content) {
           <p class="text-muted small">${escapeHtml(n.message)}</p>
           <small class="text-muted">${formatDate(n.createdAt)}</small>
         </div>
-        ${!n.isRead ? `<button class="btn btn-sm btn-ghost mark-read" aria-label="${t('notif.markAsRead') || 'Mark as read'}" data-id="${n.id}"><i class="fas fa-check"></i></button>` : ""}
+        ${!n.isRead ? `<button class="btn btn-sm btn-ghost mark-read" aria-label="${t('notif.markAsRead') || 'Mark as read'}" data-id="${n.id}"><i class="fas fa-check" aria-hidden="true"></i></button>` : ""}
       </div>
     `,
       )
@@ -1035,7 +1035,7 @@ function renderProfile(content, user) {
   content.innerHTML = `
     <div class="card animate-on-scroll">
       <div class="card-header">
-        <h3><i class="fas fa-user"></i> ${t("dash.profile")}</h3>
+        <h3><i class="fas fa-user" aria-hidden="true"></i> ${t("dash.profile")}</h3>
       </div>
       <div class="card-body">
       <form id="profileForm">
@@ -1088,7 +1088,7 @@ function renderProfile(content, user) {
       if (!valid) return;
 
       submit.disabled = true;
-      submit.innerHTML = `<i class="fas fa-spinner spinner"></i> ${t("dash.updating")}`;
+      submit.innerHTML = `<i class="fas fa-spinner spinner" aria-hidden="true"></i> ${t("dash.updating")}`;
       alertDiv.innerHTML = "";
 
       try {
@@ -1112,7 +1112,7 @@ function renderChangePassword(content) {
   content.innerHTML = `
     <div class="card animate-on-scroll">
       <div class="card-header">
-        <h3><i class="fas fa-key"></i> ${t("dash.changePassword")}</h3>
+        <h3><i class="fas fa-key" aria-hidden="true"></i> ${t("dash.changePassword")}</h3>
       </div>
       <div class="card-body">
       <form id="passwordForm">
@@ -1180,7 +1180,7 @@ function renderChangePassword(content) {
       if (!valid) return;
 
       submit.disabled = true;
-      submit.innerHTML = `<i class="fas fa-spinner spinner"></i> ${t("dash.changing")}`;
+      submit.innerHTML = `<i class="fas fa-spinner spinner" aria-hidden="true"></i> ${t("dash.changing")}`;
       alertDiv.innerHTML = "";
 
       try {

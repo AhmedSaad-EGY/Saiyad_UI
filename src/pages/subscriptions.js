@@ -11,7 +11,7 @@ export default async function renderSubscriptions(container) {
   if (!(await requireAuth())) return;
 
   container.innerHTML = `
-    <div class="section-header"><h2><i class="fas fa-crown"></i> ${t("subscriptions.title")}</h2></div>
+    <div class="section-header"><h2><i class="fas fa-crown" aria-hidden="true"></i> ${t("subscriptions.title")}</h2></div>
     <div id="subs-root">
       <div class="skeleton-grid skeleton-shimmer">
         <div class="skeleton-card"><div class="skeleton-card-body"><div class="skeleton skeleton-title"></div><div class="skeleton skeleton-text" style="width:40%"></div><div class="skeleton skeleton-text" style="height:30px;width:50%"></div><div class="skeleton skeleton-text short"></div><div class="skeleton skeleton-text short"></div></div></div>
@@ -49,13 +49,13 @@ export default async function renderSubscriptions(container) {
         <div class="d-flex gap-3 flex-wrap mb-4">
           ${walletBalance !== null ? `
             <div class="card card-sm d-flex align-items-center gap-3 p-3">
-              <i class="fas fa-wallet fs-6 text-primary"></i>
+              <i class="fas fa-wallet fs-6 text-primary" aria-hidden="true"></i>
               <div><small class="text-muted">${t("wallet.available")}</small>
               <div class="fw-bold">${formatPrice(walletBalance)}</div></div>
             </div>` : ''}
           ${mySubscription ? `
             <div class="card card-sm d-flex align-items-center gap-3 p-3">
-              <i class="fas fa-crown fs-6 text-primary"></i>
+              <i class="fas fa-crown fs-6 text-primary" aria-hidden="true"></i>
               <div><small class="text-muted">${t("subscriptions.currentPlan")}</small>
               <div class="fw-bold">
                 ${escapeHtml(mySubscription.tier || t('subscriptions.noPlan'))}
@@ -75,7 +75,7 @@ export default async function renderSubscriptions(container) {
               ${isPop ? `<span class="position-absolute" style="top:-10px;right:16px;background:var(--primary);color:var(--text-inverse);padding:2px 12px;border-radius:var(--radius-xl);font-size:0.78rem;font-weight:600">${t("subscriptions.popular")}</span>` : ''}
               <div class="card-body" style="display:flex;flex-direction:column">
               <div class="text-center mb-3">
-                <i class="fas ${getPlanIcon(p.tier)} text-primary mb-2" style="font-size:2rem"></i>
+                <i class="fas ${getPlanIcon(p.tier)} text-primary mb-2" style="font-size:2rem" aria-hidden="true"></i>
                 <h3>${escapeHtml(p.name)}</h3>
                 ${p.description ? `<p class="text-muted" style="font-size:0.88rem">${escapeHtml(p.description)}</p>` : ''}
               </div>
@@ -88,7 +88,7 @@ export default async function renderSubscriptions(container) {
               </div>
               <ul class="list-unstyled mb-3" style="flex:1">
                 ${(p.features || []).map(f => `
-                  <li class="py-2" style="border-bottom:1px solid var(--border)"><i class="fas fa-check text-success me-2" style="width:16px"></i>${escapeHtml(f)}</li>
+                  <li class="py-2" style="border-bottom:1px solid var(--border)"><i class="fas fa-check text-success me-2" style="width:16px" aria-hidden="true"></i>${escapeHtml(f)}</li>
                 `).join('')}
               </ul>
               <button class="btn ${isCurrent ? 'btn-ghost' : insufficient ? 'btn-outline' : 'btn-primary'} sub-upgrade-btn"
@@ -101,7 +101,7 @@ export default async function renderSubscriptions(container) {
           }).join('')}
         </div>` : `
         <div class="empty-state mt-4">
-          <div class="empty-state-visual"><i class="fas fa-crown" style="font-size:3rem;color:var(--text-muted)"></i></div>
+          <div class="empty-state-visual"><i class="fas fa-crown" style="font-size:3rem;color:var(--text-muted)" aria-hidden="true"></i></div>
           <h3>${t("subscriptions.noPlans") || "No plans available"}</h3>
           <p class="text-muted">${t("subscriptions.noPlansDesc") || "Subscription plans are not available at this time."}</p>
         </div>`}
@@ -118,7 +118,7 @@ export default async function renderSubscriptions(container) {
         const tier = btn.dataset.tier;
         if (!tier) return;
         btn.disabled = true;
-        btn.innerHTML = `<i class="fas fa-spinner spinner"></i> ${t("common.loading")}`;
+        btn.innerHTML = `<i class="fas fa-spinner spinner" aria-hidden="true"></i> ${t("common.loading")}`;
         try {
           const ref = createPaymentReference(tier);
           await api.post("/subscriptions/upgrade", { tier, paymentReference: ref });
@@ -136,7 +136,7 @@ export default async function renderSubscriptions(container) {
     if (root) {
       root.innerHTML = `
         <div class="empty-state mt-4">
-          <div class="empty-state-visual"><i class="fas fa-crown fs-1 text-muted"></i></div>
+          <div class="empty-state-visual"><i class="fas fa-crown fs-1 text-muted" aria-hidden="true"></i></div>
           <h3>${t("common.error")}</h3>
           <p class="text-muted">${t("common.loadFailed") || "Failed to load subscription plans."}</p>
         </div>`;

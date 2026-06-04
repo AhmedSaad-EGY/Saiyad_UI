@@ -343,3 +343,24 @@
 .op-100 { opacity: 1; }
 
 
+
+/* ── bounceIn — used by badge appearance, notification dot ──── */
+@keyframes bounceIn {
+  0%   { opacity: 0; transform: scale(0.3); }
+  50%  { opacity: 1; transform: scale(1.08); }
+  70%  { transform: scale(0.95); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+/* ── ripple — used by button click effect ────────────────────── */
+@keyframes ripple {
+  to { transform: scale(2.5); opacity: 0; }
+}
+
+/* ── theme-spin — used by theme toggle button ────────────────── */
+@keyframes theme-spin {
+  0%   { transform: rotate(0deg) scale(1); }
+  50%  { transform: rotate(200deg) scale(0.8); }
+  100% { transform: rotate(360deg) scale(1); }
+}
+.theme-spin { animation: theme-spin 0.4s var(--ease-out); }

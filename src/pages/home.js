@@ -100,12 +100,12 @@ Alpine.data('homePage', () => ({
     if (!viewed.length) return '';
     return `
       <div class="section-header animate-on-scroll">
-        <h2><i class="fas fa-history"></i> ${t('common.recentlyViewed')}</h2>
+        <h2><i class="fas fa-history" aria-hidden="true"></i> ${t('common.recentlyViewed')}</h2>
       </div>
       <div class="recently-viewed-strip">
         ${viewed.map(v => `
           <a href="${v.type === 'auction' ? '#/auction-detail?id=' : '#/product-detail?id='}${v.id}" class="recently-viewed-item" title="${escapeHtml(v.title)}">
-            ${v.image ? `<img src="${v.image}" alt="${escapeHtml(v.title)}" loading="lazy">` : '<div style="width:60px;height:60px;background:var(--body-bg);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;color:var(--text-muted)"><i class="fas fa-image"></i></div>'}
+            ${v.image ? `<img src="${v.image}" alt="${escapeHtml(v.title)}" loading="lazy">` : '<div style="width:60px;height:60px;background:var(--body-bg);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;color:var(--text-muted)"><i class="fas fa-image" aria-hidden="true"></i></div>'}
             <div class="recently-viewed-info">
               <span class="recently-viewed-title">${escapeHtml(v.title)}</span>
               ${v.price != null ? `<span class="recently-viewed-price">${formatPrice(v.price)}</span>` : ''}
@@ -140,22 +140,22 @@ export default async function renderHome(container) {
           <h1>${t('home.welcome')}</h1>
           <p>${t('home.subtitle')}</p>
           <div class="hero-actions">
-            <a href="#/products" class="btn btn-primary btn-lg"><i class="fas fa-store"></i> ${t('home.browseProducts')}</a>
-            <a href="#/auctions" class="btn btn-outline btn-lg"><i class="fas fa-gavel"></i> ${t('home.viewAuctions')}</a>
+            <a href="#/products" class="btn btn-primary btn-lg"><i class="fas fa-store" aria-hidden="true"></i> ${t('home.browseProducts')}</a>
+            <a href="#/auctions" class="btn btn-outline btn-lg"><i class="fas fa-gavel" aria-hidden="true"></i> ${t('home.viewAuctions')}</a>
           </div>
         </div>
       </section>
 
       <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 my-5">
-        <div class="feature-card animate-on-scroll stagger-1"><i class="fas fa-fish"></i><h3>${t('home.qualityGear')}</h3><p>${t('home.qualityGearDesc')}</p></div>
-        <div class="feature-card animate-on-scroll stagger-2"><i class="fas fa-gavel"></i><h3>${t('home.liveAuctions')}</h3><p>${t('home.liveAuctionsDesc')}</p></div>
-        <div class="feature-card animate-on-scroll stagger-3"><i class="fas fa-truck"></i><h3>${t('home.fastShipping')}</h3><p>${t('home.fastShippingDesc')}</p></div>
-        <div class="feature-card animate-on-scroll stagger-4"><i class="fas fa-shield-alt"></i><h3>${t('home.securePayments')}</h3><p>${t('home.securePaymentsDesc')}</p></div>
+        <div class="feature-card animate-on-scroll stagger-1"><i class="fas fa-fish" aria-hidden="true"></i><h3>${t('home.qualityGear')}</h3><p>${t('home.qualityGearDesc')}</p></div>
+        <div class="feature-card animate-on-scroll stagger-2"><i class="fas fa-gavel" aria-hidden="true"></i><h3>${t('home.liveAuctions')}</h3><p>${t('home.liveAuctionsDesc')}</p></div>
+        <div class="feature-card animate-on-scroll stagger-3"><i class="fas fa-truck" aria-hidden="true"></i><h3>${t('home.fastShipping')}</h3><p>${t('home.fastShippingDesc')}</p></div>
+        <div class="feature-card animate-on-scroll stagger-4"><i class="fas fa-shield-alt" aria-hidden="true"></i><h3>${t('home.securePayments')}</h3><p>${t('home.securePaymentsDesc')}</p></div>
       </div>
 
       <!-- Role quick links -->
       <div x-show="roleLinks.length" class="section-header animate-on-scroll">
-        <h2><i class="fas fa-user"></i> ${t('common.quickLinks')}</h2>
+        <h2><i class="fas fa-user" aria-hidden="true"></i> ${t('common.quickLinks')}</h2>
         <div class="d-flex gap-2 flex-wrap">
           <template x-for="link in roleLinks" :key="link.label">
             <a :href="link.href" class="btn btn-outline btn-sm"><i :class="'fas ' + link.icon"></i> <span x-text="link.label"></span></a>
@@ -181,7 +181,7 @@ export default async function renderHome(container) {
 
       <!-- Product error -->
       <div x-show="!loading && error" class="empty-state">
-        <div class="empty-state-visual"><i class="fas fa-exclamation-triangle text-muted" style="font-size:3.5rem"></i></div>
+        <div class="empty-state-visual"><i class="fas fa-exclamation-triangle text-muted" style="font-size:3.5rem" aria-hidden="true"></i></div>
         <h3>${t('home.loadError')}</h3>
         <p x-text="error"></p>
         <button class="btn btn-primary mt-3" @click="loadData()">${t('common.retry')}</button>
@@ -198,7 +198,7 @@ export default async function renderHome(container) {
               <div class="product-card-title" x-text="p.title || 'Product'"></div>
               <div class="product-card-price" x-text="formatPrice(p.price)"></div>
               <div class="product-card-meta">
-                <span x-show="p.categoryName" class="product-card-category"><i class="fas fa-tag"></i><span x-text="p.categoryName"></span></span>
+                <span x-show="p.categoryName" class="product-card-category"><i class="fas fa-tag" aria-hidden="true"></i><span x-text="p.categoryName"></span></span>
               </div>
             </div>
           </a>
@@ -238,12 +238,12 @@ export default async function renderHome(container) {
 
       <!-- Empty states -->
       <div x-show="!loading && !error && !products.length" class="empty-state">
-        <div class="empty-state-visual"><i class="fas fa-box-open text-muted" style="font-size:3.5rem"></i></div>
+        <div class="empty-state-visual"><i class="fas fa-box-open text-muted" style="font-size:3.5rem" aria-hidden="true"></i></div>
         <h3>${t('home.noProducts')}</h3>
       </div>
 
       <div x-show="!loading && !error && !auctions.length" class="empty-state">
-        <div class="empty-state-visual"><i class="fas fa-gavel text-muted" style="font-size:3.5rem"></i></div>
+        <div class="empty-state-visual"><i class="fas fa-gavel text-muted" style="font-size:3.5rem" aria-hidden="true"></i></div>
         <h3>${t('home.noAuctions')}</h3>
       </div>
 

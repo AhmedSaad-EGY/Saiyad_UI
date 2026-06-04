@@ -216,7 +216,7 @@ export default async function renderProducts(_container, _fullPath, params) {
   setPageMeta('Fish & Seafood Products', 'Browse fresh fish and seafood on Sayiad marketplace.');
   _container.innerHTML = `
     <div x-data="productsPage" class="products-page-alpine" @keydown.escape.window="closeSearchOverlay(); filterSheetOpen = false">
-      <div class="section-header"><h2><i class="fas fa-store"></i> ${t('products.title')}</h2></div>
+      <div class="section-header"><h2><i class="fas fa-store" aria-hidden="true"></i> ${t('products.title')}</h2></div>
       <div class="search-bar">
         <input type="text" class="form-input form-control" x-model="search" @input.debounce.400ms="reload()" placeholder="${t('products.search')}" />
         <div class="desktop-filters">
@@ -246,11 +246,11 @@ export default async function renderProducts(_container, _fullPath, params) {
           <a href="#/products" class="btn btn-ghost btn-sm" @click.prevent="resetFilters()">${t('common.clearFilters')}</a>
         </div>
         <div class="d-flex gap-2 align-items-center">
-          <button class="btn btn-outline btn-icon search-toggle-btn" @click="openSearchOverlay()" aria-label="${t('common.search')}"><i class="fas fa-search"></i></button>
-          <button class="btn btn-outline btn-icon filter-toggle-btn" @click="filterSheetOpen = true" aria-label="${t('products.filters') || 'Open filters'}"><i class="fas fa-sliders-h"></i></button>
+          <button class="btn btn-outline btn-icon search-toggle-btn" @click="openSearchOverlay()" aria-label="${t('common.search')}"><i class="fas fa-search" aria-hidden="true"></i></button>
+          <button class="btn btn-outline btn-icon filter-toggle-btn" @click="filterSheetOpen = true" aria-label="${t('products.filters') || 'Open filters'}"><i class="fas fa-sliders-h" aria-hidden="true"></i></button>
           <div class="d-none d-md-flex btn-group rounded-pill overflow-hidden border">
-            <button class="btn btn-sm px-3" :class="!isListView ? 'btn-primary' : 'btn-ghost'" @click="isListView = false" aria-label="Grid View" title="Grid View"><i class="fas fa-th-large"></i></button>
-            <button class="btn btn-sm px-3" :class="isListView ? 'btn-primary' : 'btn-ghost'" @click="isListView = true" aria-label="List View" title="List View"><i class="fas fa-list"></i></button>
+            <button class="btn btn-sm px-3" :class="!isListView ? 'btn-primary' : 'btn-ghost'" @click="isListView = false" aria-label="Grid View" title="Grid View"><i class="fas fa-th-large" aria-hidden="true"></i></button>
+            <button class="btn btn-sm px-3" :class="isListView ? 'btn-primary' : 'btn-ghost'" @click="isListView = true" aria-label="List View" title="List View"><i class="fas fa-list" aria-hidden="true"></i></button>
           </div>
         </div>
       </div>
@@ -259,32 +259,32 @@ export default async function renderProducts(_container, _fullPath, params) {
       <div x-show="hasActiveFilters()" class="filter-chips" x-cloak>
         <template x-if="search">
           <span class="filter-chip" @click="removeFilter('search')">
-            <i class="fas fa-search"></i> <span x-text="'&quot;' + search + '&quot;'"></span> <i class="fas fa-times"></i>
+            <i class="fas fa-search" aria-hidden="true"></i> <span x-text="'&quot;' + search + '&quot;'"></span> <i class="fas fa-times" aria-hidden="true"></i>
           </span>
         </template>
         <template x-if="categoryId">
           <span class="filter-chip" @click="removeFilter('categoryId')">
-            <i class="fas fa-tag"></i> <span x-text="categories.find(c => String(c.id) === String(categoryId))?.name || 'Category'"></span> <i class="fas fa-times"></i>
+            <i class="fas fa-tag" aria-hidden="true"></i> <span x-text="categories.find(c => String(c.id) === String(categoryId))?.name || 'Category'"></span> <i class="fas fa-times" aria-hidden="true"></i>
           </span>
         </template>
         <template x-if="condition">
           <span class="filter-chip" @click="removeFilter('condition')">
-            <i class="fas fa-info-circle"></i> <span x-text="condition"></span> <i class="fas fa-times"></i>
+            <i class="fas fa-info-circle" aria-hidden="true"></i> <span x-text="condition"></span> <i class="fas fa-times" aria-hidden="true"></i>
           </span>
         </template>
         <template x-if="minPrice">
           <span class="filter-chip" @click="removeFilter('minPrice')">
-            <span x-text="'>= ' + formatPrice(minPrice)"></span> <i class="fas fa-times"></i>
+            <span x-text="'>= ' + formatPrice(minPrice)"></span> <i class="fas fa-times" aria-hidden="true"></i>
           </span>
         </template>
         <template x-if="maxPrice">
           <span class="filter-chip" @click="removeFilter('maxPrice')">
-            <span x-text="'<= ' + formatPrice(maxPrice)"></span> <i class="fas fa-times"></i>
+            <span x-text="'<= ' + formatPrice(maxPrice)"></span> <i class="fas fa-times" aria-hidden="true"></i>
           </span>
         </template>
         <template x-if="inStock">
           <span class="filter-chip" @click="removeFilter('inStock')">
-            <i class="fas fa-check-circle"></i> ${t('products.inStockOnly')} <i class="fas fa-times"></i>
+            <i class="fas fa-check-circle" aria-hidden="true"></i> ${t('products.inStockOnly')} <i class="fas fa-times" aria-hidden="true"></i>
           </span>
         </template>
         <button class="btn btn-ghost btn-sm text-primary py-0" @click="resetFilters()">${t('common.clearFilters')}</button>
@@ -310,7 +310,7 @@ export default async function renderProducts(_container, _fullPath, params) {
 
       <!-- Error state -->
       <div x-show="!loading && error" class="empty-state">
-        <div class="empty-state-visual"><i class="fas fa-exclamation-triangle text-muted" style="font-size:3.5rem"></i></div>
+        <div class="empty-state-visual"><i class="fas fa-exclamation-triangle text-muted" style="font-size:3.5rem" aria-hidden="true"></i></div>
         <h3>${t('products.loadError')}</h3>
         <p x-text="error"></p>
         <button class="btn btn-primary mt-3" @click="reload()">${t('common.retry')}</button>
@@ -328,7 +328,7 @@ export default async function renderProducts(_container, _fullPath, params) {
               <div class="product-card-title" x-text="p.title || 'Product'"></div>
               <div class="product-card-price" x-text="formatPrice(p.price)"></div>
               <div class="product-card-meta">
-                <span x-show="p.categoryName" class="product-card-category"><i class="fas fa-tag"></i><span x-text="p.categoryName"></span></span>
+                <span x-show="p.categoryName" class="product-card-category"><i class="fas fa-tag" aria-hidden="true"></i><span x-text="p.categoryName"></span></span>
                 <span x-show="p.stockQuantity != null" class="product-card-stock" x-text="p.stockQuantity + ' ${t('products.inStock')}'"></span>
               </div>
             </div>
@@ -338,7 +338,7 @@ export default async function renderProducts(_container, _fullPath, params) {
 
       <!-- Empty state -->
       <div x-show="!loading && !error && !products.length" class="empty-state">
-        <div class="empty-state-visual"><i class="fas fa-box-open text-muted" style="font-size:3.5rem"></i></div>
+        <div class="empty-state-visual"><i class="fas fa-box-open text-muted" style="font-size:3.5rem" aria-hidden="true"></i></div>
         <h3>${t('products.noProducts')}</h3>
         <p>${t('common.clearFilters')}</p>
         <button class="btn btn-primary mt-3" @click="resetFilters()">${t('common.clearFilters')}</button>
@@ -363,9 +363,9 @@ export default async function renderProducts(_container, _fullPath, params) {
       <div x-show="searchOverlayOpen" class="search-overlay open" @click.outside="closeSearchOverlay()">
         <div class="search-overlay-header">
           <input type="text" x-model="mobileSearch" id="productMobileSearchInput" class="form-input form-control" placeholder="${t('products.search')}" @keydown.enter="applyMobileSearch()">
-          <button class="btn btn-ghost btn-icon" @click="closeSearchOverlay()" aria-label="${t('common.close')}"><i class="fas fa-times fa-lg"></i></button>
+          <button class="btn btn-ghost btn-icon" @click="closeSearchOverlay()" aria-label="${t('common.close')}"><i class="fas fa-times fa-lg" aria-hidden="true"></i></button>
         </div>
-        <button class="btn btn-primary mt-3 align-self-center" @click="applyMobileSearch()"><i class="fas fa-search"></i> ${t('common.search')}</button>
+        <button class="btn btn-primary mt-3 align-self-center" @click="applyMobileSearch()"><i class="fas fa-search" aria-hidden="true"></i> ${t('common.search')}</button>
       </div>
 
       <!-- Mobile filter bottom sheet -->
@@ -373,7 +373,7 @@ export default async function renderProducts(_container, _fullPath, params) {
         <div class="filter-sheet">
           <div class="filter-sheet-header">
             <h3>${t('products.filters')}</h3>
-            <button class="btn btn-ghost btn-icon" @click="filterSheetOpen = false" aria-label="${t('common.close')}"><i class="fas fa-times"></i></button>
+            <button class="btn btn-ghost btn-icon" @click="filterSheetOpen = false" aria-label="${t('common.close')}"><i class="fas fa-times" aria-hidden="true"></i></button>
           </div>
           <div class="filter-sheet-body">
             <div class="form-group">
@@ -417,7 +417,7 @@ export default async function renderProducts(_container, _fullPath, params) {
           </div>
           <div class="filter-sheet-footer">
             <button class="btn btn-ghost" @click="resetFilters(); filterSheetOpen = false">${t('common.clearFilters')}</button>
-            <button class="btn btn-primary" @click="applyMobileFilters()"><i class="fas fa-check"></i> ${t('common.showResults') || 'Show Results'}</button>
+            <button class="btn btn-primary" @click="applyMobileFilters()"><i class="fas fa-check" aria-hidden="true"></i> ${t('common.showResults') || 'Show Results'}</button>
           </div>
         </div>
       </div>

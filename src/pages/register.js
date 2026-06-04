@@ -175,7 +175,7 @@ export default function renderRegister(container) {
     <div x-data="registerForm" class="auth-page">
       <div class="card">
         <div class="card-header">
-          <h2><i class="fas fa-user-plus"></i> ${t("auth.register")}</h2>
+          <h2><i class="fas fa-user-plus" aria-hidden="true"></i> ${t("auth.register")}</h2>
         </div>
         <div class="card-body">
         <div id="registerAlert"></div>
@@ -306,7 +306,7 @@ function showVerificationOverlay(email, password) {
   overlay.innerHTML = `
     <div class="verify-overlay-card" id="verifyCard">
       <div class="verify-overlay-icon" id="verifyIcon">
-        <i class="fas fa-envelope" id="verifyIconInner"></i>
+        <i class="fas fa-envelope" id="verifyIconInner" aria-hidden="true"></i>
       </div>
       <h3 id="verifyTitle">${t("verify.waitingTitle")}</h3>
       <p id="verifyDesc">${t("verify.waitingDesc")} <strong>${escapeHtml(email)}</strong></p>
@@ -315,8 +315,8 @@ function showVerificationOverlay(email, password) {
       </div>
       <div id="verifyError" class="d-none alert alert-error"></div>
       <div class="verify-actions mt-4 d-flex flex-column gap-2">
-        <button class="btn btn-primary" id="verifyCheckBtn"><i class="fas fa-check-circle"></i> ${t("verify.alreadyVerified")}</button>
-        <button class="btn btn-ghost" id="verifyChangeEmailBtn"><i class="fas fa-arrow-left"></i> ${t("verify.useOtherEmail")}</button>
+        <button class="btn btn-primary" id="verifyCheckBtn"><i class="fas fa-check-circle" aria-hidden="true"></i> ${t("verify.alreadyVerified")}</button>
+        <button class="btn btn-ghost" id="verifyChangeEmailBtn"><i class="fas fa-arrow-left" aria-hidden="true"></i> ${t("verify.useOtherEmail")}</button>
       </div>
     </div>
   `;
@@ -396,7 +396,7 @@ function showVerificationOverlay(email, password) {
       if (!polling) return;
       document.getElementById("verifyCheckBtn").disabled = true;
       document.getElementById("verifyCheckBtn").innerHTML =
-        `<i class="fas fa-spinner spinner"></i>`;
+        `<i class="fas fa-spinner spinner" aria-hidden="true"></i>`;
       try {
         await doLogin();
         clearInterval(interval);
@@ -404,7 +404,7 @@ function showVerificationOverlay(email, password) {
       } catch (err) {
         document.getElementById("verifyCheckBtn").disabled = false;
         document.getElementById("verifyCheckBtn").innerHTML =
-          `<i class="fas fa-check-circle"></i> ${t("verify.alreadyVerified")}`;
+          `<i class="fas fa-check-circle" aria-hidden="true"></i> ${t("verify.alreadyVerified")}`;
         document.getElementById("verifyError").style.display = "block";
         document.getElementById("verifyError").textContent = err.message;
       }
