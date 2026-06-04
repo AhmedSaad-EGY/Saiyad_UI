@@ -1752,4 +1752,35 @@ Changed stat card columns from `col-sm-4` (fixed 4-col grid that left gaps when 
 
 ---
 
+## 49. POLISH — AUCTION-REQUESTS-REVIEW PAGE
+
+**Date**: June 4, 2026  
+**Action**: Polished the auction-requests-review dashboard tab with pagination, drawer CSS, and loading state.
+
+### Changes
+
+**`src/pages/auction-requests-review.js`**
+
+| Change | Detail |
+|--------|--------|
+| **Pagination** | Added `manualPaginationHtml` + `wirePagination` import; tracked `page`/`totalPages` variables; reads `res.totalPages` from backend `PagedResult`; renders prev/next bar below table |
+| **Loading state** | Shows centered spinner + "Loading..." text on every re-fetch (approve/reject) instead of stale table |
+| **Drawer inline styles → CSS** | Removed all inline `style` attributes from `.drawer-content` div |
+| **Drawer class toggling** | Replaced `style.right = "0"` → `classList.add("drawer-open")` and `style.right = "-500px"` → `classList.remove("drawer-open")` |
+| **Form cleanup** | Removed `novalidate` from approve form; removed duplicate `.form-control` class from all form inputs (`.form-input` already has all styling) |
+
+**`src/css/_components.css`**
+
+| Addition | Detail |
+|----------|--------|
+| `.drawer-overlay` | `justify-content: flex-end; align-items: stretch` (overrides modal-overlay centering) |
+| `.drawer-content` | Fixed position, `right: -100%`, `max-width: 500px`, `width: 100%`, full height, flex column, transition `right 0.3s ease-out`, shadow, border |
+| `.drawer-open` | `right: 0` |
+| `[dir="rtl"] .drawer-content` | Swaps left/right positioning, border, box-shadow for RTL |
+| `@media (max-width: 540px)` | `.drawer-content` full-width on mobile (`max-width: 100%`) |
+
+**Build**: ✅ 0 errors | **Commit**: `f503f4e`
+
+---
+
 *End of chat history record. Update this file at the start of each session by appending new sections.*

@@ -436,6 +436,7 @@ MODERATOR_ROLES = [Auctioneer, Admin]                  # Review + Analytics
 - ✅ **June 4: Profile page DOM + grid fix** — Removed stray `</div>` breaking DOM; changed stat columns `col-sm-4` → `col-sm` (auto-equal) to prevent gaps from hidden `x-show` items; added `max-width: 320px; margin-inline: auto` to stat cards | Build: ✅
 - ✅ **June 4: Upload limit 500KB → 5MB** — Increased frontend validation and updated EN/AR i18n toast messages | Build: ✅
 - ✅ **June 4: Backend upload 500 fix** — Changed `UploadController.cs` to copy `IFormFile` into `MemoryStream` once, avoiding double-read stream issue between `IsValidImageBytes` and Cloudinary upload | Build: ✅ 0 errors
+- ✅ **June 4: Auction-requests-review page polish** — Added pagination (prev/next), loading spinner on re-fetch, moved drawer inline styles to CSS with `.drawer-open` class toggling, RTL support, mobile full-width; removed duplicate `.form-control` and `novalidate` | Build: ✅
 
 ### Immediate (Next)
 1. **Phase 4 — Low Priority** (L1: WhatsApp link, L2: hreflang, L3: skip-link CSS, L4: unique titles, L5: focus styles)
