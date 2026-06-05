@@ -1,3 +1,5 @@
+import { t } from '../i18n/index.js';
+
 /**
  * SEO meta-tag manager for Sayiad.
  *
