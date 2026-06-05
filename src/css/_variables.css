@@ -163,7 +163,7 @@
    ============================================================ */
 [data-theme="dark"] {
   --primary:        oklch(0.72 0.17 250);
-  --primary-rgb:    100, 148, 237;
+  --primary-rgb:    80, 145, 235;
   --primary-dark:   oklch(0.60 0.19 250);
   --primary-light:  oklch(0.24 0.08 250);
   --primary-ghost:  oklch(0.72 0.17 250 / 0.12);

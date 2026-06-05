@@ -106,7 +106,7 @@
 
 /* ─── Dark Mode ────────────────────────────────────────────── */
 [data-theme="dark"] {
-  --bs-primary-rgb: 80, 145, 235;
+  --bs-primary-rgb: var(--primary-rgb, 80, 145, 235);
   --bs-secondary-rgb: 80, 180, 170;
   --bs-success-rgb: 90, 210, 130;
   --bs-danger-rgb: 225, 100, 70;
