@@ -487,21 +487,6 @@
   transform: scale(1.12);
 }
 
-/* Heart beat on wishlist toggle (uses Animate.css via animate() utility in JS) */
-.wishlist-active i,
-.fa-heart.wishlist-active {
-  color: var(--danger) !important;
-}
-
-.thumb-img {
-  border: 2px solid transparent;
-  transition: border-color var(--transition);
-}
-
-.thumb-active {
-  border-color: var(--primary) !important;
-}
-
 /* Lightbox
    ============================================================ */
 .lightbox {
@@ -824,10 +809,6 @@
 
 /* Urgent auction (pulse provided by Animate.css via animate__infinite on element) */
 .auction-urgent {
-  border-color: var(--danger) !important;
-}
-
-.auction-urgent:hover {
   border-color: var(--danger) !important;
 }
 
@@ -2705,20 +2686,6 @@ tr:last-child td {
 }
 
 /* ============================================================
-   PAGE TRANSITION WRAPPER
-   ============================================================ */
-.page-fade-enter {
-  opacity: 0;
-  transform: translateY(12px);
-}
-
-.page-fade-enter-active {
-  opacity: 1;
-  transform: translateY(0);
-  transition: opacity 0.25s var(--ease-out), transform 0.25s var(--ease-out);
-}
-
-/* ============================================================
    NOTIFICATION BELL
    ============================================================ */
 .notif-bell {
@@ -2780,14 +2747,6 @@ tr:last-child td {
    are now consolidated in _layout.css for single-file ownership.
    ============================================================ */
 
-
-/* 640px */
-@media (max-width: 640px) {
-  .cart-item {
-    flex-direction: column;
-    gap: var(--space-3);
-  }
-}
 
 /* 480px */
 @media (max-width: 480px) {
@@ -3138,16 +3097,7 @@ tr:last-child td {
   min-height: 44px;
 }
 
-/* Smooth scroll section anchors */
-.section-anchor {
-  scroll-margin-top: 88px;
-}
-
 /* Bid history row highlight animation */
-tr.bid-highlight {
-  background: var(--success-bg);
-}
-
 /* Scroll to top reset on nav — reset visible state before each page transition */
 #backToTop {
   display: flex;
@@ -3217,11 +3167,6 @@ tr.bid-highlight {
   display: flex;
   gap: var(--space-3);
   justify-content: center;
-}
-
-/* Search autocomplete */
-.autocomplete-item:hover {
-  background: var(--primary-ghost);
 }
 
 /* ============================================================
@@ -3690,12 +3635,6 @@ tr.bid-highlight {
   border-radius: var(--radius-lg) 0 0 var(--radius-lg);
 }
 
-.is-swiping {
-  transition: none !important;
-  touch-action: pan-y;
-  user-select: none;
-  -webkit-user-select: none;
-}
 
 /* ============================================================
    ORDER TIMELINE

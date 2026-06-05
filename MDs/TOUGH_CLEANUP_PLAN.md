@@ -2,7 +2,7 @@
 
 > **Last Updated**: June 5, 2026  
 > **Scope**: CSS dead code, undefined CSS variables, duplicate rules, empty sections, PWA manifest, vendor prefix, whitespace  
-> **Status**: Phase 1 done — Phase 2 ready  
+> **Status**: Phases 1-2 done — Phase 3 ready  
 > **Execution Order**: Phase 1 -> 2 -> 3 -> 4 -> 5 (build + verify after each phase)
 
 ---
@@ -25,33 +25,33 @@ Define missing CSS variables in src/css/_variables.css or fix references to use 
 
 ### 2A --- Remove Truly Dead CSS Selectors (no JS/HTML reference)
 
-| # | File | Lines | Selector(s) | Reason |
-|---|------|-------|-------------|--------|
-| 6 | _animations.css | 104 | .content-fade | Never used in any JS/HTML |
-| 7 | _components.css | 491-503 | .wishlist-active, .fa-heart.wishlist-active, .thumb-img, .thumb-active | No JS references |
-| 8 | _components.css | 834-845 | .auction-urgent | No JS references |
-| 9 | _components.css | 2710-2719 | .page-fade-enter, .page-fade-enter-active | Uses .op-0/.op-100 instead |
-| 10 | _components.css | 2786-2790 | .cart-item in @media (max-width: 640px) | Base class never defined, not used in JS |
-| 11 | _components.css | 3142-3144 | .section-anchor | No JS references |
-| 12 | _components.css | 3147-3149 | tr.bid-highlight | No JS references |
-| 13 | _components.css | 3223-3225 | .autocomplete-item:hover | Base class never defined |
-| 14 | _components.css | 3697 | .is-swiping | No JS references |
-| 15 | _layout.css | 605 | .badge:not(.d-none) { } | Empty rule -- does nothing |
+| # | File | Lines | Selector(s) | Reason | Status |
+|---|------|-------|-------------|--------|--------|
+| 6 | _animations.css | 104 | .content-fade | Never used in any JS/HTML | ✅ |
+| 7 | _components.css | 491-503 | .wishlist-active, .fa-heart.wishlist-active, .thumb-img, .thumb-active | No JS references | ✅ |
+| 8 | _components.css | 834-845 | .auction-urgent | No JS references | ✅ |
+| 9 | _components.css | 2710-2719 | .page-fade-enter, .page-fade-enter-active | Uses .op-0/.op-100 instead | ✅ |
+| 10 | _components.css | 2786-2790 | .cart-item in @media (max-width: 640px) | Base class never defined, not used in JS | ✅ |
+| 11 | _components.css | 3142-3144 | .section-anchor | No JS references | ✅ |
+| 12 | _components.css | 3147-3149 | tr.bid-highlight | No JS references | ✅ |
+| 13 | _components.css | 3223-3225 | .autocomplete-item:hover | Base class never defined | ✅ |
+| 14 | _components.css | 3697 | .is-swiping | No JS references | ✅ |
+| 15 | _layout.css | 605 | .badge:not(.d-none) { } | Empty rule -- does nothing | ✅ |
 
 ### 2B --- Remove Duplicate CSS Rules
 
-| # | File | Lines | Selector(s) | Reason |
-|---|------|-------|-------------|--------|
-| 16 | style.css | 198-205 | .empty-state-visual | Duplicate of _components.css:2090 |
-| 17 | style.css | 325-331 | [dir=rtl] rules (7 selectors) | Duplicates of _rtl.css |
+| # | File | Lines | Selector(s) | Reason | Status |
+|---|------|-------|-------------|--------|--------|
+| 16 | style.css | 198-205 | .empty-state-visual | Duplicate of _components.css:2090 | ✅ |
+| 17 | style.css | 325-331 | [dir=rtl] rules (7 selectors) | Duplicates of _rtl.css | ✅ |
 
 ### 2C --- Remove Dead CSS Variables
 
-| # | File | Lines | Variables | Reason |
-|---|------|-------|-----------|--------|
-| 18 | _variables.css | 215-216 | --start, --end | Defined but never consumed via var(). Logical properties used instead. |
+| # | File | Lines | Variables | Reason | Status |
+|---|------|-------|-----------|--------|--------|
+| 18 | _variables.css | 215-216 | --start, --end | Defined but never consumed via var(). Logical properties used instead. | ✅ |
 
-**Build check**: npm run build --- expect 0 errors
+**Build check**: ✅ npm run build --- 0 errors, CSS 340.50 kB -> 339.36 kB
 
 ## Phase 3 --- P2: Empty Section Comments + Dead Media Block + Vendor Prefix
 

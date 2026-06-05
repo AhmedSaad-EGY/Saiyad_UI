@@ -193,17 +193,6 @@
 }
 
 /* ============================================================
-   EMPTY STATES — global override
-   ============================================================ */
-.empty-state-visual {
-  width: 100px;
-  height: 100px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: var(--space-2);
-}
-/* ============================================================
    NAV SEARCH
    ============================================================ */
 .nav-search {
@@ -319,13 +308,4 @@
    ============================================================ */
 body.modal-open { overflow: hidden; }
 
-/* ============================================================
-   RTL GLOBAL UTILITIES
-   ============================================================ */
-[dir="rtl"] .nav-links     { flex-direction: row-reverse; }
-[dir="rtl"] .dropdown-menu { left: auto; right: 0; }
-[dir="rtl"] .breadcrumb    { flex-direction: row-reverse; }
-[dir="rtl"] .card-meta     { flex-direction: row-reverse; }
-[dir="rtl"] .modal-header  { flex-direction: row-reverse; }
-[dir="rtl"] .toast         { left: var(--space-4); right: auto; }
-[dir="rtl"] .back-btn i    { transform: scaleX(-1); }
+

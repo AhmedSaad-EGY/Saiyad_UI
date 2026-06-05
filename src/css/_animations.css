@@ -101,10 +101,6 @@
   background: linear-gradient(90deg, var(--border) 25%, var(--primary-ghost) 50%, var(--border) 75%);
 }
 
-.content-fade {
-  opacity: 1;
-}
-
 /* Alpine.js x-transition utility classes */
 .transition-fade {
   transition: opacity 0.3s ease, transform 0.3s ease;

@@ -602,8 +602,6 @@ body.nav-open .navbar { pointer-events: all; }
   border: 2px solid var(--nav-bg);
   transition: transform var(--duration-fast) var(--ease-out);
 }
-.badge:not(.d-none) { }
-
 /* Chevron animation */
 #userDropdown .fa-chevron-down,
 .dropdown-toggle .fa-chevron-down {
