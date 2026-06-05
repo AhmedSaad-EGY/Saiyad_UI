@@ -231,6 +231,10 @@
   --shadow-glow:    0 0 0 3px oklch(0.78 0.12 85 / 0.18);
   --primary-shadow: 0 4px 14px oklch(0.78 0.12 85 / 0.25);
   --gold-shimmer: linear-gradient(90deg, transparent, oklch(0.88 0.08 85 / 0.3), transparent);
+  --text:           oklch(0.96 0.008 80);
+  --text-secondary: oklch(0.72 0.015 80);
+  --text-muted:     oklch(0.68 0.015 80);
+  --text-inverse:   oklch(0.18 0.025 80);
 }
 
 /* ── Gold / VIP Theme (light mode, active subscription) ──── */
