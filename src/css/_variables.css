@@ -17,6 +17,9 @@
   --space-12: 48px;
   --space-16: 64px;
 
+  /* ── Sizing Constants ─────────────────────────────────────── */
+  --navbar-height: 60px;
+
   /* ── Typography Scale ─────────────────────────────────────── */
   --text-xs:   0.72rem;
   --text-sm:   0.82rem;
@@ -60,6 +63,7 @@
   --primary-dark:     oklch(0.35 0.24 240);
   --primary-light:    oklch(0.94 0.04 240);
   --primary-ghost:    oklch(0.42 0.22 240 / 0.08);
+  --primary-bg:       oklch(0.42 0.22 240 / 0.10);
   --accent:           oklch(0.65 0.19 48);
   --accent-dark:      oklch(0.56 0.21 48);
   --secondary:        oklch(0.55 0.14 180);
@@ -84,6 +88,7 @@
   /* ── Surface Colors ───────────────────────────────────────── */
   --body-bg:    oklch(0.975 0.006 240);
   --card-bg:    oklch(1 0 0);
+  --background: var(--card-bg);
   --nav-bg:     oklch(1 0 0 / 0.92);
   --input-bg:   oklch(0.995 0.003 240);
   --overlay:    oklch(0.18 0.02 240 / 0.5);
@@ -97,6 +102,7 @@
   /* ── Borders ──────────────────────────────────────────────── */
   --border:       oklch(0.91 0.008 240);
   --border-focus: var(--primary);
+  --skeleton-bg:  var(--border);
 
   /* ── Shadows ──────────────────────────────────────────────── */
   --shadow-sm:    0 1px 2px oklch(0 0 0 / 0.05);
@@ -104,6 +110,7 @@
   --shadow-md:    0 4px 6px -1px oklch(0 0 0 / 0.10), 0 2px 4px -2px oklch(0 0 0 / 0.10);
   --shadow-lg:    0 20px 25px -5px oklch(0 0 0 / 0.10), 0 8px 10px -6px oklch(0 0 0 / 0.10);
   --shadow-hover: 0 25px 50px -12px oklch(0 0 0 / 0.25);
+  --shadow-xl:    0 30px 60px -12px oklch(0 0 0 / 0.15);
   --shadow-glow:  0 0 0 3px oklch(0.42 0.22 240 / 0.18);
 
   /* ── Semantic shadows ─────────────────────────────────────── */
@@ -145,6 +152,7 @@
   --primary-dark:   oklch(0.60 0.19 250);
   --primary-light:  oklch(0.24 0.08 250);
   --primary-ghost:  oklch(0.72 0.17 250 / 0.12);
+  --primary-bg:     oklch(0.72 0.17 250 / 0.15);
   --accent:         oklch(0.72 0.17 50);
   --accent-dark:    oklch(0.60 0.19 50);
   --secondary:      oklch(0.65 0.12 180);
@@ -183,6 +191,7 @@
   --shadow-md:    0 4px 12px oklch(0 0 0 / 0.45), 0 2px 4px oklch(0 0 0 / 0.30);
   --shadow-lg:    0 10px 28px oklch(0 0 0 / 0.55), 0 4px 10px oklch(0 0 0 / 0.30);
   --shadow-hover: 0 16px 40px oklch(0 0 0 / 0.65), 0 6px 14px oklch(0 0 0 / 0.35);
+  --shadow-xl:    0 20px 48px oklch(0 0 0 / 0.65), 0 8px 16px oklch(0 0 0 / 0.35);
   --shadow-glow:  0 0 0 3px oklch(0.72 0.17 250 / 0.22);
 
   --primary-shadow:       0 4px 14px oklch(0.72 0.17 250 / 0.25);

@@ -2,7 +2,7 @@
 
 > **Project**: Egypt's premier fishing marketplace & live auction platform  
 > **Stack**: Vanilla JS SPA + Alpine.js 3.14.8 + Bootstrap 5.3 + Animate.css 4.1 + Vite 6 + SignalR + i18n (EN/AR)  
-> **Last Updated**: June 4, 2026  
+> **Last Updated**: June 5, 2026  
 > **Purpose**: Single entry point — each section links to the deeper doc it summarizes
 
 ---
@@ -443,7 +443,11 @@ MODERATOR_ROLES = [Auctioneer, Admin]                  # Review + Analytics
 - ✅ **June 4: Product-detail localized stock error toast** — `addToCart` handler shows `cart.insufficientStock` on 400 instead of raw error | Build: ✅ | Commit: `d8bc92c`
 
 ### Immediate (Next)
-1. **Phase 4 — Low Priority** (L1: WhatsApp link, L2: hreflang, L3: skip-link CSS, L4: unique titles, L5: focus styles)
+1. ✅ **[Phase 1 — P0: Bugfixes]** - Added 5 missing CSS variables — build ✅
+2. **[Phase 2 — P1: Dead CSS removal]** - Remove 10 dead selectors, 7 duplicate RTL rules, duplicate .empty-state-visual, dead --start/--end vars
+3. **[Phase 3 — P2: Comments & cleanup]** - Remove 7 empty section headers, dead countdown media block, unnecessary vendor prefix
+4. **[Phase 4 — P3: PWA manifest]** - Fix missing apple-touch-icon, broken hashed logo path
+5. **[Phase 5 — P3: Optional]** - Remove redundant modal-open rule, whitespace cleanup
 
 ### Short-term
 2. Follow TOUGH_CLEANUP_PLAN.md execution order (CSS → Core JS → Pages → Shared → Config)
@@ -475,3 +479,6 @@ MODERATOR_ROLES = [Auctioneer, Admin]                  # Review + Analytics
 ```
 
 *Keep this file updated! Mark tasks as `[x]` when completed.*
+
+
+
