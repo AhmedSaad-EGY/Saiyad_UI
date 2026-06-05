@@ -745,6 +745,11 @@
   will-change: transform;
 }
 
+.product-card.card {
+  padding-left: 0;
+  padding-right: 0;
+}
+
 .product-card.card:hover {
   transform: translateY(-5px);
   box-shadow: var(--shadow-hover);
