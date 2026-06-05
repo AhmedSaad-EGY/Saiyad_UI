@@ -2,7 +2,7 @@
 
 > **Last Updated**: June 5, 2026  
 > **Scope**: CSS dead code, undefined CSS variables, duplicate rules, empty sections, PWA manifest, vendor prefix, whitespace  
-> **Status**: Phases 1-3 done — Phase 4 ready  
+> **Status**: Phases 1-4 done — Phase 5 ready  
 > **Execution Order**: Phase 1 -> 2 -> 3 -> 4 -> 5 (build + verify after each phase)
 
 ---
@@ -83,12 +83,12 @@ Define missing CSS variables in src/css/_variables.css or fix references to use 
 
 ## Phase 4 --- P3: PWA Manifest Fixes
 
-| # | File | Issue | Fix |
-|---|------|-------|-----|
-| 29 | public/manifest.json | References /apple-touch-icon.png (512x512) --- file doesn't exist | Remove the entry or create the icon asset |
-| 30 | public/manifest.json | Hardcodes /logo.png but Vite hashes source assets --- icons won't resolve in production | Move logo.png to public/ so it's copied verbatim to dist root |
+| # | File | Issue | Fix | Status |
+|---|------|-------|-----|--------|
+| 29 | public/manifest.json | References /apple-touch-icon.png (512x512) --- file doesn't exist | Removed the dead entry from manifest.json | ✅ |
+| 30 | public/manifest.json | Hardcodes /logo.png but Vite hashes source assets --- icons won't resolve in production | Moved logo.png from src/ to public/ --- now copied verbatim to dist/logo.png | ✅ |
 
-**Build check**: npm run build --- verify dist/manifest.json paths
+**Build check**: ✅ npm run build --- 0 errors, logo.png at dist/logo.png resolves all paths
 
 ---
 

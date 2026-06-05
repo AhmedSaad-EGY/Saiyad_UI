@@ -446,7 +446,7 @@ MODERATOR_ROLES = [Auctioneer, Admin]                  # Review + Analytics
 1. ✅ **[Phase 1 — P0: Bugfixes]** - Added 5 missing CSS variables — build ✅
 2. ✅ **[Phase 2 — P1: Dead CSS removal]** - Removed 10 dead selectors, 7 duplicate RTL rules, duplicate .empty-state-visual, dead --start/--end vars
 3. ✅ **[Phase 3 — P2: Comments & cleanup]** - Removed 3 empty section headers + dead countdown media block
-4. **[Phase 4 — P3: PWA manifest]** - Fix missing apple-touch-icon, broken hashed logo path
+4. ✅ **[Phase 4 — P3: PWA manifest]** - Removed dead apple-touch-icon entry, moved logo.png to public/ for verbatim copy
 5. **[Phase 5 — P3: Optional]** - Remove redundant modal-open rule, whitespace cleanup
 
 ### Short-term
