@@ -723,6 +723,11 @@
   margin-bottom: var(--space-10);
 }
 
+.product-grid-wrapper {
+  padding-inline: var(--space-4);
+  width: 100%;
+}
+
 .product-card {
   background: var(--card-bg);
   border: 1px solid var(--border);
