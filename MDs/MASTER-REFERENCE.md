@@ -447,7 +447,7 @@ MODERATOR_ROLES = [Auctioneer, Admin]                  # Review + Analytics
 2. ✅ **[Phase 2 — P1: Dead CSS removal]** - Removed 10 dead selectors, 7 duplicate RTL rules, duplicate .empty-state-visual, dead --start/--end vars
 3. ✅ **[Phase 3 — P2: Comments & cleanup]** - Removed 3 empty section headers + dead countdown media block
 4. ✅ **[Phase 4 — P3: PWA manifest]** - Removed dead apple-touch-icon entry, moved logo.png to public/ for verbatim copy
-5. **[Phase 5 — P3: Optional]** - Remove redundant modal-open rule, whitespace cleanup
+5. ✅ **[Phase 5 — P3: Polish & Consistency]** - Fixed .notif-bell conflict, merged .cart-qty-cell, 5 token migrations, 3 rgba->oklch, 3 #fff->var(--text-inverse), inset-inline shorthand, comment/whitespace cleanup
 
 ### Short-term
 2. Follow TOUGH_CLEANUP_PLAN.md execution order (CSS → Core JS → Pages → Shared → Config)

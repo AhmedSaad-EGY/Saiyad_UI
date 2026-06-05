@@ -71,7 +71,7 @@
 .skeleton-detail {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 40px;
+  gap: var(--space-10);
 }
 
 .skeleton-detail .skeleton-image {

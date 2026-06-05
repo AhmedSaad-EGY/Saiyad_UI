@@ -2,7 +2,7 @@
 
 > **Last Updated**: June 5, 2026  
 > **Scope**: CSS dead code, undefined CSS variables, duplicate rules, empty sections, PWA manifest, vendor prefix, whitespace  
-> **Status**: Phases 1-4 done — Phase 5 ready  
+> **Status**: All 5 phases complete  
 > **Execution Order**: Phase 1 -> 2 -> 3 -> 4 -> 5 (build + verify after each phase)
 
 ---
@@ -92,15 +92,50 @@ Define missing CSS variables in src/css/_variables.css or fix references to use 
 
 ---
 
-## Phase 5 --- P3: Optional Polish
+## Phase 5 --- P3: Polish & Consistency
 
-| # | File | Lines | Issue |
-|---|------|-------|-------|
-| 31 | style.css | 320 | body.modal-open { overflow: hidden; } --- Bootstrap JS already applies this |
-| 32 | _components.css | 263-265, 2954-2955 | Triple blank lines -> single blank line |
-| 33 | _components.css | 568 | Trailing whitespace after } |
+### 5A --- Visual Bug Fixes
 
-**Build check**: npm run build --- expect 0 errors
+| # | File | Fix | Status |
+|---|------|-----|--------|
+| 1 | _layout.css + _components.css | Removed conflicting .notif-bell from _layout.css (was overriding _components.css version with `display:flex!important`, padding). Moved notification dot `::after` rule to _components.css where the canonical definition lives. | ✅ |
+| 2 | _components.css | Merged split .cart-qty-cell declarations (position:relative + text-align:center) into single rule | ✅ |
+| 3 | _components.css | .cart-floating-bar bare `display:none` is intentional (mobile-first pattern) --- kept | N/A |
+
+### 5B --- Design Token Migration (exact-match px -> tokens)
+
+| # | File | Before | After | Status |
+|---|------|--------|-------|--------|
+| 4 | _components.css | `.card` padding: 24px | var(--space-6) | ✅ |
+| 5 | _components.css | `.auth-page` margin: 48px | var(--space-12) | ✅ |
+| 6 | _components.css | `.status` gap: 4px | var(--space-1) | ✅ |
+| 7 | _components.css | `.search-bar` gap: 12px | var(--space-3) | ✅ |
+| 8 | _animations.css | `.skeleton-detail` gap: 40px | var(--space-10) | ✅ |
+
+### 5C --- OKLCH & Token Consistency
+
+| # | File | Before | After | Status |
+|---|------|--------|-------|--------|
+| 9-10 | _components.css | `.drawer-content` box-shadow: rgba(0,0,0,0.15) (x2) | oklch(0 0 0 / 0.15) | ✅ |
+| 11-13 | _components.css + _layout.css | color: #fff (3 instances) | var(--text-inverse) | ✅ |
+
+### 5D --- Shorthand Simplification
+
+| # | File | Before | After | Status |
+|---|------|--------|-------|--------|
+| 14 | _layout.css | `.nav-link::after` left:14px; right:14px | inset-inline: 14px | ✅ |
+
+### 5E --- Comment & Whitespace Cleanup
+
+| # | File | Removed | Status |
+|---|------|---------|--------|
+| 15 | _components.css | `/* Optimize performance */` inline comment | ✅ |
+| 16 | _components.css | `/* Bid history row highlight */` + `/* Scroll to top reset */` orphaned comments | ✅ |
+| 17 | _components.css | `/* End-of-file marker */` + `/* style.css */` EOF comments | ✅ |
+| 18-20 | _components.css | `/* 1024px */`, `/* 480px */`, `/* 360px */` redundant labels before @media | ✅ |
+| 21-22 | _components.css | 2 triple-blank-line sequences collapsed | ✅ |
+
+**Build check**: ✅ npm run build --- 0 errors
 
 ---
 

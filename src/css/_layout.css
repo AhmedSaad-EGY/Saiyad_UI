@@ -315,37 +315,6 @@
   pointer-events: all;
 }
 
-/* ── Notif Bell (mobile drawer) ────────────────────────────── */
-.notif-bell {
-  display: flex !important;
-  align-items: center;
-  gap: var(--space-3);
-  padding: 11px var(--space-4);
-  border-radius: var(--radius);
-  color: var(--text-secondary);
-  transition: background var(--transition), color var(--transition);
-  font-size: var(--text-sm);
-  text-decoration: none;
-  position: relative;
-}
-.notif-bell:hover { background: var(--primary-ghost); color: var(--text); }
-.nav-drawer .notif-bell .badge {
-  position: static;
-  margin-inline-start: auto;
-}
-
-/* Notification dot indicator */
-.notif-bell[data-count]:not([data-count="0"])::after {
-  content: '';
-  position: absolute;
-  top: 8px;
-  inset-inline-end: 12px;
-  width: 8px;
-  height: 8px;
-  background: var(--danger);
-  border-radius: 50%;
-}
-
 /* ── User Dropdown (mobile drawer: static panel) ────────────── */
 .nav-drawer .dropdown {
   display: flex;
@@ -482,8 +451,7 @@ body.nav-open .navbar { pointer-events: all; }
   .nav-link:hover::after,
   .nav-link.active::after,
   .nav-link[aria-current="page"]::after {
-    left: 14px;
-    right: 14px;
+    inset-inline: 14px;
   }
   .nav-link:hover { background: var(--primary-ghost); color: var(--primary); }
   .nav-link.active,
@@ -995,7 +963,7 @@ input[type="date"].form-input::-webkit-datetime-edit-year-field:focus {
     top: 6px;
     right: 18%;
     background: var(--danger, #ef4444);
-    color: #fff;
+    color: var(--text-inverse);
     font-size: 9px;
     font-weight: 700;
     min-width: 16px;

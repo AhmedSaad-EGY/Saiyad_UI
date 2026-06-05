@@ -258,10 +258,8 @@
 
 /* Keep default padding for cards without Bootstrap sub-component classes */
 .card:not(:has(.card-header)):not(:has(.card-body)):not(:has(.card-footer)) {
-  padding: 24px;
+  padding: var(--space-6);
 }
-
-
 
 /* Cards using Bootstrap sub-component structure — outer padding removed */
 .card:has(.card-header),
@@ -1088,7 +1086,7 @@
    ============================================================ */
 .auth-page {
   max-width: 420px;
-  margin: 48px auto;
+  margin: var(--space-12) auto;
   padding-inline: var(--space-4);
 }
 
@@ -1100,7 +1098,6 @@
   border: 1px solid var(--border-glass);
   box-shadow: var(--shadow-glass);
   will-change: background, border, box-shadow, transform;
-  /* Optimize performance */
 }
 
 .terms-content {
@@ -1379,7 +1376,7 @@ tr:last-child td {
   font-size: var(--text-xs);
   font-weight: 600;
   line-height: 1.4;
-  gap: 4px;
+  gap: var(--space-1);
 }
 
 .status-available {
@@ -1518,7 +1515,7 @@ tr:last-child td {
   display: flex;
   flex-direction: column;
   transition: right 0.3s ease-out;
-  box-shadow: -5px 0 25px rgba(0, 0, 0, 0.15);
+  box-shadow: -5px 0 25px oklch(0 0 0 / 0.15);
   z-index: 1050;
 }
 
@@ -1531,7 +1528,7 @@ tr:last-child td {
   left: -100%;
   border-left: none;
   border-right: 1px solid var(--border);
-  box-shadow: 5px 0 25px rgba(0, 0, 0, 0.15);
+  box-shadow: 5px 0 25px oklch(0 0 0 / 0.15);
 }
 
 [dir="rtl"] .drawer-content.drawer-open {
@@ -1611,7 +1608,7 @@ tr:last-child td {
    ============================================================ */
 .search-bar {
   display: flex;
-  gap: 12px;
+  gap: var(--space-3);
   margin-bottom: var(--space-6);
   flex-wrap: wrap;
   align-items: stretch;
@@ -2488,7 +2485,7 @@ tr:last-child td {
   align-items: center;
   justify-content: center;
   background: oklch(0 0 0 / 0.55);
-  color: #fff;
+  color: var(--text-inverse);
   font-size: 1.2rem;
   opacity: 0;
   transition: opacity 0.2s;
@@ -2720,6 +2717,18 @@ tr:last-child td {
   padding: 0 4px;
 }
 
+/* Notification dot indicator */
+.notif-bell[data-count]:not([data-count="0"])::after {
+  content: '';
+  position: absolute;
+  top: 8px;
+  inset-inline-end: 12px;
+  width: 8px;
+  height: 8px;
+  background: var(--danger);
+  border-radius: 50%;
+}
+
 [dir="rtl"] .notif-bell .badge {
   right: auto;
   left: -4px;
@@ -2729,14 +2738,12 @@ tr:last-child td {
    MOBILE RESPONSIVE
    ============================================================ */
 
-/* 1024px */
 @media (max-width: 1024px) {
   .hero-content {
     padding: var(--space-10) var(--space-8);
   }
 }
 
-/* 480px */
 @media (max-width: 480px) {
   .navbar .container {
     min-height: 56px;
@@ -2801,7 +2808,6 @@ tr:last-child td {
   }
 }
 
-/* 360px */
 @media (max-width: 360px) {
   /* .product-grid responsive overrides removed — handled by Bootstrap row-cols classes */
 
@@ -2897,8 +2903,6 @@ tr:last-child td {
 .verify-overlay-card.verified .verify-overlay-icon {
   background: var(--success-bg);
 }
-
-
 
 .verify-overlay-card h3 {
   font-size: var(--text-xl);
@@ -3063,9 +3067,6 @@ tr:last-child td {
 }
 
 /* Max stock reached label in cart */
-.cart-qty-cell {
-  position: relative;
-}
 .cart-max-label {
   position: absolute;
   inset-block-end: -5px;
@@ -3085,8 +3086,6 @@ tr:last-child td {
   min-height: 44px;
 }
 
-/* Bid history row highlight animation */
-/* Scroll to top reset on nav — reset visible state before each page transition */
 #backToTop {
   display: flex;
 }
@@ -3239,6 +3238,7 @@ tr:last-child td {
 }
 
 .cart-qty-cell {
+  position: relative;
   text-align: center;
 }
 
@@ -3597,7 +3597,7 @@ tr:last-child td {
   bottom: 0;
   width: 80px;
   background: var(--danger);
-  color: #fff;
+  color: var(--text-inverse);
   font-size: 1.2rem;
   border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
   cursor: pointer;
@@ -4200,6 +4200,3 @@ tr:last-child td {
   transition: width 0.8s var(--ease-bounce);
   width: 0%; /* Initial state for count-up animation */
 }
-
-/* End-of-file marker */
-/* style.css — total lines maintained */
