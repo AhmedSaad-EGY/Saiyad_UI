@@ -467,9 +467,10 @@ export default async function renderProductDetail(container, route, params) {
     document.getElementById("showReviewForm")?.addEventListener("click", () => {
       if (!isAuthenticated()) { showToast(t("auth.loginRequired"), "warning"); return; }
 
-      if (!form) { showToast(t("auth.loginRequired"), "warning"); return; }
-      form.classList.toggle("d-none");
-      form.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      const reviewForm = document.getElementById("reviewFormContainer");
+      if (!reviewForm) { showToast(t("auth.loginRequired"), "warning"); return; }
+      reviewForm.classList.toggle("d-none");
+      reviewForm.scrollIntoView({ behavior: "smooth", block: "nearest" });
     });
 
     // Star rating interaction
