@@ -12,29 +12,29 @@
 
   /* Secondary — Teal */
   --bs-secondary: var(--secondary);
-  --bs-secondary-rgb: 55, 155, 145;
+  --bs-secondary-rgb: var(--secondary-rgb, 55, 155, 145);
 
   /* Success — Emerald */
   --bs-success: var(--success);
-  --bs-success-rgb: 50, 175, 100;
+  --bs-success-rgb: var(--success-rgb, 50, 175, 100);
 
   /* Danger — Coral */
   --bs-danger: var(--danger);
-  --bs-danger-rgb: 210, 70, 50;
+  --bs-danger-rgb: var(--danger-rgb, 210, 70, 50);
 
   /* Warning — Amber */
   --bs-warning: var(--warning);
-  --bs-warning-rgb: 200, 155, 40;
+  --bs-warning-rgb: var(--warning-rgb, 200, 155, 40);
 
   /* Info — Sky */
   --bs-info: var(--info);
-  --bs-info-rgb: 50, 120, 185;
+  --bs-info-rgb: var(--info-rgb, 50, 120, 185);
 
   /* Light / Dark */
   --bs-light: var(--body-bg);
-  --bs-light-rgb: 248, 249, 251;
+  --bs-light-rgb: var(--light-rgb, 248, 249, 251);
   --bs-dark: var(--text);
-  --bs-dark-rgb: 20, 20, 30;
+  --bs-dark-rgb: var(--dark-rgb, 20, 20, 30);
 
   /* ─── Body ─────────────────────────────────────────────── */
   --bs-body-bg: var(--body-bg);
@@ -100,20 +100,20 @@
   --bs-btn-font-weight: var(--weight-medium);
   --bs-btn-border-radius: var(--radius);
   --bs-btn-focus-box-shadow: var(--shadow-glow);
-  --bs-btn-active-box-shadow: inset 0 3px 5px oklch(0 0 0 / 0.125);
+  --bs-btn-active-box-shadow: var(--btn-active-shadow, inset 0 3px 5px oklch(0 0 0 / 0.125));
 
 }
 
 /* ─── Dark Mode ────────────────────────────────────────────── */
 [data-theme="dark"] {
   --bs-primary-rgb: var(--primary-rgb, 80, 145, 235);
-  --bs-secondary-rgb: 80, 180, 170;
-  --bs-success-rgb: 90, 210, 130;
-  --bs-danger-rgb: 225, 100, 70;
-  --bs-warning-rgb: 220, 175, 55;
-  --bs-info-rgb: 90, 160, 220;
-  --bs-light-rgb: 30, 33, 45;
-  --bs-dark-rgb: 240, 242, 248;
+  --bs-secondary-rgb: var(--secondary-rgb, 80, 180, 170);
+  --bs-success-rgb: var(--success-rgb, 90, 210, 130);
+  --bs-danger-rgb: var(--danger-rgb, 225, 100, 70);
+  --bs-warning-rgb: var(--warning-rgb, 220, 175, 55);
+  --bs-info-rgb: var(--info-rgb, 90, 160, 220);
+  --bs-light-rgb: var(--light-rgb, 30, 33, 45);
+  --bs-dark-rgb: var(--dark-rgb, 240, 242, 248);
 
   --bs-body-bg: var(--body-bg);
   --bs-body-color: var(--text);

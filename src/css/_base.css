@@ -39,15 +39,15 @@ body::before {
   z-index: -2;
   background-color: var(--body-bg);
   background-image:
-    radial-gradient(ellipse 650px 450px at 85% 8%, oklch(0.70 0.12 260 / 0.20), transparent 65%),
-    radial-gradient(ellipse 550px 550px at 15% 90%, oklch(0.72 0.10 190 / 0.15), transparent 65%);
+    var(--body-grad-1),
+    var(--body-grad-2);
   transition: background-color var(--duration-normal) var(--ease-out);
 }
 
 [data-theme="dark"] body::before {
   background-image:
-    radial-gradient(ellipse 650px 450px at 85% 8%, oklch(0.45 0.15 280 / 0.20), transparent 65%),
-    radial-gradient(ellipse 550px 550px at 15% 90%, oklch(0.38 0.10 210 / 0.15), transparent 65%);
+    var(--body-grad-1),
+    var(--body-grad-2);
 }
 
 /* ── Headings ─────────────────────────────────────────────── */

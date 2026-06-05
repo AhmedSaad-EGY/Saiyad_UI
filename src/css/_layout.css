@@ -13,7 +13,7 @@
   z-index: 100;
   height: var(--navbar-height, 60px);
   background:
-    linear-gradient(135deg, oklch(1 0 0 / 0.96), oklch(0.96 0.012 235 / 0.94)),
+    var(--nav-bg-gradient),
     radial-gradient(circle at 18% 0%, oklch(from var(--primary) l c h / 0.10), transparent 34%);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
@@ -28,7 +28,7 @@
 
 [data-theme="dark"] .navbar {
   background:
-    linear-gradient(135deg, oklch(0.105 0.022 250 / 0.96), oklch(0.16 0.028 238 / 0.94)),
+    var(--nav-bg-gradient),
     radial-gradient(circle at 18% 0%, oklch(from var(--primary) l c h / 0.18), transparent 36%);
   border-bottom: 1px solid var(--border);
 }
@@ -37,7 +37,7 @@
   box-shadow: var(--shadow-md);
   border-bottom-color: transparent;
   background:
-    linear-gradient(135deg, oklch(1 0 0 / 0.82), oklch(0.96 0.012 235 / 0.78)),
+    var(--nav-scrolled-gradient),
     radial-gradient(circle at 18% 0%, oklch(from var(--primary) l c h / 0.04), transparent 34%);
   backdrop-filter: var(--glass-blur-light);
   -webkit-backdrop-filter: var(--glass-blur-light);
@@ -45,7 +45,7 @@
 
 [data-theme="dark"] .navbar.scrolled {
   background:
-    linear-gradient(135deg, oklch(0.105 0.022 250 / 0.82), oklch(0.16 0.028 238 / 0.78)),
+    var(--nav-scrolled-gradient),
     radial-gradient(circle at 18% 0%, oklch(from var(--primary) l c h / 0.08), transparent 36%);
 }
 
@@ -239,7 +239,7 @@
   position: fixed;
   inset: 0;
   z-index: 999;
-  background: oklch(0% 0 0 / 0.42);
+  background: var(--overlay-medium);
   backdrop-filter: blur(6px) saturate(120%);
   -webkit-backdrop-filter: blur(6px) saturate(120%);
   opacity: 0;
@@ -752,13 +752,13 @@ input[type="date"].form-input::-webkit-datetime-edit-year-field:focus {
   /* Mobile: solid navbar */
   .navbar {
     background:
-      linear-gradient(135deg, oklch(1 0 0 / 0.98), oklch(0.955 0.014 235 / 0.96)),
+      var(--nav-mobile-gradient),
       radial-gradient(circle at 20% 0%, oklch(from var(--primary) l c h / 0.12), transparent 38%);
     border-bottom: 1px solid var(--border);
   }
   [data-theme="dark"] .navbar {
     background:
-      linear-gradient(135deg, oklch(0.095 0.022 250 / 0.98), oklch(0.155 0.028 238 / 0.96)),
+      var(--nav-mobile-gradient),
       radial-gradient(circle at 20% 0%, oklch(from var(--primary) l c h / 0.18), transparent 40%);
   }
 
@@ -773,15 +773,12 @@ input[type="date"].form-input::-webkit-datetime-edit-year-field:focus {
     width: min(340px, 88vw);
     height: 100dvh;
     background:
-      linear-gradient(180deg,
-        oklch(1 0 0 / 0.98) 0%,
-        oklch(0.965 0.014 235 / 0.96) 48%,
-        oklch(0.94 0.018 238 / 0.98) 100%),
+      var(--drawer-gradient),
       radial-gradient(circle at 18% 4%, oklch(from var(--primary) l c h / 0.16), transparent 34%);
     backdrop-filter: var(--glass-blur);
     -webkit-backdrop-filter: var(--glass-blur);
     border-inline-start: 1px solid var(--border);
-    box-shadow: -18px 0 60px oklch(0 0 0 / 0.22), -2px 0 10px oklch(0 0 0 / 0.10);
+    box-shadow: var(--shadow-drawer-panel-1), var(--shadow-drawer-panel-2);
     transform: translateX(110%) scale(0.97);
     transition: transform 0.38s cubic-bezier(0.32, 0.72, 0, 1), opacity 0.25s var(--ease-out);
     z-index: var(--z-drawer-panel, 1000);
@@ -801,7 +798,7 @@ input[type="date"].form-input::-webkit-datetime-edit-year-field:focus {
     transform: translateX(-110%) scale(0.97);
     border-inline-start: none;
     border-inline-end: 1px solid var(--border);
-    box-shadow: 18px 0 60px oklch(0 0 0 / 0.22), 2px 0 10px oklch(0 0 0 / 0.10);
+    box-shadow: var(--shadow-drawer-panel-rtl-1), var(--shadow-drawer-panel-rtl-2);
   }
   [dir="rtl"] .nav-drawer.open { transform: translateX(0) scale(1); }
 
@@ -815,16 +812,13 @@ input[type="date"].form-input::-webkit-datetime-edit-year-field:focus {
     width: 100%;
     background:
       linear-gradient(135deg, oklch(from var(--primary) l c h / 0.14), transparent 72%),
-      linear-gradient(180deg, oklch(1 0 0 / 0.36), transparent);
+      var(--drawer-header-gradient);
     box-shadow: inset 0 -1px 0 var(--border);
   }
 
   [data-theme="dark"] .nav-drawer {
     background:
-      linear-gradient(180deg,
-        oklch(0.13 0.020 250 / 0.99) 0%,
-        oklch(0.16 0.024 245 / 0.98) 50%,
-        oklch(0.14 0.022 248 / 0.99) 100%),
+      var(--drawer-gradient),
       radial-gradient(circle at 18% 4%, oklch(from var(--primary) l c h / 0.22), transparent 40%);
   }
   [data-theme="dark"] .nav-drawer::before {

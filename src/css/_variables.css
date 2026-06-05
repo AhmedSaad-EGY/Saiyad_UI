@@ -155,6 +155,64 @@
   --z-toast:         10000;
   --z-skip-link:     10000;
 
+  /* ── Gradient Tokens (theme-aware backgrounds) ──────────── */
+  --body-grad-1: radial-gradient(ellipse 650px 450px at 85% 8%, oklch(0.70 0.12 260 / 0.20), transparent 65%);
+  --body-grad-2: radial-gradient(ellipse 550px 550px at 15% 90%, oklch(0.72 0.10 190 / 0.15), transparent 65%);
+
+  --nav-bg-gradient:              linear-gradient(135deg, oklch(1 0 0 / 0.96), oklch(0.96 0.012 235 / 0.94));
+  --nav-scrolled-gradient:        linear-gradient(135deg, oklch(1 0 0 / 0.82), oklch(0.96 0.012 235 / 0.78));
+  --nav-mobile-gradient:          linear-gradient(135deg, oklch(1 0 0 / 0.98), oklch(0.955 0.014 235 / 0.96));
+
+  --drawer-gradient:     linear-gradient(180deg, oklch(1 0 0 / 0.98) 0%, oklch(0.965 0.014 235 / 0.96) 48%, oklch(0.94 0.018 238 / 0.98) 100%);
+  --drawer-header-glass: oklch(1 0 0 / 0.36);
+  --drawer-header-gradient: linear-gradient(180deg, var(--drawer-header-glass), transparent);
+
+  /* ── Custom Overlay Opacities ────────────────────────────── */
+  --overlay-dim:    oklch(0 0 0 / 0.92);
+  --overlay-dark:   oklch(0 0 0 / 0.55);
+  --overlay-medium: oklch(0 0 0 / 0.42);
+  --overlay-mist:   oklch(0 0 0 / 0.25);
+  --overlay-tint:   oklch(0% 0 0 / 0.06);
+  --overlay-tint-dark: oklch(0% 0 0 / 0.15);
+
+  /* ── White Glass System ──────────────────────────────────── */
+  --glass-white-subtle:  oklch(100% 0 0 / 0.12);
+  --glass-white-visible: oklch(100% 0 0 / 0.25);
+  --glass-white-text:    oklch(100% 0 0 / 0.7);
+  --glass-white-bright:  oklch(1 0 0 / 0.85);
+  --glass-wallet-highlight:   oklch(1 0 0 / 0.12);
+  --glass-wallet-btn-bg:      oklch(1 0 0 / 0.2);
+  --glass-wallet-btn-border:  oklch(1 0 0 / 0.3);
+  --glass-wallet-btn-hover-bg:      oklch(1 0 0 / 0.3);
+  --glass-wallet-btn-hover-border:  oklch(1 0 0 / 0.4);
+
+  /* ── Custom Shadows ──────────────────────────────────────── */
+  --shadow-drawer-content:     -5px 0 25px oklch(0 0 0 / 0.15);
+  --shadow-drawer-content-rtl:  5px 0 25px oklch(0 0 0 / 0.15);
+  --shadow-filter-sheet:       0 -8px 32px oklch(0 0 0 / 0.15);
+  --shadow-floating-bar:       0 -4px 20px oklch(0 0 0 / 0.1);
+  --shadow-magnifier-lens:     0 0 20px oklch(0 0 0 / 0.25);
+  --shadow-slider-thumb:       0 2px 6px oklch(0% 0 0 / 0.2);
+  --shadow-lightbox-img:       0 8px 40px oklch(0 0 0 / 0.5);
+  --shadow-drawer-panel-1:     -18px 0 60px oklch(0 0 0 / 0.22);
+  --shadow-drawer-panel-2:     -2px 0 10px oklch(0 0 0 / 0.10);
+  --shadow-drawer-panel-rtl-1:  18px 0 60px oklch(0 0 0 / 0.22);
+  --shadow-drawer-panel-rtl-2:  2px 0 10px oklch(0 0 0 / 0.10);
+  --shadow-counter-bg:         oklch(0% 0 0 / 0.5);
+  --btn-active-shadow:         inset 0 3px 5px oklch(0 0 0 / 0.125);
+
+  /* ── Text Shadows ────────────────────────────────────────── */
+  --text-shadow-heading: 0 2px 4px oklch(0 0 0 / 0.5);
+
+  /* ── RGB fallbacks for Bootstrap ─────────────────────────── */
+  --secondary-rgb: 55, 155, 145;
+  --success-rgb: 50, 175, 100;
+  --danger-rgb: 210, 70, 50;
+  --warning-rgb: 200, 155, 40;
+  --info-rgb: 50, 120, 185;
+  --light-rgb: 248, 249, 251;
+  --dark-rgb: 20, 20, 30;
+
   /* ── Misc ─────────────────────────────────────────────────── */
 }
 
@@ -218,6 +276,27 @@
   --glass-bg-strong:  oklch(0.20 0.02 250 / 0.70);
   --glass-border:     oklch(1 0 0 / 0.08);
   --glass-inner-glow: inset 0 1px 1px oklch(1 0 0 / 0.05);
+
+  /* ── Gradient dark overrides ─────────────────────────────── */
+  --body-grad-1: radial-gradient(ellipse 650px 450px at 85% 8%, oklch(0.45 0.15 280 / 0.20), transparent 65%);
+  --body-grad-2: radial-gradient(ellipse 550px 550px at 15% 90%, oklch(0.38 0.10 210 / 0.15), transparent 65%);
+
+  --nav-bg-gradient:       linear-gradient(135deg, oklch(0.105 0.022 250 / 0.96), oklch(0.16 0.028 238 / 0.94));
+  --nav-scrolled-gradient: linear-gradient(135deg, oklch(0.105 0.022 250 / 0.82), oklch(0.16 0.028 238 / 0.78));
+  --nav-mobile-gradient:   linear-gradient(135deg, oklch(0.095 0.022 250 / 0.98), oklch(0.155 0.028 238 / 0.96));
+
+  --drawer-gradient: linear-gradient(180deg, oklch(0.13 0.020 250 / 0.99) 0%, oklch(0.16 0.024 245 / 0.98) 50%, oklch(0.14 0.022 248 / 0.99) 100%);
+
+  --overlay-tint:      oklch(0% 0 0 / 0.15);
+  --overlay-tint-dark: oklch(0% 0 0 / 0.15);
+
+  --secondary-rgb: 80, 180, 170;
+  --success-rgb: 90, 210, 130;
+  --danger-rgb: 225, 100, 70;
+  --warning-rgb: 220, 175, 55;
+  --info-rgb: 90, 160, 220;
+  --light-rgb: 30, 33, 45;
+  --dark-rgb: 240, 242, 248;
 }
 
 /* ── Gold / VIP Theme (dark mode only, active subscription) ─── */
@@ -235,6 +314,16 @@
   --text-secondary: oklch(0.72 0.015 80);
   --text-muted:     oklch(0.68 0.015 80);
   --text-inverse:   oklch(0.18 0.025 80);
+
+  /* ── VIP warm gradient overrides ─────────────────────────── */
+  --body-grad-1: radial-gradient(ellipse 650px 450px at 85% 8%, oklch(0.55 0.12 80 / 0.20), transparent 65%);
+  --body-grad-2: radial-gradient(ellipse 550px 550px at 15% 90%, oklch(0.50 0.10 75 / 0.15), transparent 65%);
+
+  --nav-bg-gradient:       linear-gradient(135deg, oklch(0.20 0.06 80 / 0.96), oklch(0.25 0.05 78 / 0.94));
+  --nav-scrolled-gradient: linear-gradient(135deg, oklch(0.20 0.06 80 / 0.82), oklch(0.25 0.05 78 / 0.78));
+  --nav-mobile-gradient:   linear-gradient(135deg, oklch(0.18 0.06 80 / 0.98), oklch(0.22 0.05 78 / 0.96));
+
+  --drawer-gradient: linear-gradient(180deg, oklch(0.18 0.06 80 / 0.99) 0%, oklch(0.22 0.05 78 / 0.98) 50%, oklch(0.20 0.06 80 / 0.99) 100%);
 }
 
 /* ── Gold / VIP Theme (light mode, active subscription) ──── */
@@ -247,6 +336,16 @@
   --accent:         oklch(0.65 0.18 85);
   --shadow-glow:    0 0 0 3px oklch(0.50 0.13 85 / 0.18);
   --primary-shadow: 0 4px 14px oklch(0.50 0.13 85 / 0.25);
+
+  /* ── Warm gradient overrides for light-mode VIP ──────────── */
+  --body-grad-1: radial-gradient(ellipse 650px 450px at 85% 8%, oklch(0.65 0.08 85 / 0.20), transparent 65%);
+  --body-grad-2: radial-gradient(ellipse 550px 550px at 15% 90%, oklch(0.62 0.06 80 / 0.15), transparent 65%);
+
+  --nav-bg-gradient:       linear-gradient(135deg, oklch(1 0 0 / 0.96), oklch(0.96 0.010 80 / 0.94));
+  --nav-scrolled-gradient: linear-gradient(135deg, oklch(1 0 0 / 0.82), oklch(0.96 0.010 80 / 0.78));
+  --nav-mobile-gradient:   linear-gradient(135deg, oklch(1 0 0 / 0.98), oklch(0.955 0.010 80 / 0.96));
+
+  --drawer-gradient: linear-gradient(180deg, oklch(1 0 0 / 0.98) 0%, oklch(0.965 0.010 80 / 0.96) 48%, oklch(0.94 0.012 82 / 0.98) 100%);
 }
 
 /* ============================================================
@@ -279,7 +378,7 @@
 [data-theme="dark"] [lang="ar"] h1,
 [data-theme="dark"] [lang="ar"] h2,
 [data-theme="dark"] [lang="ar"] h3 {
-  text-shadow: 0 2px 4px oklch(0 0 0 / 0.5);
+  text-shadow: var(--text-shadow-heading);
 }
 
 /* ============================================================

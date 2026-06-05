@@ -205,9 +205,17 @@ window.addEventListener("resize", () => {
 const themeToggle = document.getElementById("themeToggle");
 const savedTheme = localStorage.getItem("sayiad_theme") || "light";
 
+function syncThemeColor() {
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (!meta) return;
+  const bg = getComputedStyle(document.documentElement).getPropertyValue("--body-bg").trim();
+  if (bg) meta.setAttribute("content", bg);
+}
+
 function applyTheme(theme) {
   document.documentElement.setAttribute("data-theme", theme);
   localStorage.setItem("sayiad_theme", theme);
+  syncThemeColor();
   if (themeToggle) {
     themeToggle.innerHTML =
       theme === "dark"
