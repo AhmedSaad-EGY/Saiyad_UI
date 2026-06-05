@@ -1,5 +1,5 @@
 import { t } from "../core/i18n/index.js";
-import { api } from "../core/api/client.js";
+import { api, setAccessToken } from "../core/api/client.js";
 import { isAuthenticated, updateNavbar, syncVipAttribute } from "../core/auth/index.js";
 import { navigate, registerRouteCleanup } from "../core/router/index.js";
 import { escapeHtml, showLoading } from "../core/utils/dom.js";
@@ -353,9 +353,9 @@ function showVerificationOverlay(email, password) {
 
   const doLogin = async () => {
     const data = await api.post("/auth/login", { email, password });
-    localStorage.setItem("accessToken", data.token);
     localStorage.setItem("refreshToken", data.refreshToken);
     localStorage.setItem("user", JSON.stringify(data.user));
+    setAccessToken(data.token);
     ensureCsrfToken();
     updateNavbar();
     await syncVipAttribute();

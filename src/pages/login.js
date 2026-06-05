@@ -1,5 +1,5 @@
 import { t } from '../core/i18n/index.js';
-import { api } from '../core/api/client.js';
+import { api, setAccessToken } from '../core/api/client.js';
 import { isAuthenticated, updateNavbar, syncVipAttribute } from '../core/auth/index.js';
 import { navigate } from '../core/router/index.js';
 import { showToast } from '../core/utils/ui.js';
@@ -56,9 +56,9 @@ Alpine.data('loginForm', () => ({
         email: this.email.trim(),
         password: this.password,
       });
-      localStorage.setItem('accessToken', data.token);
       localStorage.setItem('refreshToken', data.refreshToken);
       localStorage.setItem('user', JSON.stringify(data.user));
+      setAccessToken(data.token);
       ensureCsrfToken();
       sessionStorage.removeItem('sayiadLoginFails');
       updateNavbar();

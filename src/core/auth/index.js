@@ -1,4 +1,4 @@
-import { api } from '../api/client.js';
+import { api, clearTokens } from '../api/client.js';
 import { on, emit } from '../events/bus.js';
 import { extractClaim } from '../../shared/helpers/index.js';
 import { ECOMMERCE_ROLES } from '../../shared/constants/roles.js';
@@ -210,9 +210,7 @@ export async function logout() {
   } catch {
     /* proceed with local logout */
   }
-  localStorage.removeItem("accessToken");
-  localStorage.removeItem("refreshToken");
-  localStorage.removeItem("user");
+  clearTokens();
   clearCsrfToken();
   updateNavbar();
   showToast(t("auth.loggedOut"), "success");
