@@ -180,7 +180,7 @@ export default async function renderAuctions(_container, _fullPath, params) {
       </div>
 
       <!-- Skeleton -->
-      <div x-show="loading" class="product-card-grid skeleton-shimmer">
+      <div x-show="loading" class="product-card-grid product-card-grid-dense skeleton-shimmer">
         <template x-for="i in 6" :key="i">
           <div class="product-card card pe-none">
             <div class="product-card-img skeleton-image-shim"></div>
@@ -201,7 +201,7 @@ export default async function renderAuctions(_container, _fullPath, params) {
       </div>
 
       <!-- Auction grid -->
-      <div x-show="!loading && !error && auctions.length" class="product-card-grid">
+      <div x-show="!loading && !error && auctions.length" class="product-card-grid product-card-grid-dense">
         <template x-for="(a, i) in auctions" :key="a.id">
           <a :href="'#/auction-detail?id='+a.id" class="product-card card animate-on-scroll" :class="'stagger-' + Math.min(i + 1, 8)" :aria-label="(a.productTitle || $t('auction.item')) + ' — ' + formatPrice(a.currentHighestBid || a.startingPrice)" style="position:relative;overflow:hidden">
             <!-- Popular/Ending Soon Badge Overlay -->

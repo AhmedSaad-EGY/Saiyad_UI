@@ -723,6 +723,10 @@
   margin-bottom: var(--space-10);
 }
 
+.product-card-grid-dense {
+  grid-template-columns: repeat(2, 1fr);
+}
+
 @media (min-width: 576px) {
   .product-card-grid { grid-template-columns: repeat(2, 1fr); }
 }
