@@ -1,7 +1,9 @@
 /* ============================================================
    RESET
    ============================================================ */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -26,7 +28,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
   transition: background-color var(--duration-normal) var(--ease-out),
-              color var(--duration-normal) var(--ease-out);
+    color var(--duration-normal) var(--ease-out);
 }
 
 /* Persistent body background layer (prevents flash during transitions) */
@@ -49,7 +51,12 @@ body::before {
 }
 
 /* ── Headings ─────────────────────────────────────────────── */
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: var(--font-heading);
   line-height: var(--leading-tight);
   font-weight: 700;
@@ -65,12 +72,15 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ── Anchor scroll offset for fixed navbar ────────────────── */
-[id] { scroll-margin-top: 80px; }
+[id] {
+  scroll-margin-top: 80px;
+}
 
 /* ── Keyboard navigation focus ring ──────────────────────── */
 body:not(.keyboard-nav) *:focus {
   outline: none;
 }
+
 .keyboard-nav *:focus-visible {
   outline: 2px solid var(--primary);
   outline-offset: 2px;
@@ -93,14 +103,27 @@ body:not(.keyboard-nav) *:focus {
   text-decoration: none;
   transition: top 0.2s ease;
 }
-.skip-link:focus { top: 0; }
+
+.skip-link:focus {
+  top: 0;
+}
 
 /* ── Alpine.js FOUC prevention ────────────────────────────── */
-[x-cloak] { display: none !important; }
+[x-cloak] {
+  display: none !important;
+}
 
 /* ── Global hidden utility ────────────────────────────────── */
-.hidden { display: none !important; }
+.hidden {
+  display: none !important;
+}
 
 /* ── Links ────────────────────────────────────────────────── */
-a { color: var(--primary); text-decoration: none; }
-a:hover { color: var(--primary-dark); }
+a {
+  color: var(--primary);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--primary-dark);
+}
