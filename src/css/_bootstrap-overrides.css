@@ -138,6 +138,17 @@
   --bs-navbar-brand-color: var(--primary);
 }
 
+/* ─── VIP Gold Theme (light mode) ───────────────────────────── */
+[data-vip] {
+  --bs-primary: var(--primary);
+  --bs-primary-rgb: var(--primary-rgb, 200, 150, 60);
+  --bs-link-color: var(--primary);
+  --bs-link-hover-color: var(--primary-dark);
+  --bs-navbar-hover-color: var(--primary);
+  --bs-navbar-active-color: var(--primary);
+  --bs-navbar-brand-color: var(--primary);
+}
+
 /* ─── Card hover ──────────────────────────────────────────── */
 /* Bootstrap doesn't provide card hover; we layer our custom effect */
 .card {

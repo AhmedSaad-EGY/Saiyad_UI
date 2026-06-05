@@ -233,6 +233,18 @@
   --gold-shimmer: linear-gradient(90deg, transparent, oklch(0.88 0.08 85 / 0.3), transparent);
 }
 
+/* ── Gold / VIP Theme (light mode, active subscription) ──── */
+[data-vip] {
+  --primary:        oklch(0.50 0.13 85);
+  --primary-rgb:    200, 150, 60;
+  --primary-dark:   oklch(0.42 0.13 85);
+  --primary-light:  oklch(0.92 0.04 85);
+  --primary-ghost:  oklch(0.50 0.13 85 / 0.08);
+  --accent:         oklch(0.65 0.18 85);
+  --shadow-glow:    0 0 0 3px oklch(0.50 0.13 85 / 0.18);
+  --primary-shadow: 0 4px 14px oklch(0.50 0.13 85 / 0.25);
+}
+
 /* ============================================================
    ARABIC TYPOGRAPHY OVERRIDES
    ============================================================ */
