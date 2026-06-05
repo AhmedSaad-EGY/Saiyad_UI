@@ -171,7 +171,7 @@ export default async function renderHome(container) {
       <div class="section-header animate-on-scroll"><h2>${t('home.latestProducts')}</h2><a href="#/products" class="btn btn-outline btn-sm">${t('home.viewAll')}</a></div>
 
       <!-- Product skeleton -->
-      <div x-show="loading" class="row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4 product-card-grid skeleton-shimmer">
+      <div x-show="loading" class="product-card-grid skeleton-shimmer">
         <template x-for="i in 4" :key="i">
           <div class="product-card card pe-none">
             <div class="product-card-img skeleton-image-shim"></div>
@@ -192,7 +192,7 @@ export default async function renderHome(container) {
       </div>
 
       <!-- Product grid -->
-      <div x-show="!loading && !error" class="row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4 product-card-grid">
+      <div x-show="!loading && !error" class="product-card-grid">
         <template x-for="(p, i) in products" :key="p.id">
           <a :href="'#/product-detail?id='+p.id" class="product-card card animate-on-scroll" :class="'stagger-' + Math.min(i + 1, 8)" :aria-label="escapeHtml(p.title || $t('common.product')) + ' — ' + formatPrice(p.price)">
             <div class="product-card-img">
@@ -213,7 +213,7 @@ export default async function renderHome(container) {
       <div class="section-header section-header-offset animate-on-scroll"><h2>${t('home.activeAuctions')}</h2><a href="#/auctions" class="btn btn-outline btn-sm">${t('home.viewAll')}</a></div>
 
       <!-- Auction grid (no separate skeleton — reuses same loading state) -->
-      <div x-show="!loading && !error" class="row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4 product-card-grid animate-on-scroll">
+      <div x-show="!loading && !error" class="product-card-grid animate-on-scroll">
         <template x-for="(a, i) in auctions" :key="a.id">
           <a :href="'#/auction-detail?id='+a.id" class="product-card card" :class="'animate-on-scroll stagger-' + Math.min(i + 1, 8)" :aria-label="(a.productTitle || $t('auction.item')) + ' — ' + formatPrice(a.currentHighestBid || a.startingPrice)">
             <div class="product-card-img">

@@ -712,20 +712,28 @@
 /* ============================================================
    PRODUCT / AUCTION CARDS
    ============================================================ */
-/* .product-grid migrated to Bootstrap .row + row-cols-* classes */
-
 .product-card-grid {
+  display: grid;
+  gap: var(--space-3);
+  grid-template-columns: 1fr;
   margin-block: var(--space-4) var(--space-8);
 }
 
-/* Extra bottom margin for the last grid on a page */
 .product-card-grid:last-child {
   margin-bottom: var(--space-10);
 }
 
-.product-grid-wrapper {
-  padding-inline: var(--space-4);
-  width: 100%;
+@media (min-width: 576px) {
+  .product-card-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 768px) {
+  .product-card-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 992px) {
+  .product-card-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (min-width: 1200px) {
+  .product-card-grid { grid-template-columns: repeat(4, 1fr); }
 }
 
 .product-card {
@@ -743,11 +751,6 @@
   color: inherit;
   border-top: 3px solid transparent;
   will-change: transform;
-}
-
-.product-card.card {
-  padding-left: 0;
-  padding-right: 0;
 }
 
 .product-card.card:hover {

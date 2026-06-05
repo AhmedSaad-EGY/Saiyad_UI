@@ -300,7 +300,7 @@ export default async function renderProductDetail(container, route, params) {
         if (items.length) {
           const section = document.createElement("div");
           section.classList.add("mt-5");
-          section.innerHTML = `<div class="section-header"><h2><i class="fas fa-layer-group" aria-hidden="true"></i> ${t("products.similar")}</h2></div><div class="row row-cols-2 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4" id="similarGrid"></div>`;
+          section.innerHTML = `<div class="section-header"><h2><i class="fas fa-layer-group" aria-hidden="true"></i> ${t("products.similar")}</h2></div><div class="product-card-grid" id="similarGrid"></div>`;
           container.appendChild(section);
           const grid = document.getElementById("similarGrid");
           renderProductCards(

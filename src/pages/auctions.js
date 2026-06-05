@@ -180,18 +180,16 @@ export default async function renderAuctions(_container, _fullPath, params) {
       </div>
 
       <!-- Skeleton -->
-      <div class="product-grid-wrapper">
-        <div x-show="loading" class="row row-cols-2 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4 skeleton-shimmer">
-          <template x-for="i in 6" :key="i">
-            <div class="product-card card pe-none">
-              <div class="product-card-img skeleton-image-shim"></div>
-              <div class="product-card-body p-3">
-                <div class="skeleton skeleton-title"></div>
-                <div class="skeleton skeleton-text" style="width:30%"></div>
-              </div>
+      <div x-show="loading" class="product-card-grid skeleton-shimmer">
+        <template x-for="i in 6" :key="i">
+          <div class="product-card card pe-none">
+            <div class="product-card-img skeleton-image-shim"></div>
+            <div class="product-card-body p-3">
+              <div class="skeleton skeleton-title"></div>
+              <div class="skeleton skeleton-text" style="width:30%"></div>
             </div>
-          </template>
-        </div>
+          </div>
+        </template>
       </div>
 
       <!-- Error -->
@@ -203,8 +201,7 @@ export default async function renderAuctions(_container, _fullPath, params) {
       </div>
 
       <!-- Auction grid -->
-      <div class="product-grid-wrapper">
-        <div x-show="!loading && !error && auctions.length" class="row row-cols-2 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4">
+      <div x-show="!loading && !error && auctions.length" class="product-card-grid">
         <template x-for="(a, i) in auctions" :key="a.id">
           <a :href="'#/auction-detail?id='+a.id" class="product-card card animate-on-scroll" :class="'stagger-' + Math.min(i + 1, 8)" :aria-label="(a.productTitle || $t('auction.item')) + ' — ' + formatPrice(a.currentHighestBid || a.startingPrice)" style="position:relative;overflow:hidden">
             <!-- Popular/Ending Soon Badge Overlay -->
@@ -235,7 +232,6 @@ export default async function renderAuctions(_container, _fullPath, params) {
             </div>
           </a>
         </template>
-      </div>
       </div>
 
       <!-- Empty -->
