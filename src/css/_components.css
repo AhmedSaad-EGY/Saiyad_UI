@@ -168,25 +168,7 @@
   border-left-color: var(--primary);
 }
 
-.text-danger {
-  color: var(--danger) !important;
-}
 
-.text-success {
-  color: var(--success) !important;
-}
-
-.text-warning {
-  color: var(--warning) !important;
-}
-
-.text-info {
-  color: var(--info) !important;
-}
-
-.text-primary {
-  color: var(--primary) !important;
-}
 
 .dropdown-divider {
   height: 1px;

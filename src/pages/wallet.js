@@ -185,7 +185,7 @@ async function loadWalletTransactions() {
     container.setAttribute('aria-busy', 'false');
     container.innerHTML = `
       <div class="table-responsive" role="region" aria-label="${t('wallet.transactionHistory')}" tabindex="0">
-        <table class="data-table">
+        <table class="table table-hover">
           <caption class="sr-only">Wallet transaction history</caption>
           <thead>
             <tr>

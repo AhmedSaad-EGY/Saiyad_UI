@@ -171,13 +171,15 @@ export default async function renderHome(container) {
       <div class="section-header animate-on-scroll"><h2>${t('home.latestProducts')}</h2><a href="#/products" class="btn btn-outline btn-sm">${t('home.viewAll')}</a></div>
 
       <!-- Product skeleton -->
-      <div x-show="loading" class="product-card-grid skeleton-shimmer">
+      <div x-show="loading" class="row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-4 g-3 skeleton-shimmer">
         <template x-for="i in 4" :key="i">
-          <div class="product-card card pe-none">
-            <div class="product-card-img skeleton-image-shim"></div>
-            <div class="product-card-body p-3">
-              <div class="skeleton skeleton-title"></div>
-              <div class="skeleton skeleton-text" style="width:30%"></div>
+          <div class="col">
+            <div class="product-card card pe-none">
+              <div class="product-card-img skeleton-image-shim"></div>
+              <div class="product-card-body p-3">
+                <div class="skeleton skeleton-title"></div>
+                <div class="skeleton skeleton-text" style="width:30%"></div>
+              </div>
             </div>
           </div>
         </template>
@@ -192,20 +194,22 @@ export default async function renderHome(container) {
       </div>
 
       <!-- Product grid -->
-      <div x-show="!loading && !error" class="product-card-grid">
+      <div x-show="!loading && !error" class="row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-4 g-3">
         <template x-for="(p, i) in products" :key="p.id">
-          <a :href="'#/product-detail?id='+p.id" class="product-card card animate-on-scroll" :class="'stagger-' + Math.min(i + 1, 8)" :aria-label="escapeHtml(p.title || $t('common.product')) + ' — ' + formatPrice(p.price)">
-            <div class="product-card-img">
-              <img :src="p.primaryImageUrl || p.imageUrl || ''" :alt="escapeHtml(p.title || $t('common.product'))" loading="lazy">
-            </div>
-            <div class="product-card-body">
-              <div class="product-card-title" x-text="p.title || $t('common.product')"></div>
-              <div class="product-card-price" x-text="formatPrice(p.price)"></div>
-              <div class="product-card-meta">
-                <span x-show="p.categoryName" class="product-card-category"><i class="fas fa-tag" aria-hidden="true"></i><span x-text="p.categoryName"></span></span>
+          <div class="col">
+            <a :href="'#/product-detail?id='+p.id" class="product-card card animate-on-scroll" :class="'stagger-' + Math.min(i + 1, 8)" :aria-label="escapeHtml(p.title || $t('common.product')) + ' — ' + formatPrice(p.price)">
+              <div class="product-card-img">
+                <img :src="p.primaryImageUrl || p.imageUrl || ''" :alt="escapeHtml(p.title || $t('common.product'))" loading="lazy">
               </div>
-            </div>
-          </a>
+              <div class="product-card-body">
+                <div class="product-card-title" x-text="p.title || $t('common.product')"></div>
+                <div class="product-card-price" x-text="formatPrice(p.price)"></div>
+                <div class="product-card-meta">
+                  <span x-show="p.categoryName" class="product-card-category"><i class="fas fa-tag" aria-hidden="true"></i><span x-text="p.categoryName"></span></span>
+                </div>
+              </div>
+            </a>
+          </div>
         </template>
       </div>
 
@@ -213,30 +217,32 @@ export default async function renderHome(container) {
       <div class="section-header section-header-offset animate-on-scroll"><h2>${t('home.activeAuctions')}</h2><a href="#/auctions" class="btn btn-outline btn-sm">${t('home.viewAll')}</a></div>
 
       <!-- Auction grid (no separate skeleton — reuses same loading state) -->
-      <div x-show="!loading && !error" class="product-card-grid animate-on-scroll">
+      <div x-show="!loading && !error" class="row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-4 g-3 animate-on-scroll">
         <template x-for="(a, i) in auctions" :key="a.id">
-          <a :href="'#/auction-detail?id='+a.id" class="product-card card" :class="'animate-on-scroll stagger-' + Math.min(i + 1, 8)" :aria-label="(a.productTitle || $t('auction.item')) + ' — ' + formatPrice(a.currentHighestBid || a.startingPrice)">
-            <div class="product-card-img">
-              <img :src="a.productImageUrl || ''" :alt="a.productTitle || $t('auction.item')" loading="lazy">
-              <span class="product-card-badge" :class="statusClass(a.status)" x-text="tStatus(a.status)"></span>
-            </div>
-            <div class="product-card-body">
-              <div class="product-card-title" x-text="a.productTitle || $t('auction.item')"></div>
-              <div class="current-bid" x-text="formatPrice(a.currentHighestBid || a.startingPrice)"></div>
-              <div class="product-card-meta">
-                <span>
-                  <i class="fas fa-hourglass-half" aria-hidden="true"></i>
-                  <span x-text="timeLeft(a.endTime).timeStr"></span>
-                  <span x-show="timeLeft(a.endTime).urgent" class="ending-soon-badge">${t('auction.endingSoon')}</span>
-                </span>
-                <span class="status" :class="statusClass(a.status)" x-text="tStatus(a.status)"></span>
+          <div class="col">
+            <a :href="'#/auction-detail?id='+a.id" class="product-card card" :class="'animate-on-scroll stagger-' + Math.min(i + 1, 8)" :aria-label="(a.productTitle || $t('auction.item')) + ' — ' + formatPrice(a.currentHighestBid || a.startingPrice)">
+              <div class="product-card-img">
+                <img :src="a.productImageUrl || ''" :alt="a.productTitle || $t('auction.item')" loading="lazy">
+                <span class="product-card-badge" :class="statusClass(a.status)" x-text="tStatus(a.status)"></span>
               </div>
-            </div>
-            <div class="product-card-footer">
-              <small>${t('common.start')}: <span x-text="formatPrice(a.startingPrice)"></span></small>
-              <small><span x-text="a.bidCount || 0"></span> ${t('common.bids')}</small>
-            </div>
-          </a>
+              <div class="product-card-body">
+                <div class="product-card-title" x-text="a.productTitle || $t('auction.item')"></div>
+                <div class="current-bid" x-text="formatPrice(a.currentHighestBid || a.startingPrice)"></div>
+                <div class="product-card-meta">
+                  <span>
+                    <i class="fas fa-hourglass-half" aria-hidden="true"></i>
+                    <span x-text="timeLeft(a.endTime).timeStr"></span>
+                    <span x-show="timeLeft(a.endTime).urgent" class="ending-soon-badge">${t('auction.endingSoon')}</span>
+                  </span>
+                  <span class="status" :class="statusClass(a.status)" x-text="tStatus(a.status)"></span>
+                </div>
+              </div>
+              <div class="product-card-footer">
+                <small>${t('common.start')}: <span x-text="formatPrice(a.startingPrice)"></span></small>
+                <small><span x-text="a.bidCount || 0"></span> ${t('common.bids')}</small>
+              </div>
+            </a>
+          </div>
         </template>
       </div>
 

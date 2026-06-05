@@ -301,13 +301,15 @@ export default async function renderProducts(_container, _fullPath, params) {
       </div>
 
       <!-- Skeleton loading -->
-      <div x-show="loading" class="product-card-grid skeleton-shimmer">
+      <div x-show="loading" class="row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-3 skeleton-shimmer">
         <template x-for="i in 6" :key="i">
-          <div class="product-card card pe-none">
-            <div class="product-card-img skeleton-image-shim"></div>
-            <div class="product-card-body p-3">
-              <div class="skeleton skeleton-title"></div>
-              <div class="skeleton skeleton-text" style="width:30%"></div>
+          <div class="col">
+            <div class="product-card card pe-none">
+              <div class="product-card-img skeleton-image-shim"></div>
+              <div class="product-card-body p-3">
+                <div class="skeleton skeleton-title"></div>
+                <div class="skeleton skeleton-text" style="width:30%"></div>
+              </div>
             </div>
           </div>
         </template>
@@ -322,22 +324,24 @@ export default async function renderProducts(_container, _fullPath, params) {
       </div>
 
       <!-- Product grid -->
-      <div x-show="!loading && !error && products.length" :class="isListView ? 'product-list-view d-flex flex-column gap-3' : 'product-card-grid'" id="productGrid">
+      <div x-show="!loading && !error && products.length" :class="isListView ? 'product-list-view d-flex flex-column gap-3' : 'row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-3'" id="productGrid">
         <template x-for="(p, i) in products" :key="p.id">
-          <a :href="'#/product-detail?id='+p.id" class="product-card card" :class="'animate-on-scroll stagger-' + Math.min(i + 1, 8)" :aria-label="escapeHtml(p.title || $t('common.product')) + ' — ' + formatPrice(p.price)">
-            <div class="product-card-img">
-              <img :src="p.primaryImageUrl || p.imageUrl || ''" :alt="escapeHtml(p.title || $t('common.product'))" loading="lazy">
-              <span x-show="p.status != null" class="product-card-badge" :class="'status-' + (p.status === 0 || p.status === 'Available' ? 'available' : 'draft')" x-text="p.status === 0 || p.status === 'Available' ? '${t('product.statusAvailable')}' : '${t('product.statusSold')}'"></span>
-            </div>
-            <div class="product-card-body">
-              <div class="product-card-title" x-text="p.title || $t('common.product')"></div>
-              <div class="product-card-price" x-text="formatPrice(p.price)"></div>
-              <div class="product-card-meta">
-                <span x-show="p.categoryName" class="product-card-category"><i class="fas fa-tag" aria-hidden="true"></i><span x-text="p.categoryName"></span></span>
-                <span x-show="p.stockQuantity != null" class="product-card-stock" x-text="p.stockQuantity + ' ${t('products.inStock')}'"></span>
+          <div :class="isListView ? 'w-100' : 'col'">
+            <a :href="'#/product-detail?id='+p.id" class="product-card card" :class="'animate-on-scroll stagger-' + Math.min(i + 1, 8)" :aria-label="escapeHtml(p.title || $t('common.product')) + ' — ' + formatPrice(p.price)">
+              <div class="product-card-img">
+                <img :src="p.primaryImageUrl || p.imageUrl || ''" :alt="escapeHtml(p.title || $t('common.product'))" loading="lazy">
+                <span x-show="p.status != null" class="product-card-badge" :class="'status-' + (p.status === 0 || p.status === 'Available' ? 'available' : 'draft')" x-text="p.status === 0 || p.status === 'Available' ? '${t('product.statusAvailable')}' : '${t('product.statusSold')}'"></span>
               </div>
-            </div>
-          </a>
+              <div class="product-card-body">
+                <div class="product-card-title" x-text="p.title || $t('common.product')"></div>
+                <div class="product-card-price" x-text="formatPrice(p.price)"></div>
+                <div class="product-card-meta">
+                  <span x-show="p.categoryName" class="product-card-category"><i class="fas fa-tag" aria-hidden="true"></i><span x-text="p.categoryName"></span></span>
+                  <span x-show="p.stockQuantity != null" class="product-card-stock" x-text="p.stockQuantity + ' ${t('products.inStock')}'"></span>
+                </div>
+              </div>
+            </a>
+          </div>
         </template>
       </div>
 

@@ -159,24 +159,7 @@
 
 /* Table utilities */
 .table-responsive { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-.data-table { width: 100%; border-collapse: collapse; font-size: var(--text-sm); }
-.data-table th {
-  text-align: start;
-  padding: var(--space-3) var(--space-4);
-  font-weight: var(--weight-medium);
-  color: var(--text-muted);
-  border-bottom: 1px solid var(--border);
-  font-size: var(--text-xs);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-.data-table td {
-  padding: 14px var(--space-4);
-  border-bottom: 1px solid var(--border);
-  color: var(--text);
-}
-.data-table tr:last-child td { border-bottom: none; }
-.data-table tr:hover td { background: var(--primary-ghost); }
+
 
 @media (max-width: 768px) {
   .wallet-page { padding: var(--space-6) var(--space-4); }

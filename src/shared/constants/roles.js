@@ -7,7 +7,7 @@ export const ROLES = Object.freeze({
   ADMIN: 'Admin',
   CUSTOMER: 'Customer',
   FISHERMAN: 'Fisherman',
-  BAIT_SELLER: 'BaitSeller',
+  BAIT_SELLER: 'BaitSeller', // Equivalent to the 'Butler' role in system specifications
   AUCTIONEER: 'Auctioneer',
 });
 
