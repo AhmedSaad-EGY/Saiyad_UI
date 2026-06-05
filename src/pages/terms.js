@@ -1,8 +1,10 @@
 import { t } from '../core/i18n/index.js';
 import { observeAnimations } from '../core/utils/dom.js';
 import { registerRouteCleanup } from '../core/router/index.js';
+import { setPageMeta } from '../core/utils/seo.js';
 
 export default async function renderTerms(container) {
+  setPageMeta(t('terms.title'));
   const isAr = document.documentElement.lang === 'ar';
 
   container.innerHTML = `

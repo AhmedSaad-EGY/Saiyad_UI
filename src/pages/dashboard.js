@@ -5,7 +5,7 @@ import { requireAuth, getUser, hasAnyRole, hasRole, updateNavbar, updateCartBadg
 import { registerRouteCleanup } from '../core/router/index.js';
 import { $$, showLoading, renderEmptyState, escapeHtml, observeAnimations } from '../core/utils/dom.js';
 import { manualPaginationHtml, wirePagination } from '../shared/components/pagination.js';
-import { validateForm, getPasswordStrength, clearFieldError } from '../core/utils/validation.js';
+import { validateForm, getPasswordStrengthResult, clearFieldError } from '../core/utils/validation.js';
 import { formatPrice, formatDate, statusClass, tStatus } from '../core/utils/format.js';
 import { showConfirm, showToast } from '../core/utils/ui.js';
 import { setPageMeta } from '../core/utils/seo.js';
@@ -313,11 +313,10 @@ async function renderOverview(content, user) {
         banner.innerHTML = `
           <i class="fas fa-store fs-5 flex-shrink-0" aria-hidden="true"></i>
           <span class="flex-fill">
-            <strong>${t("seller.setupRequired") || "Set up your seller profile"}</strong> —
-            ${t("seller.setupDesc") || "Complete your seller profile before listing products."}
-          </span>
-          <a href="#/seller-profile" class="btn btn-primary btn-sm">
-            ${t("seller.create") || "Set up profile"} <i class="fas fa-arrow-right" aria-hidden="true"></i>
+<strong>${t("seller.setupRequired")}</strong> —
+            ${t("seller.setupDesc")}
+            <a href="#/seller-profile" class="btn btn-sm btn-outline-primary ms-2">
+            ${t("seller.create")} <i class="fas fa-arrow-right" aria-hidden="true"></i>
           </a>`;
         overviewEl.prepend(banner);
       }
@@ -444,11 +443,10 @@ async function renderMyProducts(content) {
       <form id="myProductForm" novalidate>
         <div class="form-group"><label class="form-label">${t("product.title")} *</label><input type="text" class="form-input form-control" id="prodTitle" required></div>
         <div class="form-group"><label class="form-label">${t("product.description")} *</label><textarea class="form-textarea form-control" id="prodDesc" required></textarea></div>
-        <div class="form-group"><label class="form-label">${t("product.brand") || "Brand"} *</label><input type="text" class="form-input form-control" id="prodBrand" required></div>
-        <div class="form-group"><label class="form-label">${t("product.price")} *</label><input type="number" class="form-input form-control" id="prodPrice" min="0" step="0.01" required></div>
-        <div class="form-group"><label class="form-label">${t("product.stock") || "Stock Quantity"} *</label><input type="number" class="form-input form-control" id="prodStock" min="0" value="1" required></div>
-        <div class="form-group"><label class="form-label">${t("product.location") || "Location"} *</label><input type="text" class="form-input form-control" id="prodLocation" required></div>
-        <div class="form-group"><label class="form-label">${t("product.category") || "Category"} *</label><select class="form-select" id="prodCategory"><option value="">${t("common.loading") || "Loading..."}</option></select></div>
+        <div class="form-group"><label class="form-label">${t("product.brand")} *</label><input type="text" class="form-input form-control" id="prodBrand" required></div>
+        <div class="form-group"><label class="form-label">${t("product.stock")} *</label><input type="number" class="form-input form-control" id="prodStock" min="0" value="1" required></div>
+        <div class="form-group"><label class="form-label">${t("product.location")} *</label><input type="text" class="form-input form-control" id="prodLocation" required></div>
+        <div class="form-group"><label class="form-label">${t("product.category")} *</label><select class="form-select" id="prodCategory"><option value="">${t("common.loading")}</option></select></div>
         <div class="form-group"><label class="form-label">${t("product.condition")}</label><select class="form-select" id="prodCondition"><option value="New">${t("product.new")}</option><option value="Used">${t("product.used")}</option></select></div>
           <div class="form-group">
             <label class="form-label">${t("product.images")}</label>
@@ -567,20 +565,20 @@ async function renderMyProducts(content) {
           const ALLOWED = ["image/jpeg", "image/png", "image/webp"];
           if (!ALLOWED.includes(imageFile.type)) {
             showToast(
-              t("product.invalidImageType") || "Only JPG, PNG and WebP images are allowed.",
+              t("product.invalidImageType"),
               "error"
             );
             submit.disabled = false;
-            submit.textContent = t("product.save") || "Save";
+            submit.textContent = t("product.save");
             return;
           }
           if (imageFile.size > 5 * 1024 * 1024) {
             showToast(
-              t("product.imageTooLarge") || "Image must be under 5 MB.",
+              t("product.imageTooLarge"),
               "error"
             );
             submit.disabled = false;
-            submit.textContent = t("product.save") || "Save";
+            submit.textContent = t("product.save");
             return;
           }
           const formData = new FormData();
@@ -625,7 +623,7 @@ async function renderMyProducts(content) {
         const cats = await api.get("/categories");
         const list = Array.isArray(cats) ? cats : cats.items || cats.data || [];
         sel.innerHTML = list.map(c => `<option value="${c.id}">${escapeHtml(c.name)}</option>`).join("");
-      } catch { sel.innerHTML = `<option value="">${t("common.loadFailed") || "Failed to load"}</option>`; }
+      } catch { sel.innerHTML = `<option value="">${t("common.loadFailed")}</option>`; }
     }
   })();
 
@@ -743,7 +741,7 @@ function showAuctionModal(productId, productTitle) {
       <form id="auctionModalForm" novalidate>
         ${needsProductPicker ? `
         <div class="form-group">
-          <label class="form-label">${t("admin.products") || "Product"} *</label>
+          <label class="form-label">${t("admin.products")} *</label>
           <select class="form-select" id="auctionProductSelect" required>
             <option value="">${t("common.loading")}...</option>
           </select>
@@ -765,7 +763,7 @@ function showAuctionModal(productId, productTitle) {
           <input type="number" class="form-input form-control" id="auctionMinIncrement" min="0.01" step="0.01" value="1" required>
         </div>
         <div class="modal-actions">
-          <button type="button" class="btn btn-ghost" id="auctionModalCancel">${t("common.cancel") || "Cancel"}</button>
+          <button type="button" class="btn btn-ghost" id="auctionModalCancel">${t("common.cancel")}</button>
           <button type="submit" class="btn btn-primary" id="auctionModalSubmit"><i class="fas fa-gavel" aria-hidden="true"></i> ${t("auctions.title")}</button>
         </div>
       </form>
@@ -781,10 +779,10 @@ function showAuctionModal(productId, productTitle) {
     const select = document.getElementById("auctionProductSelect");
     api.get("/products", { IsAuctioned: false, PageSize: 200 }).then(data => {
       const items = data.items || data.data || [];
-      select.innerHTML = `<option value="">-- ${  t("common.select") || "Select"  } --</option>${
+      select.innerHTML = `<option value="">-- ${  t("common.select")  } --</option>${
          items.map(p => `<option value="${  p.id  }">${  escapeHtml(p.title)  } - ${  formatPrice(p.price)  }</option>`).join("")}`;
     }).catch(() => {
-      select.innerHTML = `<option value="">${  t("common.error") || "Error"  }</option>`;
+      select.innerHTML = `<option value="">${  t("common.error")  }</option>`;
     });
   }
 
@@ -812,7 +810,7 @@ function showAuctionModal(productId, productTitle) {
         ? parseInt(document.getElementById("auctionProductSelect").value)
         : productId;
       if (!selectedId || isNaN(selectedId)) {
-        throw new Error(t("common.required") || "Please select a product");
+        throw new Error(t("common.required"));
       }
       await api.post("/auctions", {
         productId: selectedId,
@@ -838,8 +836,8 @@ async function renderDashAuctions(content) {
   content.innerHTML = `
     <div class="card text-center p-4">
       <h3><i class="fas fa-gavel" aria-hidden="true"></i> ${t("dash.auctions")}</h3>
-      <p class="text-muted mb-3">${t("auction.startNew") || "Start a new auction for any product"}</p>
-      <button class="btn btn-primary" id="createNewAuctionBtn"><i class="fas fa-plus" aria-hidden="true"></i> ${t("auctions.title") || "Create Auction"}</button>
+      <p class="text-muted mb-3">${t("auction.startNew")}</p>
+      <button class="btn btn-primary" id="createNewAuctionBtn"><i class="fas fa-plus" aria-hidden="true"></i> ${t("auctions.title")}</button>
     </div>
   `;
   document.getElementById("createNewAuctionBtn").addEventListener("click", () => showAuctionModal());
@@ -873,7 +871,7 @@ async function renderWishlist(content) {
                 <div class="d-flex gap-2 flex-wrap">
                   <a href="#/product-detail?id=${w.productId}"
                      class="btn btn-outline btn-sm">
-                    <i class="fas fa-eye" aria-hidden="true"></i> ${t("common.view") || "View"}
+                    <i class="fas fa-eye" aria-hidden="true"></i> ${t("common.view")}
                   </a>
                   <button class="btn btn-primary btn-sm add-wishlist-to-cart"
                     data-product-id="${w.productId}"
@@ -898,8 +896,8 @@ async function renderWishlist(content) {
       btn.addEventListener("click", async () => {
         const ok = await showConfirm(
           t("wishlist.confirmRemove"),
-          t("wishlist.confirmRemoveDesc") || t("wishlist.confirmRemove"),
-          { type: "danger", confirmText: t("common.remove") || "Remove" },
+          t("wishlist.confirmRemoveDesc"),
+          { type: "danger", confirmText: t("common.remove") },
         );
         if (!ok) return;
         try {
@@ -979,7 +977,7 @@ async function renderNotifications(content) {
           btn.closest(".notif-item").classList.remove("unread");
           btn.remove();
           syncNotifBadgeCount(document.querySelectorAll("#notifList .notif-item.unread").length);
-        } catch {}
+        } catch { /* notification UI unaffected */ }
       });
     });
 
@@ -990,7 +988,7 @@ async function renderNotifications(content) {
         document.querySelectorAll("#notifList .mark-read").forEach((el) => el.remove());
         syncNotifBadgeCount(0);
         showToast(t("notif.markedAllRead"), "success");
-      } catch {}
+      } catch { /* already toasted success */ }
     });
     observeAnimations();
   } catch (e) {
@@ -1161,9 +1159,9 @@ function renderChangePassword(content) {
       txt.textContent = "";
       return;
     }
-    const result = getPasswordStrength(pw);
+    const result = getPasswordStrengthResult(pw);
     bar.className = `password-strength-bar ${  result.cls}`;
-    txt.textContent = result.label;
+    txt.textContent = t(result.label);
     txt.style.color = getComputedStyle(bar).backgroundColor;
   });
 

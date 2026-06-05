@@ -129,7 +129,7 @@
 
 /* ─── VIP Gold Theme (active subscription) ──────────────────── */
 [data-theme="dark"][data-vip] {
-  --bs-primary: oklch(0.78 0.12 85);
+  --bs-primary: var(--primary);
   --bs-primary-rgb: 200, 175, 60;
   --bs-link-color: var(--primary);
   --bs-link-hover-color: var(--primary-dark);

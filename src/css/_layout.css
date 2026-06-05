@@ -9,8 +9,7 @@
 .navbar {
   position: fixed;
   top: 0;
-  left: 0;
-  right: 0;
+  inset-inline: 0;
   z-index: 100;
   height: var(--navbar-height, 60px);
   background:
@@ -55,7 +54,7 @@
   content: "";
   position: absolute;
   bottom: -5px;
-  left: 0;
+  inset-inline-start: 0;
   width: 100%;
   height: 5px;
   background-image: radial-gradient(
@@ -172,7 +171,7 @@
   box-shadow: -18px 0 60px oklch(0 0 0 / 0.22), -2px 0 10px oklch(0 0 0 / 0.10);
   transform: translateX(110%) scale(0.97);
   transition: transform 0.38s cubic-bezier(0.32, 0.72, 0, 1), opacity 0.25s var(--ease-out);
-  z-index: 1000;
+  z-index: var(--z-drawer-panel, 1000);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -441,12 +440,12 @@ body.nav-open .navbar { pointer-events: all; }
     content: '';
     position: absolute;
     bottom: 0;
-    left: 50%;
-    right: 50%;
+    inset-inline-start: 50%;
+    inset-inline-end: 50%;
     height: 2px;
     background: var(--primary);
     border-radius: var(--radius-full);
-    transition: left 0.25s var(--ease-out), right 0.25s var(--ease-out);
+    transition: inset-inline-start 0.25s var(--ease-out), inset-inline-end 0.25s var(--ease-out);
   }
   .nav-link:hover::after,
   .nav-link.active::after,
@@ -922,13 +921,12 @@ input[type="date"].form-input::-webkit-datetime-edit-year-field:focus {
     display: flex;
     position: fixed;
     bottom: 0;
-    left: 0;
-    right: 0;
+    inset-inline: 0;
     height: calc(56px + env(safe-area-inset-bottom, 0px));
     padding-bottom: env(safe-area-inset-bottom, 0px);
     background: var(--nav-bg);
     border-top: 1px solid var(--border);
-    z-index: 1000;
+    z-index: var(--z-navbar);
     backdrop-filter: saturate(180%) blur(12px);
     -webkit-backdrop-filter: saturate(180%) blur(12px);
     box-shadow: var(--shadow-sm);
@@ -961,7 +959,7 @@ input[type="date"].form-input::-webkit-datetime-edit-year-field:focus {
   .bottom-nav-badge {
     position: absolute;
     top: 6px;
-    right: 18%;
+    inset-inline-end: 18%;
     background: var(--danger);
     color: var(--text-inverse);
     font-size: 9px;

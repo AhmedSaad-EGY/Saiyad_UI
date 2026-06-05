@@ -4,6 +4,7 @@ import { navigate, registerRouteCleanup } from "../core/router/index.js";
 import { showLoading } from "../core/utils/dom.js";
 import { api } from "../core/api/client.js";
 import { showToast, showConfirm } from "../core/utils/ui.js";
+import { setPageMeta } from "../core/utils/seo.js";
 import Alpine from "alpinejs";
 
 Alpine.data("forgotPwPage", () => ({
@@ -165,6 +166,7 @@ Alpine.data("forgotPwPage", () => ({
 }));
 
 export default function renderForgotPassword(container) {
+  setPageMeta(t('auth.forgotPassword'));
   if (isAuthenticated()) {
     navigate("");
     return;

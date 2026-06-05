@@ -78,7 +78,7 @@ Alpine.data('shippingPage', () => ({
   async deleteAddress(id) {
     const ok = await showConfirm(
       t('shipping.confirmDelete'),
-      t('shipping.confirmDeleteDesc') || t('shipping.confirmDelete'),
+      t('shipping.confirmDeleteDesc'),
       { type: 'danger', confirmText: t('common.delete') }
     );
     if (!ok) return;

@@ -43,7 +43,7 @@ function getConnection() {
     for (const id of _joinedGroups) {
       try {
         await _connection.invoke("JoinAuctionGroup", id);
-      } catch {}
+      } catch { /* group may have been removed */ }
     }
   });
   _connection.onclose(() => showSignalRBanner());
@@ -69,7 +69,7 @@ export function joinAuctionGroup(auctionId) {
   startIfNeeded().then(() => {
     const conn = getConnection();
     if (conn.state === signalR.HubConnectionState.Connected) {
-      conn.invoke("JoinAuctionGroup", auctionId).catch(() => {});
+      conn.invoke("JoinAuctionGroup", auctionId).catch(() => { /* connection may not be ready */ });
     }
   });
 }
@@ -81,13 +81,13 @@ export function leaveAuctionGroup(auctionId) {
 
   if (!_connection) return;
   if (_connection.state === signalR.HubConnectionState.Connected) {
-    _connection.invoke("LeaveAuctionGroup", auctionId).catch(() => {});
+    _connection.invoke("LeaveAuctionGroup", auctionId).catch(() => { /* connection may not be ready */ });
   }
 }
 
 export function stopSignalR() {
   if (_connection) {
-    _connection.stop().catch(() => {});
+    _connection.stop().catch(() => { /* connection already closed */ });
     _connection = null;
     _connectionPromise = null;
     _joinedGroups.clear();

@@ -43,6 +43,7 @@ export const translations = {
 
     // Auth
     "auth.login": "Login",
+    "login.title": "Login",
     "auth.logoutTitle": "Log Out",
     "auth.logoutConfirm": "Are you sure you want to log out?",
     "auth.email": "Email",
@@ -51,6 +52,7 @@ export const translations = {
     "auth.signingIn": "Signing in...",
     "auth.noAccount": "Don't have an account?",
     "auth.register": "Register",
+    "register.title": "Create Account",
     "auth.fullName": "Full Name",
     "auth.phone": "Phone",
     "auth.birthdate": "Birthdate",
@@ -162,7 +164,12 @@ export const translations = {
     "products.inStock": "in stock",
     "products.similar": "Similar Products",
 
+    "productDetail.title": "Product Detail",
+
     // Product Detail
+    "product.idRequired": "Product ID is required.",
+    "product.shareText": "Check out {title} on Sayiad!",
+    "product.startAuction": "Start Auction",
     "product.addToCart": "Add to Cart",
     "product.quantity": "Quantity",
     "product.decreaseQty": "Decrease quantity",
@@ -355,6 +362,10 @@ export const translations = {
     "shipping.confirmDelete": "Delete this address?",
     "shipping.confirmDeleteDesc": "This address will be permanently deleted.",
     "shipping.error": "Failed to save address.",
+
+    "auctionDetail.title": "Auction Detail",
+    "privacy.title": "Privacy Policy",
+    "terms.title": "Terms & Conditions",
 
     // Seller Profile
     "seller.title": "Seller Profile",
@@ -731,6 +742,7 @@ export const translations = {
     "auction.confirmBidTitle": "Confirm Your Bid",
     "auction.item": "Auction Item",
     "auction.idRequired": "Auction ID is required.",
+    "auction.userNumber": "User #",
 
     // Auctions
     "auctions.status": "Status",
@@ -748,6 +760,8 @@ export const translations = {
     "common.loadMore": "Load More",
     "common.noDescription": "No description provided",
     "common.viewProfile": "View Profile",
+    "common.kgUnit": "kg",
+    "common.unknown": "?",
 
     // Notifications
     "notif.markAsRead": "Mark as read",
@@ -793,6 +807,7 @@ export const translations = {
     "validation.invalid": "Invalid value",
     "validation.minLength": "Value is too short",
     "validation.required": "This field is required",
+    "validation.minAge": "Must be at least {minAge} years old",
   },
 
   ar: {
@@ -840,6 +855,7 @@ export const translations = {
 
     // Auth
     "auth.login": "تسجيل الدخول",
+    "login.title": "تسجيل الدخول",
     "auth.logoutTitle": "تسجيل الخروج",
     "auth.logoutConfirm": "هل أنت متأكد أنك تريد تسجيل الخروج؟",
     "auth.email": "البريد الإلكتروني",
@@ -848,6 +864,7 @@ export const translations = {
     "auth.signingIn": "جارٍ تسجيل الدخول...",
     "auth.noAccount": "ليس لديك حساب؟",
     "auth.register": "إنشاء حساب",
+    "register.title": "إنشاء حساب",
     "auth.fullName": "الاسم الكامل",
     "auth.phone": "رقم الهاتف",
     "auth.birthdate": "تاريخ الميلاد",
@@ -958,7 +975,12 @@ export const translations = {
     "products.inStock": "متوفر",
     "products.similar": "منتجات مشابهة",
 
+    "productDetail.title": "تفاصيل المنتج",
+
     // Product Detail
+    "product.idRequired": "معرف المنتج مطلوب.",
+    "product.shareText": "تحقق من {title} على سياد!",
+    "product.startAuction": "بدء المزاد",
     "product.addToCart": "أضف إلى العربة",
     "product.quantity": "الكمية",
     "product.decreaseQty": "تقليل الكمية",
@@ -1152,6 +1174,11 @@ export const translations = {
     "shipping.error": "فشل حفظ العنوان.",
 
     // Seller Profile
+    "auctionDetail.title": "تفاصيل المزاد",
+    "privacy.title": "سياسة الخصوصية",
+    "terms.title": "الشروط والأحكام",
+
+    // Seller
     "seller.title": "الملف الشخصي للبائع",
     "seller.myProfile": "ملفي الشخصي كبائع",
     "seller.storeName": "اسم المتجر",
@@ -1526,6 +1553,7 @@ export const translations = {
     "auction.confirmBidTitle": "تأكيد المزايدة",
     "auction.item": "عنصر المزاد",
     "auction.idRequired": "معرف المزاد مطلوب.",
+    "auction.userNumber": "# مستخدم",
 
     // Auctions
     "auctions.status": "الحالة",
@@ -1543,6 +1571,8 @@ export const translations = {
     "common.loadMore": "تحميل المزيد",
     "common.noDescription": "لا يوجد وصف",
     "common.viewProfile": "عرض الملف الشخصي",
+    "common.kgUnit": "كجم",
+    "common.unknown": "؟",
 
     // Notifications
     "notif.markAsRead": "تحديد كمقروء",
@@ -1588,6 +1618,7 @@ export const translations = {
     "validation.invalid": "قيمة غير صالحة",
     "validation.minLength": "القيمة قصيرة جداً",
     "validation.required": "هذا الحقل مطلوب",
+    "validation.minAge": "يجب أن يكون عمرك {minAge} سنة على الأقل",
   },
 };
 

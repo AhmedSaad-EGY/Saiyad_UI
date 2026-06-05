@@ -1,8 +1,9 @@
 import { t } from "../core/i18n/index.js";
 import { navigate, registerRouteCleanup } from "../core/router/index.js";
 import { showLoading } from "../core/utils/dom.js";
-import { getPasswordStrength } from "../core/utils/validation.js";
+import { getPasswordStrengthResult } from "../core/utils/validation.js";
 import { api } from "../core/api/client.js";
+import { setPageMeta } from "../core/utils/seo.js";
 import Alpine from "alpinejs";
 
 Alpine.data("resetPwForm", () => ({
@@ -23,9 +24,9 @@ Alpine.data("resetPwForm", () => ({
       this.strengthLabel = "";
       return;
     }
-    const result = getPasswordStrength(this.password);
+    const result = getPasswordStrengthResult(this.password);
     this.strengthCls = result.cls;
-    this.strengthLabel = result.label;
+    this.strengthLabel = t(result.label);
   },
 
   async submit() {
@@ -65,7 +66,7 @@ Alpine.data("resetPwForm", () => ({
       const timer = setTimeout(() => navigate("login"), 3000);
       try {
         registerRouteCleanup(() => clearTimeout(timer));
-      } catch {}
+      } catch { /* timer clears on navigate */ }
     } catch (err) {
       this.error = err.message;
     } finally {
@@ -75,6 +76,7 @@ Alpine.data("resetPwForm", () => ({
 }));
 
 export default function renderResetPassword(container) {
+  setPageMeta(t('auth.resetPassword'));
   const params = new URLSearchParams(location.hash.split("?")[1] || "");
   const token = params.get("token");
 
@@ -127,11 +129,7 @@ export default function renderResetPassword(container) {
           </div>
         </div>
       </div>`;
-      if (typeof Alpine.discoverUninitializedComponents === "function") {
-        Alpine.discoverUninitializedComponents(container);
-      } else if (typeof Alpine.initTree === "function") {
-        Alpine.initTree(container);
-      }
+      Alpine.initTree?.(container);
     };
 
     renderContent();

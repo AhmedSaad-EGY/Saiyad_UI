@@ -91,7 +91,7 @@ export default async function renderOrderDetail(container) {
                               ? `<img src="${item.productImageUrl || item.imageUrl}" alt="${escapeHtml(item.productTitle || '')}" style="width:48px;height:48px;object-fit:cover;border-radius:var(--radius);border:1px solid var(--border)" loading="lazy">`
                               : `<div style="width:48px;height:48px;display:flex;align-items:center;justify-content:center;background:var(--body-bg);border-radius:var(--radius);color:var(--text-muted)"><i class="fas fa-image" aria-hidden="true"></i></div>`
                             }
-                            <a href="#/product-detail?id=${item.productId}" class="text-reset text-decoration-none fw-medium">${escapeHtml(item.productTitle || 'Product')}</a>
+                            <a href="#/product-detail?id=${item.productId}" class="text-reset text-decoration-none fw-medium">${escapeHtml(item.productTitle || t('common.product'))}</a>
                           </div>
                         </td>
                         <td>${item.sellerName ? `<a href="#/seller-profile?userId=${item.sellerId}" class="text-primary">${escapeHtml(item.sellerName)}</a>` : '-'}</td>
@@ -123,7 +123,7 @@ export default async function renderOrderDetail(container) {
               <div class="card animate-on-scroll stagger-2">
                 <div class="card-header"><h3 class="mb-0"><i class="fas fa-credit-card" aria-hidden="true"></i> ${t('order.paymentInfo')}</h3></div>
                 <div class="card-body">
-                  <p class="mb-1"><strong>${t('order.method')}:</strong> ${escapeHtml(order.paymentMethod || 'Wallet')}</p>
+                  <p class="mb-1"><strong>${t('order.method')}:</strong> ${escapeHtml(order.paymentMethod ?? '')}</p>
                   <p class="mb-1"><strong>${t('order.date')}:</strong> ${formatDate(order.createdAt)}</p>
                   <p class="mb-0"><strong>${t('order.status')}:</strong> <span class="status ${statusClass(order.status)}">${tStatus(order.status)}</span></p>
                 </div>

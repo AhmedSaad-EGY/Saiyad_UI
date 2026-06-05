@@ -294,7 +294,7 @@ export function initPullToRefresh({ onRefresh, threshold = 80, indicatorId = 'pt
     if (ready) {
       indicator.classList.add('ptr-refreshing');
       indicator.querySelector('.ptr-text').textContent = t('common.refreshing');
-      try { await onRefresh(); } catch {}
+      try { await onRefresh(); } catch { /* refresh failed, UI already reset */ }
       indicator.classList.remove('ptr-refreshing');
       indicator.querySelector('.ptr-text').textContent = t('common.pullToRefresh');
     }

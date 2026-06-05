@@ -140,8 +140,21 @@
   --border-glass:       oklch(1 0 0 / 0.15);
   --shadow-glass:       0 8px 32px oklch(0.42 0.22 240 / 0.1);
 
+  /* ── Layers (z-index) ─────────────────────────────────────── */
+  --z-dropdown:      1000;
+  --z-navbar:        1000;
+  --z-sticky:        1000;
+  --z-drawer:        1050;
+  --z-cart-bar:      1080;
+  --z-lightbox:      3000;
+  --z-quickview:     3000;
+  --z-overlay:       9999;
+  --z-ptr:           9999;
+  --z-swipe:         99999;
+  --z-toast:         10000;
+  --z-skip-link:     10000;
+
   /* ── Misc ─────────────────────────────────────────────────── */
-  --gold-shimmer: linear-gradient(90deg, transparent, oklch(0.88 0.08 85 / 0.3), transparent);
 }
 
 /* ============================================================
@@ -214,6 +227,7 @@
   --accent:         oklch(0.82 0.15 95);
   --shadow-glow:    0 0 0 3px oklch(0.78 0.12 85 / 0.18);
   --primary-shadow: 0 4px 14px oklch(0.78 0.12 85 / 0.25);
+  --gold-shimmer: linear-gradient(90deg, transparent, oklch(0.88 0.08 85 / 0.3), transparent);
 }
 
 /* ============================================================

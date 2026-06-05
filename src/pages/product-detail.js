@@ -1,6 +1,7 @@
 import { t, getCurrentLang } from '../core/i18n/index.js';
 import { api } from '../core/api/client.js';
 import { isAuthenticated, getUser, hasAnyRole, requireAuth, updateCartBadge } from '../core/auth/index.js';
+import { setPageMeta } from '../core/utils/seo.js';
 import { SELLER_ROLES } from '../shared/constants/roles.js';
 import { router, registerRouteCleanup } from '../core/router/index.js';
 import { showError, showLoading, escapeHtml, progressiveImg, observeAnimations, fadeInContent, animate, safeSetHTML } from '../core/utils/dom.js';
@@ -8,9 +9,10 @@ import { formatPrice, formatDate, statusClass, tStatus, tCondition, renderStars 
 import { renderProductCards, openLightbox, trackRecentlyViewed, showToast } from '../core/utils/ui.js';
 
 export default async function renderProductDetail(container, route, params) {
+  setPageMeta(t('productDetail.title'));
   const id = params.id;
   if (!id) {
-    showError(container, "Product ID is required.");
+    showError(container, t('product.idRequired'));
     return;
   }
 
@@ -102,7 +104,7 @@ export default async function renderProductDetail(container, route, params) {
           <!-- Seller info card -->
           ${p.sellerId ? `
           <a href="#/seller-profile?userId=${p.sellerId}" class="seller-info-card mt-4" style="text-decoration:none;color:inherit">
-            <div class="seller-avatar">${escapeHtml(p.sellerName || '?').charAt(0).toUpperCase()}</div>
+            <div class="seller-avatar">${escapeHtml(p.sellerName || t('common.unknown')).charAt(0).toUpperCase()}</div>
             <div class="seller-info-details">
               <div class="seller-info-name">${escapeHtml(p.sellerName || t("common.N/A"))}</div>
               <div class="seller-info-meta"><i class="fas fa-store" aria-hidden="true"></i> ${t('common.viewProfile')}</div>
@@ -214,11 +216,11 @@ export default async function renderProductDetail(container, route, params) {
     document.getElementById("shareBtn")?.addEventListener("click", async () => {
       const shareData = {
         title: p.title,
-        text: `Check out ${p.title} on Sayiad!`,
+        text: t('product.shareText', { title: p.title }),
         url: window.location.href,
       };
       if (navigator.share) {
-        try { await navigator.share(shareData); } catch (e) { /* ignore */ }
+        try { await navigator.share(shareData); } catch (e) { /* user cancelled share dialog */ }
       } else {
         navigator.clipboard.writeText(window.location.href);
         showToast(t("common.linkCopied"), "success");
@@ -307,7 +309,7 @@ export default async function renderProductDetail(container, route, params) {
           );
           observeAnimations();
         }
-      } catch {}
+      } catch { /* similar grid stays hidden */ }
     })();
 
     // Track recently viewed
@@ -395,9 +397,10 @@ export default async function renderProductDetail(container, route, params) {
       const prevFocus = document.activeElement;
       const overlay = document.createElement("div");
       overlay.className = "modal-overlay show";
+      document.body.classList.add("modal-open");
       overlay.setAttribute("role", "dialog");
       overlay.setAttribute("aria-modal", "true");
-      overlay.setAttribute("aria-label", "Start Auction");
+      overlay.setAttribute("aria-label", t("product.startAuction"));
       overlay.innerHTML = `
         <div class="modal" onclick="event.stopPropagation()" style="max-width:460px">
           <h3><i class="fas fa-gavel" aria-hidden="true"></i> ${t("auctions.title")} — ${escapeHtml(p.title)}</h3>
@@ -420,7 +423,7 @@ export default async function renderProductDetail(container, route, params) {
               <input type="number" class="form-input form-control" id="auctionMinIncrement" min="0.01" step="0.01" value="1" required>
             </div>
             <div class="modal-actions">
-              <button type="button" class="btn btn-ghost" id="auctionModalCancel">${t("common.cancel") || "Cancel"}</button>
+              <button type="button" class="btn btn-ghost" id="auctionModalCancel">${t("common.cancel")}</button>
               <button type="submit" class="btn btn-primary" id="auctionModalSubmit"><i class="fas fa-gavel" aria-hidden="true"></i> ${t("auctions.title")}</button>
             </div>
           </form>
@@ -428,10 +431,10 @@ export default async function renderProductDetail(container, route, params) {
       overlay.addEventListener("click", (e) => { if (e.target === overlay) close(); });
       document.body.appendChild(overlay);
       animate(overlay, 'fadeIn', { duration: '0.2s' });
-      function close() { overlay.remove(); document.removeEventListener("keydown", onKey); if (prevFocus?.focus) prevFocus.focus(); }
+      function close() { document.body.classList.remove("modal-open"); overlay.remove(); document.removeEventListener("keydown", onKey); if (prevFocus?.focus) prevFocus.focus(); }
       function onKey(e) { if (e.key === "Escape") close(); }
       document.addEventListener("keydown", onKey);
-      registerRouteCleanup(() => { document.removeEventListener("keydown", onKey); if (overlay?.isConnected) overlay.remove(); });
+      registerRouteCleanup(() => { document.body.classList.remove("modal-open"); document.removeEventListener("keydown", onKey); if (overlay?.isConnected) overlay.remove(); });
       document.getElementById("auctionModalCancel").addEventListener("click", close);
       document.getElementById("auctionModalForm").addEventListener("submit", async (e) => {
         e.preventDefault();
@@ -462,9 +465,9 @@ export default async function renderProductDetail(container, route, params) {
 
     // Toggle review form
     document.getElementById("showReviewForm")?.addEventListener("click", () => {
-      if (!isAuthenticated()) { showToast(t("auth.loginRequired") || "Please log in to write a review.", "warning"); return; }
-      const form = document.getElementById("reviewFormContainer");
-      if (!form) { showToast(t("auth.loginRequired") || "Please log in to write a review.", "warning"); return; }
+      if (!isAuthenticated()) { showToast(t("auth.loginRequired"), "warning"); return; }
+
+      if (!form) { showToast(t("auth.loginRequired"), "warning"); return; }
       form.classList.toggle("d-none");
       form.scrollIntoView({ behavior: "smooth", block: "nearest" });
     });

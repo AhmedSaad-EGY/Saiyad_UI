@@ -2,6 +2,7 @@ import Alpine from 'alpinejs';
 import { t, getCurrentLang } from '../core/i18n/index.js';
 import { api } from '../core/api/client.js';
 import { requireAuth, getUser, hasRole } from '../core/auth/index.js';
+import { setPageMeta } from '../core/utils/seo.js';
 import { ROLES } from '../shared/constants/roles.js';
 import { registerRouteCleanup, navigate } from '../core/router/index.js';
 import { formatPrice, formatDate, statusClass, tStatus } from '../core/utils/format.js';
@@ -87,7 +88,7 @@ Alpine.data('auctionDetailPage', () => ({
       // Track recently viewed
       trackRecentlyViewed(
         a.id,
-        a.productTitle || 'Auction Item',
+        a.productTitle || t('auction.item'),
         a.productImageUrl,
         a.currentHighestBid || a.startingPrice,
         "auction",
@@ -279,7 +280,7 @@ Alpine.data('auctionDetailPage', () => ({
       this.bidCount = this.bids.length;
       this.bidAlert = '';
       this.bidAlertType = '';
-    } catch { /* ignore */ }
+    } catch { /* previous bid state preserved */ }
   },
 
   quickBidAdd() {
@@ -340,6 +341,7 @@ Alpine.data('auctionDetailPage', () => ({
 
 // --- Page render function ---
 export default async function renderAuctionDetail(container, _route, params) {
+  setPageMeta(t('auctionDetail.title'));
   container.innerHTML = `
     <div x-data="auctionDetailPage" x-init="init()">
       <!-- Loading skeleton -->
@@ -469,7 +471,7 @@ export default async function renderAuctionDetail(container, _route, params) {
             <!-- Seller info card -->
             <template x-if="auction.sellerName || auction.auctioneerName">
               <a :href="'#/seller-profile?userId=' + (auction.sellerId || auction.auctioneerId || '')" class="seller-info-card" style="text-decoration:none;color:inherit">
-                <div class="seller-avatar" x-text="(auction.sellerName || auction.auctioneerName || '?').charAt(0).toUpperCase()"></div>
+                <div class="seller-avatar" x-text="(auction.sellerName || auction.auctioneerName || $t('common.unknown')).charAt(0).toUpperCase()"></div>
                 <div class="seller-info-details">
                   <div class="seller-info-name" x-text="auction.sellerName || auction.auctioneerName"></div>
                   <div class="seller-info-meta"><i class="fas fa-store" aria-hidden="true"></i> ${t('common.viewProfile')}</div>
@@ -482,7 +484,7 @@ export default async function renderAuctionDetail(container, _route, params) {
             <template x-if="auction.winnerUserId">
               <div class="alert alert-success">
                 <i class="fas fa-trophy" aria-hidden="true"></i>
-                <span x-text="$t('auction.winner') + ': ' + (auction.winnerName || 'User #' + auction.winnerUserId)"></span>
+                <span x-text="$t('auction.winner') + ': ' + (auction.winnerName || $t('auction.userNumber') + auction.winnerUserId)"></span>
               </div>
             </template>
 

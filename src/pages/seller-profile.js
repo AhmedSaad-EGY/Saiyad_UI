@@ -5,8 +5,10 @@ import { SELLER_ROLES } from '../shared/constants/roles.js';
 import { showLoading, escapeHtml, observeAnimations } from '../core/utils/dom.js';
 import { renderStars } from '../core/utils/format.js';
 import { renderProductCards, showToast } from '../core/utils/ui.js';
+import { setPageMeta } from '../core/utils/seo.js';
 
 export default async function renderSellerProfile(container) {
+  setPageMeta(t('seller.title'));
   const params = new URLSearchParams(location.hash.split('?')[1] || '');
   const userId = params.get('userId');
   if (userId) {
@@ -46,7 +48,7 @@ export default async function renderSellerProfile(container) {
         productsSection.style.marginTop = "32px";
         productsSection.innerHTML = `
           <div class="section-header">
-            <h3><i class="fas fa-tag" aria-hidden="true"></i> ${t("seller.listings") || "Products"}</h3>
+            <h3><i class="fas fa-tag" aria-hidden="true"></i> ${t("seller.listings")}</h3>
           </div>
           <div class="row row-cols-2 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4" id="sellerProductGrid"></div>
         `;
@@ -57,7 +59,7 @@ export default async function renderSellerProfile(container) {
         );
         observeAnimations();
       }
-    } catch {}
+    } catch { /* inner products render failed */ }
     } catch {
       container.innerHTML = `<div class="empty-state"><i class="fas fa-store" aria-hidden="true"></i><h3>${t('seller.notFound')}</h3></div>`;
     }

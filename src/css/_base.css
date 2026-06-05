@@ -81,9 +81,9 @@ body:not(.keyboard-nav) *:focus {
 .skip-link {
   position: absolute;
   top: -100%;
-  left: 50%;
+  inset-inline-start: 50%;
   transform: translateX(-50%);
-  z-index: 10000;
+  z-index: var(--z-skip-link);
   background: var(--primary);
   color: var(--text-inverse);
   padding: 10px 20px;

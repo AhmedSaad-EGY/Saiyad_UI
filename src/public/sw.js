@@ -35,7 +35,7 @@ self.addEventListener("fetch", (event) => {
       caches.open(CACHE).then((cache) =>
         cache.match(request).then((cached) => {
           const networkFetch = fetch(request).then((response) => {
-            if (response.ok) cache.put(request, response.clone()).catch(() => {});
+            if (response.ok) cache.put(request, response.clone()).catch(() => { /* cache full or storage quota */ });
             return response;
           });
           return cached || networkFetch;
@@ -50,7 +50,7 @@ self.addEventListener("fetch", (event) => {
       .then((response) => {
         if (response.ok) {
           const key = url.pathname === "/" ? "/index.html" : url.pathname;
-          caches.open(CACHE).then((cache) => cache.put(key, response.clone())).catch(() => {});
+          caches.open(CACHE).then((cache) => cache.put(key, response.clone())).catch(() => { /* cache full or storage quota */ });
         }
         return response;
       })

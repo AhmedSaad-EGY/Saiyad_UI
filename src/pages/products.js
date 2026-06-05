@@ -73,7 +73,7 @@ Alpine.data('productsPage', () => ({
     try {
       const res = await api.get('/categories', { pageSize: 100 });
       this.categories = res.items || res.data || res || [];
-    } catch { /* ignore */ }
+    } catch { /* categories stay empty */ }
   },
 
   syncUrl() {
@@ -269,7 +269,7 @@ export default async function renderProducts(_container, _fullPath, params) {
         </template>
         <template x-if="categoryId">
           <span class="filter-chip" @click="removeFilter('categoryId')">
-            <i class="fas fa-tag" aria-hidden="true"></i> <span x-text="categories.find(c => String(c.id) === String(categoryId))?.name || 'Category'"></span> <i class="fas fa-times" aria-hidden="true"></i>
+            <i class="fas fa-tag" aria-hidden="true"></i> <span x-text="categories.find(c => String(c.id) === String(categoryId))?.name || $t('common.category')"></span> <i class="fas fa-times" aria-hidden="true"></i>
           </span>
         </template>
         <template x-if="condition">
@@ -326,11 +326,11 @@ export default async function renderProducts(_container, _fullPath, params) {
         <template x-for="(p, i) in products" :key="p.id">
           <a :href="'#/product-detail?id='+p.id" class="product-card card" :class="'animate-on-scroll stagger-' + Math.min(i + 1, 8)" :aria-label="escapeHtml(p.title || $t('common.product')) + ' — ' + formatPrice(p.price)">
             <div class="product-card-img">
-              <img :src="p.primaryImageUrl || p.imageUrl || ''" :alt="escapeHtml(p.title || 'Product')" loading="lazy">
+              <img :src="p.primaryImageUrl || p.imageUrl || ''" :alt="escapeHtml(p.title || $t('common.product'))" loading="lazy">
               <span x-show="p.status != null" class="product-card-badge" :class="'status-' + (p.status === 0 || p.status === 'Available' ? 'available' : 'draft')" x-text="p.status === 0 || p.status === 'Available' ? '${t('product.statusAvailable')}' : '${t('product.statusSold')}'"></span>
             </div>
             <div class="product-card-body">
-              <div class="product-card-title" x-text="p.title || 'Product'"></div>
+              <div class="product-card-title" x-text="p.title || $t('common.product')"></div>
               <div class="product-card-price" x-text="formatPrice(p.price)"></div>
               <div class="product-card-meta">
                 <span x-show="p.categoryName" class="product-card-category"><i class="fas fa-tag" aria-hidden="true"></i><span x-text="p.categoryName"></span></span>

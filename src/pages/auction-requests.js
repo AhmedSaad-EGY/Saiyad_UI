@@ -6,8 +6,10 @@ import { statusClass } from '../core/utils/format.js';
 import { showToast } from '../core/utils/ui.js';
 import { validateForm, clearFieldError } from '../core/utils/validation.js';
 import { ROLES } from '../shared/constants/roles.js';
+import { setPageMeta } from '../core/utils/seo.js';
 
 export default async function renderAuctionRequests(container) {
+  setPageMeta(t('auctionRequests.title'));
   const _u = getUser();
   if (!_u || _u.role !== ROLES.FISHERMAN) { window.location.hash = '#/'; return; }
 

@@ -112,7 +112,7 @@ Alpine.data('auctionsPage', () => ({
       this.auctions = [...this.auctions, ...items];
       const total = data.totalCount || data.total || 0;
       this.totalPages = Math.ceil(total / this.pageSize);
-    } catch { /* silently fail */ }
+    } catch { /* UI shows previously loaded auctions */ }
     this.loading = false;
     this.$nextTick(() => observeAnimations());
   },
@@ -173,7 +173,7 @@ export default async function renderAuctions(_container, _fullPath, params) {
           </select>
           <label class="filter-check">
             <input type="checkbox" x-model="endingSoonOnly" @change="reload()" />
-            <span>${t("auction.endingSoon") || "Ending Soon (<24h)"}</span>
+            <span>${t("auction.endingSoon")}</span>
           </label>
         </div>
         <button class="btn btn-outline filter-toggle-btn" @click="filterSheetOpen = true" aria-label="${t('products.filters')}"><i class="fas fa-sliders-h" aria-hidden="true"></i></button>

@@ -25,10 +25,6 @@
 }
 
 /* ── Dropdowns: flip position ───────────────────────────────── */
-[dir="rtl"] .dropdown-menu {
-  right: auto;
-  left: 0;
-}
 [dir="rtl"] .dropdown-item {
   border-left: none;
   border-right: 3px solid transparent;

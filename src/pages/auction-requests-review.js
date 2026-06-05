@@ -1,15 +1,18 @@
 import { t } from '../core/i18n/index.js';
 import { api } from '../core/api/client.js';
 import { getUser } from '../core/auth/index.js';
+import { MODERATOR_ROLES } from '../shared/constants/roles.js';
 import { escapeHtml } from '../core/utils/dom.js';
 import { statusClass } from '../core/utils/format.js';
 import { showToast } from '../core/utils/ui.js';
 import { registerRouteCleanup } from '../core/router/index.js';
 import { manualPaginationHtml, wirePagination } from '../shared/components/pagination.js';
+import { setPageMeta } from '../core/utils/seo.js';
 
 export default async function renderAuctionRequestsReview(container) {
+  setPageMeta(t('auctionRequestsReview.title'));
   const _u = getUser();
-  if (!_u || !['Auctioneer','Admin'].includes(_u.role)) { window.location.hash = '#/'; return; }
+  if (!_u || !MODERATOR_ROLES.includes(_u.role)) { window.location.hash = '#/'; return; }
 
   container.innerHTML = `
     <div class="section-header">
@@ -191,7 +194,7 @@ export default async function renderAuctionRequestsReview(container) {
             <tbody>
               <tr><th scope="row">${t("auctionRequestsReview.fisherman")}</th><td>${escapeHtml(r.fishermanName || '-')}</td></tr>
               <tr><th scope="row">${t("auctionRequests.fishType")}</th><td>${escapeHtml(r.fishType)}</td></tr>
-              <tr><th scope="row">${t("auctionRequests.quantityKg")}</th><td><span class="fw-semibold">${r.quantityKg} kg</span></td></tr>
+              <tr><th scope="row">${t("auctionRequests.quantityKg")}</th><td><span class="fw-semibold">${r.quantityKg} ${t('common.kgUnit')}</span></td></tr>
               <tr><th scope="row">${t("auctionRequests.estimatedValue")}</th><td><span class="fw-semibold text-primary">${r.estimatedValue}</span></td></tr>
               <tr><th scope="row">${t("auctionRequests.catchLocation")}</th><td>${escapeHtml(r.catchLocation || '-')}</td></tr>
               <tr><th scope="row">${t("auctionRequests.catchDate")}</th><td>${r.catchDate ? new Date(r.catchDate).toLocaleDateString() : '-'}</td></tr>

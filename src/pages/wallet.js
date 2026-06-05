@@ -205,7 +205,7 @@ async function loadWalletTransactions() {
                 <td class="${(tx.amount ?? 0) >= 0 ? 'tx-positive' : 'tx-negative'}">
                   ${(tx.amount ?? 0) >= 0 ? '+' : ''}${Number(tx.amount ?? 0).toLocaleString('ar-EG', { minimumFractionDigits: 2 })}
                 </td>
-                <td><span class="status-badge status-${(tx.status ?? 'pending').toLowerCase()}">${escapeHTML(tx.status ?? 'Pending')}</span></td>
+                <td><span class="status-badge status-${(tx.status ?? 'pending').toLowerCase()}">${escapeHTML(tx.status ?? '')}</span></td>
               </tr>`).join('')}
           </tbody>
         </table>

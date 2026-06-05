@@ -6,10 +6,12 @@ Alpine.data('modal', ({ title, content, onClose } = {}) => ({
   content: content || '',
   open() {
     this.show = true;
+    document.body.classList.add("modal-open");
     this.$nextTick(() => this.$refs.closeBtn?.focus());
   },
   close() {
     this.show = false;
+    document.body.classList.remove("modal-open");
     onClose?.();
   },
   handleKeydown(e) {

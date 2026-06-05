@@ -6,8 +6,10 @@ import { formatPrice } from '../core/utils/format.js';
 import { showToast } from '../core/utils/ui.js';
 import { getRoleSubscriptionInfo, getPlanIcon, isPopularPlan } from '../features/subscriptions/helpers.js';
 import { createPaymentReference } from '../features/checkout/helpers.js';
+import { setPageMeta } from '../core/utils/seo.js';
 
 export default async function renderSubscriptions(container) {
+  setPageMeta(t('subscriptions.title'));
   if (!(await requireAuth())) return;
 
   container.innerHTML = `
@@ -102,8 +104,8 @@ export default async function renderSubscriptions(container) {
         </div>` : `
         <div class="empty-state mt-4">
           <div class="empty-state-visual"><i class="fas fa-crown" style="font-size:3rem;color:var(--text-muted)" aria-hidden="true"></i></div>
-          <h3>${t("subscriptions.noPlans") || "No plans available"}</h3>
-          <p class="text-muted">${t("subscriptions.noPlansDesc") || "Subscription plans are not available at this time."}</p>
+          <h3>${t("subscriptions.noPlans")}</h3>
+          <p class="text-muted">${t("subscriptions.noPlansDesc")}</p>
         </div>`}
       </div>`;
 
@@ -139,7 +141,7 @@ export default async function renderSubscriptions(container) {
         <div class="empty-state mt-4">
           <div class="empty-state-visual"><i class="fas fa-crown fs-1 text-muted" aria-hidden="true"></i></div>
           <h3>${t("common.error")}</h3>
-          <p class="text-muted">${t("common.loadFailed") || "Failed to load subscription plans."}</p>
+          <p class="text-muted">${t("common.loadFailed")}</p>
         </div>`;
     }
   }

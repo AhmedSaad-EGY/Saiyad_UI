@@ -3,6 +3,7 @@ import { showToast, showConfirm, openQuickView } from './utils/ui.js';
 import { animate } from './utils/dom.js';
 import { api } from './api/client.js';
 import { getUser, logout, requireAuth, syncVipAttribute } from './auth/index.js';
+import { SELLER_ROLES } from '../shared/constants/roles.js';
 import { router, goBack, registerRouteCleanup } from './router/index.js';
 import { createSwipeGesture } from './utils/swipe.js';
 import { setupGlobalErrorHandlers } from '../shared/helpers/errors.js';
@@ -255,14 +256,14 @@ function syncUserRoleAttribute() {
 
 applyTheme(savedTheme);
 syncUserRoleAttribute();
-syncVipAttribute();
+syncVipAttribute().catch(err => console.warn('VIP sync failed:', err));
 initHeroTilt();
 
 // Footer "Sell on Sayiad" — route sellers to dashboard
 const _sellLink = document.getElementById('footerSellLink');
 if (_sellLink) {
   const _seller = getUser();
-  if (_seller && ['Fisherman', 'BaitSeller'].includes(_seller.role)) {
+  if (_seller && SELLER_ROLES.includes(_seller.role)) {
     _sellLink.href = '#/dashboard';
     _sellLink.setAttribute('aria-label', 'Go to your seller dashboard');
   }
@@ -543,7 +544,7 @@ if ("serviceWorker" in navigator) {
 
       setInterval(() => registration.update(), 3600000);
     })
-    .catch(() => {});
+    .catch(err => console.warn('SW registration failed:', err));
 }
 
 function showUpdateBanner(worker) {

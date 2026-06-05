@@ -4,8 +4,10 @@ import { getUser, hasAnyRole } from '../core/auth/index.js';
 import { escapeHtml } from '../core/utils/dom.js';
 import { MODERATOR_ROLES } from '../shared/constants/roles.js';
 import { formatPrice, formatDate, statusClass, tStatus } from '../core/utils/format.js';
+import { setPageMeta } from '../core/utils/seo.js';
 
 export default async function renderAuctioneerAnalytics(container) {
+  setPageMeta(t('analytics.title'));
   const _u = getUser();
   if (!_u || !hasAnyRole(...(MODERATOR_ROLES))) {
     container.innerHTML = `<div class="empty-state"><i class="fas fa-chart-bar" aria-hidden="true"></i><h3>${t("common.pageNotFound")}</h3></div>`;
@@ -93,13 +95,13 @@ export default async function renderAuctioneerAnalytics(container) {
       <!-- Live CSS Bar Chart: Auctions Status Split -->
       <div class="card mb-4 animate-on-scroll stagger-3">
         <div class="card-header border-bottom-0 pb-0">
-          <h3 class="mb-0"><i class="fas fa-chart-bar text-primary" aria-hidden="true"></i> ${t("analytics.statusDistribution") || "Auctions Distribution"}</h3>
+          <h3 class="mb-0"><i class="fas fa-chart-bar text-primary" aria-hidden="true"></i> ${t("analytics.statusDistribution")}</h3>
         </div>
         <div class="card-body">
           <div class="d-flex flex-column gap-3">
             <div>
               <div class="d-flex justify-content-between mb-1 small text-muted">
-                <span>Active</span>
+                <span>${t('auctions.active')}</span>
                 <span class="fw-bold text-success">${dash.activeAuctions ?? 0} / ${dash.totalAuctions ?? 1}</span>
               </div>
               <div class="progress" style="height:12px;background:var(--border);border-radius:var(--radius-full);overflow:hidden">
@@ -108,7 +110,7 @@ export default async function renderAuctioneerAnalytics(container) {
             </div>
             <div>
               <div class="d-flex justify-content-between mb-1 small text-muted">
-                <span>Finished</span>
+                <span>${t('auctions.finished')}</span>
                 <span class="fw-bold text-warning">${dash.finishedAuctions ?? 0} / ${dash.totalAuctions ?? 1}</span>
               </div>
               <div class="progress" style="height:12px;background:var(--border);border-radius:var(--radius-full);overflow:hidden">
@@ -133,7 +135,7 @@ export default async function renderAuctioneerAnalytics(container) {
           <h3 class="mb-0">${t("analytics.recentAuctions")}</h3>
         </div>
         <div class="card-body">
-        <div class="table-responsive"><table class="table"><thead><tr><th>${t("common.title") || "Title"}</th><th>${t("auctionRequests.status")}</th><th>${t("analytics.startingPrice")}</th><th>${t("analytics.currentPrice")}</th><th>${t("analytics.bidCount")}</th><th>${t("analytics.endTime")}</th></tr></thead><tbody>${recent.map(a => `<tr><td>${escapeHtml(a.title || a.productName || '-')}</td><td><span class="${statusClass(a.status)}">${tStatus(a.status, "auction")}</span></td><td>${formatPrice(a.startingPrice || 0)}</td><td>${formatPrice(a.currentPrice || a.startingPrice || 0)}</td><td>${a.bidCount ?? 0}</td><td>${a.endTime ? formatDate(a.endTime) : '-'}</td></tr>`).join("")}</tbody></table></div>
+        <div class="table-responsive"><table class="table"><thead><tr><th>${t("common.title")}</th><th>${t("auctionRequests.status")}</th><th>${t("analytics.startingPrice")}</th><th>${t("analytics.currentPrice")}</th><th>${t("analytics.bidCount")}</th><th>${t("analytics.endTime")}</th></tr></thead><tbody>${recent.map(a => `<tr><td>${escapeHtml(a.title || a.productName || '-')}</td><td><span class="${statusClass(a.status)}">${tStatus(a.status, "auction")}</span></td><td>${formatPrice(a.startingPrice || 0)}</td><td>${formatPrice(a.currentPrice || a.startingPrice || 0)}</td><td>${a.bidCount ?? 0}</td><td>${a.endTime ? formatDate(a.endTime) : '-'}</td></tr>`).join("")}</tbody></table></div>
       </div>
       </div>` : ''}`;
   } catch (err) {

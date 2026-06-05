@@ -2,8 +2,10 @@ import { t } from '../core/i18n/index.js';
 import { api } from '../core/api/client.js';
 import { navigate, registerRouteCleanup } from '../core/router/index.js';
 import { escapeHtml } from '../core/utils/dom.js';
+import { setPageMeta } from '../core/utils/seo.js';
 
 export default function renderVerifyEmail(container) {
+  setPageMeta(t('verify.title'));
   const params = new URLSearchParams(location.hash.split("?")[1] || "");
   const token = params.get("token");
 

@@ -187,7 +187,7 @@ export function renderProductCards(container, products) {
     return;
   }
   container.innerHTML = products.map((p, i) => {
-    const title = p.title || p.productTitle || 'Product';
+    const title = p.title || p.productTitle || t('common.product');
     const img = p.primaryImageUrl || p.imageUrl || '';
     const statusText = tStatus(p.status, "product");
     return `
@@ -227,11 +227,12 @@ export function openQuickView(product) {
   const prevFocus = document.activeElement;
   const overlay = document.createElement("div");
   overlay.className = "modal-overlay show";
+  document.body.classList.add("modal-open");
   overlay.setAttribute("role", "dialog");
   overlay.setAttribute("aria-modal", "true");
   overlay.setAttribute("aria-label", "Quick view");
 
-  const title = product.title || product.product?.title || "Product";
+  const title = product.title || product.product?.title || t('common.product');
   const price = formatPrice(
     product.price || product.currentHighestBid || product.startingPrice,
   );
@@ -254,7 +255,7 @@ export function openQuickView(product) {
           <p style="color:var(--text-secondary);font-size:0.88rem;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden">${escapeHtml(desc) || t("product.noDescription")}</p>
           <div class="modal-actions mt-4">
             <a href="${link}" class="btn btn-primary" onclick="this.closest('.modal-overlay').remove()"><i class="fas fa-eye"></i> ${t("common.page")}</a>
-            <button class="btn btn-ghost" onclick="this.closest('.modal-overlay').remove()">${t("common.close") || "Close"}</button>
+            <button class="btn btn-ghost" onclick="this.closest('.modal-overlay').remove()">${t("common.close")}</button>
           </div>
         </div>
       </div>
@@ -271,6 +272,7 @@ export function openQuickView(product) {
     }
   }
   function closeQuickView() {
+    document.body.classList.remove("modal-open");
     overlay.remove();
     document.removeEventListener("keydown", onQuickViewKey);
     document.removeEventListener("keydown", focusTrap);
@@ -285,6 +287,7 @@ export function openQuickView(product) {
   document.addEventListener("keydown", onQuickViewKey);
   document.addEventListener("keydown", focusTrap);
   registerRouteCleanup(() => {
+    document.body.classList.remove("modal-open");
     overlay.remove();
     document.removeEventListener("keydown", onQuickViewKey);
     document.removeEventListener("keydown", focusTrap);

@@ -30,19 +30,19 @@ export default async function renderAdmin(container) {
     <div class="row g-3 mb-4 animate-on-scroll">
       <div class="col-sm-4">
         <div class="card card-sm text-center p-3">
-          <div class="text-muted"><i class="fas fa-users text-primary" aria-hidden="true"></i> ${t("admin.totalUsers") || "Total Users"}</div>
+          <div class="text-muted"><i class="fas fa-users text-primary" aria-hidden="true"></i> ${t("admin.totalUsers")}</div>
           <div class="fs-2 fw-bold mt-2">1,245</div>
         </div>
       </div>
       <div class="col-sm-4">
         <div class="card card-sm text-center p-3">
-          <div class="text-muted"><i class="fas fa-chart-line text-success" aria-hidden="true"></i> ${t("admin.totalRevenue") || "Total Revenue"}</div>
+          <div class="text-muted"><i class="fas fa-chart-line text-success" aria-hidden="true"></i> ${t("admin.totalRevenue")}</div>
           <div class="fs-2 fw-bold mt-2">$45,230</div>
         </div>
       </div>
       <div class="col-sm-4">
         <div class="card card-sm text-center p-3">
-          <div class="text-muted"><i class="fas fa-gavel text-warning" aria-hidden="true"></i> ${t("admin.activeAuctions") || "Active Auctions"}</div>
+          <div class="text-muted"><i class="fas fa-gavel text-warning" aria-hidden="true"></i> ${t("admin.activeAuctions")}</div>
           <div class="fs-2 fw-bold mt-2">112</div>
         </div>
       </div>
@@ -102,7 +102,7 @@ export default async function renderAdmin(container) {
       if (!users.length) {
         renderEmptyState(panel, {
           icon: "fa-users",
-          title: t("admin.noUsers") || "No users found",
+          title: t("admin.noUsers"),
         });
         return;
       }
@@ -169,7 +169,7 @@ export default async function renderAdmin(container) {
       if (!reports.length) {
         renderEmptyState(content, {
           icon: "fa-flag",
-          title: t("admin.noReports") || "No reports found",
+          title: t("admin.noReports"),
         });
         return;
       }
@@ -313,7 +313,7 @@ export default async function renderAdmin(container) {
       if (!orders.length) {
         renderEmptyState(panel, {
           icon: "fa-box",
-          title: t("dash.noOrders") || "No orders found",
+          title: t("dash.noOrders"),
         });
         return;
       }
@@ -372,8 +372,8 @@ export default async function renderAdmin(container) {
           </div>
           <div class="empty-state mt-2">
             <div class="empty-state-visual"><i class="fas fa-tags text-muted" style="font-size:2rem" aria-hidden="true"></i></div>
-            <h3>${t("admin.noCategories") || "No categories found"}</h3>
-            <p class="text-muted">${t("admin.createFirstCategory") || "Create your first category to organize products."}</p>
+            <h3>${t("admin.noCategories")}</h3>
+            <p class="text-muted">${t("admin.createFirstCategory")}</p>
           </div>`;
         document.getElementById("showAddCat")?.addEventListener("click", () =>
           document.getElementById("addCatForm").classList.toggle("d-none")
@@ -440,8 +440,8 @@ export default async function renderAdmin(container) {
         btn.addEventListener("click", async () => {
           const ok = await showConfirm(
             t("admin.confirmDeleteCategory"),
-            t("admin.confirmDeleteCategoryDesc") || "This action cannot be undone.",
-            { type: "danger", confirmText: t("common.delete") || "Delete" }
+            t("admin.confirmDeleteCategoryDesc"),
+            { type: "danger", confirmText: t("common.delete") }
           );
           if (!ok) return;
           try {
@@ -469,8 +469,8 @@ export default async function renderAdmin(container) {
         <div class="modal-header"><h3>${escapeHtml(title)}</h3></div>
         <div class="modal-body p-3">${html}</div>
         <div class="modal-actions d-flex gap-2 justify-content-end p-3 pt-2" style="border-top:1px solid var(--border)">
-          <button class="btn btn-ghost" id="fmCancel">${t("common.cancel") || "Cancel"}</button>
-          <button class="btn btn-primary" id="fmSave">${t("common.save") || "Save"}</button>
+          <button class="btn btn-ghost" id="fmCancel">${t("common.cancel")}</button>
+          <button class="btn btn-primary" id="fmSave">${t("common.save")}</button>
         </div>
       </div>`;
     document.body.appendChild(overlay);
@@ -545,7 +545,7 @@ export default async function renderAdmin(container) {
               `              ).join("") : `<tr><td colspan="6" class="text-center p-4 text-muted">
                 <div class="empty-state-inline">
                   <i class="fas fa-chart-line mb-2 opacity-50" style="font-size:2rem" aria-hidden="true"></i>
-                  <p class="mb-0">${t("admin.noFees") || "No fee transactions yet"}</p>
+                  <p class="mb-0">${t("admin.noFees")}</p>
                 </div>
               </td></tr>`}
             </tbody>
@@ -567,21 +567,21 @@ export default async function renderAdmin(container) {
       if (!plans || !plans.length) {
         renderEmptyState(panel, {
           icon: "fa-crown",
-          title: t("subscriptions.noPlans") || "No plans found",
+          title: t("subscriptions.noPlans"),
         });
         return;
       }
 
       panel.innerHTML = `
         <div class="mb-3">
-          <button class="btn btn-primary" id="addPlanBtn"><i class="fas fa-plus" aria-hidden="true"></i> ${t("admin.addPlan") || "Add Plan"}</button>
+          <button class="btn btn-primary" id="addPlanBtn"><i class="fas fa-plus" aria-hidden="true"></i> ${t("admin.addPlan")}</button>
         </div>
         <div class="table-responsive"><table class="table">
           <caption class="text-muted mt-2" style="caption-side:bottom;font-size:0.78rem">${t("admin.plans")}</caption>
           <thead><tr>
-            <th scope="col">${t("common.name") || "Name"}</th><th scope="col">${t("common.tier") || "Tier"}</th><th scope="col">Price</th>
+            <th scope="col">${t("common.name")}</th><th scope="col">${t("common.tier")}</th><th scope="col">Price</th>
             <th scope="col">Auctions</th><th scope="col">Bids</th><th scope="col">Requests</th>
-            <th scope="col">${t("common.status") || "Status"}</th><th scope="col">${t("common.actions") || "Actions"}</th>
+            <th scope="col">${t("common.status")}</th><th scope="col">${t("common.actions")}</th>
           </tr></thead>
           <tbody>${(plans || []).map(p => `
             <tr>

@@ -5,8 +5,9 @@ import { navigate, registerRouteCleanup } from "../core/router/index.js";
 import { escapeHtml, showLoading } from "../core/utils/dom.js";
 import { ensureCsrfToken } from "../core/utils/csrf.js";
 import { ROLES } from "../shared/constants/roles.js";
+import { setPageMeta } from "../core/utils/seo.js";
 import {
-  getPasswordStrength,
+  getPasswordStrengthResult,
   calculateAge,
   clearAllFieldErrors,
   validateForm,
@@ -51,9 +52,9 @@ Alpine.data("registerForm", () => ({
       this.strengthLabel = "";
       return;
     }
-    const result = getPasswordStrength(this.password);
+    const result = getPasswordStrengthResult(this.password);
     this.strengthCls = result.cls;
-    this.strengthLabel = result.label;
+    this.strengthLabel = t(result.label);
   },
 
   togglePw() {
@@ -185,6 +186,7 @@ Alpine.data("registerForm", () => ({
 }));
 
 export default function renderRegister(container) {
+  setPageMeta(t('register.title'));
   if (isAuthenticated()) {
     navigate("");
     return;
@@ -356,7 +358,7 @@ function showVerificationOverlay(email, password) {
     localStorage.setItem("user", JSON.stringify(data.user));
     ensureCsrfToken();
     updateNavbar();
-    syncVipAttribute();
+    await syncVipAttribute();
     return data;
   };
 

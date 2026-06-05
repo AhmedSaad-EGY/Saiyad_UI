@@ -33,18 +33,20 @@ export function clearAllFieldErrors(formEl) {
     .forEach(clearFieldError);
 }
 
-export function getPasswordStrength(password) {
+export function getPasswordStrengthResult(password) {
   let score = 0;
-  if (!password) return { score: 0, label: "common.weak", class: "weak" };
+  if (!password) return { score: 0, label: "auth.veryWeak", cls: "very-weak" };
   if (password.length >= 8) score++;
   if (password.length >= 12) score++;
   if (/[A-Z]/.test(password)) score++;
   if (/[a-z]/.test(password)) score++;
   if (/[0-9]/.test(password)) score++;
   if (/[^A-Za-z0-9]/.test(password)) score++;
-  if (score <= 2) return { score, label: "common.weak", class: "weak" };
-  if (score <= 4) return { score, label: "common.medium", class: "medium" };
-  return { score, label: "common.strong", class: "strong" };
+  if (score <= 1) return { score, label: "auth.veryWeak", cls: "very-weak" };
+  if (score <= 3) return { score, label: "auth.weak", cls: "weak" };
+  if (score <= 4) return { score, label: "auth.fair", cls: "fair" };
+  if (score <= 5) return { score, label: "auth.strong", cls: "strong" };
+  return { score, label: "auth.veryStrong", cls: "very-strong" };
 }
 
 export function validateForm(formIdOrEl, rules) {
@@ -109,7 +111,7 @@ export function validateForm(formIdOrEl, rules) {
         if (isNaN(age) || age < check.minAge) {
           const msg =
             check.messages?.minAge ||
-            `Must be at least ${check.minAge} years old`;
+            t('validation.minAge', { minAge: check.minAge });
           showFieldError(resolvedField, msg);
           valid = false;
           break;

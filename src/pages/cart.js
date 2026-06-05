@@ -122,7 +122,7 @@ Alpine.data('cartPage', () => ({
       this.empty = this.items.length === 0;
       this.computeTotal();
       syncCartBadgeCount(getCartItemCount(this.items));
-    } catch { /* ignore */ }
+    } catch { /* cart stays empty on error */ }
   },
 
   initSwipe() {

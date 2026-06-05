@@ -221,14 +221,14 @@ export async function logout() {
 }
 
 export async function syncVipAttribute() {
-  try {
-    const data = await api.get('/subscriptions/my').catch(() => null);
-    if (data && data.isActive && (data.tier === 'Premium' || data.tier === 'Professional')) {
-      document.documentElement.setAttribute('data-vip', '');
-    } else {
-      document.documentElement.removeAttribute('data-vip');
-    }
-  } catch {
+  if (!isAuthenticated()) {
+    document.documentElement.removeAttribute('data-vip');
+    return;
+  }
+  const data = await api.get('/subscriptions/my').catch(() => null);
+  if (data && data.isActive && (data.tier === 'Premium' || data.tier === 'Professional')) {
+    document.documentElement.setAttribute('data-vip', '');
+  } else {
     document.documentElement.removeAttribute('data-vip');
   }
 }

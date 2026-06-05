@@ -129,7 +129,7 @@ export default async function renderProfile(container) {
           <h1 class="profile-name">${escapeHtml(user?.fullName || t('dash.profile'))}</h1>
           <p class="profile-email"><i class="fas fa-envelope" aria-hidden="true"></i> ${escapeHtml(user?.email || '')}</p>
           ${user?.phone ? `<p class="profile-phone"><i class="fas fa-phone" aria-hidden="true"></i> ${  escapeHtml(user.phone)  }</p>` : ''}
-          <span class="profile-role-badge">${escapeHtml(user?.role || 'Customer')}</span>
+          <span class="profile-role-badge">${escapeHtml(user?.role ?? '')}</span>
         </div>
         <div class="profile-hero-actions">
           <a href="#/dashboard?tab=profile" class="btn btn-outline btn-sm"><i class="fas fa-edit" aria-hidden="true"></i> ${t('dash.updateProfile')}</a>

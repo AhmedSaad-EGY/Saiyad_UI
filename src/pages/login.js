@@ -5,6 +5,7 @@ import { navigate } from '../core/router/index.js';
 import { showToast } from '../core/utils/ui.js';
 import { showFieldError, clearFieldError } from '../core/utils/validation.js';
 import { ensureCsrfToken } from '../core/utils/csrf.js';
+import { setPageMeta } from '../core/utils/seo.js';
 import Alpine from 'alpinejs';
 
 Alpine.data('loginForm', () => ({
@@ -61,7 +62,7 @@ Alpine.data('loginForm', () => ({
       ensureCsrfToken();
       sessionStorage.removeItem('sayiadLoginFails');
       updateNavbar();
-      syncVipAttribute();
+      await syncVipAttribute();
       navigate('');
     } catch (err) {
       if (err.message?.toLowerCase().includes('verify your email')) {
@@ -121,6 +122,7 @@ Alpine.data('loginForm', () => ({
 }));
 
 export default function renderLogin(container) {
+  setPageMeta(t('login.title'));
   if (isAuthenticated()) {
     navigate('');
     return;
@@ -145,7 +147,7 @@ export default function renderLogin(container) {
               </button>
               <p class="mt-2" style="font-size:var(--text-xs);opacity:0.7">
                 <i class="fas fa-clock" aria-hidden="true"></i>
-                ${t('auth.checkSpam') || "Didn't get it? Check your spam folder."}
+                ${t('auth.checkSpam')}
               </p>
             </div>
           </div>
