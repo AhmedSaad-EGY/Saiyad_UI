@@ -283,27 +283,6 @@
 .pw-reqs li.met { color: var(--success); }
 
 /* ============================================================
-   AUCTION COUNTDOWN — small-screen tweaks
-   ============================================================ */
-.countdown-timer {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-  justify-content: center;
-  align-items: center;
-}
-@media (max-width: 375px) {
-  .countdown-unit  { min-width: 44px !important; }
-  .countdown-num   { font-size: 1.5rem !important; }
-  .countdown-lbl   { font-size: 0.625rem !important; }
-}
-@media (max-width: 320px) {
-  .countdown-timer { gap: var(--space-1); }
-  .countdown-unit  { min-width: 36px !important; }
-  .countdown-num   { font-size: 1.25rem !important; }
-}
-
-/* ============================================================
    MODAL — scroll lock
    ============================================================ */
 body.modal-open { overflow: hidden; }

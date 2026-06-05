@@ -2,7 +2,7 @@
 
 > **Last Updated**: June 5, 2026  
 > **Scope**: CSS dead code, undefined CSS variables, duplicate rules, empty sections, PWA manifest, vendor prefix, whitespace  
-> **Status**: Phases 1-2 done — Phase 3 ready  
+> **Status**: Phases 1-3 done — Phase 4 ready  
 > **Execution Order**: Phase 1 -> 2 -> 3 -> 4 -> 5 (build + verify after each phase)
 
 ---
@@ -57,29 +57,29 @@ Define missing CSS variables in src/css/_variables.css or fix references to use 
 
 ### 3A --- Remove Empty Section Comments
 
-| # | File | Lines | Section Header |
-|---|------|-------|----------------|
-| 19 | _layout.css | 826-831 | PING ANIMATION (notification dot) + blank between headers |
-| 20 | _components.css | 1015-1018 | DETAIL PAGE --- layout handled by Bootstrap .row.g-5 |
-| 21 | _components.css | 1806-1809 | FEATURES GRID --- migrated to Bootstrap |
-| 22 | _components.css | 1890-1892 | DASHBOARD --- layout handled by Bootstrap .row.g-3 |
-| 23 | _components.css | 2632-2634 | .profile-links-grid migrated to Bootstrap |
-| 24 | _components.css | 2777-2781 | MOBILE NAVBAR (768px and below) --- moved to _layout.css |
-| 25 | _bootstrap-overrides.css | 143-144 | Card hover --- Bootstrap doesn't provide card hover |
+| # | File | Lines | Section Header | Status |
+|---|------|-------|----------------|--------|
+| 19 | _layout.css | 824-829 | PING ANIMATION (notification dot) + blank between headers | ✅ |
+| 20 | _components.css | 996-1000 | DETAIL PAGE --- has content below, kept (not empty) | N/A |
+| 21 | _components.css | 1786-1790 | FEATURES GRID --- migrated to Bootstrap, empty | ✅ |
+| 22 | _components.css | 1870-1872 | DASHBOARD --- has content below, kept (not empty) | N/A |
+| 23 | _components.css | 2615 | .profile-links-grid migrated --- one-liner above code, kept | N/A |
+| 24 | _components.css | 2743-2748 | MOBILE NAVBAR (768px and below) --- moved to _layout.css | ✅ |
+| 25 | _bootstrap-overrides.css | 143-144 | Card hover --- documents code below, kept | N/A |
 
 ### 3B --- Remove Dead Countdown Media Queries from style.css
 
-| # | File | Lines | Details |
-|---|------|-------|---------|
-| 26 | style.css | 296-315 | Entire AUCTION COUNTDOWN section --- .countdown-timer never used in JS. Mobile overrides already in _components.css:867-894. |
+| # | File | Lines | Details | Status |
+|---|------|-------|---------|--------|
+| 26 | style.css | 285-304 | Entire AUCTION COUNTDOWN section --- .countdown-timer never used in JS. Mobile overrides already in _components.css:867-894. | ✅ |
 
 ### 3C --- Remove Unnecessary Vendor Prefix
 
-| # | File | Line | Details |
-|---|------|------|---------|
-| 27 | _components.css | 3697 | -webkit-user-select: none --- user-select has full support since 2020. Keep standard property only. |
+| # | File | Line | Details | Status |
+|---|------|------|---------|--------|
+| 27 | _components.css | 3697 | -webkit-user-select: none --- already removed as part of .is-swiping in Phase 2 | ✅ (already done) |
 
-**Build check**: npm run build --- expect 0 errors
+**Build check**: ✅ npm run build --- 0 errors, CSS 339.36 kB -> 338.96 kB
 
 ## Phase 4 --- P3: PWA Manifest Fixes
 

@@ -1783,10 +1783,6 @@ tr:last-child td {
   border-bottom: none;
 }
 
-/* ============================================================
-   FEATURES GRID
-   ============================================================ */
-/* .features-grid migrated to Bootstrap .row + row-cols-* classes + my-5 */
 
 .feature-card {
   text-align: center;
@@ -2739,14 +2735,6 @@ tr:last-child td {
     padding: var(--space-10) var(--space-8);
   }
 }
-
-/* 768px */
-/* ============================================================
-   MOBILE NAVBAR (768px and below)
-   All mobile nav styles — drawer, overlay, hamburger, bottom nav —
-   are now consolidated in _layout.css for single-file ownership.
-   ============================================================ */
-
 
 /* 480px */
 @media (max-width: 480px) {
