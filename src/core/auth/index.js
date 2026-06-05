@@ -227,7 +227,7 @@ export async function syncVipAttribute() {
   }
   const data = await api.get('/subscriptions/my').catch(() => null);
   const sub = data?.data ?? data;
-  if (sub?.isActive && (sub.tier === 'Premium' || sub.tier === 'Professional')) {
+  if (sub?.isActive && (sub.tier === 'Pro' || sub.tier === 'Enterprise')) {
     document.documentElement.setAttribute('data-vip', '');
   } else {
     document.documentElement.removeAttribute('data-vip');
