@@ -60,6 +60,7 @@
 
   /* ── Brand Palette (Ocean Blue — Light Mode) ──────────────── */
   --primary:          oklch(0.42 0.22 240);
+  --primary-rgb:      26, 70, 165;
   --primary-dark:     oklch(0.35 0.24 240);
   --primary-light:    oklch(0.94 0.04 240);
   --primary-ghost:    oklch(0.42 0.22 240 / 0.08);
@@ -162,6 +163,7 @@
    ============================================================ */
 [data-theme="dark"] {
   --primary:        oklch(0.72 0.17 250);
+  --primary-rgb:    100, 148, 237;
   --primary-dark:   oklch(0.60 0.19 250);
   --primary-light:  oklch(0.24 0.08 250);
   --primary-ghost:  oklch(0.72 0.17 250 / 0.12);
@@ -221,6 +223,7 @@
 /* ── Gold / VIP Theme (dark mode only, active subscription) ─── */
 [data-theme="dark"][data-vip] {
   --primary:        oklch(0.78 0.12 85);
+  --primary-rgb:    200, 175, 60;
   --primary-dark:   oklch(0.70 0.14 85);
   --primary-light:  oklch(0.88 0.08 85);
   --primary-ghost:  oklch(0.78 0.12 85 / 0.12);

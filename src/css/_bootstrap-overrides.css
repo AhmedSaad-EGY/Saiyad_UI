@@ -8,7 +8,7 @@
 
   /* Primary — Ocean Blue */
   --bs-primary: var(--primary);
-  --bs-primary-rgb: 26, 70, 165;
+  --bs-primary-rgb: var(--primary-rgb, 26, 70, 165);
 
   /* Secondary — Teal */
   --bs-secondary: var(--secondary);
@@ -130,7 +130,7 @@
 /* ─── VIP Gold Theme (active subscription) ──────────────────── */
 [data-theme="dark"][data-vip] {
   --bs-primary: var(--primary);
-  --bs-primary-rgb: 200, 175, 60;
+  --bs-primary-rgb: var(--primary-rgb, 200, 175, 60);
   --bs-link-color: var(--primary);
   --bs-link-hover-color: var(--primary-dark);
   --bs-navbar-hover-color: var(--primary);
