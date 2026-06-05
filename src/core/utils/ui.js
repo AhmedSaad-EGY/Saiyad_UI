@@ -21,10 +21,10 @@ export function showToast(msg, type = "info") {
 
   const toast = document.createElement("div");
   const colors = {
-    success: "#059669",
-    error: "#e11d48",
-    info: "#0ea5e9",
-    warning: "#f59e0b",
+    success: "var(--success)",
+    error: "var(--danger)",
+    info: "var(--info)",
+    warning: "var(--warning)",
   };
   const icons = {
     success: "fa-check-circle",
@@ -37,17 +37,17 @@ export function showToast(msg, type = "info") {
   toast.style.cssText = `
     padding: var(--space-4) var(--space-6);
     border-radius: var(--radius-md);
-    color: white;
+    color: var(--text-inverse);
     font-weight: 600;
     font-size: 0.95rem;
-    box-shadow: 0 12px 32px -8px rgba(0,0,0,0.3);
+    box-shadow: var(--shadow-lg);
     display: flex;
     align-items: center;
     gap: 12px;
     min-width: 280px;
     pointer-events: auto;
     backdrop-filter: blur(12px);
-    border: 1px solid rgba(255,255,255,0.1);
+    border: 1px solid var(--glass-border, rgba(255,255,255,0.1));
   `;
   toast.style.background = colors[type] || colors.info;
   const iconEl = document.createElement("i");
@@ -148,12 +148,12 @@ export function showConfirm(title, message, options = {}) {
 
 export function triggerConfetti() {
   const colors = [
-    "#0ea5e9",
-    "#059669",
-    "#f59e0b",
-    "#e11d48",
-    "#7c3aed",
-    "#f472b6",
+    "var(--info)",
+    "var(--success)",
+    "var(--warning)",
+    "var(--danger)",
+    "var(--accent)",
+    "var(--secondary)",
   ];
   const count = 60;
 

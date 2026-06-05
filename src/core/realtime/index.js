@@ -110,7 +110,7 @@ function showSignalRBanner() {
       'background:var(--warning)','color:var(--text-inverse)','padding:.5rem 1.25rem',
       'border-radius:2rem','font-size:.875rem','font-weight:500',
       'z-index:9999','display:flex','align-items:center','gap:.5rem',
-      'box-shadow:0 4px 12px rgba(0,0,0,.25)'
+      'box-shadow:var(--shadow-md)'
     ].join(';');
     b.innerHTML = '<i class="fas fa-wifi" aria-hidden="true"></i>'
                 + '<span data-i18n="reconnecting">Reconnecting to auction…</span>';

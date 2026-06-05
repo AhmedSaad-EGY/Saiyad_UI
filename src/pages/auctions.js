@@ -209,7 +209,7 @@ export default async function renderAuctions(_container, _fullPath, params) {
             <a :href="'#/auction-detail?id='+a.id" class="product-card card animate-on-scroll" :class="'stagger-' + Math.min(i + 1, 8)" :aria-label="(a.productTitle || $t('auction.item')) + ' — ' + formatPrice(a.currentHighestBid || a.startingPrice)" style="position:relative;overflow:hidden">
               <!-- Popular/Ending Soon Badge Overlay -->
               <template x-if="a.bidCount >= 5 || timeLeft(a.endTime).urgent">
-                <div class="ribbon-badge" style="position:absolute;top:10px;left:10px;background:var(--primary);color:#fff;font-size:0.75rem;padding:2px 8px;border-radius:var(--radius-full);z-index:2;font-weight:bold;box-shadow:0 2px 4px rgba(0,0,0,0.2)">
+                <div class="ribbon-badge" style="position:absolute;top:10px;left:10px;background:var(--primary);color:var(--text-inverse);font-size:0.75rem;padding:2px 8px;border-radius:var(--radius-full);z-index:2;font-weight:bold;box-shadow:var(--shadow-sm)">
                   <i class="fas fa-fire" aria-hidden="true"></i> ${t('common.hot')}
                 </div>
               </template>

@@ -414,7 +414,7 @@ setupGlobalErrorHandlers();
       el.id = 'onlineBanner';
       el.style.cssText = [
         'position:fixed', 'top:0', 'left:0', 'right:0', 'z-index:100000',
-        'background:var(--success,#16a34a)', 'color:#fff',
+        'background:var(--success)', 'color:var(--text-inverse)',
         'text-align:center', 'padding:10px 16px',        'font-size:0.875rem', 'font-weight:600',
         'display:flex', 'align-items:center', 'justify-content:center', 'gap:8px',
       ].join(';');
@@ -428,7 +428,7 @@ setupGlobalErrorHandlers();
     el.id = 'offlineBanner';
     el.style.cssText = [
       'position:fixed', 'top:0', 'left:0', 'right:0', 'z-index:100000',
-      'background:var(--danger,#dc2626)', 'color:#fff',
+      'background:var(--danger)', 'color:var(--text-inverse)',
       'text-align:center', 'padding:10px 16px',
       'font-size:0.875rem', 'font-weight:500',
         'display:flex', 'align-items:center', 'justify-content:center', 'gap:8px',
@@ -436,7 +436,7 @@ setupGlobalErrorHandlers();
     const close = document.createElement('button');
     close.innerHTML = '&times;';
     close.setAttribute('aria-label', 'Dismiss');
-    close.style.cssText = 'background:none;border:none;color:#fff;font-size:1.2rem;cursor:pointer;padding:0 4px;line-height:1;opacity:0.8;margin-left:auto';
+    close.style.cssText = 'background:none;border:none;color:var(--text-inverse);font-size:1.2rem;cursor:pointer;padding:0 4px;line-height:1;opacity:0.8;margin-left:auto';
     close.addEventListener('click', () => { el.remove(); banner = null; });
     el.innerHTML = `<i class="fas fa-plug"></i> <span>${t('common.offline')}</span>`;
     el.appendChild(close);
@@ -560,15 +560,15 @@ function showUpdateBanner(worker) {
     "left:50%",
     "transform:translateX(-50%)",
     "z-index:99999",
-    "background:var(--card-bg, #fff)",
-    "color:var(--text, #1a1a1a)",
-    "border:1px solid var(--border, #e0e0e0)",
+    "background:var(--card-bg)",
+    "color:var(--text)",
+    "border:1px solid var(--border)",
     "border-radius:var(--radius-lg, 12px)",
     "padding:12px 20px",
     "display:flex",
     "align-items:center",
     "gap:14px",
-    "box-shadow:0 8px 32px rgba(0,0,0,0.18)",
+    "box-shadow:var(--shadow-lg)",
     "max-width:420px",
     "width:calc(100vw - 32px)",
     "font-size:14px",
@@ -581,14 +581,14 @@ function showUpdateBanner(worker) {
     </span>
     <button id="swUpdateBtn"
       class="border-0 text-white fw-semibold text-nowrap"
-      style="background:var(--primary,#1D6ECC);border-radius:var(--radius-md,8px);padding:7px 16px;
+      style="background:var(--primary);border-radius:var(--radius-md);padding:7px 16px;
              font-size:13px;cursor:pointer;font-family:inherit">
       Refresh
     </button>
     <button id="swDismissBtn" :aria-label="$t('common.dismiss')"
       class="border-0"
       style="background:transparent;cursor:pointer;
-             color:var(--text-secondary,#888);font-size:18px;line-height:1;
+             color:var(--text-secondary);font-size:18px;line-height:1;
              padding:0 2px">
       ×
     </button>

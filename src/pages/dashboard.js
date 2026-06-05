@@ -165,7 +165,7 @@ export default async function renderDashboard(container, route, params) {
         left: 0;
         width: 100vw;
         height: 100vh;
-        background: rgba(0, 0, 0, 0.45);
+        background: var(--overlay);
         backdrop-filter: blur(5px);
         z-index: 99999;
         display: flex;
@@ -178,7 +178,7 @@ export default async function renderDashboard(container, route, params) {
         background: var(--card-bg);
         border: 1px solid var(--border);
         border-radius: var(--radius-md);
-        box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        box-shadow: var(--shadow-xl);
         padding: var(--space-6);
         transform: scale(1);
         transition: all 0.3s ease;
@@ -186,7 +186,7 @@ export default async function renderDashboard(container, route, params) {
       .tour-highlight {
         position: relative;
         z-index: 99998 !important;
-        box-shadow: 0 0 0 6px var(--primary), 0 8px 30px rgba(0,0,0,0.45) !important;
+        box-shadow: 0 0 0 6px var(--primary), var(--shadow-hover) !important;
         transform: scale(1.02);
         transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
         background: var(--card-bg) !important;
