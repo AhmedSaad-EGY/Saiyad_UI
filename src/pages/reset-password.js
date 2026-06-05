@@ -40,7 +40,7 @@ Alpine.data("resetPwForm", () => ({
       this.loading = false;
       return;
     }
-    if (!this.password || this.password.length < 6) {
+    if (!this.password || this.password.length < 8) {
       this.error = t("auth.passwordMinLength");
       this.loading = false;
       return;
@@ -101,13 +101,13 @@ export default function renderResetPassword(container) {
           <form @submit.prevent="submit()" x-show="!success" novalidate>
             <div class="form-group">
               <label class="form-label" for="resetEmail">${t("auth.email")} *</label>
-              <input type="email" class="form-input form-control" id="resetEmail" name="email" x-model="email" placeholder="your@email.com" required autocomplete="email" inputmode="email">
+              <input type="email" class="form-input form-control" id="resetEmail" name="email" x-model="email" placeholder="${t('auth.emailPlaceholder')}" required autocomplete="email" inputmode="email">
             </div>
             <div class="form-group">
               <label class="form-label" for="resetPassword">${t("auth.newPassword")}</label>
               <div class="password-wrapper">
-                <input :type="showPassword ? 'text' : 'password'" class="form-input form-control" id="resetPassword" name="password" x-model="password" @input="computeStrength()" required minlength="6">
-                <button type="button" class="toggle-password" @click="showPassword = !showPassword" :aria-label="showPassword ? 'Hide password' : 'Show password'"><i :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i></button>
+                <input :type="showPassword ? 'text' : 'password'" class="form-input form-control" id="resetPassword" name="password" x-model="password" @input="computeStrength()" required minlength="8">
+                <button type="button" class="toggle-password" @click="showPassword = !showPassword" :aria-label="showPassword ? $t('auth.hidePassword') : $t('auth.showPassword')"><i :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i></button>
               </div>
               <div class="password-strength"><div class="password-strength-bar" :class="'password-strength-bar ' + strengthCls"></div></div>
               <div class="password-strength-text" x-text="strengthLabel"></div>
@@ -115,8 +115,8 @@ export default function renderResetPassword(container) {
             <div class="form-group">
               <label class="form-label" for="resetConfirmPw">${t("auth.confirmNewPassword")}</label>
               <div class="password-wrapper">
-                <input :type="showConfirmPw ? 'text' : 'password'" class="form-input form-control" id="resetConfirmPw" name="confirmPassword" x-model="confirmPassword" required minlength="6">
-                <button type="button" class="toggle-password" @click="showConfirmPw = !showConfirmPw" :aria-label="showConfirmPw ? 'Hide password' : 'Show password'"><i :class="showConfirmPw ? 'fas fa-eye-slash' : 'fas fa-eye'"></i></button>
+                <input :type="showConfirmPw ? 'text' : 'password'" class="form-input form-control" id="resetConfirmPw" name="confirmPassword" x-model="confirmPassword" required minlength="8">
+                <button type="button" class="toggle-password" @click="showConfirmPw = !showConfirmPw" :aria-label="showConfirmPw ? $t('auth.hidePassword') : $t('auth.showPassword')"><i :class="showConfirmPw ? 'fas fa-eye-slash' : 'fas fa-eye'"></i></button>
               </div>
             </div>
             <button type="submit" class="btn btn-primary w-100 btn-lg" :disabled="loading">

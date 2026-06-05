@@ -74,7 +74,7 @@ Alpine.data("forgotPwPage", () => ({
       this.step = "code";
       this.startResendCountdown();
     } catch (err) {
-      if (err.message?.toLowerCase().includes("not found")) {
+      if (err.status === 404) {
         const confirmed = await showConfirm(
           t("auth.emailNotFound"),
           t("auth.emailNotFoundRegister"),
@@ -111,7 +111,7 @@ Alpine.data("forgotPwPage", () => ({
       });
       this.step = "password";
     } catch (err) {
-      if (err.message?.includes("404")) {
+      if (err.status === 404) {
         this.step = "password";
       } else {
         this.error = err.message;
@@ -194,7 +194,7 @@ export default function renderForgotPassword(container) {
             <form @submit.prevent="step1()" novalidate>
               <div class="form-group">
                 <label class="form-label" for="forgotEmail">${t("auth.email")}</label>
-                <input type="email" class="form-input form-control" id="forgotEmail" name="email" x-model="email" placeholder="your@email.com" required autocomplete="email" inputmode="email">
+                <input type="email" class="form-input form-control" id="forgotEmail" name="email" x-model="email" placeholder="${t('auth.emailPlaceholder')}" required autocomplete="email" inputmode="email">
               </div>
               <button type="submit" class="btn btn-primary w-100 btn-lg" :disabled="loading || !isValidEmail">
                 <i class="fas fa-spinner spinner" x-show="loading" x-cloak></i>
@@ -210,11 +210,11 @@ export default function renderForgotPassword(container) {
               </div>
               <div class="form-group">
                 <label class="form-label" for="forgotCode">${t("auth.verificationCode")}</label>
-                <input type="text" class="form-input form-control" id="forgotCode" name="code" x-model="code" placeholder="${t("auth.tokenPlaceholder") || "Enter the 6-digit code"}" required autocomplete="off" inputmode="numeric" maxlength="6" style="text-align:center;font-size:1.5rem;letter-spacing:8px">
+                <input type="text" class="form-input form-control" id="forgotCode" name="code" x-model="code" placeholder="${t("auth.tokenPlaceholder")}" required autocomplete="off" inputmode="numeric" maxlength="6" style="text-align:center;font-size:1.5rem;letter-spacing:8px">
               </div>
               <button type="submit" class="btn btn-primary w-100 btn-lg" :disabled="loading">
                 <i class="fas fa-spinner spinner" x-show="loading" x-cloak></i>
-                <span x-text="loading ? ($t('auth.verifying') || 'Verifying...') : $t('auth.verifyCode')"></span>
+                <span x-text="loading ? $t('auth.verifying') : $t('auth.verifyCode')"></span>
               </button>
               <div style="margin-top:12px">
                 <button type="button" class="btn btn-ghost w-100" @click="handleResend()" :disabled="resendSeconds > 0" x-text="resendLabel"></button>

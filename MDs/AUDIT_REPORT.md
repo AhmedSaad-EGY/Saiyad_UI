@@ -2,8 +2,39 @@
 **Platform:** https://saiyad-eg.vercel.app  
 **API:** https://sayiad.runasp.net/api  
 **Audit Date:** 2 June 2026  
+**Last Updated:** 5 June 2026  
 **Auditor Role:** Senior QA / UI / UX / Frontend / Security / Accessibility / Business Analyst  
-**Methodology:** Source code review (index.html, GitHub repo), architecture analysis, API structure inspection, SPA pattern evaluation, domain-specific analysis  
+**Methodology:** Source code review (index.html, GitHub repo), architecture analysis, API structure inspection, SPA pattern evaluation, domain-specific analysis
+
+---
+
+## POST-FIX AMENDMENT (June 5, 2026)
+
+All 7 phases of the Final Polishing Plan (G + 1-6) have been executed. **41 remaining issues** were identified by a zero-tolerance deep audit.
+
+### What Was Fixed (~200+ changes)
+
+| Phase | Scope | Status |
+|-------|-------|--------|
+| **G** — Gold Theme | Replaced `data-user-role` gold with subscription-gated `data-vip` attribute; `syncVipAttribute()` wired into startup/login/register/upgrade; CSS scoped to `[data-theme="dark"][data-vip]` | ✅ |
+| **1** — Critical Bugs | 14 fixes: `$t()` magic, Alpine reset order, wallet.js i18n, RAF cleanup, AbortController, encodeURIComponent, password minlength, FA fallback, etc. | ✅ |
+| **2** — i18n Audit | ~180+ changes: 120 dead `\|\| 'English'` fallbacks removed, 31 HTML attribute i18n fixes, 80+ new i18n keys, 708-key en/ar parity confirmed, password strength labels, meta titles | ✅ |
+| **3** — Role Gating | 6 files fixed: register.js, auction-detail.js, admin.js, auctioneer-analytics.js, subscriptions/helpers.js all use `ROLES.*` constants | ✅ |
+| **4** — CSS Hardening | 9 changes: 5 dead fallbacks removed, `rgba`→`var(--shadow-sm)`, oklch→variables | ✅ |
+| **5** — Memory Leaks | 13 instances fixed: initPullToRefresh, initInfiniteScroll, observers, keydown listeners, lockout intervals, MutationObserver, body-appended modals | ✅ |
+| **6** — Code Quality | 3 changes: wallet.js export signature, profile.js rename, stale comments removed | ✅ |
+
+### Critical Items Still Open (Top Priority)
+
+1. **syncVipAttribute() lacks `isAuthenticated()` guard** — causes involuntary login redirect on every public page load
+2. **Password strength keys mismatch** — `validation.js` returns non-existent keys; `dashboard.js` & `reset-password.js` display raw keys untranslated
+3. **2 hardcoded role arrays remain** — `auction-requests-review.js:11` (`['Auctioneer','Admin']`), `app.js:265` (`['Fisherman', 'BaitSeller']`)
+4. **16 hardcoded English fallback strings** across 8 files (product titles, statuses, chart labels, etc.)
+5. **36 physical `left/right` CSS properties** not migrated to `inset-inline-*`
+
+For the full list of 41 remaining items, see [`FINAL_POLISHING_PLAN.md`](./FINAL_POLISHING_PLAN.md#deep-audit--41-remaining-issues) or [`CHAT_HISTORY.md`](./CHAT_HISTORY.md#51-final-polish-phases-g--1-6--deep-audit--41-remaining-issues).
+
+---  
 
 ---
 

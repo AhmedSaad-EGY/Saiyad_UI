@@ -9,10 +9,10 @@ import { setPageMeta } from '../core/utils/seo.js';
 
 function getTimelineSteps(status) {
   const steps = [
-    { key: 'Confirmed', icon: 'fa-check', label: t('order.confirmed') || 'Confirmed' },
-    { key: 'Processing', icon: 'fa-cog', label: t('order.processing') || 'Processing' },
-    { key: 'Shipped', icon: 'fa-truck', label: t('order.shipped') || 'Shipped' },
-    { key: 'Delivered', icon: 'fa-box-open', label: t('order.delivered') || 'Delivered' },
+    { key: 'Confirmed', icon: 'fa-check', label: t('order.confirmed') },
+    { key: 'Processing', icon: 'fa-cog', label: t('order.processing') },
+    { key: 'Shipped', icon: 'fa-truck', label: t('order.shipped') },
+    { key: 'Delivered', icon: 'fa-box-open', label: t('order.delivered') },
   ];
   const statusOrder = ['Pending', 'Confirmed', 'Processing', 'Shipped', 'Delivered'];
   const currentIdx = statusOrder.indexOf(status);
@@ -34,7 +34,7 @@ export default async function renderOrderDetail(container) {
   const params = new URLSearchParams(location.hash.split('?')[1] || '');
   const orderId = params.get('id');
   if (!orderId) { navigate('dashboard?tab=orders'); return; }
-  setPageMeta("Order Details", undefined, true);
+  setPageMeta(t('order.title'), undefined, true);
 
   showLoading(container);
 
@@ -67,7 +67,7 @@ export default async function renderOrderDetail(container) {
         </div>
       </div>
       ` : `
-      <div class="alert alert-error mb-4"><i class="fas fa-times-circle" aria-hidden="true"></i> ${t('order.cancelled') || 'This order has been cancelled.'}</div>
+      <div class="alert alert-error mb-4"><i class="fas fa-times-circle" aria-hidden="true"></i> ${t('order.cancelled')}</div>
       `}
 
       <div class="row g-4">
@@ -110,7 +110,7 @@ export default async function renderOrderDetail(container) {
           <div class="row g-4">
             <div class="col-md-6">
               <div class="card animate-on-scroll stagger-1">
-                <div class="card-header"><h3 class="mb-0"><i class="fas fa-truck" aria-hidden="true"></i> ${t('order.shippingInfo') || 'Shipping'}</h3></div>
+                <div class="card-header"><h3 class="mb-0"><i class="fas fa-truck" aria-hidden="true"></i> ${t('order.shippingInfo')}</h3></div>
                 <div class="card-body">
                   <p class="mb-1"><strong>${escapeHtml(order.shippingAddress?.fullName || order.buyerName || 'N/A')}</strong></p>
                   <p class="text-muted small mb-1">${escapeHtml(order.shippingAddress?.addressLine || order.address || '-')}</p>
@@ -121,9 +121,9 @@ export default async function renderOrderDetail(container) {
             </div>
             <div class="col-md-6">
               <div class="card animate-on-scroll stagger-2">
-                <div class="card-header"><h3 class="mb-0"><i class="fas fa-credit-card" aria-hidden="true"></i> ${t('order.paymentInfo') || 'Payment'}</h3></div>
+                <div class="card-header"><h3 class="mb-0"><i class="fas fa-credit-card" aria-hidden="true"></i> ${t('order.paymentInfo')}</h3></div>
                 <div class="card-body">
-                  <p class="mb-1"><strong>${t('order.method') || 'Method'}:</strong> ${escapeHtml(order.paymentMethod || 'Wallet')}</p>
+                  <p class="mb-1"><strong>${t('order.method')}:</strong> ${escapeHtml(order.paymentMethod || 'Wallet')}</p>
                   <p class="mb-1"><strong>${t('order.date')}:</strong> ${formatDate(order.createdAt)}</p>
                   <p class="mb-0"><strong>${t('order.status')}:</strong> <span class="status ${statusClass(order.status)}">${tStatus(order.status)}</span></p>
                 </div>
@@ -136,18 +136,18 @@ export default async function renderOrderDetail(container) {
         <div class="col-lg-4">
           <div class="checkout-sidebar">
             <div class="card mb-4 animate-on-scroll">
-              <div class="card-header"><h3 class="mb-0"><i class="fas fa-receipt" aria-hidden="true"></i> ${t('order.summary') || 'Summary'}</h3></div>
+              <div class="card-header"><h3 class="mb-0"><i class="fas fa-receipt" aria-hidden="true"></i> ${t('order.summary')}</h3></div>
               <div class="card-body">
                 <div class="d-flex justify-content-between mb-2">
-                  <span class="text-muted">${t('cart.subtotal') || 'Subtotal'}</span>
+                  <span class="text-muted">${t('cart.subtotal')}</span>
                   <span>${formatPrice(subtotal)}</span>
                 </div>
                 <div class="d-flex justify-content-between mb-2">
-                  <span class="text-muted">${t('order.shipping') || 'Shipping'}</span>
+                  <span class="text-muted">${t('order.shipping')}</span>
                   <span>${formatPrice(order.shippingCost || 0)}</span>
                 </div>
                 <div class="d-flex justify-content-between mb-2">
-                  <span class="text-muted">${t('order.tax') || 'Tax'}</span>
+                  <span class="text-muted">${t('order.tax')}</span>
                   <span>${formatPrice(order.tax || 0)}</span>
                 </div>
                 <hr style="border-color:var(--border);margin:12px 0">
@@ -163,7 +163,7 @@ export default async function renderOrderDetail(container) {
               ${order.status === 'Pending' || order.status === 'Confirmed' ? `
                 <button class="btn btn-outline-danger w-100" id="cancelOrderBtn"><i class="fas fa-times" aria-hidden="true"></i> ${t('order.cancel')}</button>
               ` : ''}
-              <a href="#/products" class="btn btn-primary w-100"><i class="fas fa-redo" aria-hidden="true"></i> ${t('order.reorder') || 'Shop Again'}</a>
+              <a href="#/products" class="btn btn-primary w-100"><i class="fas fa-redo" aria-hidden="true"></i> ${t('order.reorder')}</a>
             </div>
             <div id="cancelOrderResult" class="mt-3"></div>
           </div>

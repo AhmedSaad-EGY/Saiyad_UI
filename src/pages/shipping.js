@@ -14,7 +14,7 @@ Alpine.data('shippingPage', () => ({
   form: { fullName: '', phone: '', city: '', addressLine: '', postalCode: '' },
 
   async init() {
-    setPageMeta("My Addresses", undefined, true);
+    setPageMeta(t('shipping.title'), undefined, true);
     await this.loadAddresses();
   },
 
@@ -55,7 +55,7 @@ Alpine.data('shippingPage', () => ({
     try {
       if (this.editingId) {
         await api.put(`/shippingaddresses/${this.editingId}`, payload);
-        showToast(t('shipping.updated') || 'Address updated successfully', 'success');
+        showToast(t('shipping.updated'), 'success');
       } else {
         await api.post('/shippingaddresses', payload);
         showToast(t('shipping.saved'), 'success');
@@ -79,7 +79,7 @@ Alpine.data('shippingPage', () => ({
     const ok = await showConfirm(
       t('shipping.confirmDelete'),
       t('shipping.confirmDeleteDesc') || t('shipping.confirmDelete'),
-      { type: 'danger', confirmText: t('common.delete') || 'Delete' }
+      { type: 'danger', confirmText: t('common.delete') }
     );
     if (!ok) return;
     try {
@@ -104,7 +104,7 @@ export default async function renderShipping(container) {
 
       <div class="card" x-show="showForm" style="max-width:480px;margin-top:16px" x-transition:enter="transition-fade" x-transition:enter-start="op-0" x-transition:enter-end="op-100" x-cloak>
         <div class="card-header">
-          <h3 class="mb-0" x-text="editingId ? '${t('shipping.editAddress') || 'Edit Address'}' : '${t('shipping.addNew')}'"></h3>
+          <h3 class="mb-0" x-text="editingId ? $t('shipping.editAddress') : $t('shipping.addNew')"></h3>
         </div>
         <div class="card-body">
           <form @submit.prevent="submitForm" novalidate>
@@ -116,7 +116,7 @@ export default async function renderShipping(container) {
             
             <!-- Live Location Map Preview -->
             <div class="form-group" x-show="form.city.trim()" x-transition x-cloak style="margin-top: 16px;">
-              <label class="form-label text-primary"><i class="fas fa-map-marked-alt" aria-hidden="true"></i> ${t('shipping.locationPreview') || 'Location Preview'}</label>
+              <label class="form-label text-primary"><i class="fas fa-map-marked-alt" aria-hidden="true"></i> ${t('shipping.locationPreview')}</label>
               <div style="height: 180px; width: 100%; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border);">
                 <iframe 
                   width="100%" 
@@ -135,7 +135,7 @@ export default async function renderShipping(container) {
               <button type="submit" class="btn btn-primary" :disabled="saving">
                 <i class="fas" :class="saving ? 'fa-spinner spinner' : 'fa-save'" aria-hidden="true"></i> <span x-text="saving ? '${t('shipping.saving')}' : '${t('shipping.save')}'"></span>
               </button>
-              <button type="button" class="btn btn-ghost" @click="cancelForm()">${t('common.cancel') || 'Cancel'}</button>
+              <button type="button" class="btn btn-ghost" @click="cancelForm()">${t('common.cancel')}</button>
             </div>
           </form>
         </div>
@@ -165,7 +165,7 @@ export default async function renderShipping(container) {
                   <span style="color:var(--text-muted);font-size:0.82rem" x-text="a.phone"></span>
                 </div>
                 <div class="d-flex gap-2">
-                  <button class="btn btn-outline btn-sm" @click="editAddress(a)"><i class="fas fa-edit" aria-hidden="true"></i> ${t('common.edit') || 'Edit'}</button>
+                  <button class="btn btn-outline btn-sm" @click="editAddress(a)"><i class="fas fa-edit" aria-hidden="true"></i> ${t('common.edit')}</button>
                   <button class="btn btn-danger btn-sm" @click="deleteAddress(a.id)">${t('shipping.delete')}</button>
                 </div>
               </div>

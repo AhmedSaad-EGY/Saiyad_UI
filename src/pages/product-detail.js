@@ -2,7 +2,7 @@ import { t, getCurrentLang } from '../core/i18n/index.js';
 import { api } from '../core/api/client.js';
 import { isAuthenticated, getUser, hasAnyRole, requireAuth, updateCartBadge } from '../core/auth/index.js';
 import { SELLER_ROLES } from '../shared/constants/roles.js';
-import { router } from '../core/router/index.js';
+import { router, registerRouteCleanup } from '../core/router/index.js';
 import { showError, showLoading, escapeHtml, progressiveImg, observeAnimations, fadeInContent, animate, safeSetHTML } from '../core/utils/dom.js';
 import { formatPrice, formatDate, statusClass, tStatus, tCondition, renderStars } from '../core/utils/format.js';
 import { renderProductCards, openLightbox, trackRecentlyViewed, showToast } from '../core/utils/ui.js';
@@ -46,7 +46,7 @@ export default async function renderProductDetail(container, route, params) {
     const stockPct = Math.min(100, Math.max(0, stockQty));
 
     container.innerHTML = `
-      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="#/">${t("nav.home")}</a> <i class="fas fa-chevron-${getCurrentLang() === "ar" ? "left" : "right"}" aria-hidden="true"></i> <a href="#/products">${t("nav.products")}</a> <i class="fas fa-chevron-${getCurrentLang() === "ar" ? "left" : "right"}" aria-hidden="true"></i> <span>${escapeHtml(p.categoryName || 'Category')}</span> <i class="fas fa-chevron-${getCurrentLang() === "ar" ? "left" : "right"}" aria-hidden="true"></i> <span>${escapeHtml(p.title)}</span></nav>
+      <nav class="breadcrumb" aria-label="${t('common.breadcrumb')}"><a href="#/">${t("nav.home")}</a> <i class="fas fa-chevron-${getCurrentLang() === "ar" ? "left" : "right"}" aria-hidden="true"></i> <a href="#/products">${t("nav.products")}</a> <i class="fas fa-chevron-${getCurrentLang() === "ar" ? "left" : "right"}" aria-hidden="true"></i> <span>${escapeHtml(p.categoryName || t('common.category'))}</span> <i class="fas fa-chevron-${getCurrentLang() === "ar" ? "left" : "right"}" aria-hidden="true"></i> <span>${escapeHtml(p.title)}</span></nav>
       <div class="row g-5">
         <div class="col-lg-6">
           <div class="detail-image p-0 image-magnifier-wrap" id="mainImageWrap">
@@ -58,12 +58,12 @@ export default async function renderProductDetail(container, route, params) {
         <div class="detail-info">
           <div class="d-flex justify-content-between align-items-start mb-2">
             <h1 class="mb-0" style="margin-right:12px">${escapeHtml(p.title)}</h1>
-            <button class="btn btn-ghost btn-icon btn-sm mt-1" id="shareBtn" aria-label="${t('common.share') || 'Share'}" title="${t('common.share') || 'Share'}"><i class="fas fa-share-alt" aria-hidden="true"></i></button>
+            <button class="btn btn-ghost btn-icon btn-sm mt-1" id="shareBtn" aria-label="${t('common.share')}" title="${t('common.share')}"><i class="fas fa-share-alt" aria-hidden="true"></i></button>
           </div>
           <div class="detail-price">${formatPrice(p.price)}</div>
           
           <div class="stock-indicator">
-            <span class="stock-label stock-${stockLevel}">${p.stockQuantity !== null ? p.stockQuantity + ' ' + (t("products.inStock") || 'in stock') : t("common.N/A")}</span>
+            <span class="stock-label stock-${stockLevel}">${p.stockQuantity !== null ? p.stockQuantity + ' ' + t("products.inStock") : t("common.N/A")}</span>
             <div class="stock-bar"><div class="stock-bar-fill stock-${stockLevel}" style="width:${stockPct}%"></div></div>
           </div>
 
@@ -78,10 +78,10 @@ export default async function renderProductDetail(container, route, params) {
           <div class="d-flex gap-3 flex-wrap">
             <div class="d-flex align-items-center gap-2 flex-wrap">
               <div class="qty-btn-group">
-                <button type="button" class="qty-btn" id="qtyMinus" aria-label="Decrease quantity">−</button>
+                <button type="button" class="qty-btn" id="qtyMinus" aria-label="${t('product.decreaseQty')}">−</button>
                 <input type="number" id="productQty" value="1" min="1"
-                  max="${p.stockQuantity || 99}" aria-label="Quantity" class="cart-qty-input">
-                <button type="button" class="qty-btn" id="qtyPlus" aria-label="Increase quantity">+</button>
+                  max="${p.stockQuantity || 99}" aria-label="${t('product.quantity')}" class="cart-qty-input">
+                <button type="button" class="qty-btn" id="qtyPlus" aria-label="${t('product.increaseQty')}">+</button>
               </div>
               <button class="btn btn-primary btn-lg" id="addToCartBtn"
                 ${!isAvailable ? "disabled" : ""} style="flex:1;min-width:140px">
@@ -90,10 +90,10 @@ export default async function renderProductDetail(container, route, params) {
             </div>
             <button class="btn ${isWishlisted ? 'btn-danger' : 'btn-outline'} btn-lg"
               id="addToWishlistBtn" aria-pressed="${isWishlisted}"
-              title="${isWishlisted ? t('product.removeFromWishlist') || 'Remove from wishlist'
+              title="${isWishlisted ? t('product.removeFromWishlist')
                             : t('product.wishlist')}">
               <i class="${isWishlisted ? 'fas' : 'far'} fa-heart"></i>
-              ${isWishlisted ? (t('product.removeFromWishlist') || 'Wishlisted') : t("product.wishlist")}
+              ${isWishlisted ? t('product.removeFromWishlist') : t("product.wishlist")}
             </button>
             ${p.isAuctioned && p.auctionId ? `<a href="#/auction-detail?id=${p.auctionId}" class="btn btn-success btn-lg"><i class="fas fa-gavel" aria-hidden="true"></i> ${t("product.viewAuction")}</a>` : !p.isAuctioned && getUser()?.id === p.sellerId && hasAnyRole(...(SELLER_ROLES)) ? `<button class="btn btn-primary btn-lg" id="startAuctionBtn"><i class="fas fa-gavel" aria-hidden="true"></i> ${t("auction.startAuction")}</button>` : ""}
             ${p.sellerId ? `<a href="#/seller-profile?userId=${p.sellerId}" class="btn btn-outline btn-lg"><i class="fas fa-envelope" aria-hidden="true"></i> ${t("product.contactSeller")}</a>` : ""}
@@ -105,7 +105,7 @@ export default async function renderProductDetail(container, route, params) {
             <div class="seller-avatar">${escapeHtml(p.sellerName || '?').charAt(0).toUpperCase()}</div>
             <div class="seller-info-details">
               <div class="seller-info-name">${escapeHtml(p.sellerName || t("common.N/A"))}</div>
-              <div class="seller-info-meta"><i class="fas fa-store" aria-hidden="true"></i> ${t('common.viewProfile') || 'View Profile'}</div>
+              <div class="seller-info-meta"><i class="fas fa-store" aria-hidden="true"></i> ${t('common.viewProfile')}</div>
             </div>
             <i class="fas fa-chevron-${getCurrentLang() === 'ar' ? 'left' : 'right'} text-muted" aria-hidden="true"></i>
           </a>` : ""}
@@ -116,7 +116,7 @@ export default async function renderProductDetail(container, route, params) {
               <h3><i class="fas fa-star text-warning" aria-hidden="true"></i> ${t("review.title")} ${avgRating ? `(${renderStars(avgRating)} ${avgRating.toFixed(1)})` : ""}</h3>
               <div class="d-flex gap-2">
                 <select id="reviewSort" class="form-select form-select-sm" style="width:130px;height:34px;font-size:0.85rem">
-                  <option value="newest">${t("products.newest") || 'Newest'}</option>
+                  <option value="newest">${t("products.newest")}</option>
                   <option value="highest">${t("products.priceHighLow") ? t("products.priceHighLow").replace('Price', 'Highest') : 'Highest Rated'}</option>
                   <option value="lowest">${t("products.priceLowHigh") ? t("products.priceLowHigh").replace('Price', 'Lowest') : 'Lowest Rated'}</option>
                 </select>
@@ -146,7 +146,7 @@ export default async function renderProductDetail(container, route, params) {
             }
             <div id="reviewsList"></div>
             <div id="reviewPagination" class="text-center mt-3 d-none">
-              <button class="btn btn-ghost btn-sm" id="loadMoreReviewsBtn">${t("common.loadMore") || 'Load More'}</button>
+              <button class="btn btn-ghost btn-sm" id="loadMoreReviewsBtn">${t("common.loadMore")}</button>
             </div>
           </div>
         </div>
@@ -221,7 +221,7 @@ export default async function renderProductDetail(container, route, params) {
         try { await navigator.share(shareData); } catch (e) { /* ignore */ }
       } else {
         navigator.clipboard.writeText(window.location.href);
-        showToast("Link copied to clipboard!", "success");
+        showToast(t("common.linkCopied"), "success");
       }
     });
 
@@ -313,10 +313,7 @@ export default async function renderProductDetail(container, route, params) {
     // Track recently viewed
     trackRecentlyViewed(p.id, p.title, p.primaryImageUrl, p.price, "product");
 
-    // Lightbox: main image click
-    document.getElementById("mainImageWrap")?.addEventListener("click", () => {
-      if (allImages.length) openLightbox(allImages, 0);
-    });
+
     if (isAvailable) {
       const qtyInput = document.getElementById("productQty");
       document.getElementById("qtyMinus")?.addEventListener("click", () => {
@@ -356,7 +353,7 @@ export default async function renderProductDetail(container, route, params) {
 
     document
       .getElementById("addToWishlistBtn")
-      .addEventListener("click", async () => {
+      ?.addEventListener("click", async () => {
         if (!(await requireAuth())) return;
         const prevWishlisted = isWishlisted;
         isWishlisted = !isWishlisted;
@@ -365,16 +362,16 @@ export default async function renderProductDetail(container, route, params) {
           wBtn.className = `btn ${isWishlisted ? 'btn-danger' : 'btn-outline'} btn-lg`;
           wBtn.setAttribute("aria-pressed", String(isWishlisted));
           wBtn.title = isWishlisted
-            ? t('product.removeFromWishlist') || 'Remove from wishlist'
+            ? t('product.removeFromWishlist')
             : t('product.wishlist');
           wBtn.innerHTML = `<i class="${isWishlisted ? 'fas' : 'far'} fa-heart"></i>
-            ${isWishlisted ? (t('product.removeFromWishlist') || 'Wishlisted') : t("product.wishlist")}`;
+            ${isWishlisted ? t('product.removeFromWishlist') : t("product.wishlist")}`;
         }
         try {
           await api.post("/wishlist/toggle", { productId: p.id });
           showToast(
-            isWishlisted ? t("product.addedToWishlist") || t("product.wishlistUpdated")
-                       : t("product.removedFromWishlist") || t("product.wishlistUpdated"),
+            isWishlisted ? t("product.addedToWishlist")
+                       : t("product.removedFromWishlist"),
             "success"
           );
         } catch (e) {
@@ -383,10 +380,10 @@ export default async function renderProductDetail(container, route, params) {
             wBtn.className = `btn ${isWishlisted ? 'btn-danger' : 'btn-outline'} btn-lg`;
             wBtn.setAttribute("aria-pressed", String(isWishlisted));
             wBtn.title = isWishlisted
-              ? t('product.removeFromWishlist') || 'Remove from wishlist'
+              ? t('product.removeFromWishlist')
               : t('product.wishlist');
             wBtn.innerHTML = `<i class="${isWishlisted ? 'fas' : 'far'} fa-heart"></i>
-              ${isWishlisted ? (t('product.removeFromWishlist') || 'Wishlisted') : t("product.wishlist")}`;
+              ${isWishlisted ? t('product.removeFromWishlist') : t("product.wishlist")}`;
           }
           showToast(e.message, "error");
         }
@@ -434,6 +431,7 @@ export default async function renderProductDetail(container, route, params) {
       function close() { overlay.remove(); document.removeEventListener("keydown", onKey); if (prevFocus?.focus) prevFocus.focus(); }
       function onKey(e) { if (e.key === "Escape") close(); }
       document.addEventListener("keydown", onKey);
+      registerRouteCleanup(() => { document.removeEventListener("keydown", onKey); if (overlay?.isConnected) overlay.remove(); });
       document.getElementById("auctionModalCancel").addEventListener("click", close);
       document.getElementById("auctionModalForm").addEventListener("submit", async (e) => {
         e.preventDefault();

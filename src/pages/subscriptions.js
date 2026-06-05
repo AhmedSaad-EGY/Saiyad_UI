@@ -1,6 +1,6 @@
 import { t } from '../core/i18n/index.js';
 import { api } from '../core/api/client.js';
-import { requireAuth, getUser } from '../core/auth/index.js';
+import { requireAuth, getUser, syncVipAttribute } from '../core/auth/index.js';
 import { escapeHtml, observeAnimations } from '../core/utils/dom.js';
 import { formatPrice } from '../core/utils/format.js';
 import { showToast } from '../core/utils/ui.js';
@@ -122,6 +122,7 @@ export default async function renderSubscriptions(container) {
         try {
           const ref = createPaymentReference(tier);
           await api.post("/subscriptions/upgrade", { tier, paymentReference: ref });
+          await syncVipAttribute();
           showToast(t("subscriptions.upgradeSuccess"), "success");
           window.location.reload();
         } catch (err) {

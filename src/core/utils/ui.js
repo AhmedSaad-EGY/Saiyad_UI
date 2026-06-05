@@ -1,4 +1,5 @@
 import { t, getCurrentLang } from '../i18n/index.js';
+import { registerRouteCleanup } from '../router/index.js';
 import { formatPrice, tStatus, statusClass } from './format.js';
 import { escapeHtml, renderEmptyState, observeAnimations, animate } from './dom.js';
 
@@ -57,7 +58,7 @@ export function showToast(msg, type = "info") {
   textEl.textContent = msg;
   const closeBtn = document.createElement("button");
   closeBtn.innerHTML = "&times;";
-  closeBtn.setAttribute("aria-label", "Close");
+  closeBtn.setAttribute("aria-label", t('common.close'));
   closeBtn.style.cssText = "background:none;border:none;color:inherit;font-size:1.3rem;cursor:pointer;padding:0 0 0 8px;line-height:1;opacity:0.8;flex-shrink:0";
   closeBtn.addEventListener("click", () => closeToast(toast));
   toast.appendChild(iconEl);
@@ -88,8 +89,8 @@ export function showToast(msg, type = "info") {
 export function showConfirm(title, message, options = {}) {
   const {
     type = "primary",
-    confirmText = getCurrentLang() === "ar" ? "تأكيد" : "Confirm",
-    cancelText = getCurrentLang() === "ar" ? "إلغاء" : "Cancel",
+    confirmText = t('common.confirm'),
+    cancelText = t('common.cancel'),
     icon = type === "danger" ? "fa-exclamation-triangle" : "fa-question-circle",
   } = options;
 
@@ -200,7 +201,7 @@ export function renderProductCards(container, products) {
           ${p.status != null
             ? `<span class="product-card-badge ${statusClass(p.status)}">${escapeHtml(statusText)}</span>`
             : ''}
-          <button class="quick-add-btn" data-quick-add="${p.id}" aria-label="Add to cart" title="Add to cart"><i class="fas fa-cart-plus"></i></button>
+          <button class="quick-add-btn" data-quick-add="${p.id}" aria-label="${t('product.addToCart')}" title="${t('product.addToCart')}"><i class="fas fa-cart-plus"></i></button>
         </div>
         <div class="product-card-body">
           <div class="product-card-title">${escapeHtml(title)}</div>
@@ -283,6 +284,11 @@ export function openQuickView(product) {
   });
   document.addEventListener("keydown", onQuickViewKey);
   document.addEventListener("keydown", focusTrap);
+  registerRouteCleanup(() => {
+    overlay.remove();
+    document.removeEventListener("keydown", onQuickViewKey);
+    document.removeEventListener("keydown", focusTrap);
+  });
   document.body.appendChild(overlay);
   animate(overlay, 'fadeIn', { duration: '0.2s' });
   const qvModal = overlay.querySelector('.modal');
@@ -304,10 +310,10 @@ export function openLightbox(images, startIndex = 0) {
   const render = () => {
     const total = images.length;
     lb.innerHTML = `
-      <button class="lightbox-close" aria-label="Close"><i class="fas fa-times"></i></button>
-      ${total > 1 ? `<button class="lightbox-nav lightbox-prev" aria-label="Previous"><i class="fas fa-chevron-${getCurrentLang() === "ar" ? "right" : "left"}"></i></button>` : ""}
+      <button class="lightbox-close" aria-label="${t('common.close')}"><i class="fas fa-times"></i></button>
+      ${total > 1 ? `<button class="lightbox-nav lightbox-prev" aria-label="${t('common.previous')}"><i class="fas fa-chevron-${getCurrentLang() === "ar" ? "right" : "left"}"></i></button>` : ""}
       <img class="lightbox-img" src="${escapeHtml(images[current])}" alt="">
-      ${total > 1 ? `<button class="lightbox-nav lightbox-next" aria-label="Next"><i class="fas fa-chevron-${getCurrentLang() === "ar" ? "left" : "right"}"></i></button>` : ""}
+      ${total > 1 ? `<button class="lightbox-nav lightbox-next" aria-label="${t('common.next')}"><i class="fas fa-chevron-${getCurrentLang() === "ar" ? "left" : "right"}"></i></button>` : ""}
       ${total > 1 ? `<div class="lightbox-counter">${current + 1} / ${total}</div>` : ""}`;
 
     lb.querySelector(".lightbox-close")?.addEventListener("click", close);
@@ -362,6 +368,11 @@ export function openLightbox(images, startIndex = 0) {
   if (img) animate(img, 'zoomIn', { duration: '0.3s' });
   document.addEventListener("keydown", onKey);
   document.addEventListener("keydown", lightboxFocusTrap);
+  registerRouteCleanup(() => {
+    lb.remove();
+    document.removeEventListener("keydown", onKey);
+    document.removeEventListener("keydown", lightboxFocusTrap);
+  });
   lb.addEventListener("click", (e) => {
     if (e.target === lb) close();
   });

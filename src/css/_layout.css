@@ -926,12 +926,12 @@ input[type="date"].form-input::-webkit-datetime-edit-year-field:focus {
     right: 0;
     height: calc(56px + env(safe-area-inset-bottom, 0px));
     padding-bottom: env(safe-area-inset-bottom, 0px);
-    background: var(--nav-bg, rgba(255, 255, 255, 0.95));
+    background: var(--nav-bg);
     border-top: 1px solid var(--border);
     z-index: 1000;
     backdrop-filter: saturate(180%) blur(12px);
     -webkit-backdrop-filter: saturate(180%) blur(12px);
-    box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.08);
+    box-shadow: var(--shadow-sm);
   }
   [data-theme="dark"] .bottom-nav {
     background: var(--nav-bg);
@@ -945,7 +945,7 @@ input[type="date"].form-input::-webkit-datetime-edit-year-field:focus {
     justify-content: center;
     gap: 3px;
     text-decoration: none;
-    color: var(--text-muted, #6b7280);
+    color: var(--text-muted);
     font-size: 10px;
     font-weight: 500;
     padding: 6px 4px 0;
@@ -956,13 +956,13 @@ input[type="date"].form-input::-webkit-datetime-edit-year-field:focus {
   }
   .bottom-nav-item i { font-size: 1.1rem; transition: transform 0.15s; }
   .bottom-nav-item.active,
-  .bottom-nav-item[aria-current="page"] { color: var(--primary, #0ea5e9); }
+  .bottom-nav-item[aria-current="page"] { color: var(--primary); }
   .bottom-nav-item.active i { transform: scale(1.15); }
   .bottom-nav-badge {
     position: absolute;
     top: 6px;
     right: 18%;
-    background: var(--danger, #ef4444);
+    background: var(--danger);
     color: var(--text-inverse);
     font-size: 9px;
     font-weight: 700;

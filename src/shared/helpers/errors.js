@@ -49,11 +49,11 @@ export function showErrorFallback(container, message) {
       <div class="mb-3 text-muted animate__animated animate__pulse animate__infinite" style="font-size:3.5rem">
         <i class="fas fa-fish" aria-hidden="true"></i>
       </div>
-      <h2 class="mb-2" style="font-size:1.5rem">${t('common.somethingWentWrong') || 'Something went wrong'}</h2>
-      <p class="text-muted mb-4" style="max-width:400px">${escapeHtml(message || t('common.errorFallbackDesc') || 'An unexpected error occurred. Please try refreshing the page.')}</p>
+      <h2 class="mb-2" style="font-size:1.5rem">${t('common.somethingWentWrong')}</h2>
+      <p class="text-muted mb-4" style="max-width:400px">${escapeHtml(message || t('common.errorFallbackDesc'))}</p>
       <div class="d-flex gap-3 flex-wrap justify-content-center">
-        <button class="btn btn-primary btn-lg" data-action="refresh"><i class="fas fa-sync-alt" aria-hidden="true"></i> ${t('common.refresh') || 'Refresh'}</button>
-        <a href="#/" class="btn btn-outline btn-lg"><i class="fas fa-home" aria-hidden="true"></i> ${t('common.goHome') || 'Home'}</a>
+        <button class="btn btn-primary btn-lg" data-action="refresh"><i class="fas fa-sync-alt" aria-hidden="true"></i> ${t('common.refresh')}</button>
+        <a href="#/" class="btn btn-outline btn-lg"><i class="fas fa-home" aria-hidden="true"></i> ${t('common.goHome')}</a>
       </div>
 
     </div>`;

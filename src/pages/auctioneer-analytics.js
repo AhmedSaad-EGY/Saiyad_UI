@@ -1,12 +1,13 @@
 import { t } from '../core/i18n/index.js';
 import { api } from '../core/api/client.js';
-import { getUser } from '../core/auth/index.js';
+import { getUser, hasAnyRole } from '../core/auth/index.js';
 import { escapeHtml } from '../core/utils/dom.js';
+import { MODERATOR_ROLES } from '../shared/constants/roles.js';
 import { formatPrice, formatDate, statusClass, tStatus } from '../core/utils/format.js';
 
 export default async function renderAuctioneerAnalytics(container) {
   const _u = getUser();
-  if (!_u || (_u.role !== 'Auctioneer' && _u.role !== 'Admin')) {
+  if (!_u || !hasAnyRole(...(MODERATOR_ROLES))) {
     container.innerHTML = `<div class="empty-state"><i class="fas fa-chart-bar" aria-hidden="true"></i><h3>${t("common.pageNotFound")}</h3></div>`;
     return;
   }

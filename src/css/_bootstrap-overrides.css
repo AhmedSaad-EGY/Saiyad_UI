@@ -127,10 +127,8 @@
   --bs-navbar-active-color: var(--primary);
 }
 
-/* ─── Seller Gold Theme ─────────────────────────────────────── */
-[data-theme="dark"][data-user-role="Fisherman"],
-[data-theme="dark"][data-user-role="BaitSeller"],
-[data-theme="dark"][data-user-role="Auctioneer"] {
+/* ─── VIP Gold Theme (active subscription) ──────────────────── */
+[data-theme="dark"][data-vip] {
   --bs-primary: oklch(0.78 0.12 85);
   --bs-primary-rgb: 200, 175, 60;
   --bs-link-color: var(--primary);

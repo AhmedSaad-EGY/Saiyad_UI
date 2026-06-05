@@ -21,7 +21,7 @@ Alpine.data('dashboardPage', () => ({
   showTour: false,
 
   init() {
-    setPageMeta("Dashboard", undefined, true);
+    setPageMeta(t('dash.title'), undefined, true);
     const params = new URLSearchParams(location.hash.split('?')[1] || '');
     this.activeTab = params.get('tab') || 'overview';
     this.$nextTick(() => {
@@ -58,18 +58,18 @@ Alpine.data('dashboardPage', () => ({
     return [
       {
         target: isMobile ? '.dash-mobile-tabs' : '.dashboard-sidebar',
-        title: t('tour.navTitle') || 'Dashboard Navigation',
-        desc: t('tour.navDesc') || 'Navigate seamlessly between your overview, products, order tracking, and profile.'
+        title: t('tour.navTitle'),
+        desc: t('tour.navDesc')
       },
       {
         target: '#dashOrders',
-        title: t('tour.ordersTitle') || 'Track Orders',
-        desc: t('tour.ordersDesc') || 'Monitor your transactions, purchase records, and shipping updates dynamically.'
+        title: t('tour.ordersTitle'),
+        desc: t('tour.ordersDesc')
       },
       {
         target: '#dashProducts',
-        title: t('tour.productsTitle') || 'Manage Listings',
-        desc: t('tour.productsDesc') || 'Fisherman and sellers can easily publish or update listed catch and auction items here.'
+        title: t('tour.productsTitle'),
+        desc: t('tour.productsDesc')
       }
     ];
   },
@@ -95,7 +95,7 @@ Alpine.data('dashboardPage', () => ({
     this.showTour = false;
     document.querySelectorAll('.tour-highlight').forEach(el => el.classList.remove('tour-highlight'));
     localStorage.setItem('sayiad_tour_completed', 'true');
-    showToast(t('tour.welcomeToSayiad') || 'Ready to use Sayiad! Enjoy your experience.', 'success');
+    showToast(t('tour.welcomeToSayiad'), 'success');
   },
 
   switchTab(tabId) {
@@ -208,7 +208,7 @@ export default async function renderDashboard(container, route, params) {
         </div>
         <div class="col-md-9">
           <div class="dash-mobile-tabs">
-            <select class="form-select" aria-label="Dashboard tabs" x-model="activeTab" @change="switchTab(activeTab)">
+            <select class="form-select" aria-label="${t('dash.tabsLabel')}" x-model="activeTab" @change="switchTab(activeTab)">
               ${tabs.map(tabItem => `<option value="${tabItem.id}">${tabItem.label}</option>`).join('')}
             </select>
           </div>
@@ -245,11 +245,11 @@ export default async function renderDashboard(container, route, params) {
             <p class="text-muted" style="line-height:1.6" x-text="getTourSteps()[tourStep].desc"></p>
             <div class="d-flex justify-content-between align-items-center mt-4">
               <span class="text-muted" style="font-size:0.85rem">
-                ${t('common.step') || 'Step'} <span x-text="tourStep + 1"></span> of <span x-text="getTourSteps().length"></span>
+                ${t('common.step')} <span x-text="tourStep + 1"></span> of <span x-text="getTourSteps().length"></span>
               </span>
               <div class="d-flex gap-2">
-                <button class="btn btn-outline btn-sm" @click="prevTourStep()" :disabled="tourStep === 0">${t('common.back') || 'Back'}</button>
-                <button class="btn btn-primary btn-sm" @click="nextTourStep()" x-text="tourStep === getTourSteps().length - 1 ? '${t('common.finish') || 'Finish'}' : '${t('common.next') || 'Next'}'"></button>
+                <button class="btn btn-outline btn-sm" @click="prevTourStep()" :disabled="tourStep === 0">${t('common.back')}</button>
+                <button class="btn btn-primary btn-sm" @click="nextTourStep()" x-text="tourStep === getTourSteps().length - 1 ? '${t('common.finish')}' : '${t('common.next')}'"></button>
               </div>
             </div>
           </div>
@@ -428,6 +428,9 @@ async function renderOrders(content) {
   await loadOrders();
 }
 
+let _draftIntervalId = null;
+let _productListAbortController = null;
+
 async function renderMyProducts(content) {
   const sellerRoles = hasAnyRole(...(SELLER_ROLES));
   let editingProductId = null;
@@ -507,9 +510,10 @@ async function renderMyProducts(content) {
   });
 
   // Auto-save product form draft every 5s
+  if (_draftIntervalId) clearInterval(_draftIntervalId);
   const DRAFT_KEY = "product_draft";
   const draftFields = ["prodTitle", "prodDesc", "prodBrand", "prodPrice", "prodCondition", "prodStock", "prodLocation", "prodCategory"];
-  const _draftInterval = setInterval(() => {
+  _draftIntervalId = setInterval(() => {
     const form = document.getElementById("productFormContainer");
     if (form && !form.classList.contains("d-none")) {
       const draft = {};
@@ -608,7 +612,10 @@ async function renderMyProducts(content) {
     });
 
   // Register route cleanup to stop draft autosave interval
-  registerRouteCleanup(() => clearInterval(_draftInterval));
+  registerRouteCleanup(() => {
+    if (_draftIntervalId) { clearInterval(_draftIntervalId); _draftIntervalId = null; }
+    if (_productListAbortController) { _productListAbortController.abort(); _productListAbortController = null; }
+  });
 
   // Load categories for the product form
   (async () => {
@@ -658,6 +665,8 @@ async function renderMyProducts(content) {
     observeAnimations();
 
     // Delegate Start Auction button clicks
+    if (_productListAbortController) _productListAbortController.abort();
+    _productListAbortController = new AbortController();
     const listEl = document.getElementById("myProductsList");
     const productsById = new Map(products.map((p) => [String(p.id), p]));
     listEl.addEventListener("click", async (e) => {
@@ -705,7 +714,7 @@ async function renderMyProducts(content) {
           showToast(err.message, "error");
         }
       }
-    });
+    }, { signal: _productListAbortController.signal });
   } catch (e) {
     document.getElementById("myProductsList").innerHTML =
       `<div class="card text-center p-4"><h3><i class="fas fa-tag" aria-hidden="true"></i> ${t("dash.products")}</h3><p class="text-muted mt-2">${t("dash.productsNotAvailable")}</p></div>`;
@@ -786,6 +795,7 @@ function showAuctionModal(productId, productTitle) {
   }
   function onKey(e) { if (e.key === "Escape") close(); }
   document.addEventListener("keydown", onKey);
+  registerRouteCleanup(() => { document.removeEventListener("keydown", onKey); if (overlay?.isConnected) overlay.remove(); });
 
   document.getElementById("auctionModalCancel").addEventListener("click", close);
 
@@ -956,7 +966,7 @@ async function renderNotifications(content) {
           <p class="text-muted small">${escapeHtml(n.message)}</p>
           <small class="text-muted">${formatDate(n.createdAt)}</small>
         </div>
-        ${!n.isRead ? `<button class="btn btn-sm btn-ghost mark-read" aria-label="${t('notif.markAsRead') || 'Mark as read'}" data-id="${n.id}"><i class="fas fa-check" aria-hidden="true"></i></button>` : ""}
+        ${!n.isRead ? `<button class="btn btn-sm btn-ghost mark-read" aria-label="${t('notif.markAsRead')}" data-id="${n.id}"><i class="fas fa-check" aria-hidden="true"></i></button>` : ""}
       </div>
     `,
       )

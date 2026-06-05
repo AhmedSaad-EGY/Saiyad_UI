@@ -267,14 +267,14 @@ export function initPullToRefresh({ onRefresh, threshold = 80, indicatorId = 'pt
 
   let startY = 0, pulling = false, moved = false;
 
-  document.addEventListener('touchstart', (e) => {
+  function onTouchStart(e) {
     if (window.scrollY > 0) return;
     startY = e.touches[0].clientY;
     pulling = true;
     moved = false;
-  }, { passive: true });
+  }
 
-  document.addEventListener('touchmove', (e) => {
+  function onTouchMove(e) {
     if (!pulling) return;
     const dy = e.touches[0].clientY - startY;
     if (dy <= 0) { indicator.classList.remove('ptr-active', 'ptr-ready'); indicator.style.transform = ''; return; }
@@ -283,9 +283,9 @@ export function initPullToRefresh({ onRefresh, threshold = 80, indicatorId = 'pt
     indicator.style.transform = `translateY(${pull}px)`;
     indicator.classList.toggle('ptr-ready', dy >= threshold);
     indicator.classList.add('ptr-active');
-  }, { passive: true });
+  }
 
-  document.addEventListener('touchend', async () => {
+  async function onTouchEnd() {
     if (!pulling || !moved) { pulling = false; return; }
     const ready = indicator.classList.contains('ptr-ready');
     const _dy = parseFloat(indicator.style.transform?.replace('translateY(', '') || '0');
@@ -293,25 +293,47 @@ export function initPullToRefresh({ onRefresh, threshold = 80, indicatorId = 'pt
     indicator.classList.remove('ptr-active', 'ptr-ready');
     if (ready) {
       indicator.classList.add('ptr-refreshing');
-      indicator.querySelector('.ptr-text').textContent = 'Refreshing...';
+      indicator.querySelector('.ptr-text').textContent = t('common.refreshing');
       try { await onRefresh(); } catch {}
       indicator.classList.remove('ptr-refreshing');
-      indicator.querySelector('.ptr-text').textContent = 'Pull to refresh';
+      indicator.querySelector('.ptr-text').textContent = t('common.pullToRefresh');
     }
     indicator.style.transform = '';
     pulling = false;
     moved = false;
-  }, { passive: true });
+  }
+
+  document.addEventListener('touchstart', onTouchStart, { passive: true });
+  document.addEventListener('touchmove', onTouchMove, { passive: true });
+  document.addEventListener('touchend', onTouchEnd, { passive: true });
+
+  return () => {
+    document.removeEventListener('touchstart', onTouchStart);
+    document.removeEventListener('touchmove', onTouchMove);
+    document.removeEventListener('touchend', onTouchEnd);
+    indicator?.remove();
+  };
 }
 
 export function initInfiniteScroll({ sentinelId, onLoadMore, threshold = 300, enabled = true } = {}) {
   if (!enabled || typeof IntersectionObserver === 'undefined') return;
-  const sentinel = document.getElementById(sentinelId);
-  if (!sentinel) return;
-  const observer = new IntersectionObserver((entries) => {
-    if (entries[0].isIntersecting) onLoadMore();
+  let observer = new IntersectionObserver(async (entries) => {
+    if (entries[0].isIntersecting) {
+      try { await onLoadMore(); } catch { /* ignore errors to ensure reconnection */ }
+      requestAnimationFrame(() => {
+        observer.disconnect();
+        const newSentinel = document.getElementById(sentinelId);
+        if (newSentinel) {
+          observer = new IntersectionObserver(async (e2) => {
+            if (e2[0].isIntersecting) await onLoadMore();
+          }, { rootMargin: `${threshold}px` });
+          observer.observe(newSentinel);
+        }
+      });
+    }
   }, { rootMargin: `${threshold}px` });
-  observer.observe(sentinel);
+  const sentinel = document.getElementById(sentinelId);
+  if (sentinel) observer.observe(sentinel);
   const cleanup = () => observer.disconnect();
   return cleanup;
 }

@@ -1,6 +1,6 @@
 import { t } from '../core/i18n/index.js';
 import { api } from '../core/api/client.js';
-import { isAuthenticated, updateNavbar } from '../core/auth/index.js';
+import { isAuthenticated, updateNavbar, syncVipAttribute } from '../core/auth/index.js';
 import { navigate } from '../core/router/index.js';
 import { showToast } from '../core/utils/ui.js';
 import { showFieldError, clearFieldError } from '../core/utils/validation.js';
@@ -61,6 +61,7 @@ Alpine.data('loginForm', () => ({
       ensureCsrfToken();
       sessionStorage.removeItem('sayiadLoginFails');
       updateNavbar();
+      syncVipAttribute();
       navigate('');
     } catch (err) {
       if (err.message?.toLowerCase().includes('verify your email')) {
@@ -76,7 +77,7 @@ Alpine.data('loginForm', () => ({
           const lockMsg   = document.getElementById('loginLockMsg');
           if (submitBtn) submitBtn.disabled = true;
           let secs = 30;
-          const lockText = () => t('auth.tooManyAttempts', { secs }) || `Too many failed attempts. Wait ${secs} seconds.`;
+          const lockText = () => t('auth.tooManyAttempts', { secs });
           if (lockMsg) {
             lockMsg.classList.remove('hidden');
             lockMsg.textContent = lockText();
@@ -86,11 +87,13 @@ Alpine.data('loginForm', () => ({
             if (lockMsg) lockMsg.textContent = lockText();
             if (secs <= 0) {
               clearInterval(timer);
+              this._lockoutTimer = null;
               sessionStorage.removeItem('sayiadLoginFails');
               if (submitBtn) submitBtn.disabled = false;
               if (lockMsg) lockMsg.classList.add('hidden');
             }
           }, 1000);
+          this._lockoutTimer = timer;
         }
       }
     } finally {
@@ -103,9 +106,16 @@ Alpine.data('loginForm', () => ({
       const btn = this.$refs.resendBtn;
       if (btn) btn.disabled = true;
       await api.post('/auth/resend-verification', { email: this.unverifiedEmail });
-      showToast(t('auth.verificationSent') || 'Verification email sent!', 'success');
+      showToast(t('auth.verificationSent'), 'success');
     } catch (e) {
       showToast(e.message, 'error');
+    }
+  },
+
+  destroy() {
+    if (this._lockoutTimer) {
+      clearInterval(this._lockoutTimer);
+      this._lockoutTimer = null;
     }
   },
 }));
@@ -127,11 +137,11 @@ export default function renderLogin(container) {
           <div x-show="unverifiedEmail" x-cloak>
             <div class="alert alert-warning text-center mb-3" role="alert">
               <i class="fas fa-envelope mb-2 fs-1 d-block" aria-hidden="true"></i>
-              <strong>${t('auth.emailNotVerified') || 'Email not verified.'}</strong>
-              <p class="my-2" style="font-size:var(--text-sm)">${t('auth.checkInbox') || 'Please check your inbox and click the verification link.'}</p>
+              <strong>${t('auth.emailNotVerified')}</strong>
+              <p class="my-2" style="font-size:var(--text-sm)">${t('auth.checkInbox')}</p>
               <button class="btn btn-primary btn-sm mt-1" x-ref="resendBtn" @click="resendVerification()">
                 <i class="fas fa-paper-plane" aria-hidden="true"></i>
-                ${t('auth.resendVerification') || 'Resend Verification'}
+                ${t('auth.resendVerification')}
               </button>
               <p class="mt-2" style="font-size:var(--text-xs);opacity:0.7">
                 <i class="fas fa-clock" aria-hidden="true"></i>
@@ -144,7 +154,7 @@ export default function renderLogin(container) {
               <label class="form-label" for="loginEmail">${t('auth.email')}</label>
               <input type="email" class="form-input form-control" id="loginEmail" name="email"
                 x-model="email" @input="clearError(); clearFieldError($el)"
-                placeholder="your@email.com" required autocomplete="email" inputmode="email">
+                placeholder="${t('auth.emailPlaceholder')}" required autocomplete="email" inputmode="email">
             </div>
             <div class="form-group">
               <label class="form-label" for="loginPassword">${t('auth.password')}</label>

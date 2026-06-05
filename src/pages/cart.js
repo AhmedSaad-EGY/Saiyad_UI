@@ -21,7 +21,7 @@ Alpine.data('cartPage', () => ({
   formatPrice,
 
   async init() {
-    setPageMeta("My Cart", undefined, true);
+    setPageMeta(t('cart.title'), undefined, true);
     try {
       const cart = await api.get('/cart');
       this.items = cart.items || [];

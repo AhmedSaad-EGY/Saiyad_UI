@@ -2,8 +2,8 @@ import { setLanguage, getCurrentLang, t } from './i18n/index.js';
 import { showToast, showConfirm, openQuickView } from './utils/ui.js';
 import { animate } from './utils/dom.js';
 import { api } from './api/client.js';
-import { getUser, logout, requireAuth } from './auth/index.js';
-import { router, goBack } from './router/index.js';
+import { getUser, logout, requireAuth, syncVipAttribute } from './auth/index.js';
+import { router, goBack, registerRouteCleanup } from './router/index.js';
 import { createSwipeGesture } from './utils/swipe.js';
 import { setupGlobalErrorHandlers } from '../shared/helpers/errors.js';
 
@@ -255,6 +255,7 @@ function syncUserRoleAttribute() {
 
 applyTheme(savedTheme);
 syncUserRoleAttribute();
+syncVipAttribute();
 initHeroTilt();
 
 // Footer "Sell on Sayiad" — route sellers to dashboard
@@ -347,7 +348,7 @@ document.addEventListener("mousedown", () => {
       indicator.id = 'swipeBackIndicator';
       indicator.setAttribute('role', 'status');
       indicator.setAttribute('aria-live', 'polite');
-      indicator.innerHTML = `<i class="fas fa-arrow-left" aria-hidden="true"></i><span>${  t('common.back') || 'Back'  }</span>`;
+      indicator.innerHTML = `<i class="fas fa-arrow-left" aria-hidden="true"></i><span>${t('common.back')}</span>`;
       document.body.appendChild(indicator);
     }
     const clampedProgress = Math.min(progress, 1);
@@ -416,7 +417,7 @@ setupGlobalErrorHandlers();
         'text-align:center', 'padding:10px 16px',        'font-size:0.875rem', 'font-weight:600',
         'display:flex', 'align-items:center', 'justify-content:center', 'gap:8px',
       ].join(';');
-      el.innerHTML = `<i class="fas fa-wifi"></i> ${t('common.backOnline') || 'Back online!'}`;
+      el.innerHTML = `<i class="fas fa-wifi"></i> ${t('common.backOnline')}`;
       setTimeout(() => {
         el.addEventListener('animationend', () => el.remove(), { once: true });
         animate(el, 'slideOutUp', { duration: '0.3s' });
@@ -436,7 +437,7 @@ setupGlobalErrorHandlers();
     close.setAttribute('aria-label', 'Dismiss');
     close.style.cssText = 'background:none;border:none;color:#fff;font-size:1.2rem;cursor:pointer;padding:0 4px;line-height:1;opacity:0.8;margin-left:auto';
     close.addEventListener('click', () => { el.remove(); banner = null; });
-    el.innerHTML = `<i class="fas fa-plug"></i> <span>${t('common.offline') || 'You are offline. Some features may be unavailable.'}</span>`;
+    el.innerHTML = `<i class="fas fa-plug"></i> <span>${t('common.offline')}</span>`;
     el.appendChild(close);
     return el;
   }
@@ -488,6 +489,9 @@ setupGlobalErrorHandlers();
     </div>
   `;
   document.body.appendChild(overlay);
+  registerRouteCleanup(() => {
+    if (overlay.isConnected) overlay.remove();
+  });
   animate(overlay, 'fadeIn', { duration: '0.25s' });
   overlay.querySelector(".tour-next").addEventListener("click", () => {
     step++;
@@ -580,7 +584,7 @@ function showUpdateBanner(worker) {
              font-size:13px;cursor:pointer;font-family:inherit">
       Refresh
     </button>
-    <button id="swDismissBtn" aria-label="Dismiss"
+    <button id="swDismissBtn" :aria-label="$t('common.dismiss')"
       class="border-0"
       style="background:transparent;cursor:pointer;
              color:var(--text-secondary,#888);font-size:18px;line-height:1;
@@ -590,6 +594,9 @@ function showUpdateBanner(worker) {
   `;
 
   document.body.appendChild(banner);
+  registerRouteCleanup(() => {
+    if (banner.isConnected) banner.remove();
+  });
   animate(banner, 'slideInUp', { duration: '0.35s' });
 
   document.getElementById("swUpdateBtn").addEventListener("click", () => {

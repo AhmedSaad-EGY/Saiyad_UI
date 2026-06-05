@@ -54,14 +54,19 @@ Alpine.data('productsPage', () => ({
     this.$nextTick(() => {
       const isMobile = window.innerWidth < 768;
       if (isMobile && this.totalPages > 1) {
-        initInfiniteScroll({
+        this._scrollCleanup = initInfiniteScroll({
           sentinelId: 'productSentinel',
           onLoadMore: () => this.loadMore(),
         });
       }
     });
 
-    initPullToRefresh({ onRefresh: () => { this.page = 1; this.loadProducts(); } });
+    this._ptrCleanup = initPullToRefresh({ onRefresh: () => { this.page = 1; this.loadProducts(); } });
+  },
+
+  destroy() {
+    if (this._ptrCleanup) this._ptrCleanup();
+    if (this._scrollCleanup) this._scrollCleanup();
   },
 
   async loadCategories() {
@@ -213,7 +218,7 @@ Alpine.data('productsPage', () => ({
 }));
 
 export default async function renderProducts(_container, _fullPath, params) {
-  setPageMeta('Fish & Seafood Products', 'Browse fresh fish and seafood on Sayiad marketplace.');
+  setPageMeta(t('products.metaTitle'), t('products.metaDesc'));
   _container.innerHTML = `
     <div x-data="productsPage" class="products-page-alpine" @keydown.escape.window="closeSearchOverlay(); filterSheetOpen = false">
       <div class="section-header animate__animated animate__fadeInUp"><h2><i class="fas fa-store" aria-hidden="true"></i> ${t('products.title')}</h2></div>
@@ -247,10 +252,10 @@ export default async function renderProducts(_container, _fullPath, params) {
         </div>
         <div class="d-flex gap-2 align-items-center">
           <button class="btn btn-outline btn-icon search-toggle-btn" @click="openSearchOverlay()" aria-label="${t('common.search')}"><i class="fas fa-search" aria-hidden="true"></i></button>
-          <button class="btn btn-outline btn-icon filter-toggle-btn" @click="filterSheetOpen = true" aria-label="${t('products.filters') || 'Open filters'}"><i class="fas fa-sliders-h" aria-hidden="true"></i></button>
+          <button class="btn btn-outline btn-icon filter-toggle-btn" @click="filterSheetOpen = true" aria-label="${t('products.filters')}"><i class="fas fa-sliders-h" aria-hidden="true"></i></button>
           <div class="d-none d-md-flex btn-group rounded-pill overflow-hidden border">
-            <button class="btn btn-sm px-3" :class="!isListView ? 'btn-primary' : 'btn-ghost'" @click="isListView = false" aria-label="Grid View" title="Grid View"><i class="fas fa-th-large" aria-hidden="true"></i></button>
-            <button class="btn btn-sm px-3" :class="isListView ? 'btn-primary' : 'btn-ghost'" @click="isListView = true" aria-label="List View" title="List View"><i class="fas fa-list" aria-hidden="true"></i></button>
+            <button class="btn btn-sm px-3" :class="!isListView ? 'btn-primary' : 'btn-ghost'" @click="isListView = false" aria-label="${t('products.gridView')}" title="${t('products.gridView')}"><i class="fas fa-th-large" aria-hidden="true"></i></button>
+            <button class="btn btn-sm px-3" :class="isListView ? 'btn-primary' : 'btn-ghost'" @click="isListView = true" aria-label="${t('products.listView')}" title="${t('products.listView')}"><i class="fas fa-list" aria-hidden="true"></i></button>
           </div>
         </div>
       </div>
@@ -292,7 +297,7 @@ export default async function renderProducts(_container, _fullPath, params) {
 
       <!-- Results Count Info -->
       <div x-show="!loading && products.length" class="mb-3 d-flex justify-content-between align-items-center" x-cloak>
-        <span class="text-muted small" x-text="'Showing ' + products.length + ' of ' + totalItems + ' products'"></span>
+        <span class="text-muted small" x-text="$t('products.showingCount', { count: products.length, total: totalItems })"></span>
       </div>
 
       <!-- Skeleton loading -->
@@ -319,7 +324,7 @@ export default async function renderProducts(_container, _fullPath, params) {
       <!-- Product grid -->
       <div x-show="!loading && !error && products.length" :class="isListView ? 'product-list-view d-flex flex-column gap-3' : 'row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4 product-card-grid'" id="productGrid">
         <template x-for="(p, i) in products" :key="p.id">
-          <a :href="'#/product-detail?id='+p.id" class="product-card card" :class="'animate-on-scroll stagger-' + Math.min(i + 1, 8)" :aria-label="escapeHtml(p.title || 'Product') + ' — ' + formatPrice(p.price)">
+          <a :href="'#/product-detail?id='+p.id" class="product-card card" :class="'animate-on-scroll stagger-' + Math.min(i + 1, 8)" :aria-label="escapeHtml(p.title || $t('common.product')) + ' — ' + formatPrice(p.price)">
             <div class="product-card-img">
               <img :src="p.primaryImageUrl || p.imageUrl || ''" :alt="escapeHtml(p.title || 'Product')" loading="lazy">
               <span x-show="p.status != null" class="product-card-badge" :class="'status-' + (p.status === 0 || p.status === 'Available' ? 'available' : 'draft')" x-text="p.status === 0 || p.status === 'Available' ? '${t('product.statusAvailable')}' : '${t('product.statusSold')}'"></span>
@@ -386,7 +391,7 @@ export default async function renderProducts(_container, _fullPath, params) {
               </select>
             </div>
             <div class="form-group">
-              <label>${t('products.condition') || 'Condition'}</label>
+              <label>${t('products.condition')}</label>
               <select class="form-select" x-model="condition">
                 <option value="">${t('products.allConditions')}</option>
                 <option value="New">${t('product.new')}</option>
@@ -417,7 +422,7 @@ export default async function renderProducts(_container, _fullPath, params) {
           </div>
           <div class="filter-sheet-footer">
             <button class="btn btn-ghost" @click="resetFilters(); filterSheetOpen = false">${t('common.clearFilters')}</button>
-            <button class="btn btn-primary" @click="applyMobileFilters()"><i class="fas fa-check" aria-hidden="true"></i> ${t('common.showResults') || 'Show Results'}</button>
+            <button class="btn btn-primary" @click="applyMobileFilters()"><i class="fas fa-check" aria-hidden="true"></i> ${t('common.showResults')}</button>
           </div>
         </div>
       </div>

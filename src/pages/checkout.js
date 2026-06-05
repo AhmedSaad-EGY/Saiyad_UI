@@ -31,7 +31,7 @@ Alpine.data('checkoutPage', () => ({
   clearFieldError,
 
   async init() {
-    setPageMeta("Checkout", undefined, true);
+    setPageMeta(t('checkout.title'), undefined, true);
     try {
       const [cart, savedAddresses, walletData] = await Promise.all([
         api.get('/cart'),
@@ -182,14 +182,14 @@ export default async function renderCheckout(container) {
       <div x-show="!loading && items.length > 0 && !orderSuccess" x-transition:enter="transition-fade" x-transition:enter-start="op-0" x-transition:enter-end="op-100">
         <div>
           <div class="section-header text-center d-block border-0 pb-0">
-            <h2 class="mb-4"><i class="fas fa-lock text-muted fs-4" aria-hidden="true"></i> ${t('cart.checkout') || 'Secure Checkout'}</h2>
+            <h2 class="mb-4"><i class="fas fa-lock text-muted fs-4" aria-hidden="true"></i> ${t('cart.checkout')}</h2>
             <!-- Progress Indicator -->
             <div class="checkout-progress">
-              <div class="checkout-progress-step completed"><div class="checkout-progress-num"><i class="fas fa-check" aria-hidden="true"></i></div> <span>${t('nav.cart') || 'Cart'}</span></div>
+              <div class="checkout-progress-step completed"><div class="checkout-progress-num"><i class="fas fa-check" aria-hidden="true"></i></div> <span>${t('nav.cart')}</span></div>
               <div class="checkout-progress-divider"></div>
-              <div class="checkout-progress-step active"><div class="checkout-progress-num">2</div> <span>${t('cart.shippingAddress') || 'Shipping'}</span></div>
+              <div class="checkout-progress-step active"><div class="checkout-progress-num">2</div> <span>${t('cart.shippingAddress')}</span></div>
               <div class="checkout-progress-divider"></div>
-              <div class="checkout-progress-step"><div class="checkout-progress-num">3</div> <span>${t('cart.paymentMethod') || 'Payment'}</span></div>
+              <div class="checkout-progress-step"><div class="checkout-progress-num">3</div> <span>${t('cart.paymentMethod')}</span></div>
             </div>
           </div>
           
@@ -215,7 +215,7 @@ export default async function renderCheckout(container) {
 
                 <template x-if="addresses.length > 0">
                   <div class="mb-4">
-                    <label class="fw-semibold d-block mb-3">${t('shipping.savedAddresses') || 'Select a Saved Address'}</label>
+                    <label class="fw-semibold d-block mb-3">${t('shipping.savedAddresses')}</label>
                     <div class="row g-3">
                       <template x-for="(a, i) in addresses" :key="a.id">
                         <div class="col-sm-6">
@@ -243,7 +243,7 @@ export default async function renderCheckout(container) {
                 </template>
 
                 <form id="addressForm" x-show="useNewAddress || addresses.length === 0" x-transition>
-                  <h4 class="mb-3 fs-5">${t('shipping.addNew') || 'New Address'}</h4>
+                  <h4 class="mb-3 fs-5">${t('shipping.addNew')}</h4>
                   <div id="addressFields" class="row g-3">
                     <div class="col-sm-6">
                       <div class="form-group">
@@ -306,7 +306,7 @@ export default async function renderCheckout(container) {
               <div class="checkout-sidebar">
                 <div class="card">
                   <div class="card-header">
-                    <h3 class="mb-0"><i class="fas fa-receipt" aria-hidden="true"></i> ${t('order.summary') || 'Order Summary'}</h3>
+                    <h3 class="mb-0"><i class="fas fa-receipt" aria-hidden="true"></i> ${t('order.summary')}</h3>
                   </div>
                   <div class="card-body">
                     <div style="max-height: 250px; overflow-y: auto; padding-right: 10px; margin-bottom: 20px" class="terms-content">
@@ -314,11 +314,14 @@ export default async function renderCheckout(container) {
                         <div class="d-flex justify-content-between mb-3">
                           <div class="d-flex gap-2">
                             <div style="width:40px;height:40px;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border)">
-                              <img :src="item.product?.primaryImageUrl || item.productImageUrl || item.imageUrl || ''" style="width:100%;height:100%;object-fit:cover" onerror="this.src='';this.className='fas fa-image'">
+                              <div style="position:relative;width:100%;height:100%">
+                                <img :src="item.product?.primaryImageUrl || item.productImageUrl || item.imageUrl || ''" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none';var n=this.parentElement.querySelector('.fa-image');if(n)n.style.display='block'">
+                                <i class="fas fa-image" style="display:none;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:1.2rem;color:var(--text-muted)"></i>
+                              </div>
                             </div>
                             <div>
-                              <div style="font-size:0.85rem;line-height:1.2;margin-bottom:4px" x-text="item.productTitle || ('Product #' + item.productId)"></div>
-                              <small class="text-muted" x-text="'Qty: ' + (item.quantity || 1)"></small>
+                              <div style="font-size:0.85rem;line-height:1.2;margin-bottom:4px" x-text="item.productTitle || ($t('common.product') + ' #' + item.productId)"></div>
+                              <small class="text-muted" x-text="$t('common.qty') + ': ' + (item.quantity || 1)"></small>
                             </div>
                           </div>
                           <span class="fw-semibold ms-2" x-text="formatPrice((item.product?.price || item.unitPrice || item.price || 0) * (item.quantity || 1))"></span>
@@ -327,12 +330,12 @@ export default async function renderCheckout(container) {
                     </div>
                     <hr>
                     <div class="d-flex justify-content-between py-2">
-                      <span class="text-muted">${t('cart.subtotal') || 'Subtotal'}</span>
+                      <span class="text-muted">${t('cart.subtotal')}</span>
                       <span x-text="formatPrice(total)"></span>
                     </div>
                     <div class="d-flex justify-content-between py-2">
-                      <span class="text-muted">${t('order.shipping') || 'Shipping'}</span>
-                      <span class="text-success">${t('common.free') || 'Free'}</span>
+                      <span class="text-muted">${t('order.shipping')}</span>
+                      <span class="text-success">${t('common.free')}</span>
                     </div>
                     <div class="d-flex justify-content-between py-3 mt-2 fw-bold" style="border-top:2px dashed var(--border);font-size:1.2rem">
                       <span>${t('cart.total')}</span>
@@ -348,8 +351,8 @@ export default async function renderCheckout(container) {
                     
                     <!-- Trust Badges -->
                     <div class="trust-badges mt-4">
-                      <div class="trust-badge"><i class="fas fa-shield-alt" aria-hidden="true"></i> ${t('common.secureCheckout') || 'Secure Checkout'}</div>
-                      <div class="trust-badge"><i class="fas fa-undo" aria-hidden="true"></i> ${t('common.easyReturns') || 'Easy Returns'}</div>
+                      <div class="trust-badge"><i class="fas fa-shield-alt" aria-hidden="true"></i> ${t('common.secureCheckout')}</div>
+                      <div class="trust-badge"><i class="fas fa-undo" aria-hidden="true"></i> ${t('common.easyReturns')}</div>
                     </div>
                     
                     <a href="#/cart" class="btn btn-outline w-100 mt-2 border-0"><i class="fas fa-arrow-left" aria-hidden="true"></i> ${t('cart.backToCart')}</a>
@@ -365,11 +368,11 @@ export default async function renderCheckout(container) {
       <div x-show="orderSuccess" style="display:none" x-transition:enter="transition-fade" x-transition:enter-start="op-0" x-transition:enter-end="op-100">
         <div class="order-success animate__animated animate__fadeIn">
           <div class="order-success-icon animate__animated animate__bounceIn"><i class="fas fa-check" aria-hidden="true"></i></div>
-          <h2>${t('cart.orderSuccess') || 'Order Placed Successfully!'}</h2>
-          <p>${t('cart.orderSuccessDesc') || 'Thank you for your purchase. Your order has been received and is being processed.'}</p>
+          <h2>${t('cart.orderSuccess')}</h2>
+          <p>${t('cart.orderSuccessDesc')}</p>
           <div class="d-flex justify-content-center gap-3 mt-5">
-            <a :href="'#/order-detail?id=' + orderSuccess" class="btn btn-primary"><i class="fas fa-file-invoice" aria-hidden="true"></i> ${t('order.track') || 'View Order Details'}</a>
-            <a href="#/products" class="btn btn-outline"><i class="fas fa-shopping-bag" aria-hidden="true"></i> ${t('cart.continueShopping') || 'Continue Shopping'}</a>
+            <a :href="'#/order-detail?id=' + orderSuccess" class="btn btn-primary"><i class="fas fa-file-invoice" aria-hidden="true"></i> ${t('order.track')}</a>
+            <a href="#/products" class="btn btn-outline"><i class="fas fa-shopping-bag" aria-hidden="true"></i> ${t('cart.continueShopping')}</a>
           </div>
         </div>
       </div>

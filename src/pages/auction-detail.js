@@ -1,7 +1,8 @@
 import Alpine from 'alpinejs';
 import { t, getCurrentLang } from '../core/i18n/index.js';
 import { api } from '../core/api/client.js';
-import { requireAuth, getUser } from '../core/auth/index.js';
+import { requireAuth, getUser, hasRole } from '../core/auth/index.js';
+import { ROLES } from '../shared/constants/roles.js';
 import { registerRouteCleanup, navigate } from '../core/router/index.js';
 import { formatPrice, formatDate, statusClass, tStatus } from '../core/utils/format.js';
 import { escapeHtml, observeAnimations, animate, safeSetHTML } from '../core/utils/dom.js';
@@ -52,7 +53,7 @@ Alpine.data('auctionDetailPage', () => ({
   async init() {
     this._auctionId = new URLSearchParams(location.hash.split('?')[1] || '').get('id');
     if (!this._auctionId) {
-      this.error = 'Auction ID is required.';
+      this.error = t('auction.idRequired');
       this.loading = false;
       return;
     }
@@ -177,6 +178,7 @@ Alpine.data('auctionDetailPage', () => ({
   },
 
   animateBidCountUp(start, end) {
+    if (this._rafId) cancelAnimationFrame(this._rafId);
     const duration = 600;
     const startTime = performance.now();
     const tick = (now) => {
@@ -184,10 +186,10 @@ Alpine.data('auctionDetailPage', () => ({
       const progress = Math.min(elapsed / duration, 1);
       const eased = 1 - Math.pow(1 - progress, 3);
       this.currentBidValue = start + (end - start) * eased;
-      if (progress < 1) requestAnimationFrame(tick);
+      if (progress < 1) this._rafId = requestAnimationFrame(tick);
       else this.currentBidValue = end;
     };
-    requestAnimationFrame(tick);
+    this._rafId = requestAnimationFrame(tick);
   },
 
   // --- SignalR event handlers ---
@@ -201,7 +203,7 @@ Alpine.data('auctionDetailPage', () => ({
     if (bidEl) animate(bidEl, 'bounceIn', { duration: '0.6s' });
 
     const bidEntry = {
-      userName: bid.userName || bid.bidderName || bid.fullName || t('auction.anonymousBidder') || 'Bidder',
+      userName: bid.userName || bid.bidderName || bid.fullName || t('auction.anonymousBidder'),
       createdAt: bid.createdAt || bid.created_at || new Date().toISOString(),
       amount: newVal || 0,
       isAutoBid: bid.isAutoBid || false,
@@ -233,9 +235,9 @@ Alpine.data('auctionDetailPage', () => ({
 
     // Confirm before placing irreversible bid
     const confirmed = await showConfirm(
-      t('auction.confirmBidTitle') || 'Confirm Your Bid',
-      `${t('auction.confirmBidMsg') || 'Place a bid of'} ${formatPrice(amount)}? ${t('auction.bidIrreversible') || 'This cannot be undone.'}`,
-      { type: 'warning', confirmText: t('auction.placeBid') || 'Place Bid' }
+      t('auction.confirmBidTitle'),
+      `${t('auction.confirmBidMsg')} ${formatPrice(amount)}? ${t('auction.bidIrreversible')}`,
+      { type: 'warning', confirmText: t('auction.placeBid') }
     );
     if (!confirmed) return;
 
@@ -313,7 +315,7 @@ Alpine.data('auctionDetailPage', () => ({
   tStatus(s) { return tStatus(s, 'auction'); },
   t(key) { return t(key); },
   getCurrentLang() { return getCurrentLang(); },
-  isCustomer() { return this._user?.role === 'Customer'; },
+  isCustomer() { return hasRole(ROLES.CUSTOMER); },
   isLoggedIn() { return !!this._user; },
   retry() { navigate(''); },
 
@@ -328,6 +330,10 @@ Alpine.data('auctionDetailPage', () => ({
     if (this._refreshInterval) {
       clearInterval(this._refreshInterval);
       this._refreshInterval = null;
+    }
+    if (this._rafId) {
+      cancelAnimationFrame(this._rafId);
+      this._rafId = null;
     }
   },
 }));
@@ -360,12 +366,12 @@ export default async function renderAuctionDetail(container, _route, params) {
       <template x-if="!loading && !error && auction">
         <div>
         <!-- Breadcrumb -->
-        <nav class="breadcrumb" aria-label="Breadcrumb">
+        <nav class="breadcrumb" aria-label="${t('common.breadcrumb')}">
           <a href="#/">${t("nav.home")}</a>
           <i class="fas fa-chevron-${getCurrentLang() === "ar" ? "left" : "right"}" aria-hidden="true"></i>
           <a href="#/auctions">${t("nav.auctions")}</a>
           <i class="fas fa-chevron-${getCurrentLang() === "ar" ? "left" : "right"}" aria-hidden="true"></i>
-          <span x-text="auction.productTitle || 'Auction Item'"></span>
+          <span x-text="auction.productTitle || $t('auction.item')"></span>
         </nav>
 
         <div class="row g-5">
@@ -373,7 +379,7 @@ export default async function renderAuctionDetail(container, _route, params) {
           <div class="col-lg-6">
             <div class="detail-image">
               <template x-if="auction.productImageUrl">
-                <img :src="auction.productImageUrl" :alt="auction.productTitle || 'Auction Item'" loading="lazy" style="width:100%;height:100%;object-fit:cover">
+                <img :src="auction.productImageUrl" :alt="auction.productTitle || $t('auction.item')" loading="lazy" style="width:100%;height:100%;object-fit:cover">
               </template>
               <template x-if="!auction.productImageUrl">
                 <i class="fas fa-gavel" aria-hidden="true"></i>
@@ -384,7 +390,7 @@ export default async function renderAuctionDetail(container, _route, params) {
           <!-- Info -->
           <div class="col-lg-6">
           <div class="detail-info">
-            <h1 x-text="auction.productTitle || 'Auction Item'"></h1>
+            <h1 x-text="auction.productTitle || $t('auction.item')"></h1>
 
             <!-- Current bid with price flash -->
             <div class="current-bid">
@@ -466,7 +472,7 @@ export default async function renderAuctionDetail(container, _route, params) {
                 <div class="seller-avatar" x-text="(auction.sellerName || auction.auctioneerName || '?').charAt(0).toUpperCase()"></div>
                 <div class="seller-info-details">
                   <div class="seller-info-name" x-text="auction.sellerName || auction.auctioneerName"></div>
-                  <div class="seller-info-meta"><i class="fas fa-store" aria-hidden="true"></i> ${t('common.viewProfile') || 'View Profile'}</div>
+                  <div class="seller-info-meta"><i class="fas fa-store" aria-hidden="true"></i> ${t('common.viewProfile')}</div>
                 </div>
                 <i class="fas fa-chevron-${getCurrentLang() === 'ar' ? 'left' : 'right'} text-muted" aria-hidden="true"></i>
               </a>
@@ -526,7 +532,7 @@ export default async function renderAuctionDetail(container, _route, params) {
                       </label>
                       <div x-show="autoBidEnabled" class="flex-fill">
                         <input type="number" class="form-input form-control" x-model="autoBidMax" step="0.01" min="0"
-                               :placeholder="t('auction.autoBidMaxPlaceholder') || 'Max bid amount'"
+                               :placeholder="t('auction.autoBidMaxPlaceholder')"
                                style="padding:6px 10px;font-size:var(--text-sm)" />
                       </div>
                     </div>
@@ -545,11 +551,11 @@ export default async function renderAuctionDetail(container, _route, params) {
               <div class="alert alert-info mt-3">
                 <i class="fas fa-info-circle" aria-hidden="true"></i>
                 <template x-if="isLoggedIn()">
-                  <span x-text="$t('auction.bidCustomerOnly') || 'Only customers can place bids.'"></span>
+                  <span x-text="$t('auction.bidCustomerOnly')"></span>
                 </template>
                 <template x-if="!isLoggedIn()">
                   <a href="#/login" class="text-reset text-decoration-underline">
-                    <span x-text="$t('auction.loginToBid') || 'Login as a customer to place bids.'"></span>
+                    <span x-text="$t('auction.loginToBid')"></span>
                   </a>
                 </template>
               </div>

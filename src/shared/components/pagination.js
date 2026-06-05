@@ -62,7 +62,7 @@ export function manualPaginationHtml({ page, totalPages, prefix = 'pag' }) {
         <i class="fas ${leftChevron}" aria-hidden="true"></i>
       </button>
       <span class="text-muted small">
-        ${t("common.page") || 'Page'} ${page} / ${Math.max(totalPages, 1)}
+        ${t("common.page")} ${page} / ${Math.max(totalPages, 1)}
       </span>
       <button class="btn btn-sm btn-ghost" id="${prefix}NextBtn" ${page >= totalPages ? 'disabled' : ''}>
         <i class="fas ${rightChevron}" aria-hidden="true"></i>

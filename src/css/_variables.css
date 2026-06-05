@@ -205,10 +205,8 @@
   --glass-inner-glow: inset 0 1px 1px oklch(1 0 0 / 0.05);
 }
 
-/* ── Gold / Seller Theme (dark mode only) ───────────────────── */
-[data-theme="dark"][data-user-role="Fisherman"],
-[data-theme="dark"][data-user-role="BaitSeller"],
-[data-theme="dark"][data-user-role="Auctioneer"] {
+/* ── Gold / VIP Theme (dark mode only, active subscription) ─── */
+[data-theme="dark"][data-vip] {
   --primary:        oklch(0.78 0.12 85);
   --primary-dark:   oklch(0.70 0.14 85);
   --primary-light:  oklch(0.88 0.08 85);

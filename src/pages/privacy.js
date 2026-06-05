@@ -1,5 +1,6 @@
 import { t } from '../core/i18n/index.js';
 import { observeAnimations } from '../core/utils/dom.js';
+import { registerRouteCleanup } from '../core/router/index.js';
 
 export default async function renderPrivacy(container) {
   const isAr = document.documentElement.lang === 'ar';
@@ -140,5 +141,6 @@ export default async function renderPrivacy(container) {
   }, { rootMargin: "-20% 0px -60% 0px", threshold: 0 });
 
   document.querySelectorAll(".legal-section").forEach(sec => observer.observe(sec));
+  registerRouteCleanup(() => observer.disconnect());
 }
 

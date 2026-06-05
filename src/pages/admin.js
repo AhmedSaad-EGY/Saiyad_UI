@@ -10,8 +10,8 @@ import { setPageMeta } from '../core/utils/seo.js';
 
 export default async function renderAdmin(container) {
   const _u = getUser();
-  if (!_u || _u.role !== 'Admin') { window.location.hash = '#/'; return; }
-  setPageMeta("Admin Panel", undefined, true);
+  if (!_u || _u.role !== ROLES.ADMIN) { window.location.hash = '#/'; return; }
+  setPageMeta(t('admin.title'), undefined, true);
 
   const tabs = [
     { id: "users", icon: "fa-users", label: t("admin.users") },
@@ -593,8 +593,8 @@ export default async function renderAdmin(container) {
               <td>${p.maxAuctionRequestsPerMonth}</td>
               <td>${p.isActive ? '<span class="badge badge-success">Active</span>' : '<span class="badge badge-danger">Inactive</span>'}</td>
               <td>
-                <button class="btn btn-sm btn-outline edit-plan-btn" aria-label="${t('common.edit') || 'Edit plan'}" data-id="${p.id}" data-plan='${escapeHtml(JSON.stringify(p))}'><i class="fas fa-edit" aria-hidden="true"></i></button>
-                <button class="btn btn-sm btn-danger delete-plan-btn" aria-label="${t('common.delete') || 'Delete plan'}" data-id="${p.id}" data-name="${escapeHtml(p.name)}"><i class="fas fa-trash" aria-hidden="true"></i></button>
+                <button class="btn btn-sm btn-outline edit-plan-btn" aria-label="${t('common.edit')}" data-id="${p.id}" data-plan='${encodeURIComponent(JSON.stringify(p))}'><i class="fas fa-edit" aria-hidden="true"></i></button>
+                <button class="btn btn-sm btn-danger delete-plan-btn" aria-label="${t('common.delete')}" data-id="${p.id}" data-name="${escapeHtml(p.name)}"><i class="fas fa-trash" aria-hidden="true"></i></button>
               </td>
             </tr>`).join("")}
           </tbody>
@@ -602,7 +602,7 @@ export default async function renderAdmin(container) {
 
       panel.querySelectorAll(".edit-plan-btn").forEach(btn => {
         btn.addEventListener("click", () => {
-          const p = JSON.parse(btn.dataset.plan);
+          const p = JSON.parse(decodeURIComponent(btn.dataset.plan));
           const fields = [
             { key: "name", label: "Name", value: p.name, type: "text" },
             { key: "description", label: "Description", value: p.description || "", type: "text" },
@@ -628,7 +628,7 @@ export default async function renderAdmin(container) {
             });
             try {
               await api.put(`/subscriptionplans/${  p.id}`, body);
-              showToast("Plan updated", "success");
+              showToast(t("admin.planUpdated"), "success");
               loadPlans();
             } catch (err) { showToast(err.message, "error"); }
           });
@@ -637,11 +637,11 @@ export default async function renderAdmin(container) {
 
       panel.querySelectorAll(".delete-plan-btn").forEach(btn => {
         btn.addEventListener("click", async function() {
-          const ok = await showConfirm("Delete plan?", `Delete "${  btn.dataset.name  }"? This cannot be undone.`, { type: "danger", confirmText: "Delete" });
+          const ok = await showConfirm(t("admin.confirmDeletePlan"), `${t('common.delete')} "${  btn.dataset.name  }"? ${t('admin.confirmDeletePlanDesc')}`, { type: "danger", confirmText: t("common.delete") });
           if (!ok) return;
           try {
             await api.delete(`/subscriptionplans/${  btn.dataset.id}`);
-            showToast("Plan deleted", "success");
+            showToast(t("admin.planDeleted"), "success");
             loadPlans();
           } catch (err) { showToast(err.message, "error"); }
         });
@@ -674,7 +674,7 @@ export default async function renderAdmin(container) {
               features: [],
               sortOrder: parseInt(document.getElementById("af-sort").value) || 1,
             });
-            showToast("Plan created", "success");
+            showToast(t("admin.planCreated"), "success");
             loadPlans();
           } catch (err) { showToast(err.message, "error"); }
         });

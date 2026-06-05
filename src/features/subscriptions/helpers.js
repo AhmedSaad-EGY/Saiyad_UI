@@ -1,4 +1,5 @@
 import { t } from '../../core/i18n/index.js';
+import { ROLES } from '../../shared/constants/roles.js';
 
 const PLAN_ICONS = {
   Free: "fa-crown",
@@ -13,10 +14,10 @@ export function getPlanIcon(tier) {
 
 export function getRoleSubscriptionInfo(role) {
   let heading, desc;
-  if (role === "Customer") {
+  if (role === ROLES.CUSTOMER) {
     heading = t("subscriptions.customerHeading");
     desc = t("subscriptions.customerDesc");
-  } else if (role === "Auctioneer") {
+  } else if (role === ROLES.AUCTIONEER) {
     heading = t("subscriptions.auctioneerHeading");
     desc = t("subscriptions.auctioneerDesc");
   } else {

@@ -287,14 +287,24 @@
 
       document.addEventListener("visibilitychange", () => {
         visibility = !document.hidden;
+        if (document.hidden) {
+          observer.disconnect();
+        } else {
+          observer.observe(document.documentElement, {
+            attributes: true,
+            attributeFilter: ["data-theme", "dir"],
+          });
+        }
       });
 
-      new MutationObserver(() => {
+      const observer = new MutationObserver(() => {
         resize();
-      }).observe(document.documentElement, {
+      });
+      observer.observe(document.documentElement, {
         attributes: true,
         attributeFilter: ["data-theme", "dir"],
       });
+      window.addEventListener("beforeunload", () => observer.disconnect());
 
       let resizeTimer;
       window.addEventListener("resize", () => {

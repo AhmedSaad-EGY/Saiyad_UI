@@ -12,7 +12,7 @@ import Alpine from 'alpinejs';
 Alpine.data('profilePage', () => ({
   stats: { orders: 0, wishlist: 0, notifs: 0, auctions: 0, pendingRequests: 0 },
   init() {
-    setPageMeta("My Profile", undefined, true);
+    setPageMeta(t('profile.title'), undefined, true);
     const promises = [];
     if (hasAnyRole(ECOMMERCE_ROLES)) {
       promises.push(api.get('/orders', { page: 1, pageSize: 1 }));
@@ -103,7 +103,7 @@ Alpine.data('profilePage', () => ({
   isAuctioneer() { return hasRole(ROLES.AUCTIONEER); },
 }));
 
-export default async function renderUserProfile(container) {
+export default async function renderProfile(container) {
   if (!isAuthenticated()) {
     navigate('login');
     return;
@@ -120,7 +120,7 @@ export default async function renderUserProfile(container) {
     <div x-data="profilePage" class="profile-page">
       <div class="profile-hero card animate-on-scroll">
         <div class="card-body d-flex align-items-center gap-4 flex-wrap">
-        <div class="profile-avatar" id="profileAvatar" @click="triggerUpload()" title="Click to upload photo">
+        <div class="profile-avatar" id="profileAvatar" @click="triggerUpload()" :title="$t('profile.uploadPhoto')">
           <span class="avatar-overlay"><i class="fas fa-camera" aria-hidden="true"></i></span>
           ${user?.profileImageUrl ? `<img src="${user.profileImageUrl}" alt="" loading="lazy">` : '<i class="fas fa-user" aria-hidden="true"></i>'}
         </div>
@@ -140,7 +140,7 @@ export default async function renderUserProfile(container) {
       <!-- Profile Completion Tracker -->
       <div class="profile-completion animate__animated animate__fadeIn mt-4 mb-3">
         <div class="profile-completion-header">
-          <span><i class="fas fa-id-card" aria-hidden="true"></i> ${t('profile.completion') || 'Profile Completion'}</span>
+          <span><i class="fas fa-id-card" aria-hidden="true"></i> ${t('profile.completion')}</span>
           <span class="fw-bold text-primary">${completionPercent}%</span>
         </div>
         <div class="profile-completion-bar">

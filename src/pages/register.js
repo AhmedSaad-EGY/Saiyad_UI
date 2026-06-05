@@ -1,9 +1,10 @@
 import { t } from "../core/i18n/index.js";
 import { api } from "../core/api/client.js";
-import { isAuthenticated, updateNavbar } from "../core/auth/index.js";
+import { isAuthenticated, updateNavbar, syncVipAttribute } from "../core/auth/index.js";
 import { navigate, registerRouteCleanup } from "../core/router/index.js";
 import { escapeHtml, showLoading } from "../core/utils/dom.js";
 import { ensureCsrfToken } from "../core/utils/csrf.js";
+import { ROLES } from "../shared/constants/roles.js";
 import {
   getPasswordStrength,
   calculateAge,
@@ -31,7 +32,7 @@ Alpine.data("registerForm", () => ({
   licenseNumber: "",
 
   get needsLicense() {
-    return this.role === "Fisherman";
+    return this.role === ROLES.FISHERMAN;
   },
 
   computeAge() {
@@ -68,7 +69,7 @@ Alpine.data("registerForm", () => ({
       {
         element: document.getElementById("regName"),
         required: true,
-        messages: { required: `${t("auth.fullName")} is required.` },
+        messages: { required: t("auth.fieldRequired") },
       },
       {
         element: document.getElementById("regEmail"),
@@ -133,9 +134,18 @@ Alpine.data("registerForm", () => ({
       sessionStorage.removeItem("sayiadRegFails");
       sessionStorage.setItem("pendingLoginEmail", this.email.trim());
       document.getElementById("registerForm").reset();
+      showVerificationOverlay(this.email.trim(), this.password);
+      this.fullName = "";
+      this.email = "";
+      this.phone = "";
+      this.birthdate = "";
+      this.password = "";
+      this.confirmPassword = "";
+      this.role = "Customer";
+      this.terms = false;
       this.strengthCls = "strength-empty";
       this.strengthLabel = "";
-      showVerificationOverlay(this.email.trim(), this.password);
+      this.licenseNumber = "";
     } catch (err) {
       document.getElementById("registerAlert").innerHTML =
         `<div class="alert alert-error">${escapeHtml(err.message)}</div>`;
@@ -150,17 +160,26 @@ Alpine.data("registerForm", () => ({
         if (lockMsg) lockMsg.classList.remove('hidden');
         const timer = setInterval(() => {
           secs--;
-          if (lockMsg) lockMsg.textContent = `Too many attempts. Wait ${secs}s before trying again.`;
+          if (lockMsg) lockMsg.textContent = t('auth.tooManyAttempts', { secs });
           if (secs <= 0) {
             clearInterval(timer);
+            this._lockoutTimer = null;
             sessionStorage.removeItem('sayiadRegFails');
             if (submitBtn) submitBtn.disabled = false;
             if (lockMsg) lockMsg.classList.add('hidden');
           }
         }, 1000);
+        this._lockoutTimer = timer;
       }
     } finally {
       this.loading = false;
+    }
+  },
+
+  destroy() {
+    if (this._lockoutTimer) {
+      clearInterval(this._lockoutTimer);
+      this._lockoutTimer = null;
     }
   },
 }));
@@ -182,15 +201,15 @@ export default function renderRegister(container) {
         <form id="registerForm" @submit.prevent="submit()" novalidate>
           <div class="form-group">
             <label class="form-label" for="regName">${t("auth.fullName")}</label>
-            <input type="text" class="form-input form-control" id="regName" name="fullName" x-model="fullName" placeholder="John Doe" required autocomplete="name">
+            <input type="text" class="form-input form-control" id="regName" name="fullName" x-model="fullName" placeholder="${t('auth.fullNamePlaceholder')}" required autocomplete="name">
           </div>
           <div class="form-group">
             <label class="form-label" for="regEmail">${t("auth.email")}</label>
-            <input type="email" class="form-input form-control" id="regEmail" name="email" x-model="email" placeholder="your@email.com" required autocomplete="email" inputmode="email">
+            <input type="email" class="form-input form-control" id="regEmail" name="email" x-model="email" placeholder="${t('auth.emailPlaceholder')}" required autocomplete="email" inputmode="email">
           </div>
           <div class="form-group">
             <label class="form-label" for="regPhone">${t("auth.phone")}</label>
-            <input type="tel" class="form-input form-control" id="regPhone" name="phone" x-model="phone" placeholder="+1234567890" autocomplete="tel" required>
+            <input type="tel" class="form-input form-control" id="regPhone" name="phone" x-model="phone" placeholder="${t('auth.phonePlaceholder')}" autocomplete="tel" required>
           </div>
           <div class="form-group">
             <label class="form-label" for="regBirthdate">${t("auth.birthdate")}</label>
@@ -208,12 +227,12 @@ export default function renderRegister(container) {
               <div class="pw-strength__track"><div class="pw-strength__fill" id="pwFill"></div></div>
               <span class="pw-strength__label" id="pwLabel"></span>
             </div>
-            <ul class="pw-reqs" id="pwReqs" aria-label="Password requirements">
-              <li id="req-len"><i class="fas fa-circle" aria-hidden="true"></i> 8+ characters</li>
-              <li id="req-upper"><i class="fas fa-circle" aria-hidden="true"></i> Uppercase letter</li>
-              <li id="req-lower"><i class="fas fa-circle" aria-hidden="true"></i> Lowercase letter</li>
-              <li id="req-num"><i class="fas fa-circle" aria-hidden="true"></i> Number</li>
-              <li id="req-special"><i class="fas fa-circle" aria-hidden="true"></i> Special character</li>
+            <ul class="pw-reqs" id="pwReqs" aria-label="${t('auth.passwordRequirements')}">
+              <li id="req-len"><i class="fas fa-circle" aria-hidden="true"></i> ${t('auth.reqLength')}</li>
+              <li id="req-upper"><i class="fas fa-circle" aria-hidden="true"></i> ${t('auth.reqUpper')}</li>
+              <li id="req-lower"><i class="fas fa-circle" aria-hidden="true"></i> ${t('auth.reqLower')}</li>
+              <li id="req-num"><i class="fas fa-circle" aria-hidden="true"></i> ${t('auth.reqNum')}</li>
+              <li id="req-special"><i class="fas fa-circle" aria-hidden="true"></i> ${t('auth.reqSpecial')}</li>
             </ul>
           </div>
           <div class="form-group">
@@ -234,7 +253,7 @@ export default function renderRegister(container) {
           <div x-show="needsLicense" x-cloak>
             <div class="form-group animate-on-scroll slide-down" style="display: block; opacity: 1; transform: translateY(0);">
               <label class="form-label" for="regLicense">${t("auth.licenseNumber")} *</label>
-              <input type="text" class="form-input form-control" id="regLicense" name="licenseNumber" x-model="licenseNumber" placeholder="FL-123456" required>
+              <input type="text" class="form-input form-control" id="regLicense" name="licenseNumber" x-model="licenseNumber" placeholder="${t('auth.licensePlaceholder')}" required>
             </div>
           </div>
           <div class="form-group">
@@ -273,7 +292,7 @@ export default function renderRegister(container) {
     };
     const score  = Object.values(checks).filter(Boolean).length;
     const colors = ['','var(--danger)','var(--warning)','var(--warning)','var(--success)','var(--success)'];
-    const labels = ['','Very Weak','Weak','Fair','Strong','Very Strong'];
+    const labels = ['', t('auth.veryWeak'), t('auth.weak'), t('auth.fair'), t('auth.strong'), t('auth.veryStrong')];
 
     Object.entries(checks).forEach(([k,v]) => {
       const li = document.getElementById('req-' + k);
@@ -337,6 +356,7 @@ function showVerificationOverlay(email, password) {
     localStorage.setItem("user", JSON.stringify(data.user));
     ensureCsrfToken();
     updateNavbar();
+    syncVipAttribute();
     return data;
   };
 
@@ -378,7 +398,7 @@ function showVerificationOverlay(email, password) {
       clearInterval(interval);
       document.getElementById("verifyError").style.display = "block";
       document.getElementById("verifyError").textContent =
-        "Verification timed out. Please check your email and try logging in.";
+        t("auth.verificationTimeout");
       return;
     }
     try {

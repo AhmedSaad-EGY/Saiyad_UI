@@ -216,7 +216,21 @@ export async function logout() {
   clearCsrfToken();
   updateNavbar();
   showToast(t("auth.loggedOut"), "success");
+  document.documentElement.removeAttribute('data-vip');
   emit('auth:logged-out');
+}
+
+export async function syncVipAttribute() {
+  try {
+    const data = await api.get('/subscriptions/my').catch(() => null);
+    if (data && data.isActive && (data.tier === 'Premium' || data.tier === 'Professional')) {
+      document.documentElement.setAttribute('data-vip', '');
+    } else {
+      document.documentElement.removeAttribute('data-vip');
+    }
+  } catch {
+    document.documentElement.removeAttribute('data-vip');
+  }
 }
 
 export async function requireAuth() {
@@ -234,5 +248,6 @@ function navigateToLogin() {
 // Listen for session expired events from api/client
 on('auth:session-expired', () => {
   updateNavbar();
+  document.documentElement.removeAttribute('data-vip');
   navigateToLogin();
 });

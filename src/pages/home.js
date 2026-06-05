@@ -21,7 +21,11 @@ Alpine.data('homePage', () => ({
   async init() {
     this.isAuth = isAuthenticated();
     await this.loadData();
-    initPullToRefresh({ onRefresh: () => this.loadData() });
+    this._ptrCleanup = initPullToRefresh({ onRefresh: () => this.loadData() });
+  },
+
+  destroy() {
+    if (this._ptrCleanup) this._ptrCleanup();
   },
 
   handleHeroMouseMove(e) {
@@ -121,7 +125,7 @@ Alpine.data('homePage', () => ({
 }));
 
 export default async function renderHome(container) {
-  setPageMeta('Home', "Egypt's premier fishing marketplace.");
+  setPageMeta(t('home.title'), t('home.metaDesc'));
   container.innerHTML = `
     <style>
       .hero {
@@ -190,7 +194,7 @@ export default async function renderHome(container) {
       <!-- Product grid -->
       <div x-show="!loading && !error" class="row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4 product-card-grid">
         <template x-for="(p, i) in products" :key="p.id">
-          <a :href="'#/product-detail?id='+p.id" class="product-card card animate-on-scroll" :class="'stagger-' + Math.min(i + 1, 8)" :aria-label="escapeHtml(p.title || 'Product') + ' — ' + formatPrice(p.price)">
+          <a :href="'#/product-detail?id='+p.id" class="product-card card animate-on-scroll" :class="'stagger-' + Math.min(i + 1, 8)" :aria-label="escapeHtml(p.title || $t('common.product')) + ' — ' + formatPrice(p.price)">
             <div class="product-card-img">
               <img :src="p.primaryImageUrl || p.imageUrl || ''" :alt="escapeHtml(p.title || 'Product')" loading="lazy">
             </div>
@@ -211,7 +215,7 @@ export default async function renderHome(container) {
       <!-- Auction grid (no separate skeleton — reuses same loading state) -->
       <div x-show="!loading && !error" class="row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4 product-card-grid animate-on-scroll">
         <template x-for="(a, i) in auctions" :key="a.id">
-          <a :href="'#/auction-detail?id='+a.id" class="product-card card" :class="'animate-on-scroll stagger-' + Math.min(i + 1, 8)" :aria-label="(a.productTitle || 'Auction') + ' — ' + formatPrice(a.currentHighestBid || a.startingPrice)">
+          <a :href="'#/auction-detail?id='+a.id" class="product-card card" :class="'animate-on-scroll stagger-' + Math.min(i + 1, 8)" :aria-label="(a.productTitle || $t('auction.item')) + ' — ' + formatPrice(a.currentHighestBid || a.startingPrice)">
             <div class="product-card-img">
               <img :src="a.productImageUrl || ''" :alt="a.productTitle || 'Auction'" loading="lazy">
               <span class="product-card-badge" :class="statusClass(a.status)" x-text="tStatus(a.status)"></span>

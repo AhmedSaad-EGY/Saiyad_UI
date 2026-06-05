@@ -17,7 +17,7 @@ function setPageMeta(title, description, noIndex = false) {
     ? title + " — Sayiad"
     : "Sayiad - Fishing Marketplace & Auctions";
 
-  const desc = description || "Egypt's premier fishing marketplace.";
+  const desc = description || t('home.metaDesc');
   const set = (sel, attr, val) => {
     const el = document.querySelector(sel);
     if (el) el.setAttribute(attr, val);

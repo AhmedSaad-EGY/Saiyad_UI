@@ -12,11 +12,13 @@
 | File | Contains | Open when... |
 |------|----------|-------------|
 | **`MASTER-REFERENCE.md`** *(this file)* | Hub + TODO — accounts, commands, links, file refs, checklist | Every session — start here |
-| **`AUDIT_REPORT.md`** | Deep audit: 22 findings with code snippets, before/after, severity per file | Implementing a fix — copy-paste the exact code changes |
+| **`AUDIT_REPORT.md`** | Deep audit: 22 findings with code snippets + Post-fix amendment | Implementing a fix — copy-paste the exact code changes |
 | **`user-role-flow.md`** | Permission matrices: 16 tables covering every feature × 5 roles | Debugging role/permission issues |
 | **`phase-spec.md`** | Strategy: backend stack, what's broken, priorities, roadmap | Planning sprints, understanding the full picture |
-| **`TOUGH_CLEANUP_PLAN.md`** | 70+ cleanup items across 7 phases — CSS dead code, unused imports, missing states, memory safety | **Every session — read first!** Prioritized execution order, updated as tasks complete |
+| **`FINAL_POLISHING_PLAN.md`** | 7-phase completion status + 41 remaining deep audit items sorted by severity | Prioritizing next work — contains the complete remaining-issues list |
+| **`TOUGH_CLEANUP_PLAN.md`** | 70+ cleanup items across 7 phases — CSS dead code, unused imports, missing states, memory safety | CSS cleanup reference |
 | **`knowledge.md`** | Dev onboarding: conventions, gotchas, data flow rules | New devs, reminders about gotchas (Alpine, CDN, SW, circular deps) |
+| **`CHAT_HISTORY.md`** | Full session-by-session changelog (51 sessions) | Tracking what was changed and when |
 
 ---
 
@@ -442,16 +444,27 @@ MODERATOR_ROLES = [Auctioneer, Admin]                  # Review + Analytics
 - ✅ **June 4: Cart frontend — qty-btn-group, stock-aware disable, i18n, CSS** — Replaced `<input type="number">` with `qty-btn-group` (± buttons); `+` disabled when `quantity >= stockQuantity`; "MAX" label at stock limit; localized `cart.insufficientStock` toast on 400 | Build: ✅ | Commits: `862ae8f`, `d8bc92c`
 - ✅ **June 4: Product-detail localized stock error toast** — `addToCart` handler shows `cart.insufficientStock` on 400 instead of raw error | Build: ✅ | Commit: `d8bc92c`
 
-### Immediate (Next)
-1. ✅ **[Phase 1 — P0: Bugfixes]** - Added 5 missing CSS variables — build ✅
-2. ✅ **[Phase 2 — P1: Dead CSS removal]** - Removed 10 dead selectors, 7 duplicate RTL rules, duplicate .empty-state-visual, dead --start/--end vars
-3. ✅ **[Phase 3 — P2: Comments & cleanup]** - Removed 3 empty section headers + dead countdown media block
-4. ✅ **[Phase 4 — P3: PWA manifest]** - Removed dead apple-touch-icon entry, moved logo.png to public/ for verbatim copy
-5. ✅ **[Phase 5 — P3: Polish & Consistency]** - Fixed .notif-bell conflict, merged .cart-qty-cell, 5 token migrations, 3 rgba->oklch, 3 #fff->var(--text-inverse), inset-inline shorthand, comment/whitespace cleanup
+### ✅ Final Polishing Plan — All 7 Phases Complete (Phases G + 1-6)
+- ✅ Phase G — Gold Theme (subscription-gated `data-vip`, `syncVipAttribute()`)
+- ✅ Phase 1 — 14/14 Critical Bug Fixes
+- ✅ Phase 2 — Full i18n Audit (8 sub-phases, 180+ changes, 708-key parity)
+- ✅ Phase 3 — Role Gating (6 files standardized to ROLES constants)
+- ✅ Phase 4 — CSS Hardening (9 changes: fallbacks removed, oklch→variables)
+- ✅ Phase 5 — Memory Leak Cleanup (13 instances fixed)
+- ✅ Phase 6 — Code Quality (export signatures, stale comments removed)
+
+### Immediate (Next) — Fix 41 Deep-Audit Remaining Items
+1. 🔴 **C1 — syncVipAttribute() isAuthenticated() guard** — `core/auth/index.js:223`
+2. 🔴 **C2-C4 — Password strength i18n** — `validation.js`, `dashboard.js:1166`, `reset-password.js:113`
+3. 🔴 **C5-C6 — Hardcoded role arrays** — `auction-requests-review.js:11`, `app.js:265`
+4. 🟠 **H1-H13 — 16 hardcoded English fallbacks** across 8 files
+5. 🟠 **H14-H15 — Hardcoded oklch in CSS** — `_components.css:770`, `_bootstrap-overrides.css:132`
+6. 🟠 **H16 — 36 physical left/right properties** → `inset-inline-*`
+7. 🟠 **H17-H20 — Remaining memory leaks + Alpine initTree standardization**
 
 ### Short-term
-2. Follow TOUGH_CLEANUP_PLAN.md execution order (CSS → Core JS → Pages → Shared → Config)
-3. Standardize Bootstrap usage patterns across all 25 page modules
+- Fix the 41 deep-audit items (full list in FINAL_POLISHING_PLAN.md)
+- Standardize Alpine.initTree across all Alpine pages
 
 ---
 
