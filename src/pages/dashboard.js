@@ -6,7 +6,7 @@ import { registerRouteCleanup, navigate } from '../core/router/index.js';
 import { $$, showLoading, renderEmptyState, escapeHtml, observeAnimations } from '../core/utils/dom.js';
 import { manualPaginationHtml, wirePagination } from '../shared/components/pagination.js';
 import { validateForm, getPasswordStrengthResult, clearFieldError } from '../core/utils/validation.js';
-import { formatPrice, formatDate, statusClass, tStatus } from '../core/utils/format.js';
+import { formatPrice, formatDate, statusClass, tStatus, tCondition } from '../core/utils/format.js';
 import { showConfirm, showToast } from '../core/utils/ui.js';
 import { setPageMeta } from '../core/utils/seo.js';
 import { ROLES, SELLER_ROLES, ECOMMERCE_ROLES, MODERATOR_ROLES } from '../shared/constants/roles.js';
@@ -661,10 +661,10 @@ async function renderMyProducts(content) {
               (p) => `
             <tr data-status="${p.status}">
               <td class="product-thumb-cell">${p.primaryImageUrl ? `<img src="${p.primaryImageUrl}" alt="" class="product-thumb" loading="lazy">` : `<div class="product-thumb-placeholder"><i class="fas fa-image" aria-hidden="true"></i></div>`}</td>
-              <td><a href="#/product-detail?id=${p.id}" class="text-decoration-none text-reset fw-medium">${escapeHtml(p.title)}</a></td>
-              <td class="fw-semibold">${formatPrice(p.price)}</td>
-              <td><span class="status ${statusClass(p.status)}">${tStatus(p.status, "product")}</span></td>
-              <td class="${p.stockQuantity < 5 ? 'stock-low' : ''}">${p.stockQuantity < 5 ? `<i class="fas fa-exclamation-triangle" aria-hidden="true"></i> ` : ""}${p.stockQuantity ?? "-"}</td>
+              <td><a href="#/product-detail?id=${p.id}" class="text-decoration-none text-reset fw-medium">${escapeHtml(p.title)}</a><span class="text-muted small d-block">${escapeHtml(p.categoryName)}${p.condition != null ? ` · ${tCondition(p.condition)}` : ""}</span></td>
+              <td class="fw-semibold" data-label="${t("cart.price")}">${formatPrice(p.price)}</td>
+              <td data-label="${t("product.status")}"><span class="status ${statusClass(p.status)}">${tStatus(p.status, "product")}</span></td>
+              <td class="${p.stockQuantity < 5 ? 'stock-low' : ''}" data-label="${t("product.stock")}">${p.stockQuantity < 5 ? `<i class="fas fa-exclamation-triangle" aria-hidden="true"></i> ` : ""}${p.stockQuantity ?? "-"}</td>
               <td class="d-flex gap-1 flex-nowrap">
                 <a href="#/product-detail?id=${p.id}" class="btn btn-outline btn-sm">${t("dash.view")}</a>
                 <button class="btn btn-ghost btn-sm edit-product-btn" data-product-id="${p.id}"><i class="fas fa-pen" aria-hidden="true"></i> ${t("product.edit")}</button>
