@@ -320,6 +320,7 @@ export const translations = {
     "profile.imageTooLarge": "Image must be under 5 MB.",
     "profile.uploadNoUrl": "Upload did not return a URL.",
     "profile.photoUpdated": "Profile photo updated!",
+    "profile.photoRemoved": "Profile photo removed.",
 
     // Verify Email
     "verify.title": "Verify Email",
@@ -1129,6 +1130,7 @@ export const translations = {
     "profile.imageTooLarge": "يجب أن تكون الصورة أقل من 5 ميجابايت.",
     "profile.uploadNoUrl": "الرفع لم يُرجع رابطًا.",
     "profile.photoUpdated": "تم تحديث الصورة الشخصية!",
+    "profile.photoRemoved": "تم إزالة الصورة الشخصية.",
 
     // Verify Email
     "verify.title": "تأكيد البريد الإلكتروني",

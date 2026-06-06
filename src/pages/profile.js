@@ -96,12 +96,28 @@ Alpine.data('profilePage', () => ({
       console.log('[PFP] Saved to localStorage:', updated);
       const avatar = document.getElementById('profileAvatar');
       if (avatar) {
-        avatar.innerHTML = `<span class="avatar-overlay"><i class="fas fa-camera" aria-hidden="true"></i></span><img src="${  imageUrl  }" alt="" loading="lazy">`;
+        avatar.innerHTML = `<span class="avatar-overlay"><i class="fas fa-camera" aria-hidden="true"></i></span><img src="${  imageUrl  }" alt="" loading="lazy"><button class="avatar-delete-btn" @click.stop="deleteImage()" title="Remove photo"><i class="fas fa-trash"></i></button>`;
       }
       showToast(t('profile.photoUpdated'), 'success');
     } catch (err) {
       console.error('[Profile] Upload error:', err);
       showToast(err.message, 'error');
+    }
+  },
+
+  async deleteImage() {
+    try {
+      await api.delete('/users/profile/image');
+      const u = getUser();
+      const updated = { ...u, profileImage: null };
+      localStorage.setItem('user', JSON.stringify(updated));
+      const avatar = document.getElementById('profileAvatar');
+      if (avatar) {
+        avatar.innerHTML = `<span class="avatar-overlay"><i class="fas fa-camera" aria-hidden="true"></i></span><i class="fas fa-user" aria-hidden="true"></i>`;
+      }
+      showToast(t('profile.photoRemoved'), 'success');
+    } catch (err) {
+      showToast(err.message || t('common.error'), 'error');
     }
   },
 
@@ -129,7 +145,9 @@ export default async function renderProfile(container) {
         <div class="card-body d-flex align-items-center gap-4 flex-wrap">
         <div class="profile-avatar" id="profileAvatar" @click="triggerUpload()" :title="$t('profile.uploadPhoto')">
           <span class="avatar-overlay"><i class="fas fa-camera" aria-hidden="true"></i></span>
-          ${user?.profileImage ? `<img src="${user.profileImage}" alt="" loading="lazy">` : '<i class="fas fa-user" aria-hidden="true"></i>'}
+          ${user?.profileImage
+            ? `<img src="${user.profileImage}" alt="" loading="lazy"><button class="avatar-delete-btn" @click.stop="deleteImage()" title="Remove photo"><i class="fas fa-trash"></i></button>`
+            : '<i class="fas fa-user" aria-hidden="true"></i>'}
         </div>
         <input type="file" id="profileAvatarInput" accept="image/jpeg,image/png,image/webp" @change="handleFile($event)" class="d-none">
         <div class="profile-hero-info">
