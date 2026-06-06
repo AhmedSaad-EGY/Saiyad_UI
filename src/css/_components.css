@@ -2743,14 +2743,12 @@ tr:last-child td {
 }
 
 .profile-stats-grid {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
   gap: var(--space-3);
-  justify-content: center;
 }
 
 .profile-stats-grid > * {
-  flex: 0 1 160px;
   min-width: 0;
 }
 
