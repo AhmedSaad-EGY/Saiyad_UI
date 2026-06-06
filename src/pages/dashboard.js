@@ -286,55 +286,77 @@ async function renderOverview(content, user) {
   `;
   observeAnimations();
 
-  try {
-    const orders = await api.get("/orders", { pageSize: 1 });
-    document.getElementById("dashOrders").innerHTML =
-      `<h3><i class="fas fa-box" aria-hidden="true"></i> ${t("dash.orders")}</h3><p class="fs-2 fw-bold text-primary">${orders.totalCount || orders.total || 0}</p><p class="text-muted">${t("dash.totalOrders")}</p>`;
-  } catch {
-    document.getElementById("dashOrders").innerHTML =
-      `<div class="alert alert-info" role="alert">${t("common.error")}</div>`;
-  }
+  const isAdmin = user?.role === ROLES.ADMIN;
 
-  const sellerRoles = hasAnyRole(...(SELLER_ROLES));
-
-  if (sellerRoles) {
+  if (isAdmin) {
     try {
-      await api.get("/seller-profile/me");
-    } catch (profileErr) {
-      const is404 = profileErr?.status === 404
-        || String(profileErr?.message || "").includes("404")
-        || String(profileErr?.message || "").toLowerCase().includes("not found");
-      if (is404 && !document.getElementById("sellerOnboardBanner")) {
-        const overviewEl = document.getElementById("dashOverview") || content;
-        const banner = document.createElement("div");
-        banner.id = "sellerOnboardBanner";
-        banner.className = "alert alert-info animate-on-scroll d-flex align-items-center gap-3 flex-wrap mb-3";
-        banner.setAttribute("role", "status");
-        banner.innerHTML = `
-          <i class="fas fa-store fs-5 flex-shrink-0" aria-hidden="true"></i>
-          <span class="flex-fill">
+      const pending = await api.get("/products/pending-review", { pageSize: 1 });
+      document.getElementById("dashOrders").innerHTML =
+        `<h3><i class="fas fa-clipboard-check text-warning" aria-hidden="true"></i> ${t("dash.pendingReviews")}</h3><p class="fs-2 fw-bold text-warning">${pending.totalCount || 0}</p><p class="text-muted">${t("dash.productsAwaitingReview")}</p><a href="#/admin" class="btn btn-outline btn-sm mt-1">${t("dash.viewAdminPanel")}</a>`;
+    } catch {
+      document.getElementById("dashOrders").innerHTML =
+        `<h3><i class="fas fa-clipboard-check" aria-hidden="true"></i> ${t("dash.pendingReviews")}</h3><p class="text-muted mt-2">${t("common.error")}</p><a href="#/admin" class="btn btn-outline btn-sm mt-1">${t("dash.viewAdminPanel")}</a>`;
+    }
+
+    try {
+      const users = await api.get("/users", { page: 1, pageSize: 1 });
+      document.getElementById("dashProducts").innerHTML =
+        `<h3><i class="fas fa-users text-primary" aria-hidden="true"></i> ${t("dash.totalUsers")}</h3><p class="fs-2 fw-bold text-primary">${users.totalCount || 0}</p><p class="text-muted">${t("dash.registeredUsers")}</p><a href="#/admin" class="btn btn-outline btn-sm mt-1">${t("dash.viewAdminPanel")}</a>`;
+    } catch {
+      document.getElementById("dashProducts").innerHTML =
+        `<h3><i class="fas fa-users" aria-hidden="true"></i> ${t("dash.totalUsers")}</h3><p class="text-muted mt-2">${t("common.error")}</p><a href="#/admin" class="btn btn-outline btn-sm mt-1">${t("dash.viewAdminPanel")}</a>`;
+    }
+  } else {
+    try {
+      const orders = await api.get("/orders", { pageSize: 1 });
+      document.getElementById("dashOrders").innerHTML =
+        `<h3><i class="fas fa-box" aria-hidden="true"></i> ${t("dash.orders")}</h3><p class="fs-2 fw-bold text-primary">${orders.totalCount || orders.total || 0}</p><p class="text-muted">${t("dash.totalOrders")}</p>`;
+    } catch {
+      document.getElementById("dashOrders").innerHTML =
+        `<div class="alert alert-info" role="alert">${t("common.error")}</div>`;
+    }
+
+    const sellerRoles = hasAnyRole(...(SELLER_ROLES));
+
+    if (sellerRoles) {
+      try {
+        await api.get("/seller-profile/me");
+      } catch (profileErr) {
+        const is404 = profileErr?.status === 404
+          || String(profileErr?.message || "").includes("404")
+          || String(profileErr?.message || "").toLowerCase().includes("not found");
+        if (is404 && !document.getElementById("sellerOnboardBanner")) {
+          const overviewEl = document.getElementById("dashOverview") || content;
+          const banner = document.createElement("div");
+          banner.id = "sellerOnboardBanner";
+          banner.className = "alert alert-info animate-on-scroll d-flex align-items-center gap-3 flex-wrap mb-3";
+          banner.setAttribute("role", "status");
+          banner.innerHTML = `
+            <i class="fas fa-store fs-5 flex-shrink-0" aria-hidden="true"></i>
+            <span class="flex-fill">
 <strong>${t("seller.setupRequired")}</strong> —
-            ${t("seller.setupDesc")}
-            <a href="#/seller-profile" class="btn btn-sm btn-outline-primary ms-2">
-            ${t("seller.create")} <i class="fas fa-arrow-right" aria-hidden="true"></i>
-          </a>`;
-        overviewEl.prepend(banner);
+              ${t("seller.setupDesc")}
+              <a href="#/seller-profile" class="btn btn-sm btn-outline-primary ms-2">
+              ${t("seller.create")} <i class="fas fa-arrow-right" aria-hidden="true"></i>
+            </a>`;
+          overviewEl.prepend(banner);
+        }
       }
     }
-  }
 
-  if (sellerRoles) {
-    try {
-      const products = await api.get("/products/my", { pageSize: 1 });
-      document.getElementById("dashProducts").innerHTML =
-        `<h3><i class="fas fa-tag" aria-hidden="true"></i> ${t("dash.products")}</h3><p class="fs-2 fw-bold text-primary">${products.totalCount || products.total || 0}</p><p class="text-muted">${t("dash.yourProducts")}</p>`;
-    } catch (e) {
+    if (sellerRoles) {
+      try {
+        const products = await api.get("/products/my", { pageSize: 1 });
+        document.getElementById("dashProducts").innerHTML =
+          `<h3><i class="fas fa-tag" aria-hidden="true"></i> ${t("dash.products")}</h3><p class="fs-2 fw-bold text-primary">${products.totalCount || products.total || 0}</p><p class="text-muted">${t("dash.yourProducts")}</p>`;
+      } catch (e) {
+        document.getElementById("dashProducts").innerHTML =
+          `<div class="card text-center p-4"><h3><i class="fas fa-tag" aria-hidden="true"></i> ${t("dash.products")}</h3><p class="text-muted mt-2">${t("dash.productsNotAvailable")}</p></div>`;
+      }
+    } else {
       document.getElementById("dashProducts").innerHTML =
         `<div class="card text-center p-4"><h3><i class="fas fa-tag" aria-hidden="true"></i> ${t("dash.products")}</h3><p class="text-muted mt-2">${t("dash.productsNotAvailable")}</p></div>`;
     }
-  } else {
-    document.getElementById("dashProducts").innerHTML =
-      `<div class="card text-center p-4"><h3><i class="fas fa-tag" aria-hidden="true"></i> ${t("dash.products")}</h3><p class="text-muted mt-2">${t("dash.productsNotAvailable")}</p></div>`;
   }
 }
 
