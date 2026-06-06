@@ -87,7 +87,7 @@ Alpine.data('profilePage', () => ({
       if (!imageUrl) throw new Error(t('profile.uploadNoUrl'));
       const u = getUser();
       await api.put('/users/profile', { fullName: u?.fullName || '', phone: u?.phone || '', profileImage: imageUrl });
-      const updated = { ...u, profileImageUrl: imageUrl };
+      const updated = { ...u, profileImageUrl: imageUrl, profileImage: imageUrl };
       localStorage.setItem('user', JSON.stringify(updated));
       const avatar = document.getElementById('profileAvatar');
       if (avatar) {
@@ -115,7 +115,7 @@ export default async function renderProfile(container) {
   if (user?.fullName) completionPercent += 25;
   if (user?.email) completionPercent += 25;
   if (user?.phone) completionPercent += 25;
-  if (user?.profileImageUrl) completionPercent += 25;
+  if (user?.profileImageUrl || user?.profileImage) completionPercent += 25;
 
   container.innerHTML = `
     <div x-data="profilePage" class="profile-page">
@@ -123,7 +123,7 @@ export default async function renderProfile(container) {
         <div class="card-body d-flex align-items-center gap-4 flex-wrap">
         <div class="profile-avatar" id="profileAvatar" @click="triggerUpload()" :title="$t('profile.uploadPhoto')">
           <span class="avatar-overlay"><i class="fas fa-camera" aria-hidden="true"></i></span>
-          ${user?.profileImageUrl ? `<img src="${user.profileImageUrl}" alt="" loading="lazy">` : '<i class="fas fa-user" aria-hidden="true"></i>'}
+          ${(user?.profileImageUrl || user?.profileImage) ? `<img src="${user.profileImageUrl || user.profileImage}" alt="" loading="lazy">` : '<i class="fas fa-user" aria-hidden="true"></i>'}
         </div>
         <input type="file" id="profileAvatarInput" accept="image/jpeg,image/png,image/webp" @change="handleFile($event)" class="d-none">
         <div class="profile-hero-info">
