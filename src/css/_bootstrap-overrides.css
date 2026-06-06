@@ -39,6 +39,9 @@
   /* ─── Body ─────────────────────────────────────────────── */
   --bs-body-bg: var(--body-bg);
   --bs-body-color: var(--text);
+  --bs-secondary-color: var(--text-muted);
+  --bs-tertiary-color: var(--text-muted);
+  --bs-emphasis-color: var(--text);
   --bs-body-font-family: var(--font-sans);
   --bs-body-font-size: var(--text-base);
   --bs-body-font-weight: var(--weight-normal);
@@ -117,6 +120,9 @@
 
   --bs-body-bg: var(--body-bg);
   --bs-body-color: var(--text);
+  --bs-secondary-color: var(--text-muted);
+  --bs-tertiary-color: var(--text-muted);
+  --bs-emphasis-color: var(--text);
   --bs-border-color: var(--border);
   --bs-card-bg: var(--card-bg);
   --bs-link-color: var(--primary);
