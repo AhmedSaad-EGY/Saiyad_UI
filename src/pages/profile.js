@@ -10,7 +10,7 @@ import { setPageMeta } from '../core/utils/seo.js';
 import Alpine from 'alpinejs';
 
 Alpine.data('profilePage', () => ({
-  stats: { orders: 0, wishlist: 0, notifs: 0, auctions: 0, pendingRequests: 0 },
+  stats: { orders: 0, wishlist: 0, notifs: 0, auctions: 0, pendingRequests: 0, pendingReviews: 0, totalUsers: 0 },
   init() {
     setPageMeta(t('profile.title'), undefined, true);
     const promises = [];
@@ -21,6 +21,10 @@ Alpine.data('profilePage', () => ({
     promises.push(api.get('/notifications/unread-count'));
     if (hasRole(ROLES.AUCTIONEER)) {
       promises.push(api.get('/auctions/dashboard'));
+    }
+    if (hasRole(ROLES.ADMIN)) {
+      promises.push(api.get('/products/pending-review'));
+      promises.push(api.get('/users', { page: 1, pageSize: 1 }));
     }
     Promise.allSettled(promises).then((results) => {
       const hasEcom = hasAnyRole(ECOMMERCE_ROLES);
@@ -37,6 +41,13 @@ Alpine.data('profilePage', () => ({
       if (auctionData?.status === 'fulfilled') {
         this.animateValue('auctions', parseInt(auctionData.value?.activeAuctions ?? 0, 10));
         this.animateValue('pendingRequests', parseInt(auctionData.value?.pendingRequests ?? 0, 10));
+      }
+      if (hasRole(ROLES.ADMIN)) {
+        const adminStart = results.length - 2;
+        const pendingReview = results[adminStart];
+        const users = results[adminStart + 1];
+        if (pendingReview?.status === 'fulfilled') this.animateValue('pendingReviews', parseInt(pendingReview.value?.totalCount ?? 0, 10));
+        if (users?.status === 'fulfilled') this.animateValue('totalUsers', parseInt(users.value?.totalCount ?? 0, 10));
       }
     });
     this.$nextTick(() => {
@@ -120,6 +131,7 @@ Alpine.data('profilePage', () => ({
 
   isECommerce() { return hasAnyRole(ECOMMERCE_ROLES); },
   isAuctioneer() { return hasRole(ROLES.AUCTIONEER); },
+  isAdmin() { return hasRole(ROLES.ADMIN); },
 }));
 
 export default async function renderProfile(container) {
@@ -196,6 +208,20 @@ export default async function renderProfile(container) {
             <i class="fas fa-file-export" aria-hidden="true"></i>
             <div class="profile-stat-num" x-text="stats.pendingRequests">—</div>
             <div class="profile-stat-label">${t('auctionRequests.title')}</div>
+          </div>
+        </div>
+        <div x-show="isAdmin()">
+          <div class="profile-stat-card">
+            <i class="fas fa-clipboard-check text-warning" aria-hidden="true"></i>
+            <div class="profile-stat-num" x-text="stats.pendingReviews">—</div>
+            <div class="profile-stat-label">${t('dash.pendingReviews')}</div>
+          </div>
+        </div>
+        <div x-show="isAdmin()">
+          <div class="profile-stat-card">
+            <i class="fas fa-users text-primary" aria-hidden="true"></i>
+            <div class="profile-stat-num" x-text="stats.totalUsers">—</div>
+            <div class="profile-stat-label">${t('dash.totalUsers')}</div>
           </div>
         </div>
         <div>
