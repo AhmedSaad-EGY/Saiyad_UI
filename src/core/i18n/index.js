@@ -321,6 +321,7 @@ export const translations = {
     "profile.uploadNoUrl": "Upload did not return a URL.",
     "profile.photoUpdated": "Profile photo updated!",
     "profile.photoRemoved": "Profile photo removed.",
+    "profile.confirmDeletePhoto": "Remove profile photo?",
 
     // Verify Email
     "verify.title": "Verify Email",
@@ -1131,6 +1132,7 @@ export const translations = {
     "profile.uploadNoUrl": "الرفع لم يُرجع رابطًا.",
     "profile.photoUpdated": "تم تحديث الصورة الشخصية!",
     "profile.photoRemoved": "تم إزالة الصورة الشخصية.",
+    "profile.confirmDeletePhoto": "إزالة الصورة الشخصية؟",
 
     // Verify Email
     "verify.title": "تأكيد البريد الإلكتروني",

@@ -101,6 +101,7 @@ Alpine.data('profilePage', () => ({
   },
 
   async deleteImage() {
+    if (!confirm(t('profile.confirmDeletePhoto'))) return;
     try {
       await api.delete('/users/profile/image');
       const u = getUser();
