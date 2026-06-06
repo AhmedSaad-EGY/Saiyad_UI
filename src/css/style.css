@@ -218,7 +218,7 @@
 .nav-search__btn:hover { color: var(--primary); }
 
 @media (min-width: 769px) {
-  .nav-search { margin: 0 0 0 var(--space-4); max-width: 220px; }
+  .nav-search { margin: 0 var(--space-4); flex: 1; max-width: 400px; }
 }
 @media (max-width: 768px) {
   .nav-search { max-width: 100%; margin: var(--space-2) var(--space-4); }
