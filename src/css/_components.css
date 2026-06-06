@@ -2606,7 +2606,22 @@ tr:last-child td {
   border: 1px solid var(--glass-border);
 }
 
-/* .profile-links-grid migrated to Bootstrap .row + row-cols-* classes */
+.profile-link-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 16px;
+}
+.profile-link-grid > .profile-link-card {
+  flex: 0 0 calc(50% - 8px);
+  max-width: calc(50% - 8px);
+}
+@media (min-width: 576px) {
+  .profile-link-grid > .profile-link-card { flex: 0 0 calc(33.333% - 11px); max-width: calc(33.333% - 11px); }
+}
+@media (min-width: 768px) {
+  .profile-link-grid > .profile-link-card { flex: 0 0 calc(25% - 12px); max-width: calc(25% - 12px); }
+}
 
 .profile-link-card {
   display: flex;

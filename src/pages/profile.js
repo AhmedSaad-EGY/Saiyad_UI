@@ -191,7 +191,7 @@ export default async function renderProfile(container) {
           <h3>${t('common.quickLinks')}</h3>
         </div>
         <div class="card-body">
-        <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 g-3 mt-3">
+        <div class="profile-link-grid mt-3">
           ${ECOMMERCE_ROLES.includes(user?.role) ? `
             <a href="#/dashboard?tab=orders" class="profile-link-card"><i class="fas fa-shopping-bag" aria-hidden="true"></i><span>${t('dash.orders')}</span></a>
             <a href="#/dashboard?tab=wishlist" class="profile-link-card"><i class="fas fa-heart" aria-hidden="true"></i><span>${t('dash.wishlist')}</span></a>
