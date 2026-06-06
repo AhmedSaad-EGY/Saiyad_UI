@@ -2807,20 +2807,9 @@ tr:last-child td {
 }
 
 .profile-link-grid {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   gap: 16px;
-}
-.profile-link-grid > .profile-link-card {
-  flex: 0 0 calc(50% - 8px);
-  max-width: calc(50% - 8px);
-}
-@media (min-width: 576px) {
-  .profile-link-grid > .profile-link-card { flex: 0 0 calc(33.333% - 11px); max-width: calc(33.333% - 11px); }
-}
-@media (min-width: 768px) {
-  .profile-link-grid > .profile-link-card { flex: 0 0 calc(25% - 12px); max-width: calc(25% - 12px); }
 }
 
 .profile-link-card {
@@ -2831,6 +2820,7 @@ tr:last-child td {
   gap: var(--space-3);
   padding: var(--space-6) var(--space-4);
   min-height: 120px;
+  height: 100%;
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   color: var(--text-secondary);
