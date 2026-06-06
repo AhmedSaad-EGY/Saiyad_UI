@@ -18,7 +18,6 @@ export default async function renderAdmin(container) {
     { id: "reports", icon: "fa-flag", label: t("admin.reports") },
     { id: "products", icon: "fa-store", label: t("admin.products") },
     { id: "review", icon: "fa-clipboard-check", label: t("admin.review") },
-    { id: "orders", icon: "fa-box", label: t("admin.orders") },
     { id: "categories", icon: "fa-tags", label: t("admin.categories") },
     { id: "plans", icon: "fa-crown", label: t("admin.plans") },
     { id: "revenue", icon: "fa-chart-line", label: t("admin.revenue") },
@@ -76,9 +75,6 @@ export default async function renderAdmin(container) {
     } else if (activeTab === "review") {
       content.innerHTML = `<div id="reviewPanel"></div>`;
       loadPendingReviews();
-    } else if (activeTab === "orders") {
-      content.innerHTML = `<div id="ordersPanel"></div>`;
-      loadAdminOrders();
     } else if (activeTab === "categories") {
       loadCategories();
     } else if (activeTab === "plans") {
@@ -396,64 +392,6 @@ export default async function renderAdmin(container) {
           }, { confirmText: t("admin.reject"), confirmClass: "btn-danger" });
         });
       });
-    } catch (e) {
-      panel.innerHTML = `<div class="alert alert-error">${escapeHtml(e.message)}</div>`;
-    }
-  }
-
-  let _ordersPage = 1;
-  const _ordersPageSize = 20;
-
-  async function loadAdminOrders() {
-    const panel = document.getElementById("ordersPanel");
-    if (!panel) return;
-    panel.innerHTML = `<div class="p-4 text-center">
-      <i class="fas fa-spinner spinner" aria-hidden="true"></i> ${t("common.loading")}</div>`;
-    try {
-      const data = await api.get("/orders", { page: _ordersPage, pageSize: _ordersPageSize });
-      const orders = data.items || data.data || [];
-      const total = data.totalCount || data.total || orders.length;
-      const pages = Math.ceil(total / _ordersPageSize);
-
-      if (!orders.length) {
-        renderEmptyState(panel, {
-          icon: "fa-box",
-          title: t("dash.noOrders"),
-        });
-        return;
-      }
-
-      panel.innerHTML = `
-        <div class="table-wrapper">
-          <table class="table">
-            <caption class="text-muted mt-2" style="caption-side:bottom;font-size:0.78rem">${t("admin.orders")}</caption>
-            <thead><tr>
-              <th scope="col">#</th>
-              <th scope="col">${t("order.buyer")}</th>
-              <th scope="col">${t("cart.total")}</th>
-              <th scope="col">${t("product.status")}</th>
-              <th scope="col">${t("dash.date")}</th>
-              <th scope="col"></th>
-            </tr></thead>
-            <tbody>
-              ${orders.map(o => `
-                <tr>
-                  <td>#${escapeHtml(String(o.id))}</td>
-                  <td>${escapeHtml(o.buyerName || "-")}</td>
-                  <td class="fw-semibold">${formatPrice(o.totalPrice)}</td>
-                  <td><span class="status ${statusClass(o.status)}">${tStatus(o.status)}</span></td>
-                  <td>${formatDate(o.createdAt || o.orderDate)}</td>
-                  <td><a href="#/order-detail?id=${o.id}" class="btn btn-outline btn-sm">
-                    ${t("dash.view")}
-                  </a></td>
-                </tr>
-              `).join("")}
-            </tbody>
-          </table>
-        </div>
-        ${manualPaginationHtml({ page: _ordersPage, totalPages: pages, prefix: 'admOrders' })}`;
-
-      wirePagination({ container: panel, prefix: 'admOrders', onPrev() { if (_ordersPage > 1) { _ordersPage--; loadAdminOrders(); } }, onNext() { if (_ordersPage < pages) { _ordersPage++; loadAdminOrders(); } } });
     } catch (e) {
       panel.innerHTML = `<div class="alert alert-error">${escapeHtml(e.message)}</div>`;
     }
