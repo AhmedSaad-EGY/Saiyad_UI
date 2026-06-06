@@ -655,15 +655,16 @@ async function renderMyProducts(content) {
     list.innerHTML = `
       <div class="table-wrapper animate-on-scroll">          <table class="table">
             <caption class="mt-2 text-muted small" style="caption-side:bottom">${t("dash.products")}</caption>
-            <thead><tr><th scope="col">${t("cart.product")}</th><th scope="col">${t("cart.price")}</th><th scope="col">${t("product.status")}</th><th scope="col">${t("product.stock")}</th><th scope="col"></th></tr></thead>
+            <thead><tr><th scope="col" style="width:50px"></th><th scope="col">${t("cart.product")}</th><th scope="col">${t("cart.price")}</th><th scope="col">${t("product.status")}</th><th scope="col">${t("product.stock")}</th><th scope="col"></th></tr></thead>
           <tbody>${products
             .map(
               (p) => `
             <tr data-status="${p.status}">
+              <td class="product-thumb-cell">${p.primaryImageUrl ? `<img src="${p.primaryImageUrl}" alt="" class="product-thumb" loading="lazy">` : `<div class="product-thumb-placeholder"><i class="fas fa-image" aria-hidden="true"></i></div>`}</td>
               <td><a href="#/product-detail?id=${p.id}" class="text-decoration-none text-reset fw-medium">${escapeHtml(p.title)}</a></td>
               <td class="fw-semibold">${formatPrice(p.price)}</td>
               <td><span class="status ${statusClass(p.status)}">${tStatus(p.status, "product")}</span></td>
-              <td>${p.stockQuantity ?? "-"}</td>
+              <td class="${p.stockQuantity < 5 ? 'stock-low' : ''}">${p.stockQuantity < 5 ? `<i class="fas fa-exclamation-triangle" aria-hidden="true"></i> ` : ""}${p.stockQuantity ?? "-"}</td>
               <td class="d-flex gap-1 flex-nowrap">
                 <a href="#/product-detail?id=${p.id}" class="btn btn-outline btn-sm">${t("dash.view")}</a>
                 <button class="btn btn-ghost btn-sm edit-product-btn" data-product-id="${p.id}"><i class="fas fa-pen" aria-hidden="true"></i> ${t("product.edit")}</button>

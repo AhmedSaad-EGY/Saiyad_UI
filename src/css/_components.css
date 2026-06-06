@@ -1338,7 +1338,7 @@ tr {
 }
 
 tr:hover td {
-  background: var(--primary-ghost);
+  background: var(--table-hover);
 }
 
 tr:last-child td {
@@ -1348,6 +1348,37 @@ tr:last-child td {
 .table-wrapper table {
   border-radius: var(--radius-md);
   overflow: hidden;
+}
+
+/* ── Product table thumbnails ──────────────────────────── */
+.product-thumb-cell {
+  width: 50px;
+  vertical-align: middle;
+}
+.product-thumb,
+.product-thumb-placeholder {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  object-fit: cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--primary-ghost);
+  flex-shrink: 0;
+}
+.product-thumb-placeholder i {
+  font-size: 14px;
+  opacity: 0.5;
+}
+
+/* ── Low stock indicator ───────────────────────────────── */
+.stock-low {
+  color: var(--danger);
+  font-weight: 600;
+}
+.stock-low i {
+  margin-inline-end: 4px;
 }
 
 /* ============================================================
