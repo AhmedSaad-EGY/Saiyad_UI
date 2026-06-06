@@ -544,8 +544,8 @@ body.nav-open .navbar { pointer-events: all; }
 .back-to-top {
   position: fixed;
   bottom: var(--space-6);
-  inset-inline-end: var(--space-6);
-  z-index: 999;
+  inset-inline-end: calc(var(--space-6) + env(safe-area-inset-right, 0px));
+  z-index: 1001;
   width: 44px;
   height: 44px;
   border-radius: var(--radius-full);
