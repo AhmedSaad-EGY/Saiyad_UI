@@ -17,6 +17,7 @@ export default async function renderAdmin(container) {
     { id: "users", icon: "fa-users", label: t("admin.users") },
     { id: "reports", icon: "fa-flag", label: t("admin.reports") },
     { id: "products", icon: "fa-store", label: t("admin.products") },
+    { id: "review", icon: "fa-clipboard-check", label: t("admin.review") },
     { id: "orders", icon: "fa-box", label: t("admin.orders") },
     { id: "categories", icon: "fa-tags", label: t("admin.categories") },
     { id: "plans", icon: "fa-crown", label: t("admin.plans") },
@@ -72,6 +73,9 @@ export default async function renderAdmin(container) {
     } else if (activeTab === "products") {
       content.innerHTML = `<div id="productsPanel"></div>`;
       loadAdminProducts();
+    } else if (activeTab === "review") {
+      content.innerHTML = `<div id="reviewPanel"></div>`;
+      loadPendingReviews();
     } else if (activeTab === "orders") {
       content.innerHTML = `<div id="ordersPanel"></div>`;
       loadAdminOrders();
@@ -213,6 +217,8 @@ export default async function renderAdmin(container) {
   let _productsPage = 1;
   const _productsPageSize = 20;
   const productModerationStatuses = ["Available", "Draft", "Sold", "Rejected", "Suspended"];
+  let _reviewsPage = 1;
+  const _reviewsPageSize = 20;
 
   async function loadAdminProducts() {
     const panel = document.getElementById("productsPanel");
@@ -289,6 +295,105 @@ export default async function renderAdmin(container) {
             btn.disabled = false;
             btn.textContent = oldText;
           }
+        });
+      });
+    } catch (e) {
+      panel.innerHTML = `<div class="alert alert-error">${escapeHtml(e.message)}</div>`;
+    }
+  }
+
+  async function loadPendingReviews() {
+    const panel = document.getElementById("reviewPanel");
+    if (!panel) return;
+    panel.innerHTML = `<div class="p-4 text-center">
+      <i class="fas fa-spinner spinner" aria-hidden="true"></i> ${t("common.loading")}</div>`;
+    try {
+      const data = await api.get("/products/pending-review", { page: _reviewsPage, pageSize: _reviewsPageSize });
+      const products = data.items || data.data || [];
+      const total = data.totalCount || data.total || products.length;
+      const pages = Math.ceil(total / _reviewsPageSize);
+
+      if (!products.length) {
+        renderEmptyState(panel, {
+          icon: "fa-clipboard-check",
+          title: t("admin.noPendingReviews"),
+          desc: t("admin.productsAwaiting"),
+        });
+        return;
+      }
+
+      panel.innerHTML = `
+        <div class="table-wrapper">
+          <table class="table">
+            <caption class="text-muted mt-2" style="caption-side:bottom;font-size:0.78rem">${t("admin.review")}</caption>
+            <thead><tr>
+              <th scope="col" style="width:50px"></th>
+              <th scope="col">${t("product.title")}</th>
+              <th scope="col">${t("product.seller")}</th>
+              <th scope="col">${t("cart.price")}</th>
+              <th scope="col">${t("dash.date")}</th>
+              <th scope="col"></th>
+            </tr></thead>
+            <tbody>
+              ${products.map((p) => `
+                <tr>
+                  <td class="product-thumb-cell">${p.primaryImageUrl ? `<img src="${p.primaryImageUrl}" alt="" class="product-thumb" loading="lazy">` : `<div class="product-thumb-placeholder"><i class="fas fa-image" aria-hidden="true"></i></div>`}</td>
+                  <td><a href="#/product-detail?id=${p.id}" class="text-decoration-none text-reset fw-medium">${escapeHtml(p.title)}</a></td>
+                  <td>${escapeHtml(p.sellerName || `#${p.sellerId || "-"}`)}</td>
+                  <td class="fw-semibold">${formatPrice(p.price || 0)}</td>
+                  <td>${formatDate(p.createdAt)}</td>
+                  <td>
+                    <div class="d-flex gap-1 flex-nowrap" style="white-space:nowrap">
+                      <button class="btn btn-sm btn-success approve-review-btn" data-product-id="${p.id}"><i class="fas fa-check" aria-hidden="true"></i> ${t("admin.approve")}</button>
+                      <button class="btn btn-sm btn-danger reject-review-btn" data-product-id="${p.id}"><i class="fas fa-times" aria-hidden="true"></i> ${t("admin.reject")}</button>
+                      <a href="#/product-detail?id=${p.id}" class="btn btn-outline btn-sm">${t("dash.view")}</a>
+                    </div>
+                  </td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
+        </div>
+        ${manualPaginationHtml({ page: _reviewsPage, totalPages: pages, prefix: 'review' })}`;
+
+      wirePagination({ container: panel, prefix: 'review', onPrev() { if (_reviewsPage > 1) { _reviewsPage--; loadPendingReviews(); } }, onNext() { if (_reviewsPage < pages) { _reviewsPage++; loadPendingReviews(); } } });
+
+      panel.querySelectorAll(".approve-review-btn").forEach((btn) => {
+        btn.addEventListener("click", async () => {
+          btn.disabled = true;
+          const ok = await showConfirm(t("admin.confirmApprove"), t("admin.confirmApproveDesc"), { type: "success", confirmText: t("admin.approve") });
+          if (!ok) { btn.disabled = false; return; }
+          try {
+            await api.patch(`/products/${btn.dataset.productId}/approve`);
+            showToast(t("admin.productApproved"), "success");
+            loadPendingReviews();
+          } catch (err) {
+            showToast(err.message, "error");
+            btn.disabled = false;
+          }
+        });
+      });
+
+      panel.querySelectorAll(".reject-review-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          showFormModal(t("admin.reject"), `
+            <div class="form-group">
+              <label class="form-label">${t("admin.rejectionReason")}</label>
+              <textarea class="form-textarea form-control" id="rejectionReasonInput" rows="3" required></textarea>
+            </div>
+          `, async function onReject() {
+            const reasonText = document.getElementById("rejectionReasonInput")?.value?.trim();
+            if (!reasonText) { showToast(t("admin.rejectionReason") + " " + t("common.required"), "error"); return; }
+            btn.disabled = true;
+            try {
+              await api.patch(`/products/${btn.dataset.productId}/reject`, { reason: reasonText });
+              showToast(t("admin.productRejected"), "success");
+              loadPendingReviews();
+            } catch (err) {
+              showToast(err.message, "error");
+              btn.disabled = false;
+            }
+          }, { confirmText: t("admin.reject"), confirmClass: "btn-danger" });
         });
       });
     } catch (e) {
@@ -458,7 +563,9 @@ export default async function renderAdmin(container) {
     }
   }
 
-  function showFormModal(title, html, onSave) {
+  function showFormModal(title, html, onSave, options = {}) {
+    const confirmText = options.confirmText || t("common.save");
+    const confirmClass = options.confirmClass || "btn-primary";
     const overlay = document.createElement("div");
     overlay.className = "modal-overlay show";
     overlay.setAttribute("role", "dialog");
@@ -470,7 +577,7 @@ export default async function renderAdmin(container) {
         <div class="modal-body p-3">${html}</div>
         <div class="modal-actions d-flex gap-2 justify-content-end p-3 pt-2" style="border-top:1px solid var(--border)">
           <button class="btn btn-ghost" id="fmCancel">${t("common.cancel")}</button>
-          <button class="btn btn-primary" id="fmSave">${t("common.save")}</button>
+          <button class="btn ${confirmClass}" id="fmSave">${confirmText}</button>
         </div>
       </div>`;
     document.body.appendChild(overlay);
