@@ -646,7 +646,7 @@ async function renderMyProducts(content) {
 
   try {
     const data = await api.get("/products/my", { pageSize: 50 });
-    const products = data.items || data.data || [];
+    const products = data.items || data.data || data || [];
     const list = document.getElementById("myProductsList");
     if (!products.length) {
       renderEmptyState(list, { icon: "fa-tag", title: t("dash.noProducts") });
