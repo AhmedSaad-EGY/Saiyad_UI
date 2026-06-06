@@ -233,12 +233,9 @@ export default async function renderProfile(container) {
         </div>
       </div>
 
-      <div class="profile-quick-links card animate-on-scroll stagger-2">
-        <div class="card-header border-bottom-0">
-          <h3>${t('common.quickLinks')}</h3>
-        </div>
-        <div class="card-body">
-        <div class="profile-link-grid mt-3">
+      <div class="profile-quick-links animate-on-scroll stagger-2">
+        <h3 class="profile-quick-links-title">${t('common.quickLinks')}</h3>
+        <div class="profile-link-grid">
           ${ECOMMERCE_ROLES.includes(user?.role) ? `
             <a href="#/dashboard?tab=orders" class="profile-link-card"><i class="fas fa-shopping-bag" aria-hidden="true"></i><span>${t('dash.orders')}</span></a>
             <a href="#/dashboard?tab=wishlist" class="profile-link-card"><i class="fas fa-heart" aria-hidden="true"></i><span>${t('dash.wishlist')}</span></a>
@@ -253,7 +250,12 @@ export default async function renderProfile(container) {
             <a href="#/dashboard?tab=products" class="profile-link-card"><i class="fas fa-store" aria-hidden="true"></i><span>${t('dash.myProducts')}</span></a>
             <a href="#/dashboard?tab=overview" class="profile-link-card"><i class="fas fa-chart-line" aria-hidden="true"></i><span>${t('dash.sellerDashboard')}</span></a>
           ` : ''}
-        </div>
+          ${user?.role === ROLES.ADMIN ? `
+            <a href="#/admin" class="profile-link-card"><i class="fas fa-shield-alt" aria-hidden="true"></i><span>${t('admin.title')}</span></a>
+            <a href="#/admin" class="profile-link-card"><i class="fas fa-clipboard-check" aria-hidden="true"></i><span>${t('admin.review')}</span></a>
+            <a href="#/admin" class="profile-link-card"><i class="fas fa-users" aria-hidden="true"></i><span>${t('admin.users')}</span></a>
+            <a href="#/admin" class="profile-link-card"><i class="fas fa-flag" aria-hidden="true"></i><span>${t('admin.reports')}</span></a>
+          ` : ''}
         </div>
       </div>
     </div>`;

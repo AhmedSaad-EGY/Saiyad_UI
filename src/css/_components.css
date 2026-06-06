@@ -2804,11 +2804,19 @@ tr:last-child td {
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--glass-border);
+  padding: var(--space-6);
+}
+
+.profile-quick-links-title {
+  font-size: var(--text-lg);
+  font-weight: var(--weight-semibold);
+  margin: 0 0 var(--space-4);
+  color: var(--text);
 }
 
 .profile-link-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   gap: 16px;
 }
 
