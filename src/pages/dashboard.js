@@ -439,7 +439,7 @@ async function renderMyProducts(content) {
       <button class="btn btn-primary btn-sm" id="showProductForm"><i class="fas fa-plus" aria-hidden="true"></i> ${t("product.create")}</button>
     </div>
     <div id="productFilterTabs" class="d-flex gap-2 mb-3 flex-wrap">
-      <button class="btn btn-sm btn-primary" data-filter="all">${t("common.all")}</button>
+      <button class="btn btn-sm btn-primary" data-filter="all">All</button>
       <button class="btn btn-sm btn-ghost" data-filter="PendingReview">${t("product.statusPendingReview")}</button>
       <button class="btn btn-sm btn-ghost" data-filter="Available">${t("product.statusAvailable")}</button>
       <button class="btn btn-sm btn-ghost" data-filter="Rejected">${t("product.statusRejected")}</button>
