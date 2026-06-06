@@ -2609,7 +2609,7 @@ tr:last-child td {
 .profile-link-grid {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
+  justify-content: center;
   gap: 16px;
 }
 .profile-link-grid > .profile-link-card {
