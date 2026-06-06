@@ -86,7 +86,7 @@ Alpine.data('profilePage', () => ({
       const imageUrl = upload?.url || upload?.data?.url;
       if (!imageUrl) throw new Error(t('profile.uploadNoUrl'));
       const u = getUser();
-      await api.put('/users/profile', { fullName: u?.fullName || '', phone: u?.phone || '', profileImageUrl: imageUrl });
+      await api.put('/users/profile', { fullName: u?.fullName || '', phone: u?.phone || '', profileImage: imageUrl });
       const updated = { ...u, profileImageUrl: imageUrl };
       localStorage.setItem('user', JSON.stringify(updated));
       const avatar = document.getElementById('profileAvatar');
@@ -95,6 +95,7 @@ Alpine.data('profilePage', () => ({
       }
       showToast(t('profile.photoUpdated'), 'success');
     } catch (err) {
+      console.error('[Profile] Upload error:', err);
       showToast(err.message, 'error');
     }
   },
