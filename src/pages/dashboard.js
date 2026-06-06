@@ -2,7 +2,7 @@ import Alpine from 'alpinejs';
 import { t } from '../core/i18n/index.js';
 import { api } from '../core/api/client.js';
 import { requireAuth, getUser, hasAnyRole, hasRole, updateNavbar, updateCartBadge, syncNotifBadgeCount } from '../core/auth/index.js';
-import { registerRouteCleanup } from '../core/router/index.js';
+import { registerRouteCleanup, navigate } from '../core/router/index.js';
 import { $$, showLoading, renderEmptyState, escapeHtml, observeAnimations } from '../core/utils/dom.js';
 import { manualPaginationHtml, wirePagination } from '../shared/components/pagination.js';
 import { validateForm, getPasswordStrengthResult, clearFieldError } from '../core/utils/validation.js';
@@ -469,13 +469,23 @@ async function renderMyProducts(content) {
       </div>
     </div>`;
 
-  document.getElementById("showProductForm").addEventListener("click", () => {
+  document.getElementById("showProductForm").addEventListener("click", async () => {
+    let hasProfile = true;
+    try {
+      await api.get("/seller-profile/me");
+    } catch {
+      hasProfile = false;
+    }
+    if (!hasProfile) {
+      showToast(t("seller.setupRequired") + " — " + t("seller.setupDesc"), "error");
+      navigate("seller-profile");
+      return;
+    }
     const form = document.getElementById("productFormContainer");
     form.classList.toggle("d-none");
     if (!form.classList.contains("d-none") && !editingProductId) {
       document.querySelector("#productFormContainer h4").textContent = t("product.create");
     }
-    // Restore saved draft
     const draft = JSON.parse(localStorage.getItem("product_draft") || "null");
     if (draft) {
       Object.keys(draft).forEach((id) => {
