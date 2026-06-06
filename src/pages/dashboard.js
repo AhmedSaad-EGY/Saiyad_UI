@@ -665,11 +665,13 @@ async function renderMyProducts(content) {
               <td class="fw-semibold" data-label="${t("cart.price")}">${formatPrice(p.price)}</td>
               <td data-label="${t("product.status")}"><span class="status ${statusClass(p.status)}">${tStatus(p.status, "product")}</span></td>
               <td class="${p.stockQuantity < 5 ? 'stock-low' : ''}" data-label="${t("product.stock")}">${p.stockQuantity < 5 ? `<i class="fas fa-exclamation-triangle" aria-hidden="true"></i> ` : ""}${p.stockQuantity ?? "-"}</td>
-              <td class="d-flex gap-1 flex-nowrap">
-                <a href="#/product-detail?id=${p.id}" class="btn btn-outline btn-sm">${t("dash.view")}</a>
-                <button class="btn btn-ghost btn-sm edit-product-btn" data-product-id="${p.id}"><i class="fas fa-pen" aria-hidden="true"></i> ${t("product.edit")}</button>
-                <button class="btn btn-ghost btn-sm delete-product-btn text-danger" data-product-id="${p.id}"><i class="fas fa-trash" aria-hidden="true"></i> ${t("common.delete")}</button>
-                ${!p.isAuctioned && sellerRoles ? `<button class="btn btn-primary btn-sm start-auction-btn" data-product-id="${p.id}" data-product-title="${escapeHtml(p.title)}" aria-label="${t("auction.startAuction")}"><i class="fas fa-gavel" aria-hidden="true"></i></button>` : ""}
+              <td class="actions-cell">
+                <div class="d-flex gap-1 flex-nowrap justify-content-end">
+                  <a href="#/product-detail?id=${p.id}" class="btn btn-outline btn-sm">${t("dash.view")}</a>
+                  <button class="btn btn-ghost btn-sm edit-product-btn" data-product-id="${p.id}"><i class="fas fa-pen" aria-hidden="true"></i> ${t("product.edit")}</button>
+                  <button class="btn btn-ghost btn-sm delete-product-btn text-danger" data-product-id="${p.id}"><i class="fas fa-trash" aria-hidden="true"></i> ${t("common.delete")}</button>
+                  ${!p.isAuctioned && sellerRoles ? `<button class="btn btn-primary btn-sm start-auction-btn" data-product-id="${p.id}" data-product-title="${escapeHtml(p.title)}" aria-label="${t("auction.startAuction")}"><i class="fas fa-gavel" aria-hidden="true"></i></button>` : ""}
+                </div>
               </td>
             </tr>
           `,

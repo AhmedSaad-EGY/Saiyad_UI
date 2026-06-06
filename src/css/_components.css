@@ -1360,6 +1360,10 @@ tr:last-child td {
 }
 
 /* ── Table action button hover states ──────────────────── */
+.actions-cell {
+  white-space: nowrap;
+  text-align: end;
+}
 .edit-product-btn:hover:not(:disabled) {
   background: var(--primary-ghost);
   color: var(--primary);
@@ -1478,10 +1482,6 @@ tr:last-child td {
   .table-wrapper td:nth-child(4)[data-label]::before,
   .table-wrapper td:nth-child(6)[data-label]::before {
     display: none;
-  }
-  .table-wrapper td:nth-child(6) {
-    display: flex;
-    gap: var(--space-1);
   }
 }
 
