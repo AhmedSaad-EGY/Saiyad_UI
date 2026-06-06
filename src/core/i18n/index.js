@@ -201,6 +201,7 @@ export const translations = {
     "product.statusDraft": "Draft",
     "product.statusRejected": "Rejected",
     "product.statusSuspended": "Suspended",
+    "product.statusPendingReview": "Pending Review",
 
     // Auctions
     "auctions.title": "Auctions",
@@ -1015,6 +1016,7 @@ export const translations = {
     "product.statusDraft": "مسودة",
     "product.statusRejected": "مرفوض",
     "product.statusSuspended": "موقوف",
+    "product.statusPendingReview": "قيد المراجعة",
 
     // Auctions
     "auctions.title": "المزادات",

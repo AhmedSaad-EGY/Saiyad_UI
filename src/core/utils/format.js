@@ -44,6 +44,7 @@ export function statusClass(status) {
     Draft: "draft",
     Rejected: "draft",
     Suspended: "draft",
+    PendingReview: "pending",
     Active: "active",
     Finished: "finished",
     Cancelled: "draft",
@@ -60,7 +61,7 @@ export function statusClass(status) {
 
 export function tStatus(status, prefix = "order") {
   if (status == null) return "";
-  const numMap = ["Available", "Sold", "Draft"];
+  const numMap = ["Available", "Sold", "Draft", "Rejected", "Suspended", "PendingReview"];
   const label =
     typeof status === "number" ? (numMap[status] ?? status) : status;
   const key = `${prefix}.status${label}`;

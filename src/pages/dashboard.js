@@ -438,6 +438,12 @@ async function renderMyProducts(content) {
       <h3><i class="fas fa-tag" aria-hidden="true"></i> ${t("dash.products")}</h3>
       <button class="btn btn-primary btn-sm" id="showProductForm"><i class="fas fa-plus" aria-hidden="true"></i> ${t("product.create")}</button>
     </div>
+    <div id="productFilterTabs" class="d-flex gap-2 mb-3 flex-wrap">
+      <button class="btn btn-sm btn-primary" data-filter="all">${t("common.all")}</button>
+      <button class="btn btn-sm btn-ghost" data-filter="PendingReview">${t("product.statusPendingReview")}</button>
+      <button class="btn btn-sm btn-ghost" data-filter="Available">${t("product.statusAvailable")}</button>
+      <button class="btn btn-sm btn-ghost" data-filter="Rejected">${t("product.statusRejected")}</button>
+    </div>
     <div id="productFormContainer" class="d-none card card-sm mb-3" style="max-width:500px">
       <h4 class="mb-2">${t("product.create")}</h4>
       <form id="myProductForm" novalidate>
@@ -653,7 +659,7 @@ async function renderMyProducts(content) {
           <tbody>${products
             .map(
               (p) => `
-            <tr>
+            <tr data-status="${p.status}">
               <td><a href="#/product-detail?id=${p.id}" class="text-decoration-none text-reset fw-medium">${escapeHtml(p.title)}</a></td>
               <td class="fw-semibold">${formatPrice(p.price)}</td>
               <td><span class="status ${statusClass(p.status)}">${tStatus(p.status, "product")}</span></td>
@@ -672,6 +678,22 @@ async function renderMyProducts(content) {
       </div>
     `;
     observeAnimations();
+
+    // Product filter tabs
+    const filterTabs = document.getElementById("productFilterTabs");
+    if (filterTabs) {
+      filterTabs.addEventListener("click", (e) => {
+        const btn = e.target.closest("button");
+        if (!btn) return;
+        const filter = btn.dataset.filter;
+        filterTabs.querySelectorAll("button").forEach(b => {
+          b.className = b.dataset.filter === filter ? "btn btn-sm btn-primary" : "btn btn-sm btn-ghost";
+        });
+        document.querySelectorAll("#myProductsList tbody tr").forEach(row => {
+          row.style.display = filter === "all" || row.dataset.status === filter ? "" : "none";
+        });
+      });
+    }
 
     // Delegate Start Auction button clicks
     if (_productListAbortController) _productListAbortController.abort();
