@@ -2577,9 +2577,14 @@ tr:last-child td {
 }
 
 .profile-stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  display: flex;
+  flex-wrap: nowrap;
   gap: var(--space-3);
+}
+
+.profile-stats-grid > * {
+  flex: 1;
+  min-width: 0;
 }
 
 .profile-stat-card {
