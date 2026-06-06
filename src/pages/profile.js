@@ -5,7 +5,7 @@ import { ROLES, SELLER_ROLES, ECOMMERCE_ROLES } from '../shared/constants/roles.
 import { hasAnyRole, hasRole } from '../core/auth/index.js';
 import { navigate } from '../core/router/index.js';
 import { escapeHtml, observeAnimations } from '../core/utils/dom.js';
-import { showToast } from '../core/utils/ui.js';
+import { showConfirm, showToast } from '../core/utils/ui.js';
 import { setPageMeta } from '../core/utils/seo.js';
 import Alpine from 'alpinejs';
 
@@ -101,7 +101,8 @@ Alpine.data('profilePage', () => ({
   },
 
   async deleteImage() {
-    if (!confirm(t('profile.confirmDeletePhoto'))) return;
+    const ok = await showConfirm(t('profile.confirmDeleteTitle'), t('profile.confirmDeletePhoto'), { type: 'danger' });
+    if (!ok) return;
     try {
       await api.delete('/users/profile/image');
       const u = getUser();
