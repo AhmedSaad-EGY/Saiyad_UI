@@ -33,7 +33,7 @@ export default async function renderPrivacy(container) {
         </div>
         <h1>${t('auth.privacyPolicy')}</h1>
         <p class="legal-hero-sub">${isAr
-      ? 'آخر تحديث: ٢٣ مايو ٢٠٢٦'
+      ? 'آخر تحديث: 23 مايو 2026'
       : 'Last updated: May 23, 2026'}</p>
       </div>
 

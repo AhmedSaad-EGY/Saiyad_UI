@@ -156,7 +156,7 @@ async function loadWalletBalance() {
     const res = await api.get('/wallet');
     const amount = res?.balance ?? res?.amount ?? res?.data?.balance ?? 0;
     document.getElementById('walletBalanceAmount').textContent =
-      Number(amount).toLocaleString('ar-EG', { minimumFractionDigits: 2 });
+      Number(amount).toLocaleString('en-US', { minimumFractionDigits: 2 });
   } catch {
     document.getElementById('walletBalanceAmount').textContent = '—';
     showToast(t('wallet.loadError'), 'error');
@@ -203,7 +203,7 @@ async function loadWalletTransactions() {
                 <td><span class="tx-type tx-type-${(tx.type ?? 'other').toLowerCase()}">${escapeHTML(tx.type ?? '—')}</span></td>
                 <td>${escapeHTML(tx.description ?? tx.desc ?? '—')}</td>
                 <td class="${(tx.amount ?? 0) >= 0 ? 'tx-positive' : 'tx-negative'}">
-                  ${(tx.amount ?? 0) >= 0 ? '+' : ''}${Number(tx.amount ?? 0).toLocaleString('ar-EG', { minimumFractionDigits: 2 })}
+                  ${(tx.amount ?? 0) >= 0 ? '+' : ''}${Number(tx.amount ?? 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}
                 </td>
                 <td><span class="status-badge status-${(tx.status ?? 'pending').toLowerCase()}">${escapeHTML(tx.status ?? '')}</span></td>
               </tr>`).join('')}

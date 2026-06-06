@@ -17,6 +17,7 @@ export function formatDate(dateStr) {
       day: "numeric",
       hour: "2-digit",
       minute: "2-digit",
+      numberingSystem: "latn",
     });
   } catch {
     return dateStr;
@@ -25,7 +26,7 @@ export function formatDate(dateStr) {
 
 export function formatPrice(n) {
   try {
-    return new Intl.NumberFormat(getLocale(), {
+    return new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: getCurrency(),
     }).format(n || 0);
