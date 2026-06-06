@@ -2815,12 +2815,14 @@ tr:last-child td {
 }
 
 .profile-link-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  display: flex;
+  flex-wrap: nowrap;
   gap: 16px;
 }
 
 .profile-link-card {
+  flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
