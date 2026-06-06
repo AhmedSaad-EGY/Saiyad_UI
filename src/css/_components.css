@@ -1763,6 +1763,26 @@ tr:last-child td {
 }
 
 
+.feature-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 24px;
+}
+.feature-grid > .feature-card {
+  flex: 0 0 100%;
+  max-width: 100%;
+}
+@media (min-width: 576px) {
+  .feature-grid > .feature-card { flex: 0 0 calc(50% - 12px); max-width: calc(50% - 12px); }
+}
+@media (min-width: 768px) {
+  .feature-grid > .feature-card { flex: 0 0 calc(33.333% - 16px); max-width: calc(33.333% - 16px); }
+}
+@media (min-width: 992px) {
+  .feature-grid > .feature-card { flex: 0 0 calc(25% - 18px); max-width: calc(25% - 18px); }
+}
+
 .feature-card {
   text-align: center;
   padding: var(--space-8) var(--space-6);
