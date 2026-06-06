@@ -83,12 +83,17 @@ Alpine.data('profilePage', () => ({
       const formData = new FormData();
       formData.append('file', file);
       const upload = await api.upload('/upload', formData);
+      console.log('[PFP] Upload response:', upload);
       const imageUrl = upload?.url || upload?.data?.url;
+      console.log('[PFP] Extracted imageUrl:', imageUrl);
       if (!imageUrl) throw new Error(t('profile.uploadNoUrl'));
       const u = getUser();
-      await api.put('/users/profile', { fullName: u?.fullName || '', phone: u?.phone || '', profileImage: imageUrl });
+      console.log('[PFP] Pre-update user from localStorage:', u);
+      const putResp = await api.put('/users/profile', { fullName: u?.fullName || '', phone: u?.phone || '', profileImage: imageUrl });
+      console.log('[PFP] PUT /users/profile response:', putResp);
       const updated = { ...u, profileImage: imageUrl };
       localStorage.setItem('user', JSON.stringify(updated));
+      console.log('[PFP] Saved to localStorage:', updated);
       const avatar = document.getElementById('profileAvatar');
       if (avatar) {
         avatar.innerHTML = `<span class="avatar-overlay"><i class="fas fa-camera" aria-hidden="true"></i></span><img src="${  imageUrl  }" alt="" loading="lazy">`;
@@ -111,6 +116,7 @@ export default async function renderProfile(container) {
   }
 
   const user = getUser();
+  console.log('[PFP] Render - user from localStorage:', user);
   let completionPercent = 0;
   if (user?.fullName) completionPercent += 25;
   if (user?.email) completionPercent += 25;

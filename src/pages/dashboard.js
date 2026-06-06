@@ -1114,7 +1114,9 @@ function renderProfile(content, user) {
           fullName: nameInput.value.trim(),
           phone: phoneInput.value.trim(),
         });
+        console.log('[PFP] Dashboard PUT /users/profile response:', data);
         localStorage.setItem("user", JSON.stringify(data.user || data));
+        console.log('[PFP] Dashboard saved to localStorage:', data.user || data);
         updateNavbar();
         showToast(t("dash.profileUpdated"), "success");
       } catch (err) {
