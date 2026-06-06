@@ -444,6 +444,7 @@ async function renderMyProducts(content) {
         <div class="form-group"><label class="form-label">${t("product.title")} *</label><input type="text" class="form-input form-control" id="prodTitle" required></div>
         <div class="form-group"><label class="form-label">${t("product.description")} *</label><textarea class="form-textarea form-control" id="prodDesc" required></textarea></div>
         <div class="form-group"><label class="form-label">${t("product.brand")} *</label><input type="text" class="form-input form-control" id="prodBrand" required></div>
+        <div class="form-group"><label class="form-label">${t("product.price")} *</label><input type="number" class="form-input form-control" id="prodPrice" min="0" step="0.01" required></div>
         <div class="form-group"><label class="form-label">${t("product.stock")} *</label><input type="number" class="form-input form-control" id="prodStock" min="0" value="1" required></div>
         <div class="form-group"><label class="form-label">${t("product.location")} *</label><input type="text" class="form-input form-control" id="prodLocation" required></div>
         <div class="form-group"><label class="form-label">${t("product.category")} *</label><select class="form-select" id="prodCategory"><option value="">${t("common.loading")}</option></select></div>
