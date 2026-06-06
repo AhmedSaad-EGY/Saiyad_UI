@@ -2750,7 +2750,7 @@ tr:last-child td {
 }
 
 .profile-stats-grid > * {
-  flex: 0 1 220px;
+  flex: 0 1 160px;
   min-width: 0;
 }
 
