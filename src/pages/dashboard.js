@@ -276,11 +276,11 @@ async function renderOverview(content, user) {
       </div>
     </div>
     <div class="row g-3 mt-3">
-      <div class="col-sm-6">
-        <div class="card animate-on-scroll stagger-1" id="dashOrders"><i class="fas fa-spinner spinner" aria-hidden="true"></i> ${t("common.loading")}</div>
+      <div class="col-sm-6 d-flex">
+        <div class="card animate-on-scroll stagger-1 flex-fill" id="dashOrders"><i class="fas fa-spinner spinner" aria-hidden="true"></i> ${t("common.loading")}</div>
       </div>
-      <div class="col-sm-6">
-        <div class="card animate-on-scroll stagger-2" id="dashProducts"><i class="fas fa-spinner spinner" aria-hidden="true"></i> ${t("common.loading")}</div>
+      <div class="col-sm-6 d-flex">
+        <div class="card animate-on-scroll stagger-2 flex-fill" id="dashProducts"><i class="fas fa-spinner spinner" aria-hidden="true"></i> ${t("common.loading")}</div>
       </div>
     </div>
   `;
