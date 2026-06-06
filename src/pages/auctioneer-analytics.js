@@ -127,7 +127,7 @@ export default async function renderAuctioneerAnalytics(container) {
           <h3 class="mb-0">${t("analytics.feeIncome")}</h3>
         </div>
         <div class="card-body">
-        <div class="table-responsive"><table class="table"><thead><tr><th>${t("wallet.date")}</th><th>${t("wallet.amount")}</th><th>${t("wallet.description")}</th></tr></thead><tbody>${feeTxns.map(t => `<tr><td>${formatDate(t.createdAt)}</td><td class="fw-semibold">${formatPrice(t.amount)}</td><td>${escapeHtml(t.description || "")}</td></tr>`).join("")}</tbody></table></div>
+        <div class="table-wrapper"><table class="table"><thead><tr><th>${t("wallet.date")}</th><th>${t("wallet.amount")}</th><th>${t("wallet.description")}</th></tr></thead><tbody>${feeTxns.map(t => `<tr><td>${formatDate(t.createdAt)}</td><td class="fw-semibold">${formatPrice(t.amount)}</td><td>${escapeHtml(t.description || "")}</td></tr>`).join("")}</tbody></table></div>
       </div>` : ''}
       ${recent.length > 0 ? `
       <div class="card mt-3">
@@ -135,7 +135,7 @@ export default async function renderAuctioneerAnalytics(container) {
           <h3 class="mb-0">${t("analytics.recentAuctions")}</h3>
         </div>
         <div class="card-body">
-        <div class="table-responsive"><table class="table"><thead><tr><th>${t("common.title")}</th><th>${t("auctionRequests.status")}</th><th>${t("analytics.startingPrice")}</th><th>${t("analytics.currentPrice")}</th><th>${t("analytics.bidCount")}</th><th>${t("analytics.endTime")}</th></tr></thead><tbody>${recent.map(a => `<tr><td>${escapeHtml(a.title || a.productName || '-')}</td><td><span class="${statusClass(a.status)}">${tStatus(a.status, "auction")}</span></td><td>${formatPrice(a.startingPrice || 0)}</td><td>${formatPrice(a.currentPrice || a.startingPrice || 0)}</td><td>${a.bidCount ?? 0}</td><td>${a.endTime ? formatDate(a.endTime) : '-'}</td></tr>`).join("")}</tbody></table></div>
+        <div class="table-wrapper"><table class="table"><thead><tr><th>${t("common.title")}</th><th>${t("auctionRequests.status")}</th><th>${t("analytics.startingPrice")}</th><th>${t("analytics.currentPrice")}</th><th>${t("analytics.bidCount")}</th><th>${t("analytics.endTime")}</th></tr></thead><tbody>${recent.map(a => `<tr><td>${escapeHtml(a.title || a.productName || '-')}</td><td><span class="${statusClass(a.status)}">${tStatus(a.status, "auction")}</span></td><td>${formatPrice(a.startingPrice || 0)}</td><td>${formatPrice(a.currentPrice || a.startingPrice || 0)}</td><td>${a.bidCount ?? 0}</td><td>${a.endTime ? formatDate(a.endTime) : '-'}</td></tr>`).join("")}</tbody></table></div>
       </div>
       </div>` : ''}`;
   } catch (err) {

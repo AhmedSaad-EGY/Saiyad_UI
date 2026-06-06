@@ -35,7 +35,7 @@ export default async function renderAuctionRequestsReview(container) {
         content.innerHTML = `<div class="empty-state"><i class="fas fa-gavel" aria-hidden="true"></i><h3>${t("auctionRequestsReview.noPending")}</h3><p>${t("auctionRequestsReview.noPendingDesc")}</p></div>`;
         return;
       }
-      content.innerHTML = `<div class="table-responsive"><table class="table"><thead><tr><th>${t("auctionRequests.productTitle")}</th><th>${t("auctionRequestsReview.fisherman")}</th><th>${t("auctionRequests.fishType")}</th><th>${t("auctionRequests.quantityKg")}</th><th>${t("auctionRequests.estimatedValue")}</th><th>${t("auctionRequests.status")}</th><th>${t("auctionRequests.createdAt")}</th><th>${t("auctionRequestsReview.actions")}</th></tr></thead><tbody>${items.map(r => `<tr><td><a href="#" class="fw-semibold text-primary view-details-link" data-id="${r.id}">${escapeHtml(r.productTitle)}</a></td><td>${escapeHtml(r.fishermanName || '-')}</td><td>${escapeHtml(r.fishType)}</td><td>${r.quantityKg}</td><td>${r.estimatedValue}</td><td><span class="${statusClass(r.status)}">${t(`auctionRequests.${  r.status.toLowerCase()}`)}</span></td><td>${new Date(r.createdAt).toLocaleDateString()}</td><td><button class="btn btn-sm btn-outline btn-icon" data-action="details" data-id="${r.id}" aria-label="${t('common.view')}" title="${t('common.view')}"><i class="fas fa-eye" aria-hidden="true"></i></button> <button class="btn btn-sm btn-success" data-action="approve" data-id="${r.id}"><i class="fas fa-check" aria-hidden="true"></i> ${t("auctionRequestsReview.approve")}</button> <button class="btn btn-sm btn-danger" data-action="reject" data-id="${r.id}"><i class="fas fa-times" aria-hidden="true"></i> ${t("auctionRequestsReview.reject")}</button></td></tr>`).join("")}</tbody></table>${manualPaginationHtml({ page, totalPages, prefix: 'arp' })}</div>`;
+      content.innerHTML = `<div class="table-wrapper"><table class="table"><thead><tr><th>${t("auctionRequests.productTitle")}</th><th>${t("auctionRequestsReview.fisherman")}</th><th>${t("auctionRequests.fishType")}</th><th>${t("auctionRequests.quantityKg")}</th><th>${t("auctionRequests.estimatedValue")}</th><th>${t("auctionRequests.status")}</th><th>${t("auctionRequests.createdAt")}</th><th>${t("auctionRequestsReview.actions")}</th></tr></thead><tbody>${items.map(r => `<tr><td><a href="#" class="fw-semibold text-primary view-details-link" data-id="${r.id}">${escapeHtml(r.productTitle)}</a></td><td>${escapeHtml(r.fishermanName || '-')}</td><td>${escapeHtml(r.fishType)}</td><td>${r.quantityKg}</td><td>${r.estimatedValue}</td><td><span class="${statusClass(r.status)}">${t(`auctionRequests.${  r.status.toLowerCase()}`)}</span></td><td>${new Date(r.createdAt).toLocaleDateString()}</td><td><button class="btn btn-sm btn-outline btn-icon" data-action="details" data-id="${r.id}" aria-label="${t('common.view')}" title="${t('common.view')}"><i class="fas fa-eye" aria-hidden="true"></i></button> <button class="btn btn-sm btn-success" data-action="approve" data-id="${r.id}"><i class="fas fa-check" aria-hidden="true"></i> ${t("auctionRequestsReview.approve")}</button> <button class="btn btn-sm btn-danger" data-action="reject" data-id="${r.id}"><i class="fas fa-times" aria-hidden="true"></i> ${t("auctionRequestsReview.reject")}</button></td></tr>`).join("")}</tbody></table>${manualPaginationHtml({ page, totalPages, prefix: 'arp' })}</div>;
       attachActions(items);
       wirePagination({ container: content, prefix: 'arp', onPrev: () => { if (page > 1) { page--; loadRequests(); } }, onNext: () => { if (page < totalPages) { page++; loadRequests(); } } });
     } catch (err) {
@@ -190,7 +190,7 @@ export default async function renderAuctionRequestsReview(container) {
         </div>
         <div class="modal-body p-4 flex-grow-1">
           ${r.imageUrl || r.productImageUrl ? `<div class="mb-4 text-center"><img src="${r.imageUrl || r.productImageUrl}" alt="${escapeHtml(r.productTitle)}" class="img-fluid rounded border"></div>` : ''}
-          <table class="table table-bordered">
+          <div class="table-wrapper"><table class="table table-bordered">
             <tbody>
               <tr><th scope="row">${t("auctionRequestsReview.fisherman")}</th><td>${escapeHtml(r.fishermanName || '-')}</td></tr>
               <tr><th scope="row">${t("auctionRequests.fishType")}</th><td>${escapeHtml(r.fishType)}</td></tr>
@@ -200,7 +200,7 @@ export default async function renderAuctionRequestsReview(container) {
               <tr><th scope="row">${t("auctionRequests.catchDate")}</th><td>${r.catchDate ? new Date(r.catchDate).toLocaleDateString() : '-'}</td></tr>
               <tr><th scope="row">${t("auctionRequests.status")}</th><td><span class="${statusClass(r.status)}">${t(`auctionRequests.${r.status.toLowerCase()}`)}</span></td></tr>
             </tbody>
-          </table>
+          </table></div>
           <div class="mt-3">
             <h4 class="h6 fw-bold">${t("auctionRequests.productDescription")}</h4>
             <p class="text-secondary small bg-light p-3 rounded border">${escapeHtml(r.productDescription || t("common.noDescription"))}</p>

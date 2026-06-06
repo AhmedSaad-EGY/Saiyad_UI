@@ -3414,7 +3414,7 @@ tr:last-child td {
 }
 
 .cart-table tbody tr:hover {
-  background: var(--primary-ghost);
+  background: var(--table-hover);
 }
 
 .cart-product-cell a {

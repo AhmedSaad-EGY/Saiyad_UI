@@ -683,7 +683,7 @@ export default async function renderAdmin(container) {
         <div class="mb-3">
           <button class="btn btn-primary" id="addPlanBtn"><i class="fas fa-plus" aria-hidden="true"></i> ${t("admin.addPlan")}</button>
         </div>
-        <div class="table-responsive"><table class="table">
+        <div class="table-wrapper"><table class="table">
           <caption class="text-muted mt-2" style="caption-side:bottom;font-size:0.78rem">${t("admin.plans")}</caption>
           <thead><tr>
             <th scope="col">${t("common.name")}</th><th scope="col">${t("common.tier")}</th><th scope="col">Price</th>
