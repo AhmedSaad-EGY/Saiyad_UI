@@ -16,6 +16,7 @@
   background:
     var(--nav-bg-gradient),
     radial-gradient(circle at 18% 0%, oklch(from var(--primary) l c h / 0.10), transparent 34%);
+  background-color: var(--nav-bg-fallback);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
   border-bottom: 1px solid var(--border);
@@ -30,6 +31,7 @@
   background:
     var(--nav-bg-gradient),
     radial-gradient(circle at 18% 0%, oklch(from var(--primary) l c h / 0.18), transparent 36%);
+  background-color: var(--nav-bg-fallback);
 }
 
 /* Scrolled overlay via pseudo-element (opacity is GPU-composited) */
@@ -460,7 +462,7 @@ body.nav-open .navbar {
    DESKTOP NAVBAR OVERRIDE (≥ 769px)
    Converts the mobile side-panel into an inline horizontal bar.
    ============================================================ */
-@media (min-width: 769px) {
+@media (min-width: 768px) {
   .navbar .container {
     flex-wrap: nowrap;
   }
@@ -883,8 +885,8 @@ body.nav-open .navbar {
   display: none;
 }
 
-@media (max-width: 768px) {
-  --bottom-nav-height: 56px;
+@media (max-width: 767px) {
+  body { --bottom-nav-height: 56px; }
 
   .bottom-nav {
     display: flex;
@@ -961,7 +963,7 @@ body.nav-open .navbar {
   }
 }
 
-@media (min-width: 769px) {
+@media (min-width: 768px) {
   .bottom-nav {
     display: none !important;
   }
@@ -972,7 +974,7 @@ body.nav-open .navbar {
    ============================================================ */
 
 /* ── Mobile drawer (≤768px) ─────────────────────────────────── */
-@media (max-width: 768px) {
+@media (max-width: 767px) {
   .container {
     padding: 0 var(--space-4);
   }
@@ -1019,6 +1021,7 @@ body.nav-open .navbar {
     background:
       var(--nav-mobile-gradient),
       radial-gradient(circle at 20% 0%, oklch(from var(--primary) l c h / 0.12), transparent 38%);
+    background-color: var(--nav-bg-fallback);
     border-bottom: 1px solid var(--border);
   }
 
@@ -1026,6 +1029,7 @@ body.nav-open .navbar {
     background:
       var(--nav-mobile-gradient),
       radial-gradient(circle at 20% 0%, oklch(from var(--primary) l c h / 0.18), transparent 40%);
+    background-color: var(--nav-bg-fallback);
   }
 
   /* Mobile: fixed off-canvas drawer */
@@ -1038,6 +1042,7 @@ body.nav-open .navbar {
     background:
       var(--drawer-gradient),
       radial-gradient(circle at 18% 4%, oklch(from var(--primary) l c h / 0.16), transparent 34%);
+    background-color: var(--drawer-bg-fallback);
     backdrop-filter: var(--glass-blur);
     -webkit-backdrop-filter: var(--glass-blur);
     border-inline-start: 1px solid var(--border);
@@ -1089,10 +1094,12 @@ body.nav-open .navbar {
     background:
       linear-gradient(135deg, oklch(from var(--primary) l c h / 0.14), transparent 72%),
       var(--drawer-header-gradient);
+    background-color: var(--drawer-header-bg-fallback);
   }
 
   [data-theme="dark"] .drawer-header {
     background: linear-gradient(135deg, oklch(from var(--primary) l c h / 0.08) 0%, transparent 100%);
+    background-color: var(--drawer-header-bg-fallback);
   }
 
   .drawer-brand {
@@ -1144,6 +1151,7 @@ body.nav-open .navbar {
     background:
       var(--drawer-gradient),
       radial-gradient(circle at 18% 4%, oklch(from var(--primary) l c h / 0.22), transparent 40%);
+    background-color: var(--drawer-bg-fallback);
   }
 
   /* Dashboard sidebar: scrollable tabs on mobile */

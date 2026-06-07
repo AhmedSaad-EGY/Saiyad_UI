@@ -321,18 +321,19 @@ function initHeroTilt() {
   const content = document.querySelector(".hero-content");
   if (!hero || !content) return;
 
+  let tiltTicking = false;
   hero.addEventListener("mousemove", (e) => {
-    const rect = hero.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-
-    const centerX = rect.width / 2;
-    const centerY = rect.height / 2;
-
-    const rotateX = (y - centerY) / 25;
-    const rotateY = (centerX - x) / 25;
-
-    content.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(20px)`;
+    if (tiltTicking) return;
+    tiltTicking = true;
+    requestAnimationFrame(() => {
+      const rect = hero.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+      content.style.transform = `rotateX(${(y - centerY) / 25}deg) rotateY(${(centerX - x) / 25}deg) translateZ(20px)`;
+      tiltTicking = false;
+    });
   });
 
   hero.addEventListener("mouseleave", () => {
@@ -680,7 +681,7 @@ function showUpdateBanner(worker) {
              font-size:13px;cursor:pointer;font-family:inherit">
       Refresh
     </button>
-    <button id="swDismissBtn" :aria-label="$t('common.dismiss')"
+    <button id="swDismissBtn" aria-label="${t('common.dismiss')}"
       class="border-0"
       style="background:transparent;cursor:pointer;
              color:var(--text-secondary);font-size:18px;line-height:1;

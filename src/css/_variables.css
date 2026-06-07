@@ -193,6 +193,11 @@
   --drawer-header-glass: oklch(1 0 0 / 0.36);
   --drawer-header-gradient: linear-gradient(180deg, var(--drawer-header-glass), transparent);
 
+  /* ── Non-oklch fallbacks for gradient backgrounds (Chrome <119, FF <128) ──── */
+  --nav-bg-fallback: oklch(0.98 0.005 235);
+  --drawer-bg-fallback: oklch(0.97 0.006 240);
+  --drawer-header-bg-fallback: oklch(0.96 0.008 238);
+
   /* ── Overlay opacities ────────────────────────────────────── */
   --overlay-dim: oklch(0 0 0 / 0.92);
   --overlay-dark: oklch(0 0 0 / 0.55);
@@ -313,6 +318,10 @@
       oklch(0.13 0.020 250 / 0.99) 0%,
       oklch(0.16 0.024 245 / 0.98) 50%,
       oklch(0.14 0.022 248 / 0.99) 100%);
+
+  --nav-bg-fallback: oklch(0.13 0.020 250);
+  --drawer-bg-fallback: oklch(0.14 0.022 248);
+  --drawer-header-bg-fallback: oklch(0.12 0.018 248);
 
   --overlay-tint: oklch(0 0 0 / 0.15);
   --overlay-tint-dark: oklch(0 0 0 / 0.25);
