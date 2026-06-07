@@ -157,9 +157,6 @@
 .tx-positive { color: var(--success); font-weight: var(--weight-semibold); }
 .tx-negative { color: var(--danger);  font-weight: var(--weight-semibold); }
 
-/* Table utilities */
-.table-responsive { overflow-x: auto; }
-
 
 @media (max-width: 767px) {
   .wallet-page { padding: var(--space-6) var(--space-4); }

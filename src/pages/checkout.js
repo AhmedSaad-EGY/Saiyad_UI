@@ -1,7 +1,6 @@
 import { t } from '../core/i18n/index.js';
 import { api } from '../core/api/client.js';
 import { requireAuth } from '../core/auth/index.js';
-import { navigate } from '../core/router/index.js';
 import { escapeHtml } from '../core/utils/dom.js';
 import { showFieldError, clearFieldError, clearAllFieldErrors } from '../core/utils/validation.js';
 import { formatPrice } from '../core/utils/format.js';
@@ -172,7 +171,7 @@ export default async function renderCheckout(container) {
         <div>
           <div class="section-header animate__animated animate__fadeInUp"><h2><i class="fas fa-credit-card" aria-hidden="true"></i> ${t('cart.checkout')}</h2></div>
           <div class="empty-state">
-            <i class="fas fa-shopping-cart text-muted mb-4" style="font-size:3.5rem" aria-hidden="true"></i>
+            <i class="fas fa-shopping-cart text-muted mb-4 fs-hero" aria-hidden="true"></i>
             <h3>${t('cart.empty')}</h3>
             <p class="text-muted mb-4">${t('cart.emptyDesc')}</p>
             <a href="#/products" class="btn btn-primary"><i class="fas fa-store" aria-hidden="true"></i> ${t('cart.browseProducts')}</a>
@@ -201,7 +200,7 @@ export default async function renderCheckout(container) {
                 </div>
                 <div class="card-body">
                 <template x-for="item in items" :key="item.productId">
-                    <div class="d-flex justify-content-between py-2" style="border-bottom:1px solid var(--border)">
+                    <div class="d-flex justify-content-between py-2 border-divider-bottom">
                     <span><span x-text="item.productTitle || ('Product #' + item.productId)"></span> <small class="text-muted" x-text="' x' + (item.quantity || 1)"></small></span>
                     <span class="fw-semibold" x-text="formatPrice((item.product?.price || item.unitPrice || item.price || 0) * (item.quantity || 1))"></span>
                   </div>
@@ -224,7 +223,7 @@ export default async function renderCheckout(container) {
                               <strong x-text="a.fullName || a.name || ''"></strong>
                               <div class="address-card-check"><i class="fas fa-check" x-show="selectedAddressId === a.id" aria-hidden="true"></i></div>
                             </div>
-                            <div style="font-size:0.85rem;color:var(--text-secondary)">
+                            <div class="text-secondary-sm">
                               <div x-text="(a.addressLine || '')"></div>
                               <div x-text="(a.city || '') + (a.postalCode ? ', ' + a.postalCode : '')"></div>
                               <div class="mt-1" x-text="a.phone || ''"></div>

@@ -62,7 +62,7 @@ export function updateNavbar() {
     const name = user.fullName || user.email || "User";
     document.getElementById("userName").textContent = name;
     const dd = document.getElementById("userDropdown");
-    if (dd) dd.setAttribute("aria-label", name + " menu");
+    if (dd) dd.setAttribute("aria-label", `${name} menu`);
   }
   document.getElementById("notifBell")?.classList.toggle("d-none", !authed);
   document

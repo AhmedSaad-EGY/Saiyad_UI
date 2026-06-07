@@ -1,5 +1,5 @@
 import { api } from '../core/api/client.js';
-import { requireAuth, getUser } from '../core/auth/index.js';
+import { requireAuth } from '../core/auth/index.js';
 import { setPageMeta } from '../core/utils/seo.js';
 import { showToast } from '../core/utils/ui.js';
 import { t } from '../core/i18n/index.js';

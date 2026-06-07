@@ -117,7 +117,7 @@ export function validateForm(formIdOrEl, rules) {
           break;
         }
       }
-      if (check.phone && value && !/^[\+\d][\d\s\-\(\)]{6,}$/.test(value)) {
+      if (check.phone && value && !/^[+\d][\d\s\-()]{6,}$/.test(value)) {
         const msg = check.messages?.phone || t("validation.invalid");
         showFieldError(resolvedField, msg);
         valid = false;

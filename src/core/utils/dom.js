@@ -17,9 +17,9 @@ export function showLoading(container, type = "page") {
       </div>`,
     card: `
       <div class="skeleton-grid skeleton-shimmer">
-        <div class="skeleton-card"><div class="skeleton skeleton-image"></div><div class="skeleton-card-body"><div class="skeleton skeleton-title"></div><div class="skeleton skeleton-text" style="width:30%"></div><div class="skeleton skeleton-text short"></div></div></div>
-        <div class="skeleton-card"><div class="skeleton skeleton-image"></div><div class="skeleton-card-body"><div class="skeleton skeleton-title"></div><div class="skeleton skeleton-text" style="width:30%"></div><div class="skeleton skeleton-text short"></div></div></div>
-        <div class="skeleton-card"><div class="skeleton skeleton-image"></div><div class="skeleton-card-body"><div class="skeleton skeleton-title"></div><div class="skeleton skeleton-text" style="width:30%"></div><div class="skeleton skeleton-text short"></div></div></div>
+        <div class="skeleton-card"><div class="skeleton skeleton-image"></div><div class="skeleton-card-body"><div class="skeleton skeleton-title"></div><div class="skeleton skeleton-text xshort"></div><div class="skeleton skeleton-text short"></div></div></div>
+        <div class="skeleton-card"><div class="skeleton skeleton-image"></div><div class="skeleton-card-body"><div class="skeleton skeleton-title"></div><div class="skeleton skeleton-text xshort"></div><div class="skeleton skeleton-text short"></div></div></div>
+        <div class="skeleton-card"><div class="skeleton skeleton-image"></div><div class="skeleton-card-body"><div class="skeleton skeleton-title"></div><div class="skeleton skeleton-text xshort"></div><div class="skeleton skeleton-text short"></div></div></div>
       </div>`,
     detail: `
       <div class="skeleton-detail skeleton-shimmer">
@@ -49,11 +49,11 @@ export function showLoading(container, type = "page") {
       </div>`,
     form: `
       <div class="skeleton-form skeleton-shimmer py-3" style="padding-top:0;padding-bottom:0">
-        <div class="skeleton skeleton-text" style="width:30%"></div>
+        <div class="skeleton skeleton-text xshort"></div>
         <div class="skeleton skeleton-input"></div>
-        <div class="skeleton skeleton-text" style="width:30%"></div>
+        <div class="skeleton skeleton-text xshort"></div>
         <div class="skeleton skeleton-input"></div>
-        <div class="skeleton skeleton-text" style="width:30%"></div>
+        <div class="skeleton skeleton-text xshort"></div>
         <div class="skeleton skeleton-input"></div>
       </div>`,
   };
@@ -119,7 +119,7 @@ export function renderEmptyState(
     if (mappedType) {
       visual = emptyIllustration(mappedType);
     } else if (icon.startsWith("fa-")) {
-      visual = `<i class="fas ${icon} mb-2 d-block text-muted" style="font-size:3.5rem"></i>`;
+      visual = `<i class="fas ${icon} mb-2 d-block text-muted fs-hero"></i>`;
     } else {
       visual = emptyIllustration(icon);
     }

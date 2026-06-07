@@ -210,7 +210,7 @@ export default async function renderCart(container) {
         <div>
           <div class="section-header animate__animated animate__fadeInUp"><h2><i class="fas fa-shopping-cart" aria-hidden="true"></i> ${t('cart.title')}</h2></div>
           <div class="empty-state">
-            <i class="fas fa-shopping-cart mb-3 text-muted" style="font-size:3.5rem" aria-hidden="true"></i>
+            <i class="fas fa-shopping-cart mb-3 text-muted fs-hero" aria-hidden="true"></i>
             <h3>${t('cart.empty')}</h3>
             <p class="text-muted mb-4">${t('cart.emptyDesc')}</p>
             <a href="#/products" class="btn btn-primary"><i class="fas fa-store" aria-hidden="true"></i> ${t('cart.browseProducts')}</a>
@@ -235,7 +235,7 @@ export default async function renderCart(container) {
           </div>
           <div class="cart-table-wrapper">
             <table class="cart-table table">
-              <caption class="text-muted" style="caption-side:bottom;margin-top:8px;font-size:0.78rem">${t('cart.title')}</caption>
+              <caption class="text-muted caption-meta" style="margin-top:8px">${t('cart.title')}</caption>
               <thead>
                 <tr>
                   <th scope="col">${t('cart.product')}</th>

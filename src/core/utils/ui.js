@@ -15,7 +15,7 @@ export function showToast(msg, type = "info") {
       c.setAttribute("role", "status");
       c.setAttribute("aria-live", "polite");
       c.setAttribute("aria-atomic", "false");
-      c.style.cssText = `position:fixed;bottom:20px;${isRtl ? "left" : "right"}:20px;z-index:9999;display:flex;flex-direction:column;gap:10px;pointer-events:none`;
+      c.style[isRtl ? "left" : "right"] = "20px";
       document.body.appendChild(c);
       return c;
     })();
@@ -40,7 +40,6 @@ export function showToast(msg, type = "info") {
   const iconEl = document.createElement("i");
   iconEl.className = `fas ${icons[type] || icons.info}`;
   iconEl.setAttribute("aria-hidden", "true");
-  iconEl.style.cssText = "font-size:1.1rem;flex-shrink:0";
   const textEl = document.createElement("span");
   textEl.textContent = msg;
   const closeBtn = document.createElement("button");
@@ -52,11 +51,11 @@ export function showToast(msg, type = "info") {
   toast.appendChild(textEl);
   toast.appendChild(closeBtn);
 
-  function closeToast(t) {
-    t.style.transition = "all 0.2s ease";
-    t.style.opacity = "0";
-    t.style.transform = "translateX(20px)";
-    setTimeout(() => t.remove(), 250);
+  function closeToast(toastEl) {
+    toastEl.style.transition = "all 0.2s ease";
+    toastEl.style.opacity = "0";
+    toastEl.style.transform = "translateX(20px)";
+    setTimeout(() => toastEl.remove(), 250);
   }
 
   while (container.children.length >= 3) {
@@ -215,7 +214,7 @@ export function openQuickView(product) {
         <div style="flex:1;min-width:200px">
           <h3>${escapeHtml(title)}</h3>
           <div class="fw-bold text-primary" style="font-size:1.4rem;margin:8px 0">${price}</div>
-          <p style="color:var(--text-secondary);font-size:0.88rem;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden">${escapeHtml(desc) || t("product.noDescription")}</p>
+          <p class="text-secondary-sm" style="display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden">${escapeHtml(desc) || t("product.noDescription")}</p>
           <div class="modal-actions mt-4">
             <a href="${link}" class="btn btn-primary" onclick="this.closest('.modal-overlay').remove()"><i class="fas fa-eye"></i> ${t("common.page")}</a>
             <button class="btn btn-ghost" onclick="this.closest('.modal-overlay').remove()">${t("common.close")}</button>

@@ -217,7 +217,7 @@ Alpine.data('productsPage', () => ({
 
 }));
 
-export default async function renderProducts(_container, _fullPath, params) {
+export default async function renderProducts(_container, _fullPath, _params) {
   setPageMeta(t('products.metaTitle'), t('products.metaDesc'));
   _container.innerHTML = `
     <div x-data="productsPage" class="products-page-alpine" @keydown.escape.window="closeSearchOverlay(); filterSheetOpen = false">
@@ -308,7 +308,7 @@ export default async function renderProducts(_container, _fullPath, params) {
               <div class="product-card-img skeleton-image-shim"></div>
               <div class="product-card-body p-3">
                 <div class="skeleton skeleton-title"></div>
-                <div class="skeleton skeleton-text" style="width:30%"></div>
+                <div class="skeleton skeleton-text xshort"></div>
               </div>
             </div>
           </div>
@@ -317,7 +317,7 @@ export default async function renderProducts(_container, _fullPath, params) {
 
       <!-- Error state -->
       <div x-show="!loading && error" class="empty-state">
-        <div class="empty-state-visual"><i class="fas fa-exclamation-triangle text-muted" style="font-size:3.5rem" aria-hidden="true"></i></div>
+        <div class="empty-state-visual"><i class="fas fa-exclamation-triangle text-muted fs-hero" aria-hidden="true"></i></div>
         <h3>${t('products.loadError')}</h3>
         <p x-text="error"></p>
         <button class="btn btn-primary mt-3" @click="reload()">${t('common.retry')}</button>
@@ -347,7 +347,7 @@ export default async function renderProducts(_container, _fullPath, params) {
 
       <!-- Empty state -->
       <div x-show="!loading && !error && !products.length" class="empty-state">
-        <div class="empty-state-visual"><i class="fas fa-box-open text-muted" style="font-size:3.5rem" aria-hidden="true"></i></div>
+        <div class="empty-state-visual"><i class="fas fa-box-open text-muted fs-hero" aria-hidden="true"></i></div>
         <h3>${t('products.noProducts')}</h3>
         <p>${t('common.clearFilters')}</p>
         <button class="btn btn-primary mt-3" @click="resetFilters()">${t('common.clearFilters')}</button>

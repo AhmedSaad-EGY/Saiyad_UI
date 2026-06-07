@@ -61,6 +61,10 @@
   width: 50%;
 }
 
+.skeleton-text.xshort {
+  width: 30%;
+}
+
 .skeleton-title {
   height: 18px;
   margin-bottom: var(--space-3);

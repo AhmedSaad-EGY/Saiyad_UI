@@ -157,7 +157,7 @@ Alpine.data('auctionsPage', () => ({
   },
 }));
 
-export default async function renderAuctions(_container, _fullPath, params) {
+export default async function renderAuctions(_container, _fullPath, _params) {
   setPageMeta(t('auctions.metaTitle'), t('auctions.metaDesc'));
   _container.innerHTML = `
     <div x-data="auctionsPage" @keydown.escape.window="filterSheetOpen = false">
@@ -187,7 +187,7 @@ export default async function renderAuctions(_container, _fullPath, params) {
               <div class="product-card-img skeleton-image-shim"></div>
               <div class="product-card-body p-3">
                 <div class="skeleton skeleton-title"></div>
-                <div class="skeleton skeleton-text" style="width:30%"></div>
+                <div class="skeleton skeleton-text xshort"></div>
               </div>
             </div>
           </div>
@@ -196,7 +196,7 @@ export default async function renderAuctions(_container, _fullPath, params) {
 
       <!-- Error -->
       <div x-show="!loading && error" class="empty-state">
-        <div class="empty-state-visual"><i class="fas fa-exclamation-triangle text-muted" style="font-size:3.5rem" aria-hidden="true"></i></div>
+        <div class="empty-state-visual"><i class="fas fa-exclamation-triangle text-muted fs-hero" aria-hidden="true"></i></div>
         <h3>${t("auctions.loadError")}</h3>
         <p x-text="error"></p>
         <button class="btn btn-primary mt-3" @click="reload()">${t('common.retry')}</button>
@@ -240,7 +240,7 @@ export default async function renderAuctions(_container, _fullPath, params) {
 
       <!-- Empty -->
       <div x-show="!loading && !error && !auctions.length" class="empty-state">
-        <div class="empty-state-visual"><i class="fas fa-gavel text-muted" style="font-size:3.5rem" aria-hidden="true"></i></div>
+        <div class="empty-state-visual"><i class="fas fa-gavel text-muted fs-hero" aria-hidden="true"></i></div>
         <h3>${t("home.noAuctions")}</h3>
         <p>${t("auctions.noAuctionsDesc")}</p>
         <button class="btn btn-primary mt-3" @click="resetFilters()">${t('common.clearFilters')}</button>

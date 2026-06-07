@@ -257,7 +257,7 @@ export default async function renderHome(container) {
       <!-- Error -->
       <div x-show="!loading && error" class="empty-state">
         <div class="empty-state-visual">
-          <i class="fas fa-exclamation-triangle text-muted" style="font-size:3.5rem" aria-hidden="true"></i>
+          <i class="fas fa-exclamation-triangle text-muted fs-hero" aria-hidden="true"></i>
         </div>
         <h3>${t("home.loadError")}</h3>
         <p x-text="error"></p>
@@ -298,7 +298,7 @@ export default async function renderHome(container) {
       <!-- No products -->
       <div x-show="!loading && !error && !products.length" class="empty-state">
         <div class="empty-state-visual">
-          <i class="fas fa-box-open text-muted" style="font-size:3.5rem" aria-hidden="true"></i>
+          <i class="fas fa-box-open text-muted fs-hero" aria-hidden="true"></i>
         </div>
         <h3>${t("home.noProducts")}</h3>
       </div>
@@ -359,7 +359,7 @@ export default async function renderHome(container) {
       <!-- No auctions -->
       <div x-show="!loading && !error && !auctions.length" class="empty-state">
         <div class="empty-state-visual">
-          <i class="fas fa-gavel text-muted" style="font-size:3.5rem" aria-hidden="true"></i>
+          <i class="fas fa-gavel text-muted fs-hero" aria-hidden="true"></i>
         </div>
         <h3>${t("home.noAuctions")}</h3>
       </div>

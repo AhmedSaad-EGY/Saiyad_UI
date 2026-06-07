@@ -150,7 +150,7 @@ Alpine.data("registerForm", () => ({
     } catch (err) {
       document.getElementById("registerAlert").innerHTML =
         `<div class="alert alert-error">${escapeHtml(err.message)}</div>`;
-      let regFails = parseInt(sessionStorage.getItem('sayiadRegFails') || '0') + 1;
+      const regFails = parseInt(sessionStorage.getItem('sayiadRegFails') || '0') + 1;
       sessionStorage.setItem('sayiadRegFails', regFails);
       if (regFails >= 3) {
         const submitBtn = document.getElementById('registerSubmitBtn')
@@ -297,7 +297,7 @@ export default function renderRegister(container) {
     const labels = ['', t('auth.veryWeak'), t('auth.weak'), t('auth.fair'), t('auth.strong'), t('auth.veryStrong')];
 
     Object.entries(checks).forEach(([k,v]) => {
-      const li = document.getElementById('req-' + k);
+      const li = document.getElementById(`req-${k}`);
       if (!li) return;
       li.style.color = v ? 'var(--success)' : '';
       li.querySelector('i').className = v ? 'fas fa-check-circle' : 'fas fa-circle';
@@ -305,7 +305,7 @@ export default function renderRegister(container) {
 
     const fill  = document.getElementById('pwFill');
     const label = document.getElementById('pwLabel');
-    if (fill)  { fill.style.width = (score*20)+'%'; fill.style.background = colors[score]; }
+    if (fill)  { fill.style.width = `${score*20}%`; fill.style.background = colors[score]; }
     if (label) { label.textContent = labels[score]; label.style.color = colors[score]; }
   }
 

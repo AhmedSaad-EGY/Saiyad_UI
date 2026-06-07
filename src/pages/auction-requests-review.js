@@ -74,7 +74,7 @@ export default async function renderAuctionRequestsReview(container) {
     modal.setAttribute("aria-modal", "true");
     modal.setAttribute("aria-label", t("auctionRequestsReview.approve"));
     modal.innerHTML = `
-      <div class="modal-content" style="max-width:480px">
+      <div class="modal-content mw-lg">
         <h3><i class="fas fa-check-circle" aria-hidden="true"></i> ${t("auctionRequestsReview.approve")}</h3>
         <form id="approveForm">
           <div class="form-group"><label class="form-label">${t("scheduling.endTime")} *</label><input type="datetime-local" class="form-input" id="appEndTime" value="${fmt(defaultEnd)}" required></div>
@@ -134,7 +134,7 @@ export default async function renderAuctionRequestsReview(container) {
     modal.setAttribute("aria-modal", "true");
     modal.setAttribute("aria-label", t("auctionRequestsReview.reject"));
     modal.innerHTML = `
-      <div class="modal-content" style="max-width:420px">
+      <div class="modal-content mw-sm">
         <h3>${t("auctionRequestsReview.reject")}</h3>
         <div class="form-group mt-2">
           <label class="form-label">${t("auctionRequestsReview.rejectionReason")} *</label>

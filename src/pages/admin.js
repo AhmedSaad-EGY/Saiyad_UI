@@ -1,10 +1,10 @@
 import { t } from '../core/i18n/index.js';
 import { api } from '../core/api/client.js';
-import { getUser, hasAnyRole } from '../core/auth/index.js';
+import { getUser } from '../core/auth/index.js';
 import { ROLES } from '../shared/constants/roles.js';
 import { showLoading, showError, renderEmptyState, escapeHtml } from '../core/utils/dom.js';
 import { manualPaginationHtml, wirePagination } from '../shared/components/pagination.js';
-import { formatPrice, formatDate, statusClass, tStatus } from '../core/utils/format.js';
+import { formatPrice, formatDate, tStatus } from '../core/utils/format.js';
 import { showConfirm, showToast } from '../core/utils/ui.js';
 import { setPageMeta } from '../core/utils/seo.js';
 
@@ -47,7 +47,7 @@ export default async function renderAdmin(container) {
         </div>
       </div>
     </div>
-    <div class="tabs nav nav-tabs mb-4" id="adminTabs">${tabs.map((t) => `<button class="tab ${t.id === activeTab ? "active" : ""}" data-tab="${t.id}"><i class="fas ${t.icon}" aria-hidden="true"></i> ${t.label}</button>`).join("")}</div>
+    <div class="tabs nav nav-tabs mb-4" id="adminTabs">${tabs.map((tab) => `<button class="tab ${tab.id === activeTab ? "active" : ""}" data-tab="${tab.id}"><i class="fas ${tab.icon}" aria-hidden="true"></i> ${tab.label}</button>`).join("")}</div>
     <div id="adminContent"></div>`;
 
   const content = document.getElementById("adminContent");
@@ -58,7 +58,7 @@ export default async function renderAdmin(container) {
     activeTab = tabBtn.dataset.tab;
     document
       .querySelectorAll("#adminTabs .tab")
-      .forEach((t) => t.classList.remove("active"));
+      .forEach((tab) => tab.classList.remove("active"));
     tabBtn.classList.add("active");
     loadTab();
   });
@@ -110,7 +110,7 @@ export default async function renderAdmin(container) {
       panel.innerHTML = `
         <div class="table-wrapper">
           <table class="table">
-            <caption class="text-muted mt-2" style="caption-side:bottom;font-size:0.78rem">${t("admin.users")}</caption>
+            <caption class="text-muted mt-2 caption-meta">${t("admin.users")}</caption>
             <thead><tr>
               <th scope="col">${t("auth.fullName")}</th>
               <th scope="col">${t("auth.email")}</th>
@@ -176,7 +176,7 @@ export default async function renderAdmin(container) {
 
       content.innerHTML = `
         <div class="table-wrapper"><table class="table">
-          <caption class="text-muted mt-2" style="caption-side:bottom;font-size:0.78rem">${t("admin.reports")}</caption>
+          <caption class="text-muted mt-2 caption-meta">${t("admin.reports")}</caption>
           <thead><tr><th scope="col">${t("admin.id")}</th><th scope="col">${t("cart.product")}</th><th scope="col">${t("admin.reportReason")}</th><th scope="col">${t("admin.reportStatus")}</th><th scope="col"></th></tr></thead>
           <tbody>${reports
             .map(
@@ -238,7 +238,7 @@ export default async function renderAdmin(container) {
       panel.innerHTML = `
         <div class="table-wrapper">
           <table class="table">
-            <caption class="text-muted mt-2" style="caption-side:bottom;font-size:0.78rem">${t("admin.products")}</caption>
+            <caption class="text-muted mt-2 caption-meta">${t("admin.products")}</caption>
             <thead><tr>
               <th scope="col">${t("product.title")}</th>
               <th scope="col">${t("product.seller")}</th>
@@ -321,7 +321,7 @@ export default async function renderAdmin(container) {
       panel.innerHTML = `
         <div class="table-wrapper">
           <table class="table">
-            <caption class="text-muted mt-2" style="caption-side:bottom;font-size:0.78rem">${t("admin.review")}</caption>
+            <caption class="text-muted mt-2 caption-meta">${t("admin.review")}</caption>
             <thead><tr>
               <th scope="col" style="width:50px"></th>
               <th scope="col">${t("product.title")}</th>
@@ -379,7 +379,7 @@ export default async function renderAdmin(container) {
             </div>
           `, async function onReject() {
             const reasonText = document.getElementById("rejectionReasonInput")?.value?.trim();
-            if (!reasonText) { showToast(t("admin.rejectionReason") + " " + t("common.required"), "error"); return; }
+            if (!reasonText) { showToast(`${t("admin.rejectionReason")} ${t("common.required")}`, "error"); return; }
             btn.disabled = true;
             try {
               await api.patch(`/products/${btn.dataset.productId}/reject`, { reason: reasonText });
@@ -406,7 +406,7 @@ export default async function renderAdmin(container) {
       if (!cats.length) {
         content.innerHTML = `
           <div class="mb-3"><button class="btn btn-primary btn-sm" id="showAddCat"><i class="fas fa-plus" aria-hidden="true"></i> ${t("admin.addCategory")}</button></div>
-        <div id="addCatForm" class="d-none card card-sm mb-3" style="max-width:400px">
+        <div id="addCatForm" class="d-none card card-sm mb-3 mw-xs">
           <form id="catForm" novalidate>
               <div class="form-group"><label class="form-label">${t("admin.categoryName")}</label><input type="text" class="form-input form-control" id="catName" required></div>
               <div class="form-group"><label class="form-label">${t("admin.categoryDesc")}</label><input type="text" class="form-input form-control" id="catDesc"></div>
@@ -439,7 +439,7 @@ export default async function renderAdmin(container) {
 
       content.innerHTML = `
         <div class="mb-3"><button class="btn btn-primary btn-sm" id="showAddCat"><i class="fas fa-plus" aria-hidden="true"></i> ${t("admin.addCategory")}</button></div>
-        <div id="addCatForm" class="d-none card card-sm mb-3" style="max-width:400px">
+        <div id="addCatForm" class="d-none card card-sm mb-3 mw-xs">
           <form id="catForm" novalidate>
             <div class="form-group"><label class="form-label">${t("admin.categoryName")}</label><input type="text" class="form-input form-control" id="catName" required></div>
             <div class="form-group"><label class="form-label">${t("admin.categoryDesc")}</label><input type="text" class="form-input form-control" id="catDesc"></div>
@@ -447,7 +447,7 @@ export default async function renderAdmin(container) {
           </form>
         </div>
         <div class="table-wrapper"><table class="table">
-          <caption class="text-muted mt-2" style="caption-side:bottom;font-size:0.78rem">${t("admin.categories")}</caption>
+          <caption class="text-muted mt-2 caption-meta">${t("admin.categories")}</caption>
           <thead><tr><th scope="col">${t("admin.id")}</th><th scope="col">${t("admin.name")}</th><th scope="col">${t("admin.categoryDesc")}</th><th scope="col"></th></tr></thead>
           <tbody>${cats
             .map(
@@ -510,10 +510,10 @@ export default async function renderAdmin(container) {
     overlay.setAttribute("aria-modal", "true");
     overlay.setAttribute("aria-label", escapeHtml(title));
     overlay.innerHTML = `
-      <div class="modal" onclick="event.stopPropagation()" style="max-width:500px">
+      <div class="modal mw-xl" onclick="event.stopPropagation()">
         <div class="modal-header"><h3>${escapeHtml(title)}</h3></div>
         <div class="modal-body p-3">${html}</div>
-        <div class="modal-actions d-flex gap-2 justify-content-end p-3 pt-2" style="border-top:1px solid var(--border)">
+        <div class="modal-actions d-flex gap-2 justify-content-end p-3 pt-2 border-divider-top">
           <button class="btn btn-ghost" id="fmCancel">${t("common.cancel")}</button>
           <button class="btn ${confirmClass}" id="fmSave">${confirmText}</button>
         </div>
@@ -535,8 +535,8 @@ export default async function renderAdmin(container) {
       ]);
 
       const items = txns.items || txns.data || [];
-      const feeTxns = items.filter(t => t.type === "PlatformFee" || t.type === "SubscriptionPayment");
-      const totalFees = feeTxns.reduce((sum, t) => sum + Math.abs(t.amount), 0);
+      const feeTxns = items.filter(txn => txn.type === "PlatformFee" || txn.type === "SubscriptionPayment");
+      const totalFees = feeTxns.reduce((sum, txn) => sum + Math.abs(txn.amount), 0);
 
       content.innerHTML = `
         <div class="row g-3 mb-4">
@@ -568,7 +568,7 @@ export default async function renderAdmin(container) {
         <h3 class="mb-2">${t("admin.feeIncome")}</h3>
         <div class="table-wrapper">
           <table class="table">
-            <caption class="text-muted mt-2" style="caption-side:bottom;font-size:0.78rem">${t("admin.feeIncome")}</caption>
+            <caption class="text-muted mt-2 caption-meta">${t("admin.feeIncome")}</caption>
             <thead><tr>
               <th scope="col">${t("admin.id")}</th>
               <th scope="col">${t("wallet.type")}</th>
@@ -578,11 +578,11 @@ export default async function renderAdmin(container) {
               <th scope="col">${t("dash.date")}</th>
             </tr></thead>
             <tbody>
-              ${feeTxns.length ? feeTxns.map(t => `
+              ${feeTxns.length ? feeTxns.map(txn => `
                 <tr>
-                  <td>${t.id}</td>
-                  <td><span class="status ${t.type === "PlatformFee" ? "status-available" : "status-pending"}">${t.type}</span></td>
-                  <td class="fw-semibold">${formatPrice(t.amount)}</td>
+                  <td>${txn.id}</td>
+                  <td><span class="status ${txn.type === "PlatformFee" ? "status-available" : "status-pending"}">${txn.type}</span></td>
+                  <td class="fw-semibold">${formatPrice(txn.amount)}</td>
                   <td>${t.referenceType || "-"} #${t.referenceId || "-"}</td>
                   <td>${escapeHtml(t.description || "-")}</td>
                   <td>${formatDate(t.createdAt)}</td>
@@ -622,7 +622,7 @@ export default async function renderAdmin(container) {
           <button class="btn btn-primary" id="addPlanBtn"><i class="fas fa-plus" aria-hidden="true"></i> ${t("admin.addPlan")}</button>
         </div>
         <div class="table-wrapper"><table class="table">
-          <caption class="text-muted mt-2" style="caption-side:bottom;font-size:0.78rem">${t("admin.plans")}</caption>
+          <caption class="text-muted mt-2 caption-meta">${t("admin.plans")}</caption>
           <thead><tr>
             <th scope="col">${t("common.name")}</th><th scope="col">${t("common.tier")}</th><th scope="col">Price</th>
             <th scope="col">Auctions</th><th scope="col">Bids</th><th scope="col">Requests</th>
@@ -693,7 +693,7 @@ export default async function renderAdmin(container) {
       });
 
       document.getElementById("addPlanBtn")?.addEventListener("click", function() {
-        const tierOptions = ["Free", "Basic", "Pro", "Enterprise"].map(function(t) { return `<option value="${  t  }">${  t  }</option>`; }).join("");
+        const tierOptions = ["Free", "Basic", "Pro", "Enterprise"].map(function(tier) { return `<option value="${  tier  }">${  tier  }</option>`; }).join("");
         const formHtml =
           `<div class="mb-2"><label>Tier</label><select id="af-tier" class="form-control">${  tierOptions  }</select></div>` +
           `<div class="mb-2"><label>Name</label><input id="af-name" class="form-control"></div>` +

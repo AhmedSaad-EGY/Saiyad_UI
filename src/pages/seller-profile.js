@@ -27,7 +27,7 @@ export default async function renderSellerProfile(container) {
             ${profile.averageRating ? `<span><strong>${t('seller.rating')}:</strong> ${renderStars(profile.averageRating)} (${profile.averageRating.toFixed(1)})</span>` : ''}
             <span><strong>${t('seller.totalSales')}:</strong> ${profile.totalSales || 0}</span>
           </div>
-          <div class="pt-3" style="border-top:1px solid var(--border);color:var(--text-secondary);font-size:0.88rem">
+          <div class="pt-3 border-divider-top text-secondary-sm">
             ${profile.contactEmail ? `<p><i class="fas fa-envelope" aria-hidden="true"></i> ${escapeHtml(profile.contactEmail)}</p>` : ''}
             ${profile.contactPhone ? `<p><i class="fas fa-phone" aria-hidden="true"></i> ${escapeHtml(profile.contactPhone)}</p>` : ''}
             ${profile.location ? `<p><i class="fas fa-map-marker-alt" aria-hidden="true"></i> ${escapeHtml(profile.location)}</p>` : ''}

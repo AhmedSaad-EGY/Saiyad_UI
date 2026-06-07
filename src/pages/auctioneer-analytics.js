@@ -29,7 +29,7 @@ function renderSkeleton(container) {
 
 function renderContent(container, dash, feeTxns, recent, wallet) {
   const content = document.getElementById('analyticsContent') || container;
-  const totalFees = feeTxns.reduce((s, t) => s + Math.abs(t.amount), 0);
+  const totalFees = feeTxns.reduce((s, txn) => s + Math.abs(txn.amount), 0);
   content.innerHTML = `
     <div class="row g-3 mb-4">
       <div class="col-sm-6 col-lg-3">
@@ -125,7 +125,7 @@ function renderContent(container, dash, feeTxns, recent, wallet) {
         <h3 class="mb-0">${t("analytics.feeIncome")}</h3>
       </div>
       <div class="card-body">
-      <div class="table-wrapper"><table class="table"><thead><tr><th>${t("wallet.date")}</th><th>${t("wallet.amount")}</th><th>${t("wallet.description")}</th></tr></thead><tbody>${feeTxns.map(t => `<tr><td>${formatDate(t.createdAt)}</td><td class="fw-semibold">${formatPrice(t.amount)}</td><td>${escapeHtml(t.description || "")}</td></tr>`).join("")}</tbody></table></div>
+      <div class="table-wrapper"><table class="table"><thead><tr><th>${t("wallet.date")}</th><th>${t("wallet.amount")}</th><th>${t("wallet.description")}</th></tr></thead><tbody>${feeTxns.map(txn => `<tr><td>${formatDate(txn.createdAt)}</td><td class="fw-semibold">${formatPrice(txn.amount)}</td><td>${escapeHtml(txn.description || "")}</td></tr>`).join("")}</tbody></table></div>
     </div>` : ''}
     ${recent.length > 0 ? `
     <div class="card mt-3">
@@ -172,13 +172,13 @@ export default async function renderAuctioneerAnalytics(container) {
     const dash = (dataResult.status === 'fulfilled' ? dataResult.value : {}) || {};
     const recent = dash.recentAuctions || dash.recent || [];
     const allTxns = (txnResult.status === 'fulfilled' ? txnResult.value?.items || [] : []);
-    const feeTxns = allTxns.filter(t => t.type === "PlatformFee");
+    const feeTxns = allTxns.filter(txn => txn.type === "PlatformFee");
     const wallet = walletResult.status === 'fulfilled' ? walletResult.value : null;
 
     try {
       sessionStorage.setItem(CACHE_KEY, JSON.stringify({
         dash: { totalAuctions: dash.totalAuctions, activeAuctions: dash.activeAuctions, finishedAuctions: dash.finishedAuctions, totalBids: dash.totalBids, totalRevenue: dash.totalRevenue },
-        feeTxns: feeTxns.map(t => ({ createdAt: t.createdAt, amount: t.amount, description: t.description })),
+        feeTxns: feeTxns.map(txn => ({ createdAt: txn.createdAt, amount: txn.amount, description: txn.description })),
         recent: recent.map(a => ({ title: a.title, productName: a.productName, status: a.status, startingPrice: a.startingPrice, currentPrice: a.currentPrice, bidCount: a.bidCount, endTime: a.endTime })),
         wallet: wallet ? { availableBalance: wallet.availableBalance } : null,
       }));

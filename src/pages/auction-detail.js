@@ -6,7 +6,7 @@ import { setPageMeta } from '../core/utils/seo.js';
 import { ROLES } from '../shared/constants/roles.js';
 import { registerRouteCleanup, navigate } from '../core/router/index.js';
 import { formatPrice, formatDate, statusClass, tStatus } from '../core/utils/format.js';
-import { escapeHtml, observeAnimations, animate, safeSetHTML } from '../core/utils/dom.js';
+import { escapeHtml, observeAnimations, animate } from '../core/utils/dom.js';
 import { triggerConfetti, trackRecentlyViewed, showConfirm } from '../core/utils/ui.js';
 import { createScopedBus } from '../core/events/bus.js';
 import { joinAuctionGroup, leaveAuctionGroup } from '../core/realtime/index.js';
@@ -66,7 +66,7 @@ Alpine.data('auctionDetailPage', () => ({
       const detail = await api.get(`/auctions/${this._auctionId}`);
       const a = detail.auction || detail;
       this.auction = a;
-      this.bids = (detail.bids || []).sort((a, b) => new Date(b.createdAt || b.created_at) - new Date(a.createdAt || a.created_at));
+      this.bids = (detail.bids || []).sort((x, y) => new Date(y.createdAt || y.created_at) - new Date(x.createdAt || x.created_at));
       this.endTime = new Date(a.endTime);
       this.isActive = a.status === 'Active';
       this.currentBidValue = a.currentHighestBid || a.startingPrice;
@@ -275,7 +275,7 @@ Alpine.data('auctionDetailPage', () => ({
       const detail = await api.get(`/auctions/${this._auctionId}`);
       const a = detail.auction || detail;
       this.auction = a;
-      this.bids = (detail.bids || []).sort((a, b) => new Date(b.createdAt || b.created_at) - new Date(a.createdAt || a.created_at));
+      this.bids = (detail.bids || []).sort((x, y) => new Date(y.createdAt || y.created_at) - new Date(x.createdAt || x.created_at));
       this.currentBidValue = a.currentHighestBid || a.startingPrice;
       this.bidCount = this.bids.length;
       this.bidAlert = '';
@@ -340,7 +340,7 @@ Alpine.data('auctionDetailPage', () => ({
 }));
 
 // --- Page render function ---
-export default async function renderAuctionDetail(container, _route, params) {
+export default async function renderAuctionDetail(container, _route, _params) {
   setPageMeta(t('auctionDetail.title'));
   container.innerHTML = `
     <div x-data="auctionDetailPage" x-init="init()">
@@ -358,7 +358,7 @@ export default async function renderAuctionDetail(container, _route, params) {
 
       <!-- Error state -->
       <div x-show="!loading && error" class="empty-state">
-        <div class="empty-state-visual"><i class="fas fa-gavel text-muted" style="font-size:3.5rem" aria-hidden="true"></i></div>
+        <div class="empty-state-visual"><i class="fas fa-gavel text-muted fs-hero" aria-hidden="true"></i></div>
         <h3 x-text="$t('common.loadFailed')"></h3>
         <p x-text="error"></p>
         <button class="btn btn-primary mt-3" @click="retry()">${t('common.retry')}</button>

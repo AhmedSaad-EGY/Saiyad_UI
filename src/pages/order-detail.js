@@ -18,7 +18,7 @@ function getTimelineSteps(status) {
   const currentIdx = statusOrder.indexOf(status);
   const cancelled = status === 'Cancelled';
 
-  return steps.map((step, i) => {
+  return steps.map((step, _i) => {
     const stepIdx = statusOrder.indexOf(step.key);
     let cls = '';
     if (cancelled) cls = '';
@@ -114,7 +114,7 @@ export default async function renderOrderDetail(container) {
                 <div class="card-body">
                   <p class="mb-1"><strong>${escapeHtml(order.shippingAddress?.fullName || order.buyerName || 'N/A')}</strong></p>
                   <p class="text-muted small mb-1">${escapeHtml(order.shippingAddress?.addressLine || order.address || '-')}</p>
-                  <p class="text-muted small mb-1">${escapeHtml(order.shippingAddress?.city || '')}${order.shippingAddress?.postalCode ? ', ' + escapeHtml(order.shippingAddress.postalCode) : ''}</p>
+                  <p class="text-muted small mb-1">${escapeHtml(order.shippingAddress?.city || '')}${order.shippingAddress?.postalCode ? `, ${escapeHtml(order.shippingAddress.postalCode)}` : ''}</p>
                   <p class="text-muted small">${escapeHtml(order.shippingAddress?.phone || '')}</p>
                 </div>
               </div>

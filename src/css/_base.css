@@ -86,8 +86,7 @@ h3[id],
 h4[id],
 h5[id],
 h6[id],
-section[id],
-article[id] {
+section[id] {
   scroll-margin-top: 88px;
 }
 
@@ -164,7 +163,6 @@ button,
 
 /* ── Images & media ───────────────────────────────────────── */
 img,
-video,
 svg {
   max-width: 100%;
   display: block;

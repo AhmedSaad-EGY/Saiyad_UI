@@ -90,7 +90,7 @@ export default async function renderSubscriptions(container) {
               </div>
               <ul class="list-unstyled mb-3" style="flex:1">
                 ${(p.features || []).map(f => `
-                  <li class="py-2" style="border-bottom:1px solid var(--border)"><i class="fas fa-check text-success me-2" style="width:16px" aria-hidden="true"></i>${escapeHtml(f)}</li>
+                  <li class="py-2 border-divider-bottom"><i class="fas fa-check text-success me-2" style="width:16px" aria-hidden="true"></i>${escapeHtml(f)}</li>
                 `).join('')}
               </ul>
               <button class="btn ${isCurrent ? 'btn-ghost' : insufficient ? 'btn-outline' : 'btn-primary'} sub-upgrade-btn"

@@ -105,13 +105,7 @@ function showSignalRBanner() {
     b.id = 'signalrBanner';
     b.setAttribute('role', 'status');
     b.setAttribute('aria-live', 'polite');
-    b.style.cssText = [
-      'position:fixed','bottom:1rem','left:50%','transform:translateX(-50%)',
-      'background:var(--warning)','color:var(--text-inverse)','padding:.5rem 1.25rem',
-      'border-radius:2rem','font-size:.875rem','font-weight:500',
-      'z-index:9999','display:flex','align-items:center','gap:.5rem',
-      'box-shadow:var(--shadow-md)'
-    ].join(';');
+    b.className = 'signalr-banner';
     b.innerHTML = '<i class="fas fa-wifi" aria-hidden="true"></i>'
                 + '<span data-i18n="reconnecting">Reconnecting to auction…</span>';
     document.body.appendChild(b);

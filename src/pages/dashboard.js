@@ -137,7 +137,7 @@ Alpine.data('dashboardPage', () => ({
   },
 }));
 
-export default async function renderDashboard(container, route, params) {
+export default async function renderDashboard(container, _route, _params) {
   if (!(await requireAuth())) return;
 
   const isECommerceRole = hasAnyRole(...(ECOMMERCE_ROLES));
@@ -349,7 +349,7 @@ async function renderOverview(content, user) {
         const products = await api.get("/products/my", { pageSize: 1 });
         document.getElementById("dashProducts").innerHTML =
           `<h3><i class="fas fa-tag" aria-hidden="true"></i> ${t("dash.products")}</h3><p class="fs-2 fw-bold text-primary">${products.totalCount || products.total || 0}</p><p class="text-muted">${t("dash.yourProducts")}</p>`;
-      } catch (e) {
+      } catch (_e) {
         document.getElementById("dashProducts").innerHTML =
           `<div class="card text-center p-4"><h3><i class="fas fa-tag" aria-hidden="true"></i> ${t("dash.products")}</h3><p class="text-muted mt-2">${t("dash.productsNotAvailable")}</p></div>`;
       }
@@ -370,10 +370,10 @@ async function renderOrders(content) {
     const list = document.getElementById("ordersList");
     list.innerHTML = `
       <div class="p-2">
-        <div class="skeleton-text w-100 mb-2" style="height:48px"></div>
-        <div class="skeleton-text w-100 mb-2" style="height:48px"></div>
-        <div class="skeleton-text w-100 mb-2" style="height:48px"></div>
-        <div class="skeleton-text w-100 mb-2" style="height:48px"></div>
+        <div class="skeleton-row w-100 mb-2"></div>
+        <div class="skeleton-row w-100 mb-2"></div>
+        <div class="skeleton-row w-100 mb-2"></div>
+        <div class="skeleton-row w-100 mb-2"></div>
       </div>
     `;
     try {
@@ -393,7 +393,7 @@ async function renderOrders(content) {
       list.innerHTML = `
         <div class="table-wrapper animate-on-scroll">
           <table class="table">
-            <caption class="mt-2 text-muted small" style="caption-side:bottom">${t("dash.orders")}</caption>
+            <caption class="mt-2 text-muted small caption-meta">${t("dash.orders")}</caption>
             <thead><tr><th scope="col">${t("dash.orderNum")}</th><th scope="col">${t("cart.total")}</th><th scope="col">${t("product.status")}</th><th scope="col">${t("dash.date")}</th><th scope="col"></th></tr></thead>
             <tbody>${orders
               .map(
@@ -466,7 +466,7 @@ async function renderMyProducts(content) {
       <button class="btn btn-sm btn-ghost" data-filter="Available">${t("product.statusAvailable")}</button>
       <button class="btn btn-sm btn-ghost" data-filter="Rejected">${t("product.statusRejected")}</button>
     </div>
-    <div id="productFormContainer" class="d-none card card-sm mb-3" style="max-width:500px">
+    <div id="productFormContainer" class="d-none card card-sm mb-3 mw-xl">
       <h4 class="mb-2">${t("product.create")}</h4>
       <form id="myProductForm" novalidate>
         <div class="form-group"><label class="form-label">${t("product.title")} *</label><input type="text" class="form-input form-control" id="prodTitle" required></div>
@@ -492,9 +492,9 @@ async function renderMyProducts(content) {
     </div>
     <div id="myProductsList">
       <div class="p-2">
-        <div class="skeleton-text w-100 mb-2" style="height:48px"></div>
-        <div class="skeleton-text w-100 mb-2" style="height:48px"></div>
-        <div class="skeleton-text w-100 mb-2" style="height:48px"></div>
+        <div class="skeleton-row w-100 mb-2"></div>
+        <div class="skeleton-row w-100 mb-2"></div>
+        <div class="skeleton-row w-100 mb-2"></div>
       </div>
     </div>`;
 
@@ -506,7 +506,7 @@ async function renderMyProducts(content) {
       hasProfile = false;
     }
     if (!hasProfile) {
-      showToast(t("seller.setupRequired") + " — " + t("seller.setupDesc"), "error");
+      showToast(`${t("seller.setupRequired")} — ${t("seller.setupDesc")}`, "error");
       navigate("seller-profile");
       return;
     }
@@ -527,7 +527,6 @@ async function renderMyProducts(content) {
         <span><i class="fas fa-history" aria-hidden="true"></i> ${t("product.draftRestored")}</span>
         <button class="btn btn-ghost btn-sm" id="discardDraftBtn">${t("product.discardDraft")}</button>
       `;
-      const form = document.getElementById("productFormContainer");
       form?.prepend(draftBanner);
       document.getElementById("discardDraftBtn")?.addEventListener("click", () => {
         localStorage.removeItem("product_draft");
@@ -676,7 +675,7 @@ async function renderMyProducts(content) {
     }
     list.innerHTML = `
       <div class="table-wrapper animate-on-scroll">          <table class="table">
-            <caption class="mt-2 text-muted small" style="caption-side:bottom">${t("dash.products")}</caption>
+            <caption class="mt-2 text-muted small caption-meta">${t("dash.products")}</caption>
             <thead><tr><th scope="col" style="width:50px"></th><th scope="col">${t("cart.product")}</th><th scope="col">${t("cart.price")}</th><th scope="col">${t("product.status")}</th><th scope="col">${t("product.stock")}</th><th scope="col"></th></tr></thead>
           <tbody>${products
             .map(
@@ -771,7 +770,7 @@ async function renderMyProducts(content) {
         }
       }
     }, { signal: _productListAbortController.signal });
-  } catch (e) {
+  } catch (_e) {
     document.getElementById("myProductsList").innerHTML =
       `<div class="card text-center p-4"><h3><i class="fas fa-tag" aria-hidden="true"></i> ${t("dash.products")}</h3><p class="text-muted mt-2">${t("dash.productsNotAvailable")}</p></div>`;
   }
@@ -793,7 +792,7 @@ function showAuctionModal(productId, productTitle) {
   const needsProductPicker = !productId;
 
   overlay.innerHTML = `
-    <div class="modal" onclick="event.stopPropagation()" style="max-width:460px">
+    <div class="modal mw-md" onclick="event.stopPropagation()">
       <h3><i class="fas fa-gavel" aria-hidden="true"></i> ${t("auctions.title")}${productTitle ? ` — ${escapeHtml(productTitle)}` : ""}</h3>
       <div id="auctionModalAlert"></div>
       <form id="auctionModalForm" novalidate>
@@ -917,7 +916,7 @@ async function renderWishlist(content) {
     }
     document.getElementById("wishlistItems").innerHTML = `
       <div class="table-wrapper animate-on-scroll">          <table class="table">
-            <caption class="mt-2 text-muted small" style="caption-side:bottom">${t("dash.wishlist")}</caption>
+            <caption class="mt-2 text-muted small caption-meta">${t("dash.wishlist")}</caption>
             <thead><tr><th scope="col">${t("cart.product")}</th><th scope="col">${t("cart.price")}</th><th scope="col"></th></tr></thead>
           <tbody>${items
             .map(
@@ -1162,9 +1161,7 @@ function renderProfile(content, user) {
           fullName: nameInput.value.trim(),
           phone: phoneInput.value.trim(),
         });
-        console.log('[PFP] Dashboard PUT /users/profile response:', data);
         localStorage.setItem("user", JSON.stringify(data.user || data));
-        console.log('[PFP] Dashboard saved to localStorage:', data.user || data);
         updateNavbar();
         showToast(t("dash.profileUpdated"), "success");
       } catch (err) {

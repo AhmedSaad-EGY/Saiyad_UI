@@ -102,7 +102,7 @@ export default async function renderShipping(container) {
         <button class="btn btn-primary btn-sm" x-show="!showForm" @click="showForm = true" x-cloak><i class="fas fa-plus" aria-hidden="true"></i> ${t('shipping.addNew')}</button>
       </div>
 
-      <div class="card" x-show="showForm" style="max-width:480px;margin-top:16px" x-transition:enter="transition-fade" x-transition:enter-start="op-0" x-transition:enter-end="op-100" x-cloak>
+      <div class="card mw-lg" x-show="showForm" style="margin-top:16px" x-transition:enter="transition-fade" x-transition:enter-start="op-0" x-transition:enter-end="op-100" x-cloak>
         <div class="card-header">
           <h3 class="mb-0" x-text="editingId ? $t('shipping.editAddress') : $t('shipping.addNew')"></h3>
         </div>
@@ -144,13 +144,13 @@ export default async function renderShipping(container) {
       <div class="mt-4">
         <template x-if="loading">
           <div class="skeleton-grid skeleton-shimmer">
-            <div class="skeleton-card"><div class="skeleton-card-body"><div class="skeleton skeleton-title"></div><div class="skeleton skeleton-text" style="width:30%"></div><div class="skeleton skeleton-text short"></div></div></div>
-            <div class="skeleton-card"><div class="skeleton-card-body"><div class="skeleton skeleton-title"></div><div class="skeleton skeleton-text" style="width:30%"></div><div class="skeleton skeleton-text short"></div></div></div>
+            <div class="skeleton-card"><div class="skeleton-card-body"><div class="skeleton skeleton-title"></div><div class="skeleton skeleton-text xshort"></div><div class="skeleton skeleton-text short"></div></div></div>
+            <div class="skeleton-card"><div class="skeleton-card-body"><div class="skeleton skeleton-title"></div><div class="skeleton skeleton-text xshort"></div><div class="skeleton skeleton-text short"></div></div></div>
           </div>
         </template>
         <template x-if="!loading && addresses.length === 0">
           <div class="empty-state">
-            <div class="empty-state-visual mb-3"><i class="fas fa-truck text-muted" style="font-size:3.5rem" aria-hidden="true"></i></div>
+            <div class="empty-state-visual mb-3"><i class="fas fa-truck text-muted fs-hero" aria-hidden="true"></i></div>
             <h3>${t('shipping.noAddresses')}</h3>
             <button class="btn btn-primary mt-3" @click="showForm = true">${t('shipping.addNew')}</button>
           </div>
@@ -161,7 +161,7 @@ export default async function renderShipping(container) {
               <div class="card card-sm" style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-direction:row">
                 <div>
                   <strong x-text="a.fullName"></strong><br>
-                  <span style="color:var(--text-secondary);font-size:0.88rem" x-text="a.addressLine + ', ' + a.city + (a.postalCode ? ', ' + a.postalCode : '')"></span><br>
+                  <span class="text-secondary-sm" x-text="a.addressLine + ', ' + a.city + (a.postalCode ? ', ' + a.postalCode : '')"></span><br>
                   <span style="color:var(--text-muted);font-size:0.82rem" x-text="a.phone"></span>
                 </div>
                 <div class="d-flex gap-2">

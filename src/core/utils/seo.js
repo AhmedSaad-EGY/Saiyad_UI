@@ -16,7 +16,7 @@ import { t } from '../i18n/index.js';
  */
 function setPageMeta(title, description, noIndex = false) {
   document.title = title
-    ? title + " — Sayiad"
+    ? `${title} — Sayiad`
     : "Sayiad - Fishing Marketplace & Auctions";
 
   const desc = description || t('home.metaDesc');

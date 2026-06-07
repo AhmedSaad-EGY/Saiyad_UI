@@ -4,7 +4,7 @@ import { isAuthenticated, getUser, hasAnyRole, requireAuth, updateCartBadge } fr
 import { setPageMeta } from '../core/utils/seo.js';
 import { SELLER_ROLES } from '../shared/constants/roles.js';
 import { router, registerRouteCleanup } from '../core/router/index.js';
-import { showError, showLoading, escapeHtml, progressiveImg, observeAnimations, fadeInContent, animate, safeSetHTML } from '../core/utils/dom.js';
+import { showError, showLoading, escapeHtml, observeAnimations, fadeInContent, animate, safeSetHTML } from '../core/utils/dom.js';
 import { formatPrice, formatDate, statusClass, tStatus, tCondition, renderStars } from '../core/utils/format.js';
 import { renderProductCards, openLightbox, trackRecentlyViewed, showToast } from '../core/utils/ui.js';
 import { createModal } from '../shared/components/modal.js';
@@ -66,7 +66,7 @@ export default async function renderProductDetail(container, route, params) {
           <div class="detail-price">${formatPrice(p.price)}</div>
           
           <div class="stock-indicator">
-            <span class="stock-label stock-${stockLevel}">${p.stockQuantity !== null ? p.stockQuantity + ' ' + t("products.inStock") : t("common.N/A")}</span>
+            <span class="stock-label stock-${stockLevel}">${p.stockQuantity !== null ? `${p.stockQuantity} ${t("products.inStock")}` : t("common.N/A")}</span>
             <div class="stock-bar"><div class="stock-bar-fill stock-${stockLevel}" style="width:${stockPct}%"></div></div>
           </div>
 
@@ -114,7 +114,7 @@ export default async function renderProductDetail(container, route, params) {
           </a>` : ""}
 
           <!-- Reviews section -->
-          <div class="mt-4 pt-4" style="border-top:1px solid var(--border)" id="reviewsSection">
+          <div class="mt-4 pt-4 border-divider-top" id="reviewsSection">
             <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
               <h3><i class="fas fa-star text-warning" aria-hidden="true"></i> ${t("review.title")} ${avgRating ? `(${renderStars(avgRating)} ${avgRating.toFixed(1)})` : ""}</h3>
               <div class="d-flex gap-2">
@@ -221,7 +221,7 @@ export default async function renderProductDetail(container, route, params) {
         url: window.location.href,
       };
       if (navigator.share) {
-        try { await navigator.share(shareData); } catch (e) { /* user cancelled share dialog */ }
+        try { await navigator.share(shareData); } catch (_e) { /* user cancelled share dialog */ }
       } else {
         navigator.clipboard.writeText(window.location.href);
         showToast(t("common.linkCopied"), "success");
@@ -249,12 +249,10 @@ export default async function renderProductDetail(container, route, params) {
         if (y > rect.height - lensH / 2) { y = rect.height - lensH / 2; }
         if (y < lensH / 2) { y = lensH / 2; }
         
-        magLens.style.left = (x - lensW / 2) + "px";
-        magLens.style.top = (y - lensH / 2) + "px";
+        magLens.style.left = `${x - lensW / 2}px`;
+        magLens.style.top = `${y - lensH / 2}px`;
         
         // Set background image and position for zoom effect (2x zoom)
-        const cx = mainImg.offsetWidth / lensW * 2;
-        const cy = mainImg.offsetHeight / lensH * 2;
         magLens.style.backgroundImage = `url('${escapeHtml(p.primaryImageUrl)}')`;
         magLens.style.backgroundSize = `${mainImg.offsetWidth * 2}px ${mainImg.offsetHeight * 2}px`;
         magLens.style.backgroundPosition = `-${(x * 2) - lensW / 2}px -${(y * 2) - lensH / 2}px`;
@@ -280,11 +278,10 @@ export default async function renderProductDetail(container, route, params) {
         const active = currentIndex >= 0 ? currentIndex : 0;
         const next = dx < 0 ? Math.min(active + 1, allImages.length - 1) : Math.max(active - 1, 0);
         if (next !== active) {
-          const mainImg = document.getElementById("mainImg");
           if (mainImg) {
             mainImg.src = allImages[next];
-            const magLens = document.getElementById("magLens");
-            if (magLens) magLens.style.backgroundImage = `url('${escapeHtml(allImages[next])}')`;
+            if (magLens) magLens.style.backgroundImage
+            magLens.style.backgroundImage = `url('${escapeHtml(allImages[next])}')`;
           }
         }
       }, { passive: true });
@@ -396,7 +393,7 @@ export default async function renderProductDetail(container, route, params) {
     document.getElementById("startAuctionBtn")?.addEventListener("click", () => {
       const minEnd = new Date(Date.now() + 3600000).toISOString().slice(0, 16);
       const { close, overlay } = createModal(`
-          <div style="max-width:460px">
+          <div class="mw-md">
           <h3><i class="fas fa-gavel" aria-hidden="true"></i> ${t("auctions.title")} — ${escapeHtml(p.title)}</h3>
           <div id="auctionModalAlert"></div>
           <form id="auctionModalForm" novalidate>
@@ -530,7 +527,6 @@ export default async function renderProductDetail(container, route, params) {
             s.style.color = "var(--text-muted)";
             s.style.transform = "scale(1)";
           });
-          const reviewsList = document.getElementById("reviewsList");
           const user = getUser();
           const noReviewsMsg = reviewsList?.querySelector("p");
           if (noReviewsMsg) noReviewsMsg.remove();

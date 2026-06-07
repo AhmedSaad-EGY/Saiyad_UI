@@ -499,7 +499,7 @@ setupGlobalErrorHandlers();
     const close = document.createElement('button');
     close.innerHTML = '&times;';
     close.setAttribute('aria-label', 'Dismiss');
-    close.style.cssText = 'background:none;border:none;color:var(--text-inverse);font-size:1.2rem;cursor:pointer;padding:0 4px;line-height:1;opacity:0.8;margin-left:auto';
+    close.className = 'sw-close-btn';
     close.addEventListener('click', () => { el.remove(); banner = null; });
     el.innerHTML = `<i class="fas fa-plug"></i> <span>${t('common.offline')}</span>`;
     el.appendChild(close);

@@ -70,7 +70,7 @@ Alpine.data('loginForm', () => ({
       } else {
         this.error = err.message;
         // Track failed attempts
-        let failCount = parseInt(sessionStorage.getItem('sayiadLoginFails') || '0') + 1;
+        const failCount = parseInt(sessionStorage.getItem('sayiadLoginFails') || '0') + 1;
         sessionStorage.setItem('sayiadLoginFails', failCount);
 
         if (failCount >= 5) {
