@@ -784,8 +784,8 @@ body.nav-open .navbar {
 }
 
 .footer-social-link {
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   border: 1px solid var(--border);
   display: flex;
@@ -802,13 +802,6 @@ body.nav-open .navbar {
   border-color: var(--primary);
   color: var(--text-inverse);
   transform: translateY(-2px);
-}
-
-@media (hover: none) and (pointer: coarse) {
-  .footer-social-link {
-    width: 44px;
-    height: 44px;
-  }
 }
 
 .footer-heading {
@@ -1275,7 +1268,6 @@ body.nav-open .navbar {
     border-radius: var(--radius-lg);
     background: var(--glass-bg);
     border: 1px solid var(--border);
-    -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
   }
 

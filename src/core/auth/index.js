@@ -101,6 +101,31 @@ export function updateNavbar() {
   if (footerShipping) footerShipping.classList.toggle("d-none", !isEcom);
   if (authed) startNotifPolling();
   else stopNotifPolling();
+  injectNavIcons();
+}
+
+const _navIconMap = {
+  "#/": "fa-home",
+  "#/products": "fa-store",
+  "#/auctions": "fa-gavel",
+  "#/cart": "fa-shopping-cart",
+  "#/dashboard": "fa-tachometer-alt",
+  "#/profile": "fa-user",
+  "#/shipping": "fa-map-marker-alt",
+  "#/admin": "fa-shield-alt",
+};
+
+function injectNavIcons() {
+  document.querySelectorAll(".navbar-nav .nav-link").forEach((link) => {
+    const href = link.getAttribute("href");
+    const iconClass = _navIconMap[href];
+    if (iconClass && !link.querySelector(".nav-icon")) {
+      const icon = document.createElement("i");
+      icon.className = `fas ${iconClass} nav-icon`;
+      icon.setAttribute("aria-hidden", "true");
+      link.insertBefore(icon, link.firstChild);
+    }
+  });
 }
 
 let _cartCount = null;

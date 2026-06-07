@@ -1298,7 +1298,6 @@ input[type="date"].form-input::-webkit-datetime-edit-year-field:focus {
   position: relative;
   background: var(--card-bg);
   padding: var(--space-1);
-  -webkit-overflow-scrolling: touch;
 }
 
 /* Fade-out indicator for horizontal overflow */
@@ -2392,7 +2391,6 @@ body.modal-open {
   overflow-x: auto;
   padding: 8px 4px 16px;
   scroll-snap-type: x mandatory;
-  -webkit-overflow-scrolling: touch;
   scrollbar-width: thin;
 }
 
@@ -3181,7 +3179,6 @@ body.modal-open {
   border-radius: var(--radius-lg);
   padding: var(--space-1);
   overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
 }
 
 .cart-table {

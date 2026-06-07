@@ -179,29 +179,7 @@ navOverlay?.addEventListener("touchstart", (e) => {
   if (e.target === navOverlay) closeDrawer();
 }, { passive: true });
 
-// Inject nav icons into drawer links
-(function injectNavIcons() {
-  const iconMap = {
-    "#/": "fa-home",
-    "#/products": "fa-store",
-    "#/auctions": "fa-gavel",
-    "#/cart": "fa-shopping-cart",
-    "#/dashboard": "fa-tachometer-alt",
-    "#/profile": "fa-user",
-    "#/shipping": "fa-map-marker-alt",
-    "#/admin": "fa-shield-alt",
-  };
-  document.querySelectorAll(".navbar-nav .nav-link").forEach((link) => {
-    const href = link.getAttribute("href");
-    const iconClass = iconMap[href];
-    if (iconClass && !link.querySelector(".nav-icon")) {
-      const icon = document.createElement("i");
-      icon.className = `fas ${iconClass} nav-icon`;
-      icon.setAttribute("aria-hidden", "true");
-      link.insertBefore(icon, link.firstChild);
-    }
-  });
-})();
+
 
 document.addEventListener("keydown", (e) => {
   if (
