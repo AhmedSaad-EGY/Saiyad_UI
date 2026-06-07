@@ -25,3 +25,7 @@ node_modules/
 
 # Build output
 dist/
+
+# Archives
+*.zip
+*.gz
