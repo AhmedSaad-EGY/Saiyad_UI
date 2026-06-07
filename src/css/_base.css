@@ -2,7 +2,6 @@
    BASE — Reset, document root, typography, global utilities
    ============================================================ */
 @layer reset {
-
   *,
   *::before,
   *::after {
@@ -13,7 +12,6 @@
 }
 
 @layer base {
-
   /* ── Document root ─────────────────────────────────────── */
   html {
     scroll-behavior: smooth;
@@ -35,7 +33,7 @@
     text-rendering: optimizeLegibility;
     transition:
       background-color var(--theme-ease),
-      color var(--theme-ease);
+      color            var(--theme-ease);
   }
 
   /*
@@ -55,12 +53,7 @@
   }
 
   /* ── Headings ──────────────────────────────────────────── */
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
+  h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-heading);
     line-height: var(--leading-tight);
     font-weight: var(--weight-bold);
@@ -76,12 +69,7 @@
   }
 
   /* ── Anchor scroll offset for fixed navbar ─────────────── */
-  h2[id],
-  h3[id],
-  h4[id],
-  h5[id],
-  h6[id],
-  section[id] {
+  h2[id], h3[id], h4[id], h5[id], h6[id], section[id] {
     scroll-margin-top: 88px;
   }
 
@@ -113,19 +101,13 @@
     transition: top 0.2s ease;
   }
 
-  .skip-link:focus {
-    top: 0;
-  }
+  .skip-link:focus { top: 0; }
 
   /* ── Alpine.js FOUC prevention ─────────────────────────── */
-  [x-cloak] {
-    display: none !important;
-  }
+  [x-cloak] { display: none !important; }
 
   /* ── Global hidden utility ─────────────────────────────── */
-  .hidden {
-    display: none !important;
-  }
+  .hidden { display: none !important; }
 
   /* ── Links ─────────────────────────────────────────────── */
   a {
@@ -133,32 +115,23 @@
     text-decoration: none;
   }
 
-  a:hover {
-    color: var(--primary-dark);
-  }
+  a:hover { color: var(--primary-dark); }
 
   /* ── Form element font inheritance ─────────────────────── */
-  button,
-  input,
-  optgroup,
-  select,
-  textarea {
+  button, input, optgroup, select, textarea {
     font-family: inherit;
     font-size: 100%;
     line-height: inherit;
   }
 
   /* ── Touch: fast tap, no callout ───────────────────────── */
-  a,
-  button,
-  [role="button"] {
+  a, button, [role="button"] {
     touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
   }
 
   /* ── Images & media ─────────────────────────────────────── */
-  img,
-  svg {
+  img, svg {
     max-width: 100%;
     display: block;
   }
@@ -174,20 +147,14 @@
 
   /* ── Responsive container adjustments ──────────────────── */
   @media (max-width: 767px) {
-    .container {
-      padding: 0 var(--space-4);
-    }
+    .container { padding: 0 var(--space-4); }
   }
 
   @media (max-width: 480px) {
-    .container {
-      padding: 0 var(--space-4);
-    }
+    .container { padding: 0 var(--space-4); }
   }
 
   @media (max-width: 360px) {
-    .container {
-      padding: 0 var(--space-3);
-    }
+    .container { padding: 0 var(--space-3); }
   }
 }
