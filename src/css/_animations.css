@@ -1,141 +1,329 @@
 /* ============================================================
-   ANIMATION UTILITIES
-   Animate.css is loaded from CDN in index.html.
-   This file provides structural helpers and project-specific
-   skeleton/shimmer styles only; no page-level keyframes.
+   ANIMATIONS
+   Animate.css is loaded from CDN for page-level utility classes.
+   This file covers:
+     1. Scroll-reveal base
+     2. Project entrance keyframes
+     3. Skeleton shimmer
+     4. Alpine.js transition helpers
    ============================================================ */
+@layer base {
 
-/* ── Scroll-reveal base ───────────────────────────────────── */
-.animate-on-scroll {
-  opacity: 0;
+  /* ── Scroll-reveal base ──────────────────────────────────── */
+  .animate-on-scroll {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  .animate-on-scroll.visible,
+  .animate__animated {
+    opacity: 1;
+    transform: translateY(0);
+    transition:
+      opacity var(--duration-slow) var(--ease-out),
+      transform var(--duration-slow) var(--ease-out);
+  }
+
+  /* Scroll-reveal variants */
+  .animate-on-scroll[data-anim="fade-left"] {
+    transform: translateX(-20px);
+  }
+
+  .animate-on-scroll[data-anim="fade-right"] {
+    transform: translateX(20px);
+  }
+
+  .animate-on-scroll[data-anim="zoom-in"] {
+    transform: scale(0.94);
+  }
+
+  .animate-on-scroll[data-anim="fade-left"].visible,
+  .animate-on-scroll[data-anim="fade-right"].visible,
+  .animate-on-scroll[data-anim="zoom-in"].visible {
+    transform: none;
+  }
+
+  /* Staggered children */
+  .animate-stagger>* {
+    opacity: 0;
+    transform: translateY(12px);
+    transition:
+      opacity var(--duration-slow) var(--ease-out),
+      transform var(--duration-slow) var(--ease-out);
+  }
+
+  .animate-stagger.visible>*:nth-child(1) {
+    transition-delay: 0ms;
+  }
+
+  .animate-stagger.visible>*:nth-child(2) {
+    transition-delay: 60ms;
+  }
+
+  .animate-stagger.visible>*:nth-child(3) {
+    transition-delay: 120ms;
+  }
+
+  .animate-stagger.visible>*:nth-child(4) {
+    transition-delay: 180ms;
+  }
+
+  .animate-stagger.visible>*:nth-child(5) {
+    transition-delay: 240ms;
+  }
+
+  .animate-stagger.visible>*:nth-child(n+6) {
+    transition-delay: 300ms;
+  }
+
+  .animate-stagger.visible>* {
+    opacity: 1;
+    transform: none;
+  }
+
+
+  /* ============================================================
+     KEYFRAMES — reusable entrance animations
+     ============================================================ */
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fade-down {
+    from {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slide-in-right {
+    from {
+      opacity: 0;
+      transform: translateX(30px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes slide-in-left {
+    from {
+      opacity: 0;
+      transform: translateX(-30px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes scale-in {
+    from {
+      opacity: 0;
+      transform: scale(0.92);
+    }
+
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @keyframes pulse-ring {
+    0% {
+      transform: scale(1);
+      opacity: 0.6;
+    }
+
+    50% {
+      transform: scale(1.15);
+      opacity: 0;
+    }
+
+    100% {
+      transform: scale(1);
+      opacity: 0;
+    }
+  }
+
+  /* Utility animation classes */
+  .anim-fade-in {
+    animation: fade-in var(--duration-normal) var(--ease-out) both;
+  }
+
+  .anim-fade-up {
+    animation: fade-up var(--duration-slow) var(--ease-out) both;
+  }
+
+  .anim-scale-in {
+    animation: scale-in var(--duration-slow) var(--ease-out) both;
+  }
+
+  .anim-spin {
+    animation: spin 1s linear infinite;
+  }
+
+
+  /* ============================================================
+     SKELETON SHIMMER
+     ============================================================ */
+  @keyframes skeleton-scan {
+    0% {
+      transform: translateX(-100%);
+    }
+
+    100% {
+      transform: translateX(100%);
+    }
+  }
+
+  .skeleton {
+    position: relative;
+    overflow: hidden;
+    background: var(--border);
+    border-radius: var(--radius);
+    color: transparent;
+    user-select: none;
+    pointer-events: none;
+    contain: paint;
+  }
+
+  .skeleton::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg,
+        transparent 25%,
+        var(--primary-ghost) 50%,
+        transparent 75%);
+    animation: skeleton-scan 1.8s ease-in-out infinite;
+  }
+
+  /* Skeleton building blocks */
+  .skeleton-text {
+    height: 12px;
+    background: var(--skeleton-bg);
+    border-radius: var(--radius-sm);
+    margin-bottom: var(--space-2);
+    width: 80%;
+  }
+
+  .skeleton-text.short {
+    width: 50%;
+  }
+
+  .skeleton-text.xshort {
+    width: 30%;
+  }
+
+  .skeleton-title {
+    height: 18px;
+    margin-bottom: var(--space-3);
+    width: 60%;
+  }
+
+  .skeleton-image {
+    height: 200px;
+    margin-bottom: var(--space-3);
+    border-radius: var(--radius);
+  }
+
+  /* Skeleton layouts */
+  .skeleton-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: var(--space-6);
+  }
+
+  .skeleton-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+
+  .skeleton-card-body {
+    padding: 16px 18px;
+  }
+
+  .skeleton-detail {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-10);
+  }
+
+  .skeleton-detail .skeleton-image {
+    height: 380px;
+  }
+
+  .skeleton-row {
+    height: 48px;
+    margin-bottom: 4px;
+  }
+
+  .skeleton-row-header {
+    height: 40px;
+    margin-bottom: 8px;
+  }
+
+  .skeleton-form .skeleton-text {
+    margin-bottom: 6px;
+  }
+
+  .skeleton-form .skeleton-input {
+    height: 42px;
+    margin-bottom: var(--space-4);
+  }
+
+
+  /* ============================================================
+     ALPINE.JS TRANSITION HELPERS
+     ============================================================ */
+  .transition-fade {
+    transition: opacity var(--duration-normal) var(--ease-out),
+      transform var(--duration-normal) var(--ease-out);
+  }
+
+  .op-0 {
+    opacity: 0;
+  }
+
+  .op-100 {
+    opacity: 1;
+  }
+
 }
 
-.animate-on-scroll.visible,
-.animate__animated {
-  opacity: 1;
-}
-
-/* ============================================================
-   SKELETON SHIMMER
-   Provides a loading placeholder with an animated scan line.
-   The keyframe runs only when the .skeleton class is active —
-   prefers-reduced-motion suppresses animation globally via
-   the @media block in _variables.css.
-   ============================================================ */
-@keyframes skeleton-scan {
-  0%   { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
-}
-
-.skeleton {
-  position: relative;
-  overflow: hidden;
-  background: var(--border);
-  border-radius: var(--radius);
-  color: transparent !important;
-  user-select: none;
-  pointer-events: none;
-}
-
-.skeleton::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(90deg,
-      transparent 25%,
-      var(--primary-ghost) 50%,
-      transparent 75%);
-  animation: skeleton-scan 1.8s ease-in-out infinite;
-}
-
-/* ── Skeleton building blocks ─────────────────────────────── */
-.skeleton-text {
-  height: 12px;
-  background: var(--skeleton-bg);
-  border-radius: var(--radius-sm);
-  margin-bottom: var(--space-2);
-  width: 80%;
-}
-
-.skeleton-text.short {
-  width: 50%;
-}
-
-.skeleton-text.xshort {
-  width: 30%;
-}
-
-.skeleton-title {
-  height: 18px;
-  margin-bottom: var(--space-3);
-  width: 60%;
-}
-
-.skeleton-image {
-  height: 200px;
-  margin-bottom: var(--space-3);
-  border-radius: var(--radius);
-}
-
-/* ── Skeleton layouts ─────────────────────────────────────── */
-.skeleton-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: var(--space-6);
-}
-
-.skeleton-card {
-  background: var(--card-bg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-}
-
-.skeleton-card-body {
-  padding: 16px 18px;
-}
-
-.skeleton-detail {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-10);
-}
-
-.skeleton-detail .skeleton-image {
-  height: 380px;
-}
-
-.skeleton-row {
-  height: 48px;
-  margin-bottom: 4px;
-}
-
-.skeleton-row-header {
-  height: 40px;
-  margin-bottom: 8px;
-}
-
-.skeleton-form .skeleton-text {
-  margin-bottom: 6px;
-}
-
-.skeleton-form .skeleton-input {
-  height: 42px;
-  margin-bottom: var(--space-4);
-}
-
-/* ============================================================
-   ALPINE.JS TRANSITION HELPERS
-   Used with x-transition:enter / x-transition:leave directives.
-   ============================================================ */
-.transition-fade {
-  transition: opacity 0.3s ease, transform 0.3s ease;
-}
-
-.op-0 {
-  opacity: 0;
-}
-
-.op-100 {
-  opacity: 1;
-}
+/* end @layer base */
