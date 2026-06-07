@@ -2,6 +2,7 @@ import { t, getCurrentLang } from '../i18n/index.js';
 import { registerRouteCleanup } from '../router/index.js';
 import { formatPrice, tStatus, statusClass } from './format.js';
 import { escapeHtml, renderEmptyState, observeAnimations, animate } from './dom.js';
+import { createModal } from '../../shared/components/modal.js';
 
 export function showToast(msg, type = "info") {
   const existing = document.querySelector(".toast-container");
@@ -34,21 +35,7 @@ export function showToast(msg, type = "info") {
   };
 
   toast.setAttribute("role", "alert");
-  toast.style.cssText = `
-    padding: var(--space-4) var(--space-6);
-    border-radius: var(--radius-md);
-    color: var(--text-inverse);
-    font-weight: 600;
-    font-size: 0.95rem;
-    box-shadow: var(--shadow-lg);
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    min-width: 280px;
-    pointer-events: auto;
-    backdrop-filter: blur(12px);
-    border: 1px solid var(--glass-border, rgba(255,255,255,0.1));
-  `;
+  toast.className = "toast-base";
   toast.style.background = colors[type] || colors.info;
   const iconEl = document.createElement("i");
   iconEl.className = `fas ${icons[type] || icons.info}`;
@@ -59,7 +46,7 @@ export function showToast(msg, type = "info") {
   const closeBtn = document.createElement("button");
   closeBtn.innerHTML = "&times;";
   closeBtn.setAttribute("aria-label", t('common.close'));
-  closeBtn.style.cssText = "background:none;border:none;color:inherit;font-size:1.3rem;cursor:pointer;padding:0 0 0 8px;line-height:1;opacity:0.8;flex-shrink:0";
+  closeBtn.className = "toast-close-btn";
   closeBtn.addEventListener("click", () => closeToast(toast));
   toast.appendChild(iconEl);
   toast.appendChild(textEl);
@@ -95,13 +82,7 @@ export function showConfirm(title, message, options = {}) {
   } = options;
 
   return new Promise((resolve) => {
-    const prevFocus = document.activeElement;
-    const overlay = document.createElement("div");
-    overlay.className = "modal-overlay show confirm-modal-overlay";
-    overlay.setAttribute("role", "alertdialog");
-    overlay.setAttribute("aria-modal", "true");
-
-    overlay.innerHTML = `
+    const { close, overlay } = createModal(`
       <div class="modal modal-confirm" onclick="event.stopPropagation()">
         <div class="confirm-icon ${type}">
           <i class="fas ${icon}"></i>
@@ -112,19 +93,15 @@ export function showConfirm(title, message, options = {}) {
           <button class="btn btn-ghost" id="confirmCancel">${cancelText}</button>
           <button class="btn btn-${type}" id="confirmProceed">${confirmText}</button>
         </div>
-      </div>`;
+      </div>`, { closeOnOverlayClick: false });
 
-    const close = (result) => {
-      overlay.classList.remove("show");
-      setTimeout(() => {
-        overlay.remove();
-        if (prevFocus) prevFocus.focus();
-        resolve(result);
-      }, 200);
+    const finish = (result) => {
+      close();
+      resolve(result);
     };
 
-    overlay.querySelector("#confirmProceed").addEventListener("click", () => close(true));
-    overlay.querySelector("#confirmCancel").addEventListener("click", () => close(false));
+    overlay.querySelector("#confirmProceed").addEventListener("click", () => finish(true));
+    overlay.querySelector("#confirmCancel").addEventListener("click", () => finish(false));
 
     overlay.addEventListener("click", (e) => {
       if (e.target === overlay) {
@@ -133,16 +110,11 @@ export function showConfirm(title, message, options = {}) {
       }
     });
 
-    document.body.appendChild(overlay);
     animate(overlay, 'fadeIn', { duration: '0.2s' });
     setTimeout(() => {
       const proceedBtn = overlay.querySelector("#confirmProceed");
       proceedBtn?.focus();
     }, 50);
-
-    overlay.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") close(false);
-    });
   });
 }
 
@@ -224,14 +196,6 @@ export function openQuickView(product) {
   const existing = document.querySelector(".modal-overlay.show");
   if (existing) existing.remove();
 
-  const prevFocus = document.activeElement;
-  const overlay = document.createElement("div");
-  overlay.className = "modal-overlay show";
-  document.body.classList.add("modal-open");
-  overlay.setAttribute("role", "dialog");
-  overlay.setAttribute("aria-modal", "true");
-  overlay.setAttribute("aria-label", "Quick view");
-
   const title = product.title || product.product?.title || t('common.product');
   const price = formatPrice(
     product.price || product.currentHighestBid || product.startingPrice,
@@ -245,8 +209,7 @@ export function openQuickView(product) {
       ? `#/auction-detail?id=${id}`
       : `#/product-detail?id=${id}`;
 
-  overlay.innerHTML = `
-    <div class="modal" onclick="event.stopPropagation()">
+  const { close, overlay } = createModal(`
       <div class="d-flex gap-4 flex-wrap">
         ${image ? `<img src="${escapeHtml(image)}" alt="${escapeHtml(title)}" loading="lazy" class="flex-shrink-0" style="width:180px;height:180px;object-fit:cover;border-radius:var(--radius-md)">` : ""}
         <div style="flex:1;min-width:200px">
@@ -258,41 +221,9 @@ export function openQuickView(product) {
             <button class="btn btn-ghost" onclick="this.closest('.modal-overlay').remove()">${t("common.close")}</button>
           </div>
         </div>
-      </div>
-    </div>`;
+      </div>`, { ariaLabel: "Quick view" });
 
-  function focusTrap(e) {
-    const focusable = overlay.querySelectorAll('a, button, input, select, textarea, [tabindex]:not([tabindex="-1"])');
-    if (!focusable.length) return;
-    const first = focusable[0];
-    const last = focusable[focusable.length - 1];
-    if (e.key === "Tab") {
-      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
-      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
-    }
-  }
-  function closeQuickView() {
-    document.body.classList.remove("modal-open");
-    overlay.remove();
-    document.removeEventListener("keydown", onQuickViewKey);
-    document.removeEventListener("keydown", focusTrap);
-    if (prevFocus && typeof prevFocus.focus === "function") prevFocus.focus();
-  }
-  function onQuickViewKey(e) {
-    if (e.key === "Escape") closeQuickView();
-  }
-  overlay.addEventListener("click", (e) => {
-    if (e.target === overlay) closeQuickView();
-  });
-  document.addEventListener("keydown", onQuickViewKey);
-  document.addEventListener("keydown", focusTrap);
-  registerRouteCleanup(() => {
-    document.body.classList.remove("modal-open");
-    overlay.remove();
-    document.removeEventListener("keydown", onQuickViewKey);
-    document.removeEventListener("keydown", focusTrap);
-  });
-  document.body.appendChild(overlay);
+  registerRouteCleanup(() => close());
   animate(overlay, 'fadeIn', { duration: '0.2s' });
   const qvModal = overlay.querySelector('.modal');
   if (qvModal) animate(qvModal, 'zoomIn', { duration: '0.25s' });

@@ -111,8 +111,8 @@ export default function renderResetPassword(container) {
                 <input :type="showPassword ? 'text' : 'password'" class="form-input form-control" id="resetPassword" name="password" x-model="password" @input="computeStrength()" required minlength="8">
                 <button type="button" class="toggle-password" @click="showPassword = !showPassword" :aria-label="showPassword ? $t('auth.hidePassword') : $t('auth.showPassword')"><i :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i></button>
               </div>
-              <div class="password-strength"><div class="password-strength-bar" :class="'password-strength-bar ' + strengthCls"></div></div>
-              <div class="password-strength-text" x-text="strengthLabel"></div>
+              <div class="pw-strength"><div class="pw-strength__track"><div class="pw-strength__fill" :class="'pw-strength__fill ' + strengthCls"></div></div></div>
+              <span class="pw-strength__label" x-text="strengthLabel"></span>
             </div>
             <div class="form-group">
               <label class="form-label" for="resetConfirmPw">${t("auth.confirmNewPassword")}</label>

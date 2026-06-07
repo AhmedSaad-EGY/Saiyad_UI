@@ -1193,8 +1193,8 @@ function renderChangePassword(content) {
           <div class="password-wrapper">
             <input type="password" class="form-input form-control" id="newPassword" name="newPassword" required minlength="6" autocomplete="new-password">
           </div>
-          <div class="password-strength" id="dashStrength"><div class="password-strength-bar" id="dashStrengthBar"></div></div>
-          <div class="password-strength-text" id="dashStrengthText"></div>
+          <div class="pw-strength" id="dashStrength"><div class="pw-strength__track"><div class="pw-strength__fill" id="dashStrengthBar"></div></div></div>
+          <span class="pw-strength__label" id="dashStrengthText"></span>
         </div>
         <div id="passwordAlert"></div>      <button type="submit" class="btn btn-primary" id="passwordSubmit">${t("dash.changePwBtn")}</button>
     </form>
@@ -1215,12 +1215,12 @@ function renderChangePassword(content) {
     const bar = document.getElementById("dashStrengthBar");
     const txt = document.getElementById("dashStrengthText");
     if (!pw) {
-      bar.className = "password-strength-bar strength-empty";
+      bar.className = "pw-strength__fill";
       txt.textContent = "";
       return;
     }
     const result = getPasswordStrengthResult(pw);
-    bar.className = `password-strength-bar ${  result.cls}`;
+    bar.className = `pw-strength__fill`;
     txt.textContent = t(result.label);
     txt.style.color = getComputedStyle(bar).backgroundColor;
   });

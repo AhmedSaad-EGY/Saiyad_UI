@@ -18,12 +18,12 @@
   --space-4: 16px;
   --space-5: 20px;
   --space-6: 24px;
-  --space-7: 28px;
+
+
   --space-8: 32px;
   --space-10: 40px;
   --space-12: 48px;
-  --space-14: 56px;
-  --space-16: 64px;
+
 
   /* ── Sizing constants ─────────────────────────────────────── */
   --navbar-height: 60px;
@@ -165,16 +165,20 @@
   --shadow-glass: 0 8px 32px oklch(0.42 0.22 240 / 0.10);
 
   /* ── Z-index layers ───────────────────────────────────────── */
-  --z-dropdown: 1000;
+
+
   --z-navbar: 1000;
-  --z-sticky: 1000;
+
+
   --z-drawer: 1050;
   --z-cart-bar: 1080;
   --z-lightbox: 3000;
   --z-quickview: 3000;
   --z-overlay: 9999;
-  --z-ptr: 9999;
-  --z-swipe: 99999;
+
+
+
+
   --z-toast: 10000;
   --z-skip-link: 10000;
 

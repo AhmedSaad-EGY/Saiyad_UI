@@ -7,6 +7,7 @@ import { router, registerRouteCleanup } from '../core/router/index.js';
 import { showError, showLoading, escapeHtml, progressiveImg, observeAnimations, fadeInContent, animate, safeSetHTML } from '../core/utils/dom.js';
 import { formatPrice, formatDate, statusClass, tStatus, tCondition, renderStars } from '../core/utils/format.js';
 import { renderProductCards, openLightbox, trackRecentlyViewed, showToast } from '../core/utils/ui.js';
+import { createModal } from '../shared/components/modal.js';
 
 export default async function renderProductDetail(container, route, params) {
   setPageMeta(t('productDetail.title'));
@@ -394,15 +395,8 @@ export default async function renderProductDetail(container, route, params) {
     // Start Auction button on product detail
     document.getElementById("startAuctionBtn")?.addEventListener("click", () => {
       const minEnd = new Date(Date.now() + 3600000).toISOString().slice(0, 16);
-      const prevFocus = document.activeElement;
-      const overlay = document.createElement("div");
-      overlay.className = "modal-overlay show";
-      document.body.classList.add("modal-open");
-      overlay.setAttribute("role", "dialog");
-      overlay.setAttribute("aria-modal", "true");
-      overlay.setAttribute("aria-label", t("product.startAuction"));
-      overlay.innerHTML = `
-        <div class="modal" onclick="event.stopPropagation()" style="max-width:460px">
+      const { close, overlay } = createModal(`
+          <div style="max-width:460px">
           <h3><i class="fas fa-gavel" aria-hidden="true"></i> ${t("auctions.title")} — ${escapeHtml(p.title)}</h3>
           <div id="auctionModalAlert"></div>
           <form id="auctionModalForm" novalidate>
@@ -427,14 +421,9 @@ export default async function renderProductDetail(container, route, params) {
               <button type="submit" class="btn btn-primary" id="auctionModalSubmit"><i class="fas fa-gavel" aria-hidden="true"></i> ${t("auctions.title")}</button>
             </div>
           </form>
-        </div>`;
-      overlay.addEventListener("click", (e) => { if (e.target === overlay) close(); });
-      document.body.appendChild(overlay);
+        </div>`, { ariaLabel: t("product.startAuction") });
       animate(overlay, 'fadeIn', { duration: '0.2s' });
-      function close() { document.body.classList.remove("modal-open"); overlay.remove(); document.removeEventListener("keydown", onKey); if (prevFocus?.focus) prevFocus.focus(); }
-      function onKey(e) { if (e.key === "Escape") close(); }
-      document.addEventListener("keydown", onKey);
-      registerRouteCleanup(() => { document.body.classList.remove("modal-open"); document.removeEventListener("keydown", onKey); if (overlay?.isConnected) overlay.remove(); });
+      registerRouteCleanup(() => close());
       document.getElementById("auctionModalCancel").addEventListener("click", close);
       document.getElementById("auctionModalForm").addEventListener("submit", async (e) => {
         e.preventDefault();

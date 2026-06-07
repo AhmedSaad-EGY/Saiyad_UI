@@ -444,53 +444,6 @@
 }
 
 /* Password strength meter */
-.password-strength {
-  height: 4px;
-  border-radius: 2px;
-  background: var(--border);
-  margin-top: 6px;
-  overflow: hidden;
-}
-
-.password-strength-bar {
-  height: 100%;
-  width: 0;
-  border-radius: 2px;
-  transition: width 0.3s ease, background 0.3s ease;
-}
-
-.password-strength-text {
-  font-size: 0.78rem;
-  margin-top: 3px;
-  min-height: 1.2em;
-}
-
-.password-strength-bar.very-weak {
-  width: 20%;
-  background: var(--danger);
-}
-
-.password-strength-bar.weak {
-  width: 25%;
-  background: var(--danger);
-}
-
-.password-strength-bar.fair {
-  width: 50%;
-  background: var(--warning);
-}
-
-.password-strength-bar.strong {
-  width: 75%;
-  background: var(--success);
-}
-
-.password-strength-bar.very-strong,
-.strength-strong {
-  width: 100%;
-  background: var(--success);
-}
-
 /* ── Date input ─────────────────────────────────────────────── */
 input[type="date"].form-input {
   appearance: none;
@@ -3937,11 +3890,6 @@ body.modal-open {
     font-size: var(--text-sm);
   }
 
-  .footer-grid {
-    grid-template-columns: 1fr;
-    gap: var(--space-5);
-  }
-
   .footer-tagline {
     max-width: 100%;
   }
@@ -3965,6 +3913,70 @@ body.modal-open {
     padding: 4px 10px;
     align-self: flex-start;
   }
+}
+
+/* ── Banner & toast utility classes (extracted from inline styles) ── */
+.offline-banner,
+.online-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100000;
+  text-align: center;
+  padding: 10px 16px;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.offline-banner { background: var(--danger); color: var(--text-inverse); font-weight: 500; }
+.online-banner { background: var(--success); color: var(--text-inverse); font-weight: 600; }
+.sw-update-banner {
+  position: fixed;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 99999;
+  background: var(--card-bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg, 12px);
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  box-shadow: var(--shadow-lg);
+  max-width: 420px;
+  width: calc(100vw - 32px);
+  font-size: 14px;
+}
+.toast-base {
+  padding: var(--space-4) var(--space-6);
+  border-radius: var(--radius-md);
+  color: var(--text-inverse);
+  font-weight: 600;
+  font-size: 0.95rem;
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 280px;
+  pointer-events: auto;
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border, rgba(255,255,255,0.1));
+}
+.toast-close-btn {
+  background: none;
+  border: none;
+  color: inherit;
+  font-size: 1.3rem;
+  cursor: pointer;
+  padding: 0 0 0 8px;
+  line-height: 1;
+  opacity: 0.8;
+  flex-shrink: 0;
 }
 
 @media (max-width: 360px) {

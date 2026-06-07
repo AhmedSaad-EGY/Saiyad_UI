@@ -508,12 +508,7 @@ setupGlobalErrorHandlers();
     el.setAttribute('role', 'alert');
     if (online) {
       el.id = 'onlineBanner';
-      el.style.cssText = [
-        'position:fixed', 'top:0', 'left:0', 'right:0', 'z-index:100000',
-        'background:var(--success)', 'color:var(--text-inverse)',
-        'text-align:center', 'padding:10px 16px',        'font-size:0.875rem', 'font-weight:600',
-        'display:flex', 'align-items:center', 'justify-content:center', 'gap:8px',
-      ].join(';');
+      el.className = 'online-banner';
       el.innerHTML = `<i class="fas fa-wifi"></i> ${t('common.backOnline')}`;
       setTimeout(() => {
         el.addEventListener('animationend', () => el.remove(), { once: true });
@@ -522,13 +517,7 @@ setupGlobalErrorHandlers();
       return el;
     }
     el.id = 'offlineBanner';
-    el.style.cssText = [
-      'position:fixed', 'top:0', 'left:0', 'right:0', 'z-index:100000',
-      'background:var(--danger)', 'color:var(--text-inverse)',
-      'text-align:center', 'padding:10px 16px',
-      'font-size:0.875rem', 'font-weight:500',
-        'display:flex', 'align-items:center', 'justify-content:center', 'gap:8px',
-      ].join(';');
+    el.className = 'offline-banner';
     const close = document.createElement('button');
     close.innerHTML = '&times;';
     close.setAttribute('aria-label', 'Dismiss');
@@ -650,25 +639,7 @@ function showUpdateBanner(worker) {
   banner.id = "swUpdateBanner";
   banner.setAttribute("role", "status");
   banner.setAttribute("aria-live", "polite");
-  banner.style.cssText = [
-    "position:fixed",
-    "bottom:16px",
-    "left:50%",
-    "transform:translateX(-50%)",
-    "z-index:99999",
-    "background:var(--card-bg)",
-    "color:var(--text)",
-    "border:1px solid var(--border)",
-    "border-radius:var(--radius-lg, 12px)",
-    "padding:12px 20px",
-    "display:flex",
-    "align-items:center",
-    "gap:14px",
-    "box-shadow:var(--shadow-lg)",
-    "max-width:420px",
-    "width:calc(100vw - 32px)",
-    "font-size:14px",
-  ].join(";");
+  banner.className = "sw-update-banner";
 
   banner.innerHTML = `
     <i class="fas fa-arrow-up-circle text-primary flex-shrink-0 fs-5"></i>
