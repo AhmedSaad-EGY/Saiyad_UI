@@ -52,7 +52,15 @@
   </noscript>
 
   <!-- Icons & Animations -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link
+    rel="preload"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    as="style"
+    onload="this.onload=null;this.rel='stylesheet'"
+  >
+  <noscript>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  </noscript>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
 
   <!-- App styles -->
@@ -92,7 +100,18 @@
       </a>
 
       <!-- Nav drawer: inline flex row on desktop, off-canvas on mobile -->
-      <div class="nav-drawer" id="navDrawer" aria-label="Site navigation">
+      <div class="nav-drawer" id="navDrawer" aria-label="Site navigation" aria-hidden="true">
+
+        <!-- Drawer header: brand + close (mobile only) -->
+        <div class="drawer-header">
+          <a href="#/" class="drawer-brand" aria-label="Sayiad — Go to Home">
+            <img src="/logo.png" alt="Sayiad logo" class="drawer-brand-img" width="32" height="32">
+            <span class="drawer-brand-text">Sayiad</span>
+          </a>
+          <button type="button" class="drawer-close" id="drawerCloseBtn" aria-label="Close menu">
+            <i class="fas fa-times" aria-hidden="true"></i>
+          </button>
+        </div>
 
         <!-- Primary nav links -->
         <ul class="navbar-nav" id="navLinks" role="list">
@@ -171,6 +190,7 @@
               aria-haspopup="true"
               aria-expanded="false"
               aria-controls="dropdownMenu"
+              aria-label="User menu"
             >
               <i class="fas fa-user" aria-hidden="true"></i>
               <span id="userName">User</span>
@@ -235,12 +255,13 @@
         aria-controls="navDrawer"
       >
         <i class="fas fa-bars" aria-hidden="true"></i>
+        <i class="fas fa-times" aria-hidden="true"></i>
       </button>
 
     </div><!-- /container -->
 
     <!-- Mobile overlay — closes drawer on tap -->
-    <div class="nav-overlay" id="navOverlay" aria-hidden="true"></div>
+    <div class="nav-overlay" id="navOverlay" aria-hidden="true" inert></div>
   </nav>
   <!-- /NAVBAR -->
 

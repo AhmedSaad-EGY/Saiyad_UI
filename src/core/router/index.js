@@ -1,8 +1,12 @@
-import { getUser, updateNavbar } from '../auth/index.js';
-import { t } from '../i18n/index.js';
-import { showLoading, observeAnimations } from '../utils/dom.js';
-import { showErrorFallback } from '../../shared/helpers/errors.js';
-import { routeGuards, routes, routeTitleKeys } from '../../shared/constants/routes.js';
+import { getUser, updateNavbar } from "../auth/index.js";
+import { t } from "../i18n/index.js";
+import { showLoading, observeAnimations } from "../utils/dom.js";
+import { showErrorFallback } from "../../shared/helpers/errors.js";
+import {
+  routeGuards,
+  routes,
+  routeTitleKeys,
+} from "../../shared/constants/routes.js";
 
 let currentRouteKey = null;
 let currentParams = {};
@@ -13,16 +17,16 @@ let _initialLoad = true;
 
 // Close mobile nav drawer when route changes
 function closeDrawer() {
-  const drawer = document.getElementById('navDrawer');
-  const overlay = document.getElementById('navOverlay');
+  const drawer = document.getElementById("navDrawer");
+  const overlay = document.getElementById("navOverlay");
   if (!drawer && !overlay) return;
-  drawer?.classList.remove('open');
-  overlay?.classList.remove('open');
-  document.body.classList.remove('nav-open');
-  const btn = document.getElementById('hamburger');
+  drawer?.classList.remove("open");
+  overlay?.classList.remove("open");
+  document.body.classList.remove("nav-open");
+  const btn = document.getElementById("hamburger");
   if (btn) {
     btn.innerHTML = '<i class="fas fa-bars" aria-hidden="true"></i>';
-    btn.setAttribute('aria-expanded', 'false');
+    btn.setAttribute("aria-expanded", "false");
   }
   btn?.focus();
 }
@@ -32,7 +36,13 @@ export function registerRouteCleanup(fn) {
 }
 
 function runRouteCleanups() {
-  _routeCleanups.forEach(fn => { try { fn(); } catch(e) { console.warn('Cleanup error:', e); } });
+  _routeCleanups.forEach((fn) => {
+    try {
+      fn();
+    } catch (e) {
+      console.warn("Cleanup error:", e);
+    }
+  });
   _routeCleanups = [];
 }
 
@@ -45,23 +55,23 @@ export function navigate(path) {
 export function pushRouteHistory(route) {
   if (_initialLoad) {
     _initialLoad = false;
-    _routeHistory.push(route || '');
+    _routeHistory.push(route || "");
     return;
   }
   const last = _routeHistory[_routeHistory.length - 1];
   if (last === route) return;
-  _routeHistory.push(route || '');
+  _routeHistory.push(route || "");
   if (_routeHistory.length > MAX_HISTORY) _routeHistory.shift();
 }
 
 export function goBack() {
   if (_routeHistory.length < 2) {
-    navigate('');
+    navigate("");
     return;
   }
   _routeHistory.pop(); // remove current
   const prev = _routeHistory.pop(); // get previous
-  navigate(prev != null ? prev : '');
+  navigate(prev != null ? prev : "");
 }
 
 function getRoute() {
@@ -74,10 +84,10 @@ function getRoute() {
 
 export async function router(force = false) {
   // Hide global skeleton and error on any route change
-  const _sk = document.getElementById('globalSkeleton');
-  const _ge = document.getElementById('globalError');
-  if (_sk) _sk.classList.add('hidden');
-  if (_ge) _ge.classList.add('hidden');
+  const _sk = document.getElementById("globalSkeleton");
+  const _ge = document.getElementById("globalError");
+  if (_sk) _sk.classList.add("hidden");
+  if (_ge) _ge.classList.add("hidden");
 
   const { route, params } = getRoute();
   const app = document.getElementById("app");
@@ -89,7 +99,7 @@ export async function router(force = false) {
   if (guard) {
     const user = getUser();
     if (!guard(user)) {
-      window.location.hash = user ? '#/' : '#/login';
+      window.location.hash = user ? "#/" : "#/login";
       return;
     }
   }
@@ -106,8 +116,8 @@ export async function router(force = false) {
         <h2>${t("common.pageNotFound")}</h2>
         <p>${t("common.pageNotFoundDesc")}</p>
         <div class="search-bar mx-auto mt-4" class="justify-content-center" style="max-width:380px">
-          <input type="text" id="notFoundSearch" class="form-input" placeholder="${t('products.search')}" style="max-width:240px">
-          <button class="btn btn-primary" id="notFoundSearchBtn"><i class="fas fa-search"></i> ${t('common.search')}</button>
+          <input type="text" id="notFoundSearch" class="form-input" placeholder="${t("products.search")}" style="max-width:240px">
+          <button class="btn btn-primary" id="notFoundSearchBtn"><i class="fas fa-search"></i> ${t("common.search")}</button>
         </div>
         <div class="d-flex gap-2 justify-content-center flex-wrap mt-2">
           <a href="#/" class="btn btn-primary btn-lg"><i class="fas fa-home"></i> ${t("common.goHome")}</a>
@@ -117,12 +127,18 @@ export async function router(force = false) {
       </div>`;
     observeAnimations();
     setTimeout(() => {
-      const si = document.getElementById('notFoundSearch');
-      const sb = document.getElementById('notFoundSearchBtn');
+      const si = document.getElementById("notFoundSearch");
+      const sb = document.getElementById("notFoundSearchBtn");
       if (si && sb) {
-        const go = () => { const q = si.value.trim(); if (q) window.location.hash = `#/products?search=${  encodeURIComponent(q)}`; };
-        sb.addEventListener('click', go);
-        si.addEventListener('keydown', e => { if (e.key === 'Enter') go(); });
+        const go = () => {
+          const q = si.value.trim();
+          if (q)
+            window.location.hash = `#/products?search=${encodeURIComponent(q)}`;
+        };
+        sb.addEventListener("click", go);
+        si.addEventListener("keydown", (e) => {
+          if (e.key === "Enter") go();
+        });
       }
     }, 0);
     return;
@@ -131,11 +147,16 @@ export async function router(force = false) {
   // Close mobile drawer
   closeDrawer();
 
+  // Move focus to main content immediately (override hamburger focus from closeDrawer)
+  app.setAttribute("tabindex", "-1");
+  app.focus({ preventScroll: true });
+  app.removeAttribute("tabindex");
+
   // Cleanup previous route resources
   runRouteCleanups();
 
   // Scroll to top
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  window.scrollTo({ top: 0, behavior: "smooth" });
 
   // Allow re-render when route key is same but params changed
   const paramsChanged =
@@ -162,23 +183,29 @@ export async function router(force = false) {
   window.scrollTo({ top: 0, behavior: "smooth" });
 
   // Set aria-current="page" on nav links
-  const cleanPath = route.split('?')[0];
-  document.querySelectorAll('.nav-link').forEach(link => {
-    const href = link.getAttribute('href');
-    const isMatch = href === `#/${cleanPath}` || (cleanPath === '' && href === '#/');
-    link.setAttribute('aria-current', isMatch ? 'page' : 'false');
+  const cleanPath = route.split("?")[0];
+  document.querySelectorAll(".nav-link").forEach((link) => {
+    const href = link.getAttribute("href");
+    const isMatch =
+      href === `#/${cleanPath}` || (cleanPath === "" && href === "#/");
+    link.setAttribute("aria-current", isMatch ? "page" : "false");
   });
   // Sync bottom nav
   document.querySelectorAll(".bottom-nav-item").forEach((link) => {
     const href = link.getAttribute("href");
-    const isMatch = href === `#/${cleanPath}` || (cleanPath === "" && href === "#/");
+    const isMatch =
+      href === `#/${cleanPath}` || (cleanPath === "" && href === "#/");
     link.setAttribute("aria-current", isMatch ? "page" : "false");
     link.classList.toggle("active", isMatch);
   });
-  if (_navTimer) clearTimeout(_navTimer);    _navTimer = setTimeout(async () => {
+  if (_navTimer) clearTimeout(_navTimer);
+  _navTimer = setTimeout(async () => {
     _navTimer = null;
     const { route: curRoute } = getRoute();
-    if (routeKey !== (curRoute.includes("/") ? curRoute.split("/")[0] : curRoute)) return;
+    if (
+      routeKey !== (curRoute.includes("/") ? curRoute.split("/")[0] : curRoute)
+    )
+      return;
     const fullPath = route;
     try {
       const pageModule = await dynamicImport();
@@ -190,7 +217,7 @@ export async function router(force = false) {
     updateNavbar();
 
     const titleKey = routeTitleKeys[routeKey];
-    document.title = `${titleKey ? t(titleKey) : "Sayiad"  } — Sayiad`;
+    document.title = `${titleKey ? t(titleKey) : "Sayiad"} — Sayiad`;
 
     app.setAttribute("tabindex", "-1");
     app.focus({ preventScroll: true });
@@ -200,7 +227,8 @@ export async function router(force = false) {
     if (live) live.textContent = `Navigated to ${document.title}`;
 
     requestAnimationFrame(() => {
-      app.style.transition = "opacity 0.35s ease, transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1)";
+      app.style.transition =
+        "opacity 0.35s ease, transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1)";
       app.style.opacity = "1";
       app.style.transform = "translateY(0)";
     });

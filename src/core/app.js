@@ -58,6 +58,61 @@ document.getElementById("logoutBtn")?.addEventListener("click", async (e) => {
 
 // Mobile drawer
 const navOverlay = document.getElementById("navOverlay");
+const _focusableSel = 'a, button, input, select, textarea, [tabindex]:not([tabindex="-1"])';
+
+function _getFocusable(el) {
+  return [...el.querySelectorAll(_focusableSel)].filter(
+    (f) => f.offsetParent !== null && !f.disabled,
+  );
+}
+
+function _trapFocus(e) {
+  const drawer = document.getElementById("navDrawer");
+  if (!drawer?.classList.contains("open")) return;
+  if (e.key !== "Tab") return;
+  const focusable = _getFocusable(drawer);
+  if (!focusable.length) { e.preventDefault(); return; }
+  const first = focusable[0];
+  const last = focusable[focusable.length - 1];
+  if (e.shiftKey && document.activeElement === first) {
+    e.preventDefault();
+    last.focus();
+  } else if (!e.shiftKey && document.activeElement === last) {
+    e.preventDefault();
+    first.focus();
+  }
+}
+
+let _drawerSwipe = null;
+
+function _initDrawerSwipe() {
+  if (_drawerSwipe) _drawerSwipe.destroy();
+  const drawer = document.getElementById("navDrawer");
+  if (!drawer) return;
+  _drawerSwipe = createSwipeGesture({
+    el: drawer,
+    threshold: 10,
+    onSwipeMove({ distance }) {
+      if (!drawer.classList.contains("open")) return;
+      const isRtl = document.dir === "rtl";
+      const closing = isRtl ? distance < 0 : distance > 0;
+      if (!closing) return;
+      const clamped = Math.min(Math.abs(distance), drawer.offsetWidth * 0.5);
+      drawer.style.transition = "none";
+      drawer.style.transform = `translateX(${clamped}px)`;
+    },
+    onSwipeEnd({ distance }) {
+      if (!drawer.classList.contains("open")) return;
+      drawer.style.transition = "";
+      const isRtl = document.dir === "rtl";
+      const closing = isRtl ? distance < 0 : distance > 0;
+      if (!closing) { drawer.style.transform = ""; return; }
+      const close = _drawerSwipe ? Math.abs(distance) >= 80 : false;
+      drawer.style.transform = "";
+      if (close) closeDrawer();
+    },
+  });
+}
 
 function openDrawer() {
   const drawer = document.getElementById("navDrawer");
@@ -65,29 +120,43 @@ function openDrawer() {
   if (!drawer) return;
   drawer.offsetHeight;
   drawer.classList.add("open");
-  overlay?.classList.add("open");
+  drawer.setAttribute("aria-hidden", "false");
+  if (overlay) {
+    overlay.classList.add("open");
+    overlay.removeAttribute("inert");
+  }
   document.body.classList.add("nav-open");
 
   const btn = document.getElementById("hamburger");
   if (btn) {
-    btn.innerHTML = '<i class="fas fa-times" aria-hidden="true"></i>';
     btn.setAttribute("aria-expanded", "true");
   }
 
-  const firstFocusable = drawer.querySelector(
-    'a, button, input, select, textarea, [tabindex]:not([tabindex="-1"])',
-  );
+  const firstFocusable = drawer.querySelector(_focusableSel);
   firstFocusable?.focus();
+  document.addEventListener("keydown", _trapFocus);
+  _initDrawerSwipe();
 }
 
 function closeDrawer() {
-  document.getElementById("navDrawer")?.classList.remove("open");
-  navOverlay?.classList.remove("open");
+  const drawer = document.getElementById("navDrawer");
+  if (drawer) {
+    drawer.style.transition = "";
+    drawer.style.transform = "";
+    drawer.classList.remove("open");
+    drawer.setAttribute("aria-hidden", "true");
+  }
+  if (navOverlay) {
+    navOverlay.classList.remove("open");
+    navOverlay.setAttribute("inert", "");
+  }
   document.body.classList.remove("nav-open");
+
+  document.removeEventListener("keydown", _trapFocus);
+  if (_drawerSwipe) { _drawerSwipe.destroy(); _drawerSwipe = null; }
 
   const btn = document.getElementById("hamburger");
   if (btn) {
-    btn.innerHTML = '<i class="fas fa-bars" aria-hidden="true"></i>';
     btn.setAttribute("aria-expanded", "false");
   }
   btn?.focus();
@@ -103,11 +172,9 @@ document.getElementById("hamburger")?.addEventListener("click", () => {
   }
 });
 
+document.getElementById("drawerCloseBtn")?.addEventListener("click", closeDrawer);
+
 navOverlay?.addEventListener("click", closeDrawer);
-navOverlay?.addEventListener("touchend", (e) => {
-  e.preventDefault();
-  closeDrawer();
-}, { passive: false });
 navOverlay?.addEventListener("touchstart", (e) => {
   if (e.target === navOverlay) closeDrawer();
 }, { passive: true });
@@ -151,10 +218,17 @@ document.getElementById("navSearchForm")?.addEventListener("submit", (e) => {
   const input = document.getElementById("navSearchInput");
   if (!input) return;
   const query = input.value.trim();
-  if (!query) return;
+  if (!query) {
+    input.setAttribute("aria-invalid", "true");
+    animate(input, "shakeX", { duration: "0.4s" });
+    setTimeout(() => input.removeAttribute("aria-invalid"), 600);
+    return;
+  }
+  input.removeAttribute("aria-invalid");
   closeDrawer();
+  const app = document.getElementById("app");
+  if (app) app.focus({ preventScroll: true });
   window.location.hash = `#/products?search=${encodeURIComponent(query)}`;
-  input.blur();
 });
 
 // Quick add to cart delegation
@@ -197,7 +271,20 @@ let prevWidth = window.innerWidth;
 window.addEventListener("resize", () => {
   const width = window.innerWidth;
   // Close drawer when viewport expands to desktop (>768px)
-  if (prevWidth <= 768 && width > 768) closeDrawer();
+  if (prevWidth <= 768 && width > 768) {
+    const drawer = document.getElementById("navDrawer");
+    if (drawer) {
+      // Suppress CSS transition during media query layout shift
+      drawer.style.transition = "none";
+      // Force layout recalc so the "none" takes effect immediately
+      drawer.offsetHeight;
+      closeDrawer();
+      // Restore transition after a frame so the media query is settled
+      requestAnimationFrame(() => {
+        drawer.style.transition = "";
+      });
+    }
+  }
   prevWidth = width;
 }, { passive: true });
 

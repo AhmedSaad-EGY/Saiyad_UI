@@ -58,9 +58,12 @@ export function updateNavbar() {
   document.getElementById("loginBtn").classList.toggle("d-none", authed);
   document.getElementById("registerBtn").classList.toggle("d-none", authed);
   document.getElementById("userMenu").classList.toggle("d-none", !authed);
-  if (user)
-    document.getElementById("userName").textContent =
-      user.fullName || user.email || "User";
+  if (user) {
+    const name = user.fullName || user.email || "User";
+    document.getElementById("userName").textContent = name;
+    const dd = document.getElementById("userDropdown");
+    if (dd) dd.setAttribute("aria-label", name + " menu");
+  }
   document.getElementById("notifBell")?.classList.toggle("d-none", !authed);
   document
     .getElementById("userDropdown")
@@ -118,35 +121,51 @@ export function syncCartBadgeCount(count) {
   const badge = document.getElementById("cartBadge");
   _cartCount = Math.max(0, parseInt(count, 10) || 0);
   if (!badge) return;
-  badge.textContent = _cartCount;
-  badge.classList.toggle("d-none", _cartCount === 0 || !isAuthenticated());
-  if (_cartCount > 0) animate(badge, 'bounceIn', { duration: '0.35s' });
+  const hidden = _cartCount === 0 || !isAuthenticated();
+  badge.textContent = hidden ? '' : _cartCount;
+  badge.classList.toggle("d-none", hidden);
+  badge.setAttribute("aria-hidden", hidden ? "true" : "false");
+  if (!hidden) animate(badge, 'bounceIn', { duration: '0.35s' });
   const bnBadge = document.getElementById("bnCartBadge");
   if (bnBadge) {
-    bnBadge.textContent = _cartCount;
-    bnBadge.classList.toggle("d-none", _cartCount === 0 || !isAuthenticated());
+    bnBadge.textContent = hidden ? '' : _cartCount;
+    bnBadge.classList.toggle("d-none", hidden);
+    bnBadge.setAttribute("aria-hidden", hidden ? "true" : "false");
   }
+}
+
+function _hideBadge(el) {
+  if (!el) return;
+  el.textContent = '';
+  el.classList.add("d-none");
+  el.setAttribute("aria-hidden", "true");
+}
+
+function _showBadge(el, count) {
+  if (!el) return;
+  el.textContent = count;
+  el.classList.remove("d-none");
+  el.setAttribute("aria-hidden", "false");
 }
 
 export async function updateCartBadge(forceRefresh = true) {
   const badge = document.getElementById("cartBadge");
   if (!badge) return;
   if (!isAuthenticated()) {
-    badge.classList.add("d-none");
+    _hideBadge(badge);
     _cartCount = null;
     return;
   }
   if (!forceRefresh && _cartCount !== null) {
-    badge.textContent = _cartCount;
-    badge.classList.toggle("d-none", _cartCount === 0);
+    _cartCount === 0 ? _hideBadge(badge) : _showBadge(badge, _cartCount);
     return;
   }
-  if (!hasAnyRole(ECOMMERCE_ROLES)) { badge.classList.add("d-none"); _cartCount = null; return; }
+  if (!hasAnyRole(ECOMMERCE_ROLES)) { _hideBadge(badge); _cartCount = null; return; }
   try {
     const cart = await api.get("/cart");
     syncCartBadgeCount(getCartItemCount(cart.items || []));
   } catch {
-    badge.classList.add("d-none");
+    _hideBadge(badge);
   }
 }
 
@@ -165,13 +184,14 @@ export async function updateNotifBadge() {
     const data = await api.get("/Notifications/unread-count");
     const count = getUnreadNotificationCount(data);
     if (count > 0) {
-  badge.textContent = count;
-  badge.classList.remove("d-none");
-  if (count > 0) animate(badge, 'bounceIn', { duration: '0.35s' });
-} else    badge?.classList.add("d-none");
+      _showBadge(badge, count);
+      animate(badge, 'bounceIn', { duration: '0.35s' });
+    } else {
+      _hideBadge(badge);
+    }
   } catch {
     if (!isAuthenticated()) stopNotifPolling();
-    else    badge?.classList.add("d-none");
+    else _hideBadge(badge);
   }
 }
 
@@ -184,8 +204,7 @@ export function syncNotifBadgeCount(count) {
   const badge = document.getElementById("notifBadge");
   const safeCount = Math.max(0, parseInt(count, 10) || 0);
   if (!badge || !isAuthenticated()) return;
-  badge.textContent = safeCount;
-  badge.classList.toggle("d-none", safeCount === 0);
+  safeCount === 0 ? _hideBadge(badge) : _showBadge(badge, safeCount);
 }
 
 export function startNotifPolling() {
@@ -199,8 +218,7 @@ export function stopNotifPolling() {
     clearInterval(notifPollInterval);
     notifPollInterval = null;
   }
-  const badge = document.getElementById("notifBadge");
-  if (badge) badge.classList.add("d-none");
+  _hideBadge(document.getElementById("notifBadge"));
 }
 
 export async function logout() {

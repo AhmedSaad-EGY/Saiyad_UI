@@ -206,6 +206,10 @@
   min-width: 0;
 }
 .nav-search__input::placeholder { color: var(--text-muted); }
+.nav-search:has(.nav-search__input[aria-invalid="true"]) {
+  border-color: var(--danger);
+  box-shadow: 0 0 0 1.5px var(--danger);
+}
 .nav-search__btn {
   background: transparent;
   border: none;
