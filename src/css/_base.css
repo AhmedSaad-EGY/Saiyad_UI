@@ -1,160 +1,129 @@
 /* ============================================================
-   BASE — Reset, document root, typography, global utilities
+   RESET
    ============================================================ */
-@layer reset {
-  *,
-  *::before,
-  *::after {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-@layer base {
-  /* ── Document root ─────────────────────────────────────── */
-  html {
-    scroll-behavior: smooth;
-    text-size-adjust: 100%;
-    -webkit-text-size-adjust: 100%;
-  }
+/* ============================================================
+   BASE
+   ============================================================ */
+html {
+  scroll-behavior: smooth;
+}
 
-  /* ── Body ──────────────────────────────────────────────── */
-  body {
-    font-family: var(--font-sans);
-    background: var(--body-bg);
-    color: var(--text);
-    line-height: var(--leading);
-    min-height: 100dvh;
-    display: flex;
-    flex-direction: column;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-rendering: optimizeLegibility;
-    transition:
-      background-color var(--theme-ease),
-      color            var(--theme-ease);
-  }
+body {
+  font-family: var(--font-sans);
+  background: var(--body-bg);
+  color: var(--text);
+  line-height: var(--leading);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  transition: background-color var(--duration-normal) var(--ease-out),
+    color var(--duration-normal) var(--ease-out);
+}
 
-  /*
-   * Persistent background layer — renders the ambient gradient
-   * behind all page content. Fixed positioning prevents scroll
-   * repaints. z-index: -2 keeps it behind all scrolled content.
-   */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    z-index: -2;
-    background-color: var(--body-bg);
-    background-image: var(--body-grad-1), var(--body-grad-2);
-    transition: background-color var(--theme-ease);
-    pointer-events: none;
-  }
+/* Persistent body background layer (prevents flash during transitions) */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background-color: var(--body-bg);
+  background-image:
+    var(--body-grad-1),
+    var(--body-grad-2);
+  transition: background-color var(--duration-normal) var(--ease-out);
+}
 
-  /* ── Headings ──────────────────────────────────────────── */
-  h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-heading);
-    line-height: var(--leading-tight);
-    font-weight: var(--weight-bold);
-    letter-spacing: -0.01em;
-  }
+[data-theme="dark"] body::before {
+  background-image:
+    var(--body-grad-1),
+    var(--body-grad-2);
+}
 
-  /* ── Container ─────────────────────────────────────────── */
-  .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 var(--space-6);
-    width: 100%;
-  }
+/* ── Headings ─────────────────────────────────────────────── */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading);
+  line-height: var(--leading-tight);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
 
-  /* ── Anchor scroll offset for fixed navbar ─────────────── */
-  h2[id], h3[id], h4[id], h5[id], h6[id], section[id] {
-    scroll-margin-top: 88px;
-  }
+/* ── Container ────────────────────────────────────────────── */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--space-6);
+  width: 100%;
+}
 
-  /* ── Focus management ──────────────────────────────────── */
-  body:not(.keyboard-nav) *:focus {
-    outline: none;
-  }
+/* ── Anchor scroll offset for fixed navbar ────────────────── */
+[id] {
+  scroll-margin-top: 80px;
+}
 
-  .keyboard-nav *:focus-visible {
-    outline: 2px solid var(--primary);
-    outline-offset: 2px;
-    border-radius: var(--radius-sm);
-  }
+/* ── Keyboard navigation focus ring ──────────────────────── */
+body:not(.keyboard-nav) *:focus {
+  outline: none;
+}
 
-  /* ── Skip to content ───────────────────────────────────── */
-  .skip-link {
-    position: absolute;
-    top: -100%;
-    inset-inline-start: 50%;
-    transform: translateX(-50%);
-    z-index: var(--z-skip-link);
-    background: var(--primary);
-    color: var(--text-inverse);
-    padding: 10px 20px;
-    border-radius: 0 0 var(--radius) var(--radius);
-    font-weight: var(--weight-semibold);
-    font-size: var(--text-sm);
-    text-decoration: none;
-    transition: top 0.2s ease;
-  }
+.keyboard-nav *:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
 
-  .skip-link:focus { top: 0; }
+/* ── Skip to content ──────────────────────────────────────── */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  inset-inline-start: 50%;
+  transform: translateX(-50%);
+  z-index: var(--z-skip-link);
+  background: var(--primary);
+  color: var(--text-inverse);
+  padding: 10px 20px;
+  border-radius: 0 0 var(--radius) var(--radius);
+  font-weight: 600;
+  font-size: var(--text-sm);
+  text-decoration: none;
+  transition: top 0.2s ease;
+}
 
-  /* ── Alpine.js FOUC prevention ─────────────────────────── */
-  [x-cloak] { display: none !important; }
+.skip-link:focus {
+  top: 0;
+}
 
-  /* ── Global hidden utility ─────────────────────────────── */
-  .hidden { display: none !important; }
+/* ── Alpine.js FOUC prevention ────────────────────────────── */
+[x-cloak] {
+  display: none !important;
+}
 
-  /* ── Links ─────────────────────────────────────────────── */
-  a {
-    color: var(--primary);
-    text-decoration: none;
-  }
+/* ── Global hidden utility ────────────────────────────────── */
+.hidden {
+  display: none !important;
+}
 
-  a:hover { color: var(--primary-dark); }
+/* ── Links ────────────────────────────────────────────────── */
+a {
+  color: var(--primary);
+  text-decoration: none;
+}
 
-  /* ── Form element font inheritance ─────────────────────── */
-  button, input, optgroup, select, textarea {
-    font-family: inherit;
-    font-size: 100%;
-    line-height: inherit;
-  }
-
-  /* ── Touch: fast tap, no callout ───────────────────────── */
-  a, button, [role="button"] {
-    touch-action: manipulation;
-    -webkit-tap-highlight-color: transparent;
-  }
-
-  /* ── Images & media ─────────────────────────────────────── */
-  img, svg {
-    max-width: 100%;
-    display: block;
-  }
-
-  /* Lazy-loaded images: smooth appearance */
-  img[loading="lazy"] {
-    transition: opacity 0.3s var(--ease-out);
-  }
-
-  img[loading="lazy"]:not([src]) {
-    opacity: 0;
-  }
-
-  /* ── Responsive container adjustments ──────────────────── */
-  @media (max-width: 767px) {
-    .container { padding: 0 var(--space-4); }
-  }
-
-  @media (max-width: 480px) {
-    .container { padding: 0 var(--space-4); }
-  }
-
-  @media (max-width: 360px) {
-    .container { padding: 0 var(--space-3); }
-  }
+a:hover {
+  color: var(--primary-dark);
 }

@@ -1,212 +1,180 @@
 /* ============================================================
-   SAYIAD — Bootstrap 5 Theme Overrides  v2
-   Maps OKLCH design tokens → Bootstrap CSS custom properties.
-   All values reference our token layer — never raw colors.
+   SAYIAD — Bootstrap 5 Theme Overrides
+   Maps our OKLCH design tokens → Bootstrap CSS custom properties
    ============================================================ */
-@layer overrides {
 
-  :root {
-    /* ── Color system ─────────────────────────────────────── */
-    --bs-primary:   var(--primary);
-    --bs-primary-rgb: var(--primary-rgb, 26, 70, 165);
+:root {
+  /* ─── Color System ─────────────────────────────────────── */
 
-    --bs-secondary:   var(--secondary);
-    --bs-secondary-rgb: var(--secondary-rgb, 55, 155, 145);
+  /* Primary — Ocean Blue */
+  --bs-primary: var(--primary);
+  --bs-primary-rgb: var(--primary-rgb, 26, 70, 165);
 
-    --bs-success:   var(--success);
-    --bs-success-rgb: var(--success-rgb, 50, 175, 100);
+  /* Secondary — Teal */
+  --bs-secondary: var(--secondary);
+  --bs-secondary-rgb: var(--secondary-rgb, 55, 155, 145);
 
-    --bs-danger:    var(--danger);
-    --bs-danger-rgb: var(--danger-rgb, 210, 70, 50);
+  /* Success — Emerald */
+  --bs-success: var(--success);
+  --bs-success-rgb: var(--success-rgb, 50, 175, 100);
 
-    --bs-warning:   var(--warning);
-    --bs-warning-rgb: var(--warning-rgb, 200, 155, 40);
+  /* Danger — Coral */
+  --bs-danger: var(--danger);
+  --bs-danger-rgb: var(--danger-rgb, 210, 70, 50);
 
-    --bs-info:      var(--info);
-    --bs-info-rgb:  var(--info-rgb, 50, 120, 185);
+  /* Warning — Amber */
+  --bs-warning: var(--warning);
+  --bs-warning-rgb: var(--warning-rgb, 200, 155, 40);
 
-    --bs-light:     var(--body-bg);
-    --bs-light-rgb: var(--light-rgb, 248, 249, 251);
-    --bs-dark:      var(--text);
-    --bs-dark-rgb:  var(--dark-rgb, 20, 20, 30);
+  /* Info — Sky */
+  --bs-info: var(--info);
+  --bs-info-rgb: var(--info-rgb, 50, 120, 185);
 
-    /* ── Body ─────────────────────────────────────────────── */
-    --bs-body-bg:          var(--body-bg);
-    --bs-body-color:       var(--text);
-    --bs-secondary-color:  var(--text-muted);
-    --bs-tertiary-color:   var(--text-muted);
-    --bs-emphasis-color:   var(--text);
-    --bs-body-font-family: var(--font-sans);
-    --bs-body-font-size:   var(--text-base);
-    --bs-body-font-weight: var(--weight-normal);
-    --bs-body-line-height: var(--leading-normal);
+  /* Light / Dark */
+  --bs-light: var(--body-bg);
+  --bs-light-rgb: var(--light-rgb, 248, 249, 251);
+  --bs-dark: var(--text);
+  --bs-dark-rgb: var(--dark-rgb, 20, 20, 30);
 
-    /* ── Typography ───────────────────────────────────────── */
-    --bs-font-sans-serif:      var(--font-sans);
-    --bs-font-monospace:       var(--font-mono);
-    --bs-heading-font-family:  var(--font-heading);
-    --bs-heading-color:        var(--text);
-    --bs-heading-font-weight:  var(--weight-semibold);
-    --bs-heading-line-height:  var(--leading-tight);
+  /* ─── Body ─────────────────────────────────────────────── */
+  --bs-body-bg: var(--body-bg);
+  --bs-body-color: var(--text);
+  --bs-secondary-color: var(--text-muted);
+  --bs-tertiary-color: var(--text-muted);
+  --bs-emphasis-color: var(--text);
+  --bs-body-font-family: var(--font-sans);
+  --bs-body-font-size: var(--text-base);
+  --bs-body-font-weight: var(--weight-normal);
+  --bs-body-line-height: var(--leading-normal);
 
-    /* ── Links ────────────────────────────────────────────── */
-    --bs-link-color:       var(--primary);
-    --bs-link-hover-color: var(--primary-dark);
-    --bs-link-decoration:  none;
+  /* ─── Typography ───────────────────────────────────────── */
+  --bs-font-sans-serif: var(--font-sans);
+  --bs-font-monospace: var(--font-mono);
+  --bs-heading-font-family: var(--font-heading);
+  --bs-heading-color: var(--text);
+  --bs-heading-font-weight: var(--weight-semibold);
+  --bs-heading-line-height: var(--leading-tight);
 
-    /* ── Borders ──────────────────────────────────────────── */
-    --bs-border-color:       var(--border);
-    --bs-border-radius:      var(--radius);
-    --bs-border-radius-sm:   var(--radius-sm);
-    --bs-border-radius-lg:   var(--radius-lg);
-    --bs-border-radius-xl:   var(--radius-xl);
-    --bs-border-radius-2xl:  var(--radius-xl);
-    --bs-border-radius-pill: var(--radius-full);
+  /* ─── Links ────────────────────────────────────────────── */
+  --bs-link-color: var(--primary);
+  --bs-link-hover-color: var(--primary-dark);
+  --bs-link-decoration: none;
 
-    /* ── Shadows ──────────────────────────────────────────── */
-    --bs-box-shadow:    var(--shadow);
-    --bs-box-shadow-sm: var(--shadow-sm);
-    --bs-box-shadow-lg: var(--shadow-lg);
+  /* ─── Borders ──────────────────────────────────────────── */
+  --bs-border-color: var(--border);
+  --bs-border-radius: var(--radius);
+  --bs-border-radius-sm: var(--radius-sm);
+  --bs-border-radius-lg: var(--radius-lg);
+  --bs-border-radius-xl: var(--radius-xl);
+  --bs-border-radius-2xl: var(--radius-xl);
+  --bs-border-radius-pill: var(--radius-full);
 
-    /* ── Focus ────────────────────────────────────────────── */
-    --bs-focus-ring-color: color-mix(in oklch, var(--primary) 25%, transparent);
-    --bs-focus-ring-width: 3px;
+  /* ─── Shadows ──────────────────────────────────────────── */
+  --bs-box-shadow: var(--shadow);
+  --bs-box-shadow-sm: var(--shadow-sm);
+  --bs-box-shadow-lg: var(--shadow-lg);
 
-    /* ── Navbar ───────────────────────────────────────────── */
-    --bs-navbar-color:             var(--text-secondary);
-    --bs-navbar-hover-color:       var(--primary);
-    --bs-navbar-active-color:      var(--primary);
-    --bs-navbar-brand-color:       var(--primary);
-    --bs-navbar-brand-hover-color: var(--primary-dark);
-    --bs-navbar-toggler-border-color: transparent;
+  /* ─── Focus ────────────────────────────────────────────── */
+  --bs-focus-ring-color: oklch(from var(--primary) l c h / 0.25);
+  --bs-focus-ring-width: 3px;
 
-    /* ── Cards ────────────────────────────────────────────── */
-    --bs-card-bg:               var(--card-bg);
-    --bs-card-border-color:     var(--border);
-    --bs-card-border-radius:    var(--radius-lg);
-    --bs-card-inner-border-radius: var(--radius-md);
-    --bs-card-box-shadow:       var(--shadow);
-    --bs-card-cap-bg:           transparent;
-    --bs-card-spacer-x:         24px;
-    --bs-card-spacer-y:         24px;
-    --bs-card-cap-padding-x:    24px;
-    --bs-card-cap-padding-y:    16px;
+  /* ─── Navbar ───────────────────────────────────────────── */
+  --bs-navbar-color: var(--text-secondary);
+  --bs-navbar-hover-color: var(--primary);
+  --bs-navbar-active-color: var(--primary);
+  --bs-navbar-brand-color: var(--primary);
+  --bs-navbar-brand-hover-color: var(--primary-dark);
+  --bs-navbar-toggler-border-color: transparent;
 
-    /* ── Buttons ──────────────────────────────────────────── */
-    --bs-btn-font-family:    var(--font-sans);
-    --bs-btn-font-weight:    var(--weight-medium);
-    --bs-btn-border-radius:  var(--radius);
-    --bs-btn-focus-box-shadow: var(--shadow-glow);
-    --bs-btn-active-box-shadow: var(--btn-active-shadow);
+  /* ─── Cards ────────────────────────────────────────────── */
+  --bs-card-bg: var(--card-bg);
+  --bs-card-border-color: var(--border);
+  --bs-card-border-radius: var(--radius-lg);
+  --bs-card-inner-border-radius: var(--radius-md);
+  --bs-card-box-shadow: var(--shadow);
+  --bs-card-cap-bg: transparent;
+  --bs-card-spacer-x: 24px;
+  --bs-card-spacer-y: 24px;
+  --bs-card-cap-padding-x: 24px;
+  --bs-card-cap-padding-y: 16px;
 
-    /* ── Modals ───────────────────────────────────────────── */
-    --bs-modal-bg:             var(--card-bg);
-    --bs-modal-color:          var(--text);
-    --bs-modal-border-color:   var(--border);
-    --bs-modal-border-radius:  var(--radius-xl);
-    --bs-modal-header-border-color: var(--border);
-    --bs-modal-footer-border-color: var(--border);
-    --bs-modal-box-shadow:     var(--shadow-xl);
+  /* ─── Buttons ──────────────────────────────────────────── */
+  --bs-btn-font-family: var(--font-sans);
+  --bs-btn-font-weight: var(--weight-medium);
+  --bs-btn-border-radius: var(--radius);
+  --bs-btn-focus-box-shadow: var(--shadow-glow);
+  --bs-btn-active-box-shadow: var(--btn-active-shadow, inset 0 3px 5px oklch(0 0 0 / 0.125));
 
-    /* ── Forms ────────────────────────────────────────────── */
-    --bs-form-control-bg:         var(--input-bg);
-    --bs-form-control-color:      var(--text);
-    --bs-form-control-border-color: var(--border);
-    --bs-form-select-bg:          var(--input-bg);
-    --bs-input-focus-border-color: var(--primary);
-    --bs-input-focus-box-shadow:   var(--shadow-glow);
+}
 
-    /* ── Tables ───────────────────────────────────────────── */
-    --bs-table-color:       var(--text);
-    --bs-table-bg:          transparent;
-    --bs-table-border-color: var(--border);
-    --bs-table-striped-bg:   var(--table-hover);
-    --bs-table-hover-bg:     var(--table-hover);
-  }
+/* ─── Dark Mode ────────────────────────────────────────────── */
+[data-theme="dark"] {
+  --bs-primary-rgb: var(--primary-rgb, 80, 145, 235);
+  --bs-secondary-rgb: var(--secondary-rgb, 80, 180, 170);
+  --bs-success-rgb: var(--success-rgb, 90, 210, 130);
+  --bs-danger-rgb: var(--danger-rgb, 225, 100, 70);
+  --bs-warning-rgb: var(--warning-rgb, 220, 175, 55);
+  --bs-info-rgb: var(--info-rgb, 90, 160, 220);
+  --bs-light-rgb: var(--light-rgb, 30, 33, 45);
+  --bs-dark-rgb: var(--dark-rgb, 240, 242, 248);
 
+  --bs-body-bg: var(--body-bg);
+  --bs-body-color: var(--text);
+  --bs-secondary-color: var(--text-muted);
+  --bs-tertiary-color: var(--text-muted);
+  --bs-emphasis-color: var(--text);
+  --bs-border-color: var(--border);
+  --bs-card-bg: var(--card-bg);
+  --bs-link-color: var(--primary);
+  --bs-link-hover-color: var(--primary-dark);
+  --bs-heading-color: var(--text);
+  --bs-navbar-color: var(--text-secondary);
+  --bs-navbar-hover-color: var(--primary);
+  --bs-navbar-active-color: var(--primary);
+}
 
-  /* ── Dark Mode ───────────────────────────────────────────── */
-  [data-theme="dark"] {
-    --bs-primary-rgb:   var(--primary-rgb, 75, 135, 230);
-    --bs-secondary-rgb: var(--secondary-rgb, 80, 180, 170);
-    --bs-success-rgb:   var(--success-rgb, 90, 210, 130);
-    --bs-danger-rgb:    var(--danger-rgb, 225, 100, 70);
-    --bs-warning-rgb:   var(--warning-rgb, 220, 175, 55);
-    --bs-info-rgb:      var(--info-rgb, 90, 160, 220);
-    --bs-light-rgb:     var(--light-rgb, 30, 33, 45);
-    --bs-dark-rgb:      var(--dark-rgb, 240, 242, 248);
+/* ─── VIP Gold Theme (active subscription) ──────────────────── */
+[data-theme="dark"][data-vip] {
+  --bs-primary: var(--primary);
+  --bs-primary-rgb: var(--primary-rgb, 200, 175, 60);
+  --bs-link-color: var(--primary);
+  --bs-link-hover-color: var(--primary-dark);
+  --bs-navbar-hover-color: var(--primary);
+  --bs-navbar-active-color: var(--primary);
+  --bs-navbar-brand-color: var(--primary);
+}
 
-    --bs-body-bg:        var(--body-bg);
-    --bs-body-color:     var(--text);
-    --bs-secondary-color:var(--text-muted);
-    --bs-tertiary-color: var(--text-muted);
-    --bs-emphasis-color: var(--text);
-    --bs-border-color:   var(--border);
-    --bs-card-bg:        var(--card-bg);
-    --bs-link-color:     var(--primary);
-    --bs-link-hover-color: var(--primary-dark);
-    --bs-heading-color:  var(--text);
+/* ─── VIP Gold Theme (light mode) ───────────────────────────── */
+[data-vip] {
+  --bs-primary: var(--primary);
+  --bs-primary-rgb: var(--primary-rgb, 200, 150, 60);
+  --bs-link-color: var(--primary);
+  --bs-link-hover-color: var(--primary-dark);
+  --bs-navbar-hover-color: var(--primary);
+  --bs-navbar-active-color: var(--primary);
+  --bs-navbar-brand-color: var(--primary);
+}
 
-    --bs-navbar-color:        var(--text-secondary);
-    --bs-navbar-hover-color:  var(--primary);
-    --bs-navbar-active-color: var(--primary);
+/* ─── Card hover ──────────────────────────────────────────── */
+/* Bootstrap doesn't provide card hover; we layer our custom effect */
+.card {
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s cubic-bezier(0.16, 1, 0.3, 1), background-color var(--theme-transition);
+}
 
-    --bs-modal-bg:           var(--card-bg);
-    --bs-modal-border-color: var(--border);
-  }
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-hover);
+  border-color: var(--primary-light);
+}
 
+.card-sm:hover {
+  transform: none;
+  box-shadow: var(--shadow);
+}
 
-  /* ── VIP Gold — dark mode ────────────────────────────────── */
-  [data-theme="dark"][data-vip] {
-    --bs-primary:             var(--primary);
-    --bs-primary-rgb:         var(--primary-rgb, 200, 175, 60);
-    --bs-link-color:          var(--primary);
-    --bs-link-hover-color:    var(--primary-dark);
-    --bs-navbar-hover-color:  var(--primary);
-    --bs-navbar-active-color: var(--primary);
-    --bs-navbar-brand-color:  var(--primary);
-  }
-
-
-  /* ── VIP Gold — light mode ───────────────────────────────── */
-  [data-vip] {
-    --bs-primary:             var(--primary);
-    --bs-primary-rgb:         var(--primary-rgb, 200, 150, 60);
-    --bs-link-color:          var(--primary);
-    --bs-link-hover-color:    var(--primary-dark);
-    --bs-navbar-hover-color:  var(--primary);
-    --bs-navbar-active-color: var(--primary);
-    --bs-navbar-brand-color:  var(--primary);
-  }
-
-
-  /* ── Card hover ──────────────────────────────────────────── */
-  .card {
-    transition:
-      transform          0.25s cubic-bezier(0.16, 1, 0.3, 1),
-      box-shadow         0.25s cubic-bezier(0.16, 1, 0.3, 1),
-      border-color       0.25s cubic-bezier(0.16, 1, 0.3, 1),
-      background-color   var(--theme-ease);
-  }
-
-  @media (hover: hover) {
-    .card:hover {
-      transform: translateY(-3px);
-      box-shadow: var(--shadow-hover);
-      border-color: var(--primary-light);
-    }
-
-    .card-sm:hover {
-      transform: none;
-      box-shadow: var(--shadow);
-    }
-  }
-
-  /* ── RTL border radii ────────────────────────────────────── */
-  [dir="rtl"] {
-    --bs-border-radius:    var(--radius);
-    --bs-border-radius-sm: var(--radius-sm);
-    --bs-border-radius-lg: var(--radius-lg);
-  }
-
-} /* end @layer overrides */
+/* ─── RTL ───────────────────────────────────────────────────── */
+[dir="rtl"] {
+  --bs-border-radius: var(--radius);
+  --bs-border-radius-sm: var(--radius-sm);
+  --bs-border-radius-lg: var(--radius-lg);
+}
