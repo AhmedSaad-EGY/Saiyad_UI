@@ -1,8 +1,9 @@
-import { t } from '../core/i18n/index.js';
-import { api } from '../core/api/client.js';
-import { navigate, registerRouteCleanup } from '../core/router/index.js';
-import { escapeHtml } from '../core/utils/dom.js';
-import { setPageMeta } from '../core/utils/seo.js';
+import { t } from '../app/i18n.js';
+import { setPageMeta } from '../shared/utils/seo.js';
+import { escapeHtml } from '../shared/utils/dom.js';
+import { navigate } from '../app/router.js';
+import { registerRouteCleanup } from '../app/events.js';
+import { verifyEmail } from '../features/auth/verify-email.js';
 
 export default function renderVerifyEmail(container) {
   setPageMeta(t('verify.title'));
@@ -16,9 +17,8 @@ export default function renderVerifyEmail(container) {
 
   container.innerHTML = `<div class="auth-page animate__animated animate__fadeIn"><div class="card"><div class="card-body"><div class="loading"><i class="fas fa-spinner spinner" aria-hidden="true"></i><p>${t("common.loading")}</p></div></div></div></div>`;
 
-  api
-    .get(`/auth/verify-email?token=${encodeURIComponent(token)}`)
-    .then(async () => {
+  verifyEmail(token).then((result) => {
+    if (result.success) {
       container.innerHTML = `
         <div class="auth-page animate__animated animate__fadeIn"><div class="card">
           <div class="card-body">
@@ -29,21 +29,17 @@ export default function renderVerifyEmail(container) {
           </div>
           </div>
         </div></div>`;
-
-      // Cleanup pending login info
       sessionStorage.removeItem("pendingLoginEmail");
-
-      // Redirect to login (auto-login with password removed for security)
       const timer = setTimeout(() => navigate("login"), 2000);
       registerRouteCleanup(() => clearTimeout(timer));
-    })
-    .catch((err) => {
+    } else {
       container.innerHTML = `
         <div class="auth-page animate__animated animate__fadeIn"><div class="card">
           <div class="card-body">
           <div class="empty-state"><i class="fas fa-exclamation-triangle" aria-hidden="true"></i><h3>${t("verify.error")}</h3>
-          <p style="font-size:var(--text-sm);opacity:0.7;margin-top:4px">${escapeHtml(err.message || "")}</p>
+          <p style="font-size:var(--text-sm);opacity:0.7;margin-top:4px">${escapeHtml(result.message || "")}</p>
           <a href="#/login" class="btn btn-primary mt-3">${t("auth.login")}</a>
         </div></div></div></div>`;
-    });
+    }
+  });
 }

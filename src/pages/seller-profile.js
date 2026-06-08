@@ -1,11 +1,18 @@
-import { t } from '../core/i18n/index.js';
-import { api } from '../core/api/client.js';
-import { requireAuth, hasAnyRole } from '../core/auth/index.js';
+import { t } from '../app/i18n.js';
+import { requireAuth, hasAnyRole } from '../features/auth/login.js';
 import { SELLER_ROLES } from '../shared/constants/roles.js';
-import { showLoading, escapeHtml, observeAnimations } from '../core/utils/dom.js';
-import { renderStars } from '../core/utils/format.js';
-import { renderProductCards, showToast } from '../core/utils/ui.js';
-import { setPageMeta } from '../core/utils/seo.js';
+import { showLoading, escapeHtml, observeAnimations } from '../shared/utils/dom.js';
+import { renderStars } from '../shared/utils/format.js';
+import { showToast } from '../widgets/ui/toast.js';
+import { renderProductCards } from '../widgets/cards/product-card.js';
+import { setPageMeta } from '../shared/utils/seo.js';
+import {
+  fetchSellerProfile,
+  fetchSellerProducts,
+  fetchMySellerProfile,
+  createSellerProfile,
+  updateSellerProfile,
+} from '../features/seller-profile/index.js';
 
 export default async function renderSellerProfile(container) {
   setPageMeta(t('seller.title'));
@@ -14,7 +21,7 @@ export default async function renderSellerProfile(container) {
   if (userId) {
     showLoading(container);
     try {
-      const profile = await api.get(`/seller-profile/${userId}`);
+      const profile = await fetchSellerProfile(userId);
       container.innerHTML = `
         <div class="card mx-auto" style="max-width:600px">
           <div class="card-body">
@@ -35,13 +42,8 @@ export default async function renderSellerProfile(container) {
         </div>
         </div>`;
 
-    // Load seller's public product listings
     try {
-      const sellerProducts = await api.get("/products", {
-        SellerId: userId,
-        PageSize: 8,
-        Page: 1,
-      });
+      const sellerProducts = await fetchSellerProducts(userId);
       const items = sellerProducts.items || sellerProducts.data || [];
       if (items.length) {
         const productsSection = document.createElement("div");
@@ -53,10 +55,7 @@ export default async function renderSellerProfile(container) {
           <div class="product-card-grid product-card-grid-dense" id="sellerProductGrid"></div>
         `;
         container.appendChild(productsSection);
-        renderProductCards(
-          document.getElementById("sellerProductGrid"),
-          items
-        );
+        renderProductCards(document.getElementById("sellerProductGrid"), items);
         observeAnimations();
       }
     } catch { /* inner products render failed */ }
@@ -75,7 +74,7 @@ export default async function renderSellerProfile(container) {
   showLoading(container);
 
   try {
-    const profile = await api.get('/seller-profile/me');
+    const profile = await fetchMySellerProfile();
     renderForm(profile);
   } catch {
     renderForm(null);
@@ -113,9 +112,9 @@ export default async function renderSellerProfile(container) {
       };
       try {
         if (isNew) {
-          await api.post('/seller-profile', body);
+          await createSellerProfile(body);
         } else {
-          await api.put('/seller-profile', body);
+          await updateSellerProfile(body);
         }
         showToast(t('seller.saved'), 'success');
       } catch (err) {

@@ -1,0 +1,70 @@
+/* ============================================================
+   LAYOUT — Main Content, Container
+   ============================================================ */
+
+/* ============================================================
+   MAIN CONTENT
+   Sits below the fixed navbar via margin-top: var(--navbar-height).
+   Responsive overrides adjust padding only — do NOT change
+   margin-top here; it must always equal the navbar height.
+   ============================================================ */
+.main-content {
+  flex: 1;
+  margin-top: var(--navbar-height);
+  margin-inline: var(--space-6);
+  margin-bottom: var(--space-10);
+  padding: var(--space-10);
+  position: relative;
+  z-index: 1;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur-light);
+  -webkit-backdrop-filter: var(--glass-blur-light);
+  border: 1px solid var(--glass-border);
+  border-top: none;
+  border-radius: 0 0 var(--radius-xl) var(--radius-xl);
+  box-shadow: var(--glass-shadow);
+}
+
+@media (min-width: 768px) {
+  .main-content {
+    margin-inline: auto;
+    width: calc(100% - var(--space-12));
+    max-width: 1200px;
+  }
+}
+
+/* ── Container ────────────────────────────────────────────── */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--space-6);
+  width: 100%;
+}
+
+@media (max-width: 767px) {
+  .container {
+    padding: 0 var(--space-4);
+  }
+
+  .main-content {
+    margin-inline: 0;
+    padding: var(--space-6) var(--space-4) var(--space-10);
+    border-radius: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 var(--space-4);
+  }
+
+  .main-content {
+    padding: var(--space-5) var(--space-4) var(--space-10);
+  }
+}
+
+@media (max-width: 360px) {
+  .container {
+    padding: 0 var(--space-3);
+  }
+}

@@ -1,0 +1,98 @@
+/* ============================================================
+   WALLET PAGE
+   ============================================================ */
+.wallet-page {
+  padding: var(--space-8) var(--space-6);
+  max-width: 900px;
+  margin: 0 auto;
+}
+.wallet-header {
+  margin-bottom: var(--space-6);
+}
+.wallet-header h1 {
+  font-size: var(--text-3xl);
+  font-weight: var(--weight-bold);
+}
+.wallet-balance-card {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: var(--text-inverse);
+  border-radius: var(--radius-xl);
+  padding: var(--space-8) var(--space-8);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
+  margin-bottom: var(--space-8);
+  box-shadow: var(--primary-shadow);
+  position: relative;
+  overflow: hidden;
+}
+.wallet-balance-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 85% 15%, var(--glass-wallet-highlight), transparent 60%);
+  pointer-events: none;
+}
+.wallet-balance-label {
+  font-size: var(--text-sm);
+  opacity: 0.85;
+  font-weight: var(--weight-medium);
+}
+.wallet-balance-amount {
+  font-size: clamp(2rem, 5vw, 2.75rem);
+  font-weight: var(--weight-bold);
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+.wallet-balance-currency {
+  font-size: var(--text-sm);
+  opacity: 0.75;
+  margin-top: calc(-1 * var(--space-1));
+}
+.wallet-balance-card .btn {
+  background: var(--glass-wallet-btn-bg);
+  border: 1px solid var(--glass-wallet-btn-border);
+  color: var(--text-inverse);
+  backdrop-filter: blur(8px);
+  margin-top: var(--space-2);
+}
+.wallet-balance-card .btn:hover {
+  background: var(--glass-wallet-btn-hover-bg);
+  border-color: var(--glass-wallet-btn-hover-border);
+}
+.wallet-payment-note {
+  font-size: var(--text-xs);
+  opacity: 0.65;
+  margin-top: var(--space-2);
+}
+.wallet-transactions-section h2 {
+  font-size: var(--text-xl);
+  font-weight: var(--weight-semibold);
+  margin-bottom: var(--space-4);
+}
+
+/* Wallet table */
+.tx-type {
+  text-transform: capitalize;
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-sm);
+}
+.tx-positive { color: var(--success); font-weight: var(--weight-semibold); }
+.tx-negative { color: var(--danger);  font-weight: var(--weight-semibold); }
+
+@media (max-width: 767px) {
+  .wallet-page { padding: var(--space-6) var(--space-4); }
+  .wallet-balance-card { padding: var(--space-6); }
+  .wallet-balance-amount { font-size: 2rem; }
+}
+@media (max-width: 480px) {
+  .wallet-page { padding: var(--space-4) var(--space-4); }
+  .wallet-balance-card { padding: var(--space-5); border-radius: var(--radius-lg); }
+}
+@media (max-width: 320px) {
+  .wallet-balance-card { padding: var(--space-4); }
+  .wallet-balance-amount { font-size: 1.75rem; }
+}

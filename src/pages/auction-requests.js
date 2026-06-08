@@ -1,12 +1,13 @@
-import { t } from '../core/i18n/index.js';
-import { api } from '../core/api/client.js';
-import { getUser } from '../core/auth/index.js';
-import { escapeHtml } from '../core/utils/dom.js';
-import { statusClass } from '../core/utils/format.js';
-import { showToast } from '../core/utils/ui.js';
-import { validateForm, clearFieldError } from '../core/utils/validation.js';
+import { t } from '../app/i18n.js';
+import { getUser } from '../features/auth/login.js';
+import { escapeHtml } from '../shared/utils/dom.js';
+import { statusClass } from '../shared/utils/format.js';
+import { showToast } from '../widgets/ui/toast.js';
+import { validateForm, clearFieldError } from '../shared/utils/validation.js';
 import { ROLES } from '../shared/constants/roles.js';
-import { setPageMeta } from '../core/utils/seo.js';
+import { setPageMeta } from '../shared/utils/seo.js';
+
+import { fetchMyRequests, createAuctionRequest } from '../features/auctions/create.js';
 
 export default async function renderAuctionRequests(container) {
   setPageMeta(t('auctionRequests.title'));
@@ -30,7 +31,7 @@ export default async function renderAuctionRequests(container) {
   async function loadRequests() {
     const content = document.getElementById("auctionReqContent");
     try {
-      const res = await api.get("/auctions/requests/my", { page: 1, pageSize: 50 });
+      const res = await fetchMyRequests(1, 50);
       const items = res?.items || res?.data || [];
       if (!items || items.length === 0) {
         content.innerHTML = `<div class="empty-state"><i class="fas fa-gavel" aria-hidden="true"></i><h3>${t("auctionRequests.noRequests")}</h3><p>${t("auctionRequests.noRequestsDesc")}</p><button class="btn btn-primary" id="emptyRequestBtn"><i class="fas fa-plus" aria-hidden="true"></i> ${t("auctionRequests.requestAuction")}</button></div>`;
@@ -106,7 +107,7 @@ export default async function renderAuctionRequests(container) {
         productImageUrl: document.getElementById("arImageUrl").value.trim() || null,
       };
       try {
-        await api.post("/auctions/requests", body);
+        await createAuctionRequest(body);
         showToast(t("auctionRequests.submitted"), "success");
         loadRequests();
       } catch (err) {

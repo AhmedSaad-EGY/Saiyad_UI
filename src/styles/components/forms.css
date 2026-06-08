@@ -1,0 +1,212 @@
+/* ============================================================
+   FORMS
+   ============================================================ */
+.form-group {
+  margin-bottom: var(--space-5);
+}
+
+.form-label {
+  display: block;
+  font-weight: var(--weight-semibold);
+  margin-bottom: 6px;
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+
+.form-input,
+.form-select,
+.form-textarea {
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  font-size: var(--text-base);
+  font-family: inherit;
+  background: var(--input-bg);
+  color: var(--text);
+  transition:
+    border-color var(--transition),
+    box-shadow var(--transition),
+    background var(--transition);
+}
+
+.form-input:hover,
+.form-select:hover,
+.form-textarea:hover {
+  border-color: var(--text-muted);
+}
+
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+  outline: none;
+  border-color: var(--border-focus);
+  box-shadow: var(--shadow-glow);
+}
+
+.form-input::placeholder {
+  color: var(--text-muted);
+}
+
+/* Touch-friendly select height */
+.form-select {
+  min-height: 44px;
+}
+
+.form-textarea {
+  min-height: 110px;
+  resize: vertical;
+}
+
+/* Validation states */
+.form-input.error,
+.form-select.error,
+.form-textarea.error {
+  border-color: var(--danger);
+  box-shadow: 0 0 0 3px var(--danger-bg);
+}
+
+.form-group.has-error .form-label {
+  color: var(--danger);
+}
+
+.form-error {
+  color: var(--danger);
+  font-size: 0.82rem;
+  margin-top: 4px;
+}
+
+/* Password field wrapper */
+.password-wrapper {
+  position: relative;
+}
+
+.password-wrapper .form-input {
+  padding-inline-end: 44px;
+}
+
+.toggle-password {
+  position: absolute;
+  top: 50%;
+  inset-inline-end: 10px;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  padding: 10px;
+  font-size: 1rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  transition: color var(--transition);
+}
+
+.toggle-password:hover {
+  color: var(--text);
+}
+
+/* ── Date input ─────────────────────────────────────────────── */
+input[type="date"].form-input {
+  appearance: none;
+  -webkit-appearance: none;
+  position: relative;
+  cursor: pointer;
+}
+
+input[type="date"].form-input::-webkit-calendar-picker-indicator {
+  position: absolute;
+  inset-inline-end: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  opacity: 0.6;
+  width: 18px;
+  height: 18px;
+  transition: opacity var(--duration-fast) var(--ease-out);
+}
+
+[data-theme="dark"] input[type="date"].form-input::-webkit-calendar-picker-indicator {
+  filter: invert(1) brightness(0.8);
+}
+
+input[type="date"].form-input:hover::-webkit-calendar-picker-indicator {
+  opacity: 1;
+}
+
+input[type="date"].form-input::-webkit-datetime-edit {
+  color: var(--text);
+}
+
+input[type="date"].form-input::-webkit-datetime-edit-month-field:focus,
+input[type="date"].form-input::-webkit-datetime-edit-day-field:focus,
+input[type="date"].form-input::-webkit-datetime-edit-year-field:focus {
+  background: var(--primary-ghost);
+  color: var(--primary);
+  outline: none;
+}
+
+/* Password strength meter */
+.pw-strength { margin-top: var(--space-2); }
+.pw-strength__track {
+  height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.pw-strength__fill {
+  height: 100%;
+  width: 0;
+  border-radius: 2px;
+  transition: width 0.3s var(--ease-out), background 0.3s var(--ease-out);
+}
+.pw-strength__label {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  margin-top: 4px;
+  display: block;
+}
+.pw-reqs {
+  list-style: none;
+  margin-top: var(--space-2);
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-1);
+}
+.pw-reqs li {
+  font-size: var(--text-xs);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-muted);
+  transition: color var(--duration-fast) var(--ease-out),
+              opacity var(--duration-fast) var(--ease-out);
+}
+.pw-reqs li.met { color: var(--success); }
+
+/* Filter checkbox */
+.filter-check {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 44px;
+  padding: 0 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--card-bg);
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  cursor: pointer;
+  user-select: none;
+}
+
+.filter-check input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--primary);
+}

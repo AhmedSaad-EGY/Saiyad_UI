@@ -1,11 +1,11 @@
-import { t } from '../core/i18n/index.js';
-import { api } from '../core/api/client.js';
-import { requireAuth } from '../core/auth/index.js';
-import { navigate, registerRouteCleanup } from '../core/router/index.js';
-import { showLoading, escapeHtml, observeAnimations } from '../core/utils/dom.js';
-import { formatPrice, formatDate, statusClass, tStatus } from '../core/utils/format.js';
-import { showConfirm, showToast } from '../core/utils/ui.js';
-import { setPageMeta } from '../core/utils/seo.js';
+import { t } from '../app/i18n.js';
+import { requireAuth } from '../features/auth/login.js';
+import { fetchOrder, cancelOrder } from '../features/orders/index.js';
+import { navigate, registerRouteCleanup } from '../app/router.js';
+import { showLoading, escapeHtml, observeAnimations } from '../shared/utils/dom.js';
+import { formatPrice, formatDate, statusClass, tStatus } from '../shared/utils/format.js';
+import { showToast } from '../widgets/ui/toast.js'; import { showConfirm } from '../widgets/ui/modal.js';
+import { setPageMeta } from '../shared/utils/seo.js';
 
 function getTimelineSteps(status) {
   const steps = [
@@ -39,7 +39,7 @@ export default async function renderOrderDetail(container) {
   showLoading(container);
 
   try {
-    const order = await api.get(`/orders/${orderId}`);
+    const order = await fetchOrder(orderId);
     const timelineSteps = getTimelineSteps(order.status);
     const items = order.items || [];
     const subtotal = items.reduce((s, i) => s + (i.subtotal || (i.unitPrice * i.quantity)), 0);
@@ -184,7 +184,7 @@ export default async function renderOrderDetail(container) {
         cancelBtn.disabled = true;
         cancelBtn.innerHTML = `<i class="fas fa-spinner spinner" aria-hidden="true"></i> ${t("order.cancelling")}`;
         try {
-          await api.put(`/orders/${orderId}/cancel`);
+          await cancelOrder(orderId);
           showToast(t("order.cancelled"), "success");
           const timer = setTimeout(() => navigate(`order-detail?id=${orderId}`), 1500);
           registerRouteCleanup(() => clearTimeout(timer));

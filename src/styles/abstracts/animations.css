@@ -1,0 +1,44 @@
+/* ============================================================
+   ANIMATION UTILITIES
+   Animate.css is loaded from CDN in index.html.
+   This file provides structural helpers and project-specific
+   skeleton/shimmer styles only; no page-level keyframes.
+   ============================================================ */
+
+/* ── Scroll-reveal base ───────────────────────────────────── */
+.animate-on-scroll {
+  opacity: 0;
+}
+
+.animate-on-scroll.visible,
+.animate__animated {
+  opacity: 1;
+}
+
+/* ============================================================
+   SKELETON SHIMMER
+   Provides a loading placeholder with an animated scan line.
+   The keyframe runs only when the .skeleton class is active —
+   prefers-reduced-motion suppresses animation globally via
+   the @media block in _variables.css.
+   ============================================================ */
+@keyframes skeleton-scan {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* ============================================================
+   ALPINE.JS TRANSITION HELPERS
+   Used with x-transition:enter / x-transition:leave directives.
+   ============================================================ */
+.transition-fade {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.op-0 {
+  opacity: 0;
+}
+
+.op-100 {
+  opacity: 1;
+}

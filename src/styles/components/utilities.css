@@ -1,0 +1,42 @@
+/* ── Utility classes ────────────────────────────────────────── */
+.fs-hero {
+    font-size: 3.5rem;
+}
+
+.caption-meta {
+    caption-side: bottom;
+    font-size: 0.78rem;
+}
+
+.mw-xs {
+    max-width: 400px;
+}
+
+.mw-sm {
+    max-width: 420px;
+}
+
+.mw-md {
+    max-width: 460px;
+}
+
+.mw-lg {
+    max-width: 480px;
+}
+
+.mw-xl {
+    max-width: 500px;
+}
+
+.text-secondary-sm {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+}
+
+.border-divider-top {
+    border-top: 1px solid var(--border);
+}
+
+.border-divider-bottom {
+    border-bottom: 1px solid var(--border);
+}

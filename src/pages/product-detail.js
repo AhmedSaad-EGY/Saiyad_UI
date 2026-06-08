@@ -1,13 +1,21 @@
-import { t, getCurrentLang } from '../core/i18n/index.js';
-import { api } from '../core/api/client.js';
-import { isAuthenticated, getUser, hasAnyRole, requireAuth, updateCartBadge } from '../core/auth/index.js';
-import { setPageMeta } from '../core/utils/seo.js';
+import { t } from '../app/i18n.js';
+import { isAuthenticated, getUser, hasAnyRole, requireAuth } from '../features/auth/login.js';
+import { updateCartBadge } from '../widgets/layout/navbar.js';
+import { setPageMeta } from '../shared/utils/seo.js';
 import { SELLER_ROLES } from '../shared/constants/roles.js';
-import { router, registerRouteCleanup } from '../core/router/index.js';
-import { showError, showLoading, escapeHtml, observeAnimations, fadeInContent, animate, safeSetHTML } from '../core/utils/dom.js';
-import { formatPrice, formatDate, statusClass, tStatus, tCondition, renderStars } from '../core/utils/format.js';
-import { renderProductCards, openLightbox, trackRecentlyViewed, showToast } from '../core/utils/ui.js';
-import { createModal } from '../shared/components/modal.js';
+import { router, registerRouteCleanup } from '../app/router.js';
+import { showError, showLoading, escapeHtml, observeAnimations, fadeInContent, animate, safeSetHTML } from '../shared/utils/dom.js';
+import { formatPrice, formatDate, renderStars } from '../shared/utils/format.js';
+import { showToast } from '../widgets/ui/toast.js';
+import { openLightbox, createModal } from '../widgets/ui/modal.js';
+import { renderProductCards } from '../widgets/cards/product-card.js';
+import { trackRecentlyViewed } from '../features/home/index.js';
+import { addToCart } from '../features/cart/add.js';
+import { fetchProductById, fetchProducts } from '../features/products/detail.js';
+import { fetchWishlist, toggleWishlist } from '../features/wishlist/index.js';
+import { createAuction } from '../features/auctions/create.js';
+import { fetchProductRating, fetchProductReviews, submitReview } from '../features/reviews/index.js';
+import { renderBreadcrumb, renderGallery, renderDetailPanel, renderReviewCards } from '../widgets/product-detail/index.js';
 
 export default async function renderProductDetail(container, route, params) {
   setPageMeta(t('productDetail.title'));
@@ -20,15 +28,14 @@ export default async function renderProductDetail(container, route, params) {
   showLoading(container, "detail");
 
   try {
-    const p = await api.get(`/products/${id}`);
+    const p = await fetchProductById(id);
     const isAvailable = p.status === "Available" || p.status === 0;
 
-    // Fetch reviews in parallel
     const [ratingData, reviewsData, wishlistData] = await Promise.all([
-      api.get(`/reviews/product/${id}/rating`).catch(() => null),
-      api.get(`/reviews/product/${id}`).catch(() => null),
+      fetchProductRating(id),
+      fetchProductReviews(id),
       isAuthenticated()
-        ? api.get("/wishlist").catch(() => null)
+        ? fetchWishlist(200).catch(() => null)
         : Promise.resolve(null),
     ]);
     const wishlistItems = wishlistData?.items || wishlistData?.data || wishlistData || [];
@@ -48,125 +55,14 @@ export default async function renderProductDetail(container, route, params) {
     const stockLevel = stockQty > 50 ? 'high' : stockQty > 10 ? 'medium' : 'low';
     const stockPct = Math.min(100, Math.max(0, stockQty));
 
+    const isSellerOwner = !p.isAuctioned && getUser()?.id === p.sellerId && hasAnyRole(...(SELLER_ROLES));
+
     container.innerHTML = `
-      <nav class="breadcrumb" aria-label="${t('common.breadcrumb')}"><a href="#/">${t("nav.home")}</a> <i class="fas fa-chevron-${getCurrentLang() === "ar" ? "left" : "right"}" aria-hidden="true"></i> <a href="#/products">${t("nav.products")}</a> <i class="fas fa-chevron-${getCurrentLang() === "ar" ? "left" : "right"}" aria-hidden="true"></i> <span>${escapeHtml(p.categoryName || t('common.category'))}</span> <i class="fas fa-chevron-${getCurrentLang() === "ar" ? "left" : "right"}" aria-hidden="true"></i> <span>${escapeHtml(p.title)}</span></nav>
+      ${renderBreadcrumb(p)}
       <div class="row g-5">
-        <div class="col-lg-6">
-          <div class="detail-image p-0 image-magnifier-wrap" id="mainImageWrap">
-            ${p.primaryImageUrl ? `<img src="${escapeHtml(p.primaryImageUrl)}" id="mainImg" alt="${escapeHtml(p.title)}" style="width:100%;height:100%;object-fit:cover" loading="lazy" decoding="async" fetchpriority="high"><div class="magnifier-lens" id="magLens"></div>` : '<i class="fas fa-image" aria-hidden="true"></i>'}
-            <div class="rounded-circle d-flex align-items-center justify-content-center" style="position:absolute;bottom:12px;right:12px;background:var(--overlay);color:var(--text-inverse);width:36px;height:36px;pointer-events:none"><i class="fas fa-search-plus" aria-hidden="true"></i></div>
-          </div>
-        </div>
-        <div class="col-lg-6">
-        <div class="detail-info">
-          <div class="d-flex justify-content-between align-items-start mb-2">
-            <h1 class="mb-0" style="margin-right:12px">${escapeHtml(p.title)}</h1>
-            <button class="btn btn-ghost btn-icon btn-sm mt-1" id="shareBtn" aria-label="${t('common.share')}" title="${t('common.share')}"><i class="fas fa-share-alt" aria-hidden="true"></i></button>
-          </div>
-          <div class="detail-price">${formatPrice(p.price)}</div>
-          
-          <div class="stock-indicator">
-            <span class="stock-label stock-${stockLevel}">${p.stockQuantity !== null ? `${p.stockQuantity} ${t("products.inStock")}` : t("common.N/A")}</span>
-            <div class="stock-bar"><div class="stock-bar-fill stock-${stockLevel}" style="width:${stockPct}%"></div></div>
-          </div>
-
-          <div class="detail-meta mt-3">
-            <div class="detail-meta-item"><strong>${t("product.condition")}:</strong> ${tCondition(p.condition)}</div>
-            <div class="detail-meta-item"><strong>${t("product.location")}:</strong> ${escapeHtml(p.location || t("common.N/A"))}</div>
-            <div class="detail-meta-item"><strong>${t("product.category")}:</strong> ${p.categoryName || t("common.N/A")}</div>
-            <div class="detail-meta-item"><strong>${t("product.status")}:</strong> <span class="status ${statusClass(p.status)}">${tStatus(p.status, "product")}</span></div>
-          </div>
-          ${p.brand ? `<p class="mb-2 mt-2"><strong>${t("product.brand")}:</strong> ${escapeHtml(p.brand)}</p>` : ""}
-          <div class="detail-desc mt-3">${escapeHtml(p.description || t("product.noDescription"))}</div>
-          <div class="d-flex gap-3 flex-wrap">
-            <div class="d-flex align-items-center gap-2 flex-wrap">
-              <div class="qty-btn-group">
-                <button type="button" class="qty-btn" id="qtyMinus" aria-label="${t('product.decreaseQty')}">−</button>
-                <input type="number" id="productQty" value="1" min="1"
-                  max="${p.stockQuantity || 99}" aria-label="${t('product.quantity')}" class="cart-qty-input">
-                <button type="button" class="qty-btn" id="qtyPlus" aria-label="${t('product.increaseQty')}">+</button>
-              </div>
-              <button class="btn btn-primary btn-lg" id="addToCartBtn"
-                ${!isAvailable ? "disabled" : ""} style="flex:1;min-width:140px">
-                <i class="fas fa-shopping-cart" aria-hidden="true"></i> ${t("product.addToCart")}
-              </button>
-            </div>
-            <button class="btn ${isWishlisted ? 'btn-danger' : 'btn-outline'} btn-lg"
-              id="addToWishlistBtn" aria-pressed="${isWishlisted}"
-              title="${isWishlisted ? t('product.removeFromWishlist')
-                            : t('product.wishlist')}">
-              <i class="${isWishlisted ? 'fas' : 'far'} fa-heart"></i>
-              ${isWishlisted ? t('product.removeFromWishlist') : t("product.wishlist")}
-            </button>
-            ${p.isAuctioned && p.auctionId ? `<a href="#/auction-detail?id=${p.auctionId}" class="btn btn-success btn-lg"><i class="fas fa-gavel" aria-hidden="true"></i> ${t("product.viewAuction")}</a>` : !p.isAuctioned && getUser()?.id === p.sellerId && hasAnyRole(...(SELLER_ROLES)) ? `<button class="btn btn-primary btn-lg" id="startAuctionBtn"><i class="fas fa-gavel" aria-hidden="true"></i> ${t("auction.startAuction")}</button>` : ""}
-            ${p.sellerId ? `<a href="#/seller-profile?userId=${p.sellerId}" class="btn btn-outline btn-lg"><i class="fas fa-envelope" aria-hidden="true"></i> ${t("product.contactSeller")}</a>` : ""}
-          </div>
-          
-          <!-- Seller info card -->
-          ${p.sellerId ? `
-          <a href="#/seller-profile?userId=${p.sellerId}" class="seller-info-card mt-4" style="text-decoration:none;color:inherit">
-            <div class="seller-avatar">${escapeHtml(p.sellerName || t('common.unknown')).charAt(0).toUpperCase()}</div>
-            <div class="seller-info-details">
-              <div class="seller-info-name">${escapeHtml(p.sellerName || t("common.N/A"))}</div>
-              <div class="seller-info-meta"><i class="fas fa-store" aria-hidden="true"></i> ${t('common.viewProfile')}</div>
-            </div>
-            <i class="fas fa-chevron-${getCurrentLang() === 'ar' ? 'left' : 'right'} text-muted" aria-hidden="true"></i>
-          </a>` : ""}
-
-          <!-- Reviews section -->
-          <div class="mt-4 pt-4 border-divider-top" id="reviewsSection">
-            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
-              <h3><i class="fas fa-star text-warning" aria-hidden="true"></i> ${t("review.title")} ${avgRating ? `(${renderStars(avgRating)} ${avgRating.toFixed(1)})` : ""}</h3>
-              <div class="d-flex gap-2">
-                <select id="reviewSort" class="form-select form-select-sm" style="width:130px;height:34px;font-size:0.85rem">
-                  <option value="newest">${t("products.newest")}</option>
-                  <option value="highest">${t("products.priceHighLow") ? t("products.priceHighLow").replace('Price', 'Highest') : 'Highest Rated'}</option>
-                  <option value="lowest">${t("products.priceLowHigh") ? t("products.priceLowHigh").replace('Price', 'Lowest') : 'Lowest Rated'}</option>
-                </select>
-                ${isAuthenticated() ? `<button class="btn btn-outline btn-sm" id="showReviewForm">${t("review.writeReview")}</button>` : ""}
-              </div>
-            </div>
-            ${
-              isAuthenticated()
-                ? `
-            <div id="reviewFormContainer" class="d-none card card-sm mb-3">
-              <div id="reviewAlert"></div>
-              <div class="form-group">
-                <label class="form-label">${t("review.rating")}</label>
-                <div id="starRating" role="radiogroup" aria-label="${t("review.rating")}" class="d-flex gap-2 fs-4 text-muted" style="cursor:pointer">
-                  ${[1, 2, 3, 4, 5].map((i) => `<i class="fas fa-star" data-star="${i}" role="radio" aria-checked="false" aria-label="${i} ${t("review.stars")}" style="transition:color 0.15s,transform 0.15s"></i>`).join("")}
-                </div>
-                <input type="hidden" id="ratingVal" value="0">
-              </div>
-              <div class="form-group">
-                <label class="form-label">${t("review.comment")}</label>
-                <textarea class="form-textarea form-control" id="reviewComment" rows="3" placeholder="${t("review.rateProduct")}" style="resize:vertical"></textarea>
-              </div>
-              <button class="btn btn-primary btn-sm" id="reviewSubmit"><i class="fas fa-paper-plane" aria-hidden="true"></i> ${t("review.submit")}</button>
-            </div>
-            `
-                : `<p class="text-muted small"><a href="#/login" class="text-primary">${t("auth.login")}</a> ${t("review.title")}</p>`
-            }
-            <div id="reviewsList"></div>
-            <div id="reviewPagination" class="text-center mt-3 d-none">
-              <button class="btn btn-ghost btn-sm" id="loadMoreReviewsBtn">${t("common.loadMore")}</button>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Mobile sticky add-to-cart -->
-      <div class="mobile-sticky-bar" id="mobileStickyCart">
-        <div class="current-bid-mini">
-          <small>${t("cart.price")}</small>
-          <span>${formatPrice(p.price)}</span>
-        </div>
-        <button class="btn btn-primary" id="mobileAddToCartBtn" ${!isAvailable ? "disabled" : ""}>
-          <i class="fas fa-shopping-cart" aria-hidden="true"></i> ${t("product.addToCart")}
-        </button>
-      </div>
-    </div>
-    `;
+        ${renderGallery(p)}
+        ${renderDetailPanel(p, isAvailable, isWishlisted, stockLevel, stockPct, avgRating, isAuthenticated(), isSellerOwner)}
+      </div>`;
 
     fadeInContent(container);
 
@@ -174,29 +70,7 @@ export default async function renderProductDetail(container, route, params) {
     const reviewsList = document.getElementById("reviewsList");
     let currentReviewPage = 1;
     let sortedReviews = [...reviews];
-    const renderReviews = (reviewsArr, page = 1) => {
-      const pageSize = 5;
-      const paginated = reviewsArr.slice(0, page * pageSize);
-      if (paginated.length === 0) {
-        safeSetHTML(reviewsList, `<p class="text-muted text-center p-4">${t("review.noReviews")}</p>`);
-      } else {
-        safeSetHTML(reviewsList, paginated.map(r => `
-          <div class="notif-item">
-            <div class="flex-fill">
-              <strong>${escapeHtml(r.userName || "User")}</strong>
-              <span class="text-warning">${renderStars(r.rating)}</span>
-              ${r.comment ? `<p class="mt-1" style="color:var(--text-secondary);font-size:0.9rem">${escapeHtml(r.comment)}</p>` : ""}
-              <small class="text-muted">${formatDate(r.createdAt)}</small>
-            </div>
-          </div>
-        `).join(''));
-      }
-      const loadMoreBtn = document.getElementById("reviewPagination");
-      if (reviewsArr.length > page * pageSize) loadMoreBtn.classList.remove("d-none");
-      else loadMoreBtn.classList.add("d-none");
-    };
-
-    renderReviews(sortedReviews, currentReviewPage);
+    renderReviewCards(reviewsList, sortedReviews, currentReviewPage);
 
     // Review Sorting
     document.getElementById("reviewSort")?.addEventListener("change", (e) => {
@@ -205,12 +79,12 @@ export default async function renderProductDetail(container, route, params) {
       else if (val === 'lowest') sortedReviews = [...reviews].sort((a,b) => a.rating - b.rating);
       else sortedReviews = [...reviews].sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
       currentReviewPage = 1;
-      renderReviews(sortedReviews, currentReviewPage);
+      renderReviewCards(reviewsList, sortedReviews, currentReviewPage);
     });
 
     document.getElementById("loadMoreReviewsBtn")?.addEventListener("click", () => {
       currentReviewPage++;
-      renderReviews(sortedReviews, currentReviewPage);
+      renderReviewCards(reviewsList, sortedReviews, currentReviewPage);
     });
 
     // Share Button
@@ -290,7 +164,7 @@ export default async function renderProductDetail(container, route, params) {
     // Similar products
     (async () => {
       try {
-        const similar = await api.get("/products", {
+        const similar = await fetchProducts({
           categoryId: p.categoryId,
           pageSize: 4,
         });
@@ -332,10 +206,7 @@ export default async function renderProductDetail(container, route, params) {
         btn.disabled = true;
         btn.innerHTML = `<i class="fas fa-spinner spinner" aria-hidden="true"></i> ${t("common.loading")}`;
         try {
-          await api.post("/cart/items", {
-            productId: p.id,
-            quantity: parseInt(document.getElementById("productQty")?.value) || 1
-          });
+          await addToCart(p.id, parseInt(document.getElementById("productQty")?.value) || 1);
           showToast(t("product.addedToCart"), "success");
           updateCartBadge();
         } catch (e) {
@@ -368,7 +239,7 @@ export default async function renderProductDetail(container, route, params) {
             ${isWishlisted ? t('product.removeFromWishlist') : t("product.wishlist")}`;
         }
         try {
-          await api.post("/wishlist/toggle", { productId: p.id });
+          await toggleWishlist(p.id);
           showToast(
             isWishlisted ? t("product.addedToWishlist")
                        : t("product.removedFromWishlist"),
@@ -430,7 +301,7 @@ export default async function renderProductDetail(container, route, params) {
         submit.disabled = true;
         submit.innerHTML = `<i class="fas fa-spinner spinner" aria-hidden="true"></i> ${t("auction.placingBid")}`;
         try {
-          await api.post("/auctions", {
+          await createAuction({
             productId: p.id,
             endTime: new Date(document.getElementById("auctionEndTime").value).toISOString(),
             startingPrice: parseFloat(document.getElementById("auctionStartPrice").value),
@@ -516,7 +387,7 @@ export default async function renderProductDetail(container, route, params) {
         submit.disabled = true;
         submit.innerHTML = `<i class="fas fa-spinner spinner" aria-hidden="true"></i> ${t("review.submitting")}`;
         try {
-          await api.post("/reviews", { productId: p.id, rating, comment });
+          await submitReview(p.id, rating, comment);
           showToast(t("review.submitted"), "success");
           document
             .getElementById("reviewFormContainer")

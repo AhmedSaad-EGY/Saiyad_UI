@@ -1,0 +1,80 @@
+/* ============================================================
+   SELLER INFO CARD & ORDER SUCCESS
+   ============================================================ */
+.seller-info-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border-subtle);
+  margin: var(--space-4) 0;
+  transition: all 0.2s var(--ease-out);
+}
+
+.seller-info-card:hover {
+  border-color: var(--primary-light);
+  box-shadow: var(--shadow-sm);
+}
+
+.seller-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-full);
+  background: var(--primary-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: var(--weight-bold);
+  color: var(--primary);
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.seller-info-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.seller-info-name {
+  font-weight: var(--weight-semibold);
+  color: var(--text);
+  font-size: var(--text-sm);
+}
+
+.seller-info-meta {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+}
+
+/* ── Order success ──────────────────────────────────────────── */
+.order-success {
+  text-align: center;
+  padding: var(--space-12) var(--space-6);
+}
+
+.order-success-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: var(--radius-full);
+  background: var(--success-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto var(--space-6);
+  font-size: 2rem;
+  color: var(--success);
+}
+
+.order-success h2 {
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-bold);
+  margin-bottom: var(--space-3);
+}
+
+.order-success p {
+  color: var(--text-secondary);
+  max-width: 400px;
+  margin-inline: auto;
+}

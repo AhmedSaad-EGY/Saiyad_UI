@@ -1,0 +1,213 @@
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 20px;
+  border-radius: var(--radius);
+  font-family: var(--font-sans);
+  font-weight: var(--weight-semibold);
+  font-size: var(--text-sm);
+  line-height: 1.2;
+  cursor: pointer;
+  text-decoration: none;
+  border: 1px solid transparent;
+  white-space: nowrap;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  position: relative;
+  overflow: hidden;
+  transition:
+    transform var(--transition),
+    box-shadow var(--transition),
+    background var(--transition),
+    color var(--transition),
+    border-color var(--transition);
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(0) scale(0.97);
+  box-shadow: var(--btn-active-shadow) !important;
+}
+
+/* ── Variants ───────────────────────────────────────────────── */
+.btn-primary {
+  background: var(--primary);
+  color: var(--text-inverse);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--primary-dark);
+  box-shadow: var(--primary-shadow);
+  transform: translateY(-2px);
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--primary);
+  border-color: var(--primary);
+}
+
+.btn-outline:hover:not(:disabled) {
+  background: var(--primary);
+  color: var(--text-inverse);
+  box-shadow: var(--primary-shadow-light);
+  transform: translateY(-2px);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text-secondary);
+  border: none;
+}
+
+.btn-ghost:hover:not(:disabled) {
+  background: var(--primary-ghost);
+  color: var(--text);
+}
+
+.btn-danger {
+  background: var(--danger);
+  color: var(--text-inverse);
+}
+
+.btn-danger:hover:not(:disabled) {
+  background: var(--danger-dark);
+  box-shadow: var(--danger-shadow);
+  transform: translateY(-2px);
+}
+
+.btn-success {
+  background: var(--success);
+  color: var(--text-inverse);
+}
+
+.btn-success:hover:not(:disabled) {
+  background: var(--success-dark);
+  box-shadow: var(--success-shadow);
+  transform: translateY(-2px);
+}
+
+/* ── Sizes ──────────────────────────────────────────────────── */
+.btn-sm {
+  padding: 6px 14px;
+  font-size: var(--text-xs);
+}
+
+.btn-lg {
+  padding: 14px 32px;
+  font-size: var(--text-base);
+}
+
+.btn-icon {
+  padding: 8px;
+  border-radius: 50%;
+  min-width: 44px;
+  min-height: 44px;
+}
+
+/* ── Disabled ───────────────────────────────────────────────── */
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* ── Icon micro-interaction ─────────────────────────────────── */
+.btn i,
+.nav-link i,
+.dropdown-item i {
+  transition: transform var(--transition);
+}
+
+.btn:not(:disabled):hover i {
+  transform: scale(1.12);
+}
+
+.nav-link:hover i,
+.dropdown-item:hover i {
+  transform: scale(1.15);
+}
+
+/* ── VIP gold shimmer (dark + data-vip only) ─────────────────── */
+[data-theme="dark"][data-vip] .btn-primary::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--gold-shimmer);
+  opacity: 0;
+  transition: opacity var(--transition);
+  pointer-events: none;
+}
+
+[data-theme="dark"][data-vip] .btn-primary:hover::after {
+  opacity: 1;
+}
+
+/* ============================================================
+   TOGGLE BUTTONS (theme / lang)
+   ============================================================ */
+.toggle-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 7px 11px;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  line-height: 1;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background var(--transition),
+    color var(--transition),
+    border-color var(--transition),
+    transform var(--transition);
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .toggle-btn {
+    min-height: 44px;
+    padding: 10px 14px;
+  }
+}
+
+.toggle-btn:hover {
+  background: var(--primary-ghost);
+  color: var(--text);
+  border-color: var(--primary);
+  transform: translateY(-1px);
+}
+
+.toggle-btn:active {
+  transform: translateY(0);
+}
+
+.toggle-btn:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+#themeToggle i {
+  transition: transform 0.4s var(--ease-bounce);
+  display: inline-block;
+}
+
+@media (max-width: 360px) {
+  .btn-lg {
+    padding: var(--space-3) var(--space-5);
+    font-size: var(--text-sm);
+  }
+}

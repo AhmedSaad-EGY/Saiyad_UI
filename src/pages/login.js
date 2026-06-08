@@ -1,191 +1,64 @@
-import { t } from '../core/i18n/index.js';
-import { api, setAccessToken } from '../core/api/client.js';
-import { isAuthenticated, updateNavbar, syncVipAttribute } from '../core/auth/index.js';
-import { navigate } from '../core/router/index.js';
-import { showToast } from '../core/utils/ui.js';
-import { showFieldError, clearFieldError } from '../core/utils/validation.js';
-import { ensureCsrfToken } from '../core/utils/csrf.js';
-import { setPageMeta } from '../core/utils/seo.js';
-import Alpine from 'alpinejs';
-
-Alpine.data('loginForm', () => ({
-  email: '',
-  password: '',
-  loading: false,
-  error: '',
-  showPassword: false,
-  unverifiedEmail: '',
-
-  clearFieldError,
-
-  togglePw() {
-    this.showPassword = !this.showPassword;
-  },
-
-  clearError() {
-    this.error = '';
-  },
-
-  async submit() {
-    this.loading = true;
-    this.error = '';
-    this.unverifiedEmail = '';
-
-    const emailEl = document.getElementById('loginEmail');
-    const pwEl = document.getElementById('loginPassword');
-
-    clearFieldError(emailEl);
-    clearFieldError(pwEl);
-
-    let valid = true;
-    if (!this.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.email.trim())) {
-      showFieldError(emailEl, t('auth.invalidEmail'));
-      valid = false;
-    }
-    if (!this.password || this.password.length < 6) {
-      showFieldError(pwEl, t('auth.passwordMinLength'));
-      valid = false;
-    }
-    if (!valid) {
-      this.loading = false;
-      return;
-    }
-
-    try {
-      const data = await api.post('/auth/login', {
-        email: this.email.trim(),
-        password: this.password,
-      });
-      localStorage.setItem('refreshToken', data.refreshToken);
-      localStorage.setItem('user', JSON.stringify(data.user));
-      setAccessToken(data.token);
-      ensureCsrfToken();
-      sessionStorage.removeItem('sayiadLoginFails');
-      updateNavbar();
-      await syncVipAttribute();
-      navigate('');
-    } catch (err) {
-      if (err.message?.toLowerCase().includes('verify your email')) {
-        this.unverifiedEmail = this.email.trim();
-      } else {
-        this.error = err.message;
-        // Track failed attempts
-        const failCount = parseInt(sessionStorage.getItem('sayiadLoginFails') || '0') + 1;
-        sessionStorage.setItem('sayiadLoginFails', failCount);
-
-        if (failCount >= 5) {
-          const submitBtn = document.querySelector('#loginForm button[type="submit"], #loginSubmitBtn');
-          const lockMsg   = document.getElementById('loginLockMsg');
-          if (submitBtn) submitBtn.disabled = true;
-          let secs = 30;
-          const lockText = () => t('auth.tooManyAttempts', { secs });
-          if (lockMsg) {
-            lockMsg.classList.remove('hidden');
-            lockMsg.textContent = lockText();
-          }
-          const timer = setInterval(() => {
-            secs--;
-            if (lockMsg) lockMsg.textContent = lockText();
-            if (secs <= 0) {
-              clearInterval(timer);
-              this._lockoutTimer = null;
-              sessionStorage.removeItem('sayiadLoginFails');
-              if (submitBtn) submitBtn.disabled = false;
-              if (lockMsg) lockMsg.classList.add('hidden');
-            }
-          }, 1000);
-          this._lockoutTimer = timer;
-        }
-      }
-    } finally {
-      this.loading = false;
-    }
-  },
-
-  async resendVerification() {
-    try {
-      const btn = this.$refs.resendBtn;
-      if (btn) btn.disabled = true;
-      await api.post('/auth/resend-verification', { email: this.unverifiedEmail });
-      showToast(t('auth.verificationSent'), 'success');
-    } catch (e) {
-      showToast(e.message, 'error');
-    }
-  },
-
-  destroy() {
-    if (this._lockoutTimer) {
-      clearInterval(this._lockoutTimer);
-      this._lockoutTimer = null;
-    }
-  },
-}));
+import { t } from '../app/i18n.js';
+import { setPageMeta } from '../shared/utils/seo.js';
+import { showToast } from '../widgets/ui/toast.js';
+import { navigate } from '../app/router.js';
+import '../features/auth/login.js';
 
 export default function renderLogin(container) {
-  setPageMeta(t('login.title'));
-  if (isAuthenticated()) {
-    navigate('');
-    return;
+  if (new URLSearchParams(window.location.hash.split('?')[1] || '').get('redirect')) {
+    setPageMeta(t('auth.loginRequired'));
+  } else {
+    setPageMeta(t('auth.login'));
   }
 
   container.innerHTML = `
-    <div x-data="loginForm" class="auth-page animate__animated animate__fadeIn">
+    <div class="auth-page animate__animated animate__fadeIn" x-data="loginForm">
       <div class="card">
-        <div class="card-header">
-          <h2><i class="fas fa-sign-in-alt" aria-hidden="true"></i> ${t('auth.login')}</h2>
-        </div>
         <div class="card-body">
-          <div x-show="error" x-text="error" class="alert alert-error mb-3" role="alert" aria-live="assertive" x-cloak></div>
-          <div x-show="unverifiedEmail" x-cloak>
-            <div class="alert alert-warning text-center mb-3" role="alert">
-              <i class="fas fa-envelope mb-2 fs-1 d-block" aria-hidden="true"></i>
-              <strong>${t('auth.emailNotVerified')}</strong>
-              <p class="my-2" style="font-size:var(--text-sm)">${t('auth.checkInbox')}</p>
-              <button class="btn btn-primary btn-sm mt-1" x-ref="resendBtn" @click="resendVerification()">
-                <i class="fas fa-paper-plane" aria-hidden="true"></i>
-                ${t('auth.resendVerification')}
-              </button>
-              <p class="mt-2" style="font-size:var(--text-xs);opacity:0.7">
-                <i class="fas fa-clock" aria-hidden="true"></i>
-                ${t('auth.checkSpam')}
-              </p>
-            </div>
+          <div class="auth-header">
+            <i class="fas fa-fish auth-icon"></i>
+            <h1>${t('auth.welcomeBack')}</h1>
+            <p>${t('auth.loginDesc')}</p>
           </div>
-          <form id="loginForm" @submit.prevent="submit()" novalidate>
+
+          <form @submit.prevent="submit">
+            <template x-if="error">
+              <div class="alert alert-error" @click="clearError" role="alert"><i class="fas fa-exclamation-circle"></i> <span x-text="error"></span></div>
+            </template>
+
             <div class="form-group">
-              <label class="form-label" for="loginEmail">${t('auth.email')}</label>
-              <input type="email" class="form-input form-control" id="loginEmail" name="email"
-                x-model="email" @input="clearError(); clearFieldError($el)"
-                placeholder="${t('auth.emailPlaceholder')}" required autocomplete="email" inputmode="email">
+              <label for="loginEmail">${t('auth.email')}</label>
+              <input type="email" id="loginEmail" class="form-input" x-model="email" placeholder="${t('auth.emailPlaceholder')}" required autocomplete="email" :disabled="loading" @input="clearError">
             </div>
+
             <div class="form-group">
-              <label class="form-label" for="loginPassword">${t('auth.password')}</label>
+              <label for="loginPassword">${t('auth.password')}</label>
               <div class="password-wrapper">
-                <input :type="showPassword ? 'text' : 'password'" class="form-input form-control"
-                  id="loginPassword" name="password" x-model="password"
-                  @input="clearError(); clearFieldError($el)"
-                  placeholder="${t('auth.password')}" required autocomplete="current-password" minlength="6">
-                <button type="button" class="toggle-password" @click="togglePw()"
-                  :aria-label="showPassword ? $t('auth.hidePassword') : $t('auth.showPassword')">
-                  <i :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'" aria-hidden="true"></i>
-                </button>
-              </div>
-              <div class="text-end mt-1">
-                <a href="#/forgot-password" class="text-primary text-decoration-none" style="font-size:var(--text-xs)">
-                  ${t('auth.forgotPassword')}
-                </a>
+                <input :type="showPassword ? 'text' : 'password'" id="loginPassword" class="form-input" x-model="password" placeholder="${t('auth.passwordPlaceholder')}" required autocomplete="current-password" :disabled="loading">
+                <button type="button" class="toggle-pw" @click="togglePw" :aria-label="showPassword ? '${t('common.hidePassword')}' : '${t('common.showPassword')}'" tabindex="-1"><i :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i></button>
               </div>
             </div>
-            <div id="loginLockMsg" class="field-error hidden" role="alert" aria-live="assertive"></div>
-            <button type="submit" id="loginSubmitBtn" class="btn btn-primary w-100 btn-lg mt-1" :disabled="loading">
+
+            <div class="d-flex justify-content-end">
+              <a href="#/forgot-password" class="forgot-link">${t('auth.forgotPassword')}</a>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block" :disabled="loading">
               <i class="fas fa-spinner spinner" x-show="loading" x-cloak aria-hidden="true"></i>
-              <span x-text="loading ? $t('auth.signingIn') : $t('auth.signIn')"></span>
+              <span x-text="loading ? '${t('common.loading')}' : '${t('auth.login')}'"></span>
             </button>
           </form>
-        </div>
-        <div class="card-footer">
+
+          <template x-if="unverifiedEmail">
+            <div class="alert alert-warning mt-3" role="alert">
+              <i class="fas fa-envelope"></i> ${t('auth.verifyPrompt')}
+              <button class="btn btn-sm btn-ghost" @click="resendVerification">${t('auth.resendVerification')}</button>
+            </div>
+          </template>
+
           <div class="auth-footer">
-            ${t('auth.noAccount')} <a href="#/register">${t('auth.register')}</a>
+            <span>${t('auth.noAccount')}</span>
+            <a href="#/register">${t('auth.register')}</a>
           </div>
         </div>
       </div>

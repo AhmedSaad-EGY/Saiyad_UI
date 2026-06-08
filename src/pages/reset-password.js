@@ -1,138 +1,63 @@
-import { t } from "../core/i18n/index.js";
-import { navigate, registerRouteCleanup } from "../core/router/index.js";
-import { showLoading } from "../core/utils/dom.js";
-import { getPasswordStrengthResult } from "../core/utils/validation.js";
-import { api } from "../core/api/client.js";
-import { setPageMeta } from "../core/utils/seo.js";
-import Alpine from "alpinejs";
-
-Alpine.data("resetPwForm", () => ({
-  email: "",
-  password: "",
-  confirmPassword: "",
-  showPassword: false,
-  showConfirmPw: false,
-  loading: false,
-  error: "",
-  success: false,
-  strengthCls: "strength-empty",
-  strengthLabel: "",
-
-  computeStrength() {
-    if (!this.password) {
-      this.strengthCls = "strength-empty";
-      this.strengthLabel = "";
-      return;
-    }
-    const result = getPasswordStrengthResult(this.password);
-    this.strengthCls = result.cls;
-    this.strengthLabel = t(result.label);
-  },
-
-  async submit() {
-    this.loading = true;
-    this.error = "";
-
-    if (
-      !this.email.trim() ||
-      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.email.trim())
-    ) {
-      this.error = t("auth.invalidEmail");
-      this.loading = false;
-      return;
-    }
-    if (!this.password || this.password.length < 8) {
-      this.error = t("auth.passwordMinLength");
-      this.loading = false;
-      return;
-    }
-    if (this.password !== this.confirmPassword) {
-      this.error = t("auth.passwordsDoNotMatch");
-      this.loading = false;
-      return;
-    }
-
-    const params = new URLSearchParams(location.hash.split("?")[1] || "");
-    const token = params.get("token");
-
-    try {
-      await api.post("/auth/reset-password", {
-        email: this.email.trim(),
-        token,
-        newPassword: this.password,
-        confirmPassword: this.confirmPassword,
-      });
-      this.success = true;
-      const timer = setTimeout(() => navigate("login"), 3000);
-      try {
-        registerRouteCleanup(() => clearTimeout(timer));
-      } catch { /* timer clears on navigate */ }
-    } catch (err) {
-      this.error = err.message;
-    } finally {
-      this.loading = false;
-    }
-  },
-}));
+import { t } from '../app/i18n.js';
+import { setPageMeta } from '../shared/utils/seo.js';
+import '../features/auth/reset-password.js';
 
 export default function renderResetPassword(container) {
   setPageMeta(t('auth.resetPassword'));
-  const params = new URLSearchParams(location.hash.split("?")[1] || "");
-  const token = params.get("token");
 
-  if (!token) {
-    navigate("login");
-    return;
-  }
-
-  showLoading(container, "form");
-
-  const renderTimer = setTimeout(() => {
-    const renderContent = () => {
-      container.innerHTML = `
-      <div x-data="resetPwForm" class="auth-page animate__animated animate__fadeIn">
-        <div class="card">
-          <div class="card-header">
-            <h2><i class="fas fa-key" aria-hidden="true"></i> ${t("auth.resetPassword")}</h2>
-          </div>
-          <div class="card-body">
-          <div x-show="error" class="alert alert-error" x-text="error" x-cloak></div>
-          <div x-show="success" class="alert alert-success" x-cloak>
-            <i class="fas fa-check-circle" aria-hidden="true"></i> ${t("auth.passwordResetSuccess")}
-          </div>
-          <form @submit.prevent="submit()" x-show="!success" novalidate>
-            <div class="form-group">
-              <label class="form-label" for="resetEmail">${t("auth.email")} *</label>
-              <input type="email" class="form-input form-control" id="resetEmail" name="email" x-model="email" placeholder="${t('auth.emailPlaceholder')}" required autocomplete="email" inputmode="email">
+  container.innerHTML = `
+    <div class="auth-page animate__animated animate__fadeIn" x-data="resetPwForm">
+      <div class="card">
+        <div class="card-body">
+          <template x-if="success">
+            <div class="empty-state">
+              <i class="fas fa-check-circle" style="color:var(--success);font-size:3rem"></i>
+              <h3>${t('auth.passwordResetSuccess')}</h3>
+              <p>${t('auth.redirectingToLogin')}</p>
             </div>
-            <div class="form-group">
-              <label class="form-label" for="resetPassword">${t("auth.newPassword")}</label>
-              <div class="password-wrapper">
-                <input :type="showPassword ? 'text' : 'password'" class="form-input form-control" id="resetPassword" name="password" x-model="password" @input="computeStrength()" required minlength="8">
-                <button type="button" class="toggle-password" @click="showPassword = !showPassword" :aria-label="showPassword ? $t('auth.hidePassword') : $t('auth.showPassword')"><i :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i></button>
+          </template>
+
+          <template x-if="!success">
+            <div>
+              <div class="auth-header">
+                <i class="fas fa-key auth-icon"></i>
+                <h1>${t('auth.resetPassword')}</h1>
+                <p>${t('auth.enterNewPassword')}</p>
               </div>
-              <div class="pw-strength"><div class="pw-strength__track"><div class="pw-strength__fill" :class="'pw-strength__fill ' + strengthCls"></div></div></div>
-              <span class="pw-strength__label" x-text="strengthLabel"></span>
+
+              <template x-if="error">
+                <div class="alert alert-error" role="alert"><i class="fas fa-exclamation-circle"></i> <span x-text="error"></span></div>
+              </template>
+
+              <form @submit.prevent="submit">
+                <div class="form-group">
+                  <label for="rpPassword">${t('auth.newPassword')}</label>
+                  <div class="password-wrapper">
+                    <input :type="showPassword ? 'text' : 'password'" id="rpPassword" class="form-input" x-model="password" @input="computeStrength" placeholder="${t('auth.passwordPlaceholder')}" required autocomplete="new-password" minlength="8" :disabled="loading">
+                    <button type="button" class="toggle-pw" @click="togglePw" tabindex="-1"><i :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i></button>
+                  </div>
+                  <div class="pw-strength" x-show="password.length >= 3" x-cloak>
+                    <div class="pw-strength-bar" :class="strengthCls"></div>
+                    <span class="pw-strength-label" :class="strengthCls" x-text="strengthLabel"></span>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="rpConfirm">${t('auth.confirmPassword')}</label>
+                  <div class="password-wrapper">
+                    <input :type="showConfirmPw ? 'text' : 'password'" id="rpConfirm" class="form-input" x-model="confirmPassword" placeholder="${t('auth.confirmPasswordPlaceholder')}" required autocomplete="new-password" :disabled="loading">
+                    <button type="button" class="toggle-pw" @click="toggleConfirmPw" tabindex="-1"><i :class="showConfirmPw ? 'fas fa-eye-slash' : 'fas fa-eye'"></i></button>
+                  </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block" :disabled="loading">
+                  <i class="fas fa-spinner spinner" x-show="loading" x-cloak aria-hidden="true"></i>
+                  <span x-text="loading ? '${t('common.loading')}' : '${t('auth.resetPassword')}'"></span>
+                </button>
+              </form>
             </div>
-            <div class="form-group">
-              <label class="form-label" for="resetConfirmPw">${t("auth.confirmNewPassword")}</label>
-              <div class="password-wrapper">
-                <input :type="showConfirmPw ? 'text' : 'password'" class="form-input form-control" id="resetConfirmPw" name="confirmPassword" x-model="confirmPassword" required minlength="8">
-                <button type="button" class="toggle-password" @click="showConfirmPw = !showConfirmPw" :aria-label="showConfirmPw ? $t('auth.hidePassword') : $t('auth.showPassword')"><i :class="showConfirmPw ? 'fas fa-eye-slash' : 'fas fa-eye'"></i></button>
-              </div>
-            </div>
-            <button type="submit" class="btn btn-primary w-100 btn-lg" :disabled="loading">
-              <i class="fas fa-spinner spinner" x-show="loading" x-cloak></i>
-              <span x-text="loading ? $t('auth.updatingPassword') : $t('auth.resetPassword')"></span>
-            </button>
-          </form>
-          </div>
+          </template>
         </div>
-      </div>`;
-      Alpine.initTree?.(container);
-    };
-
-    renderContent();
-  }, 300);
-  registerRouteCleanup(() => clearTimeout(renderTimer));
+      </div>
+    </div>`;
 }

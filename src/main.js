@@ -1,5 +1,6 @@
 import 'bootstrap';
 
-import './core/stores/alpine.js';
-import './core/utils/ocean.js';
-import './core/app.js';
+import './app/bootstrap.js';
+import './app/app.js';
+import './shared/stores/auth.store.js';
+import './shared/stores/app.store.js';

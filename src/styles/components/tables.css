@@ -1,0 +1,217 @@
+/* ============================================================
+   TABLE
+   ============================================================ */
+.table-wrapper {
+  overflow-x: auto;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  position: relative;
+  background: var(--card-bg);
+  padding: var(--space-1);
+}
+
+/* Fade-out indicator for horizontal overflow */
+.table-wrapper::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  inset-inline-end: 0;
+  width: 40px;
+  height: 100%;
+  background: linear-gradient(to right, transparent, var(--card-bg));
+  pointer-events: none;
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  opacity: 0;
+  transition: opacity var(--duration-fast) var(--ease-out);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  text-align: start;
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--border);
+  font-size: var(--text-sm);
+}
+
+th {
+  font-weight: var(--weight-semibold);
+  color: var(--text-secondary);
+  background: var(--card-bg);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+.table-wrapper th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+tr {
+  transition: background var(--transition);
+}
+
+tr:hover td {
+  background: var(--table-hover);
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+
+.table-wrapper table {
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+/* Table action cells */
+.actions-cell {
+  white-space: nowrap;
+  text-align: end;
+}
+
+.edit-product-btn:hover:not(:disabled) {
+  background: var(--primary-ghost);
+  color: var(--primary);
+}
+
+.delete-product-btn:hover:not(:disabled) {
+  background: oklch(from var(--danger) l c h / 0.12);
+  color: var(--danger);
+}
+
+/* Product thumbnails */
+.product-thumb-cell {
+  width: 50px;
+  vertical-align: middle;
+}
+
+.product-thumb,
+.product-thumb-placeholder {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  object-fit: cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--primary-ghost);
+  flex-shrink: 0;
+}
+
+.product-thumb-placeholder i {
+  font-size: 14px;
+  opacity: 0.5;
+}
+
+.stock-low {
+  color: var(--danger);
+  font-weight: var(--weight-semibold);
+}
+
+.stock-low i {
+  margin-inline-end: 4px;
+}
+
+/* Mobile: card layout for product table */
+@media (max-width: 767px) {
+
+  .table-wrapper table,
+  .table-wrapper thead,
+  .table-wrapper tbody,
+  .table-wrapper tr,
+  .table-wrapper th,
+  .table-wrapper td {
+    display: block;
+  }
+
+  .table-wrapper {
+    background: transparent;
+    border: none;
+    padding: 0;
+  }
+
+  .table-wrapper thead {
+    display: none;
+  }
+
+  .table-wrapper tbody tr {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-3) var(--space-4);
+    margin-bottom: var(--space-3);
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: var(--space-2) var(--space-3);
+    align-items: center;
+    transition:
+      border-color var(--duration-fast) var(--ease-out),
+      box-shadow var(--duration-fast) var(--ease-out);
+  }
+
+  .table-wrapper tbody tr:hover {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 1px var(--primary);
+    background: var(--card-bg);
+  }
+
+  .table-wrapper td {
+    padding: 0;
+    border: none;
+  }
+
+  .table-wrapper tbody tr td:nth-child(1) {
+    grid-column: 1;
+    grid-row: 1 / 4;
+    align-self: start;
+  }
+
+  .table-wrapper tbody tr td:nth-child(2) {
+    grid-column: 2 / 4;
+    grid-row: 1;
+  }
+
+  .table-wrapper tbody tr td:nth-child(3) {
+    grid-column: 2;
+    grid-row: 2;
+    font-size: var(--text-sm);
+  }
+
+  .table-wrapper tbody tr td:nth-child(4) {
+    grid-column: 3;
+    grid-row: 2;
+    justify-self: end;
+  }
+
+  .table-wrapper tbody tr td:nth-child(5) {
+    grid-column: 2;
+    grid-row: 3;
+    font-size: var(--text-sm);
+  }
+
+  .table-wrapper tbody tr td:nth-child(6) {
+    grid-column: 3;
+    grid-row: 3;
+    justify-self: end;
+  }
+
+  .table-wrapper td[data-label]::before {
+    content: attr(data-label) " ";
+    font-weight: var(--weight-normal);
+    color: var(--text-muted);
+    margin-inline-end: var(--space-1);
+  }
+
+  .table-wrapper td:nth-child(4)[data-label]::before,
+  .table-wrapper td:nth-child(6)[data-label]::before {
+    display: none;
+  }
+}

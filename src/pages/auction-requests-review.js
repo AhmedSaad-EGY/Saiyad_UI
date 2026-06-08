@@ -1,13 +1,14 @@
-import { t } from '../core/i18n/index.js';
-import { api } from '../core/api/client.js';
-import { getUser } from '../core/auth/index.js';
+import { t } from '../app/i18n.js';
+import { getUser } from '../features/auth/login.js';
 import { MODERATOR_ROLES } from '../shared/constants/roles.js';
-import { escapeHtml } from '../core/utils/dom.js';
-import { statusClass } from '../core/utils/format.js';
-import { showToast } from '../core/utils/ui.js';
-import { registerRouteCleanup } from '../core/router/index.js';
-import { manualPaginationHtml, wirePagination } from '../shared/components/pagination.js';
-import { setPageMeta } from '../core/utils/seo.js';
+import { escapeHtml } from '../shared/utils/dom.js';
+import { statusClass } from '../shared/utils/format.js';
+import { showToast } from '../widgets/ui/toast.js';
+import { registerRouteCleanup } from '../app/router.js';
+import { manualPaginationHtml, wirePagination } from '../widgets/ui/pagination.js';
+import { setPageMeta } from '../shared/utils/seo.js';
+
+import { fetchPendingRequests, approveAuctionRequest, rejectAuctionRequest } from '../features/auctions/analytics.js';
 
 export default async function renderAuctionRequestsReview(container) {
   setPageMeta(t('auctionRequestsReview.title'));
@@ -28,7 +29,7 @@ export default async function renderAuctionRequestsReview(container) {
     const content = document.getElementById("reviewContent");
     content.innerHTML = `<div class="text-center py-5"><i class="fas fa-spinner spinner fa-2x" aria-hidden="true"></i><p class="text-muted mt-2">${t("common.loading")}</p></div>`;
     try {
-      const res = await api.get("/auctions/requests/pending", { page, pageSize: 50 });
+      const res = await fetchPendingRequests(page, 50);
       const items = res?.items || res?.data || [];
       totalPages = res?.totalPages || 1;
       if (!items || items.length === 0) {
@@ -111,7 +112,7 @@ export default async function renderAuctionRequestsReview(container) {
       btn.disabled = true;
       btn.innerHTML = `<i class="fas fa-spinner spinner" aria-hidden="true"></i> ${t("auctionRequestsReview.approving")}`;
       try {
-        await api.post(`/auctions/requests/${requestId}/approve`, body);
+        await approveAuctionRequest(requestId, body);
         showToast(t("auctionRequestsReview.approvedSuccess"), "success");
         close();
         loadRequests();
@@ -160,7 +161,7 @@ export default async function renderAuctionRequestsReview(container) {
       btn.disabled = true;
       btn.innerHTML = `<i class="fas fa-spinner spinner" aria-hidden="true"></i> ${t("auctionRequestsReview.rejecting")}`;
       try {
-        await api.post(`/auctions/requests/${requestId}/reject`, { reason });
+        await rejectAuctionRequest(requestId, reason);
         showToast(t("auctionRequestsReview.rejectedSuccess"), "success");
         close();
         loadRequests();

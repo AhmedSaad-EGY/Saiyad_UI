@@ -1,12 +1,12 @@
-import { t } from '../core/i18n/index.js';
-import { api } from '../core/api/client.js';
-import { requireAuth, getUser, syncVipAttribute } from '../core/auth/index.js';
-import { escapeHtml, observeAnimations } from '../core/utils/dom.js';
-import { formatPrice } from '../core/utils/format.js';
-import { showToast } from '../core/utils/ui.js';
-import { getRoleSubscriptionInfo, getPlanIcon, isPopularPlan } from '../features/subscriptions/helpers.js';
-import { createPaymentReference } from '../features/checkout/helpers.js';
-import { setPageMeta } from '../core/utils/seo.js';
+import { t } from '../app/i18n.js';
+import { requireAuth, getUser, syncVipAttribute } from '../features/auth/login.js';
+import { escapeHtml, observeAnimations } from '../shared/utils/dom.js';
+import { formatPrice } from '../shared/utils/format.js';
+import { showToast } from '../widgets/ui/toast.js';
+import { getRoleSubscriptionInfo, getPlanIcon, isPopularPlan, fetchPlans, fetchMySubscription, upgradeSubscription } from '../features/subscriptions/subscriptions.js';
+import { fetchWalletBalance } from '../features/wallet/wallet.js';
+import { createPaymentReference } from '../features/checkout/checkout.js';
+import { setPageMeta } from '../shared/utils/seo.js';
 
 export default async function renderSubscriptions(container) {
   setPageMeta(t('subscriptions.title'));
@@ -24,9 +24,9 @@ export default async function renderSubscriptions(container) {
 
   try {
     const [plans, mySub, walletData] = await Promise.all([
-      api.get("/subscriptionplans").catch(() => []),
-      api.get("/subscriptions/my").catch(() => null),
-      api.get("/wallet").catch(() => null),
+      fetchPlans(),
+      fetchMySubscription(),
+      fetchWalletBalance(),
     ]);
 
     const planList = plans || [];
@@ -123,7 +123,7 @@ export default async function renderSubscriptions(container) {
         btn.innerHTML = `<i class="fas fa-spinner spinner" aria-hidden="true"></i> ${t("common.loading")}`;
         try {
           const ref = createPaymentReference(tier);
-          await api.post("/subscriptions/upgrade", { tier, paymentReference: ref });
+          await upgradeSubscription(tier, ref);
           await syncVipAttribute();
           showToast(t("subscriptions.upgradeSuccess"), "success");
           window.location.reload();

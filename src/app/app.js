@@ -1,0 +1,544 @@
+import { setLanguage, getCurrentLang, t } from './i18n.js';
+import { showToast } from '../widgets/ui/toast.js'; import { showConfirm } from '../widgets/ui/modal.js'; import { openQuickView } from '../widgets/cards/product-card.js';
+import { animate } from '../shared/utils/dom.js';
+import { getUser, logout, requireAuth, syncVipAttribute } from '../features/auth/login.js';
+import { SELLER_ROLES } from '../shared/constants/roles.js';
+import { addToCart } from '../features/cart/add.js';
+import { openDrawer, closeDrawer } from '../widgets/layout/navbar.js';
+import { router, goBack, registerRouteCleanup } from './router.js';
+import { createSwipeGesture } from '../shared/utils/swipe.js';
+
+// Navbar scroll effect + back-to-top visibility
+let scrollTicking = false;
+window.addEventListener("scroll", () => {
+  if (!scrollTicking) {
+    window.requestAnimationFrame(() => {
+      const navbar = document.querySelector(".navbar");
+      if (navbar) navbar.classList.toggle("scrolled", window.scrollY > 20);
+      const btt = document.getElementById("backToTop");
+      if (btt) {
+        const show = window.scrollY > 400;
+        if (show) requestAnimationFrame(() => btt.classList.add("visible"));
+        else { btt.classList.remove("visible"); }
+      }
+      scrollTicking = false;
+    });
+    scrollTicking = true;
+  }
+}, { passive: true });
+
+document.addEventListener("click", (e) => {
+  if (e.target.closest("#backToTop")) {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+});
+
+// Navbar dropdown
+document.addEventListener("click", (e) => {
+  const dropdown = document.getElementById("dropdownMenu");
+  if (dropdown && !e.target.closest(".dropdown"))
+    dropdown.classList.remove("show");
+});
+
+document.getElementById("userDropdown")?.addEventListener("click", (e) => {
+  e.stopPropagation();
+  const menu = document.getElementById("dropdownMenu");
+  const isOpen = menu?.classList.toggle("show");
+  e.currentTarget.setAttribute("aria-expanded", isOpen ? "true" : "false");
+});
+
+document.getElementById("logoutBtn")?.addEventListener("click", async (e) => {
+  e.preventDefault();
+  const ok = await showConfirm(t("auth.logoutTitle"), t("auth.logoutConfirm"), {
+    type: "danger",
+    confirmText: t("nav.logout"),
+  });
+  if (ok) logout();
+});
+
+// Mobile drawer events (logic in widgets/layout/navbar.js)
+document.getElementById("hamburger")?.addEventListener("click", () => {
+  const drawer = document.getElementById("navDrawer");
+  if (drawer?.classList.contains("open")) {
+    closeDrawer();
+  } else {
+    openDrawer();
+  }
+});
+
+document.getElementById("drawerCloseBtn")?.addEventListener("click", closeDrawer);
+
+const _navOverlay = document.getElementById("navOverlay");
+_navOverlay?.addEventListener("click", closeDrawer);
+_navOverlay?.addEventListener("touchstart", (e) => {
+  if (e.target === _navOverlay) closeDrawer();
+}, { passive: true });
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && document.getElementById("navDrawer")?.classList.contains("open")) {
+    closeDrawer();
+  }
+});
+
+// Nav search form — submit navigates to products page with search query
+document.getElementById("navSearchForm")?.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const input = document.getElementById("navSearchInput");
+  if (!input) return;
+  const query = input.value.trim();
+  if (!query) {
+    input.setAttribute("aria-invalid", "true");
+    animate(input, "shakeX", { duration: "0.4s" });
+    setTimeout(() => input.removeAttribute("aria-invalid"), 600);
+    return;
+  }
+  input.removeAttribute("aria-invalid");
+  closeDrawer();
+  const app = document.getElementById("app");
+  if (app) app.focus({ preventScroll: true });
+  window.location.hash = `#/products?search=${encodeURIComponent(query)}`;
+});
+
+// Quick add to cart delegation
+document.addEventListener("click", async (e) => {
+  const btn = e.target.closest(".quick-add-btn");
+  if (!btn) return;
+  e.preventDefault();
+  e.stopPropagation();
+  if (!(await requireAuth())) return;
+  const productId = parseInt(btn.dataset.quickAdd);
+  try {
+    await addToCart(productId, 1);
+    showToast(t("product.addedToCart"), "success");
+  } catch (err) {
+    showToast(err.message, "error");
+  }
+});
+
+// Quick view delegation
+document.addEventListener("click", (e) => {
+  const btn = e.target.closest(".quick-view-btn");
+  if (!btn) return;
+  e.preventDefault();
+  const product = {
+    id: btn.dataset.quickviewId,
+    title: btn.dataset.quickviewTitle,
+    price: parseFloat(btn.dataset.quickviewPrice) || 0,
+    primaryImageUrl: btn.dataset.quickviewImage || undefined,
+    description: btn.dataset.quickviewDesc || undefined,
+  };
+  openQuickView(product);
+});
+
+document.querySelectorAll(".nav-link").forEach((link) => {
+  link.addEventListener("click", closeDrawer);
+});
+
+let prevWidth = window.innerWidth;
+window.addEventListener("resize", () => {
+  const width = window.innerWidth;
+  // Close drawer when viewport expands to desktop (>768px)
+  if (prevWidth <= 768 && width > 768) {
+    const drawer = document.getElementById("navDrawer");
+    if (drawer) {
+      // Suppress CSS transition during media query layout shift
+      drawer.style.transition = "none";
+      // Force layout recalc so the "none" takes effect immediately
+      drawer.offsetHeight;
+      closeDrawer();
+      // Restore transition after a frame so the media query is settled
+      requestAnimationFrame(() => {
+        drawer.style.transition = "";
+      });
+    }
+  }
+  prevWidth = width;
+}, { passive: true });
+
+// Theme toggle
+const themeToggle = document.getElementById("themeToggle");
+const savedTheme = localStorage.getItem("sayiad_theme") || "light";
+
+function syncThemeColor() {
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (!meta) return;
+  const bg = getComputedStyle(document.documentElement).getPropertyValue("--body-bg").trim();
+  if (bg) meta.setAttribute("content", bg);
+}
+
+function applyTheme(theme) {
+  document.documentElement.setAttribute("data-theme", theme);
+  localStorage.setItem("sayiad_theme", theme);
+  syncThemeColor();
+  if (themeToggle) {
+    themeToggle.innerHTML =
+      theme === "dark"
+        ? '<i class="fas fa-sun" aria-hidden="true"></i>'
+        : '<i class="fas fa-moon" aria-hidden="true"></i>';
+    themeToggle.setAttribute("aria-pressed", theme === "dark" ? "true" : "false");
+    themeToggle.setAttribute(
+      "aria-label",
+      theme === "dark" ? "Switch to light mode" : "Toggle dark mode",
+    );
+  }
+}
+
+function initHeroTilt() {
+  const hero = document.querySelector(".hero");
+  const content = document.querySelector(".hero-content");
+  if (!hero || !content) return;
+
+  let tiltTicking = false;
+  hero.addEventListener("mousemove", (e) => {
+    if (tiltTicking) return;
+    tiltTicking = true;
+    requestAnimationFrame(() => {
+      const rect = hero.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+      content.style.transform = `rotateX(${(y - centerY) / 25}deg) rotateY(${(centerX - x) / 25}deg) translateZ(20px)`;
+      tiltTicking = false;
+    });
+  });
+
+  hero.addEventListener("mouseleave", () => {
+    content.style.transform = `rotateX(0deg) rotateY(0deg) translateZ(0)`;
+  });
+}
+
+function syncUserRoleAttribute() {
+  const user = getUser();
+  if (user && user.role) {
+    document.documentElement.setAttribute("data-user-role", user.role);
+  } else {
+    document.documentElement.removeAttribute("data-user-role");
+  }
+}
+
+applyTheme(savedTheme);
+syncUserRoleAttribute();
+syncVipAttribute().catch(err => console.warn('VIP sync failed:', err));
+initHeroTilt();
+
+// Footer "Sell on Sayiad" — route sellers to dashboard
+const _sellLink = document.getElementById('footerSellLink');
+if (_sellLink) {
+  const _seller = getUser();
+  if (_seller && SELLER_ROLES.includes(_seller.role)) {
+    _sellLink.href = '#/dashboard';
+    _sellLink.setAttribute('aria-label', 'Go to your seller dashboard');
+  }
+}
+
+// Dynamic copyright year
+const _cy = document.getElementById('copyrightYear');
+if (_cy) _cy.textContent = new Date().getFullYear();
+
+themeToggle?.addEventListener("click", () => {
+  const current = document.documentElement.getAttribute("data-theme");
+  const next = current === "dark" ? "light" : "dark";
+
+  document.documentElement.classList.add("theme-transitioning");
+  applyTheme(next);
+
+  animate(themeToggle, "rotateIn", { duration: "0.4s" });
+
+  setTimeout(
+    () => document.documentElement.classList.remove("theme-transitioning"),
+    450,
+  );
+});
+
+// Language toggle
+const langToggle = document.getElementById("langToggle");
+const initialLang = getCurrentLang();
+
+function applyLanguage(lang) {
+  document.documentElement.lang = lang;
+  document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
+  if (langToggle) {
+    langToggle.textContent = lang === "ar" ? "AR" : "EN";
+    langToggle.setAttribute("aria-pressed", lang === "ar" ? "true" : "false");
+    langToggle.setAttribute(
+      "aria-label",
+      lang === "ar" ? "Switch to English" : "Switch to Arabic",
+    );
+  }
+}
+
+function handleLangChange(next) {
+  const app = document.getElementById("app");
+  app.style.transition = "opacity 0.12s ease";
+  app.style.opacity = "0";
+
+  setTimeout(() => {
+    setLanguage(next);
+    applyLanguage(next);
+    router(true);
+    setTimeout(() => {
+      app.style.transition = "";
+      app.style.opacity = "";
+    }, 300);
+  }, 130);
+}
+
+applyLanguage(initialLang);
+
+langToggle?.addEventListener("click", () => {
+  const current = getCurrentLang();
+  handleLangChange(current === "en" ? "ar" : "en");
+});
+
+// Focus visible
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Tab") document.body.classList.add("keyboard-nav");
+});
+document.addEventListener("mousedown", () => {
+  document.body.classList.remove("keyboard-nav");
+});
+
+// Swipe-back navigation (mobile edge swipe)
+(function initSwipeBack() {
+  if (!('ontouchstart' in window)) return;
+
+  let indicator = null;
+  let removeTimer = null;
+
+  function showIndicator(progress) {
+    if (!indicator) {
+      indicator = document.createElement('div');
+      indicator.id = 'swipeBackIndicator';
+      indicator.setAttribute('role', 'status');
+      indicator.setAttribute('aria-live', 'polite');
+      indicator.innerHTML = `<i class="fas fa-arrow-left" aria-hidden="true"></i><span>${t('common.back')}</span>`;
+      document.body.appendChild(indicator);
+    }
+    const clampedProgress = Math.min(progress, 1);
+    indicator.style.opacity = clampedProgress;
+    const translate = Math.min(progress * 40, 30);
+    indicator.style.transform = `translateX(${translate}px)`;
+  }
+
+  function hideIndicator() {
+    if (indicator) {
+      indicator.style.transition = 'opacity 0.15s ease, transform 0.15s ease';
+      indicator.style.opacity = '0';
+      indicator.style.transform = 'translateX(0)';
+      clearTimeout(removeTimer);
+      removeTimer = setTimeout(() => {
+        if (indicator) { indicator.remove(); indicator = null; }
+      }, 200);
+    }
+  }
+
+  const edgeSwipe = createSwipeGesture({
+    el: document.documentElement,
+    edgeOnly: true,
+    edgeWidth: 35,
+    threshold: 10,
+    onSwipeMove({ distance }) {
+      const isRtl = document.dir === 'rtl';
+      // Right swipe in LTR, left swipe in RTL
+      const valid = isRtl ? distance < 0 : distance > 0;
+      if (!valid) { hideIndicator(); return; }
+      const absDist = Math.abs(distance);
+      showIndicator(absDist / 100);
+    },
+    onSwipeEnd({ distance }) {
+      hideIndicator();
+      const isRtl = document.dir === 'rtl';
+      const valid = isRtl ? distance < 0 : distance > 0;
+      if (!valid) return;
+      if (Math.abs(distance) >= 80) {
+        goBack();
+      }
+    },
+  });
+
+  // Cleanup on page unload
+  window.addEventListener('beforeunload', () => {
+    edgeSwipe.destroy();
+    if (indicator) { indicator.remove(); indicator = null; }
+  });
+})();
+
+// Offline detection banner
+(function initOfflineBanner() {
+  let banner = null;
+
+  function createBanner(online) {
+    const el = document.createElement('div');
+    el.setAttribute('role', 'alert');
+    if (online) {
+      el.id = 'onlineBanner';
+      el.className = 'online-banner';
+      el.innerHTML = `<i class="fas fa-wifi"></i> ${t('common.backOnline')}`;
+      setTimeout(() => {
+        el.addEventListener('animationend', () => el.remove(), { once: true });
+        animate(el, 'slideOutUp', { duration: '0.3s' });
+      }, 2500);
+      return el;
+    }
+    el.id = 'offlineBanner';
+    el.className = 'offline-banner';
+    const close = document.createElement('button');
+    close.innerHTML = '&times;';
+    close.setAttribute('aria-label', 'Dismiss');
+    close.className = 'sw-close-btn';
+    close.addEventListener('click', () => { el.remove(); banner = null; });
+    el.innerHTML = `<i class="fas fa-plug"></i> <span>${t('common.offline')}</span>`;
+    el.appendChild(close);
+    return el;
+  }
+
+  function showOffline() {
+    if (document.getElementById('offlineBanner')) return;
+    if (document.getElementById('onlineBanner')) document.getElementById('onlineBanner').remove();
+    banner = createBanner(false);
+    document.body.prepend(banner);
+    animate(banner, 'slideInDown', { duration: '0.3s' });
+  }
+
+  function showOnline() {
+    if (document.getElementById('offlineBanner')) document.getElementById('offlineBanner').remove();
+    banner = null;
+    if (document.getElementById('onlineBanner')) return;
+    const el = createBanner(true);
+    document.body.prepend(el);
+    animate(el, 'slideInDown', { duration: '0.3s' });
+  }
+
+  window.addEventListener('offline', showOffline);
+  window.addEventListener('online', showOnline);
+
+  if (!navigator.onLine) showOffline();
+})();
+
+// Onboarding tour
+(function showOnboarding() {
+  if (localStorage.getItem("sayiad_tour_done")) return;
+  const steps = [
+    { title: t("home.welcome"), desc: t("tour.welcome"), icon: "fa-fish" },
+    { title: t("nav.products"), desc: t("tour.products"), icon: "fa-store" },
+    { title: t("nav.auctions"), desc: t("tour.auctions"), icon: "fa-gavel" },
+  ];
+  let step = 0;
+  const overlay = document.createElement("div");
+  overlay.className = "tour-overlay";
+  overlay.innerHTML = `
+    <div class="tour-card">
+      <div class="tour-icon"><i class="fas ${steps[0].icon}"></i></div>
+      <h3 class="tour-title">${steps[0].title}</h3>
+      <p class="tour-desc">${steps[0].desc}</p>
+      <div class="tour-dots">${steps.map((_, i) => `<span class="tour-dot${i === 0 ? " active" : ""}"></span>`).join("")}</div>
+      <div class="tour-actions">
+        <button class="btn btn-ghost btn-sm tour-skip">${t("common.cancel")}</button>
+        <button class="btn btn-primary btn-sm tour-next">${t("common.next")}</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+  registerRouteCleanup(() => {
+    if (overlay.isConnected) overlay.remove();
+  });
+  animate(overlay, 'fadeIn', { duration: '0.25s' });
+  overlay.querySelector(".tour-next").addEventListener("click", () => {
+    step++;
+    if (step >= steps.length) {
+      localStorage.setItem("sayiad_tour_done", "1");
+      overlay.remove();
+      return;
+    }
+    overlay.querySelector(".tour-icon i").className = `fas ${steps[step].icon}`;
+    overlay.querySelector(".tour-title").textContent = steps[step].title;
+    overlay.querySelector(".tour-desc").textContent = steps[step].desc;
+    overlay.querySelectorAll(".tour-dot").forEach((d, i) => d.classList.toggle("active", i === step));
+    overlay.querySelector(".tour-next").textContent = step === steps.length - 1 ? t("common.start") : t("common.next");
+  });
+  overlay.querySelector(".tour-skip").addEventListener("click", () => {
+    localStorage.setItem("sayiad_tour_done", "1");
+    overlay.remove();
+  });
+})();
+
+// Service worker
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker
+    .register("/sw.js")
+    .then((registration) => {
+      if (registration.waiting) {
+        showUpdateBanner(registration.waiting);
+      }
+
+      registration.addEventListener("updatefound", () => {
+        const newWorker = registration.installing;
+        if (!newWorker) return;
+        newWorker.addEventListener("statechange", () => {
+          if (
+            newWorker.state === "installed" &&
+            navigator.serviceWorker.controller
+          ) {
+            showUpdateBanner(newWorker);
+          }
+        });
+      });
+
+      let refreshing = false;
+      navigator.serviceWorker.addEventListener("controllerchange", () => {
+        if (refreshing) return;
+        refreshing = true;
+        window.location.reload();
+      });
+
+      setInterval(() => registration.update(), 3600000);
+    })
+    .catch(err => console.warn('SW registration failed:', err));
+}
+
+function showUpdateBanner(worker) {
+  if (document.getElementById("swUpdateBanner")) return;
+
+  const banner = document.createElement("div");
+  banner.id = "swUpdateBanner";
+  banner.setAttribute("role", "status");
+  banner.setAttribute("aria-live", "polite");
+  banner.className = "sw-update-banner";
+
+  banner.innerHTML = `
+    <i class="fas fa-arrow-up-circle text-primary flex-shrink-0 fs-5"></i>
+    <span class="flex-fill fw-medium">
+      A new version is available.
+    </span>
+    <button id="swUpdateBtn"
+      class="border-0 text-white fw-semibold text-nowrap"
+      style="background:var(--primary);border-radius:var(--radius-md);padding:7px 16px;
+             font-size:13px;cursor:pointer;font-family:inherit">
+      Refresh
+    </button>
+    <button id="swDismissBtn" aria-label="${t('common.dismiss')}"
+      class="border-0"
+      style="background:transparent;cursor:pointer;
+             color:var(--text-secondary);font-size:18px;line-height:1;
+             padding:0 2px">
+      ×
+    </button>
+  `;
+
+  document.body.appendChild(banner);
+  registerRouteCleanup(() => {
+    if (banner.isConnected) banner.remove();
+  });
+  animate(banner, 'slideInUp', { duration: '0.35s' });
+
+  document.getElementById("swUpdateBtn").addEventListener("click", () => {
+    banner.remove();
+    worker.postMessage("SKIP_WAITING");
+  });
+
+  document.getElementById("swDismissBtn").addEventListener("click", () => {
+    banner.addEventListener('animationend', () => banner.remove(), { once: true });
+    animate(banner, 'fadeOut', { duration: '0.2s' });
+  });
+}

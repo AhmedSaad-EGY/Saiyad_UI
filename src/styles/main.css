@@ -1,0 +1,44 @@
+/* ============================================================
+   SAYIAD — Design System
+   Entry point — imports all partials
+   ============================================================ */
+
+/* Bootstrap 5 — base framework layer */
+@import 'bootstrap/dist/css/bootstrap.min.css';
+
+/* Abstracts — design tokens, keyframes, RTL */
+@import 'abstracts/variables.css';
+@import 'abstracts/animations.css';
+@import 'abstracts/rtl.css';
+
+/* Vendors — framework overrides */
+@import 'vendors/bootstrap-overrides.css';
+
+/* Base — reset, elements */
+@import 'base/reset.css';
+
+/* Layout — structural */
+@import 'layout/navbar.css';
+@import 'layout/grid.css';
+@import 'layout/footer.css';
+
+/* Components */
+@import 'components/skeleton.css';
+@import 'components/buttons.css';
+@import 'components/cards.css';
+@import 'components/forms.css';
+@import 'components/modals.css';
+@import 'components/tables.css';
+@import 'components/alerts.css';
+@import 'components/badges.css';
+@import 'components/nav-search.css';
+@import 'components/molecules.css';
+@import 'components/utilities.css';
+
+/* Pages */
+@import 'pages/profile.css';
+@import 'pages/dashboard.css';
+@import 'pages/cart.css';
+@import 'pages/wallet.css';
+@import 'pages/legal.css';
+@import 'pages/seller.css';

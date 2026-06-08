@@ -1,8 +1,9 @@
-import { api } from '../core/api/client.js';
-import { requireAuth } from '../core/auth/index.js';
-import { setPageMeta } from '../core/utils/seo.js';
-import { showToast } from '../core/utils/ui.js';
-import { t } from '../core/i18n/index.js';
+import { requireAuth } from '../features/auth/login.js';
+import { setPageMeta } from '../shared/utils/seo.js';
+import { showToast } from '../widgets/ui/toast.js';
+import { t } from '../app/i18n.js';
+
+import { fetchWalletBalance, fetchWalletTransactions, topUpWallet } from '../features/wallet/wallet.js';
 
 export default async function renderWallet(container) {
   if (!(await requireAuth())) return;
@@ -153,7 +154,7 @@ function closeTopUpModal() {
 
 async function loadWalletBalance() {
   try {
-    const res = await api.get('/wallet');
+    const res = await fetchWalletBalance();
     const amount = res?.balance ?? res?.amount ?? res?.data?.balance ?? 0;
     document.getElementById('walletBalanceAmount').textContent =
       Number(amount).toLocaleString('en-US', { minimumFractionDigits: 2 });
@@ -166,7 +167,7 @@ async function loadWalletBalance() {
 async function loadWalletTransactions() {
   const container = document.getElementById('walletTransactionsContainer');
   try {
-    const res = await api.get('/wallet/transactions', { page: 1, pageSize: 20 });
+    const res = await fetchWalletTransactions(1, 20);
     const txs = Array.isArray(res) ? res : (res?.data ?? res?.transactions ?? res?.items ?? []);
 
     if (!txs.length) {
@@ -249,9 +250,8 @@ async function handleTopUp() {
     // PAYMENT GATEWAY NOTE: Until Fawry/InstaPay is integrated,
     // top-up is handled as a manual/admin-credited operation.
     // The button will show a pending confirmation instead of instant credit.
-    await api.post('/wallet/deposit', { amount });
+    await topUpWallet(amount);
     closeTopUpModal();
-    showToast(t('wallet.topUpSuccess'), 'success');
     loadWalletBalance();
     loadWalletTransactions();
   } catch (err) {

@@ -1,10 +1,12 @@
-import { t } from '../core/i18n/index.js';
-import { api } from '../core/api/client.js';
-import { getUser, hasAnyRole } from '../core/auth/index.js';
-import { escapeHtml, observeAnimations } from '../core/utils/dom.js';
+import { t } from '../app/i18n.js';
+import { getUser, hasAnyRole } from '../features/auth/login.js';
+import { escapeHtml, observeAnimations } from '../shared/utils/dom.js';
 import { MODERATOR_ROLES } from '../shared/constants/roles.js';
-import { formatPrice, formatDate, statusClass, tStatus } from '../core/utils/format.js';
-import { setPageMeta } from '../core/utils/seo.js';
+import { formatPrice, formatDate, statusClass, tStatus } from '../shared/utils/format.js';
+import { setPageMeta } from '../shared/utils/seo.js';
+
+import { fetchAuctionAnalytics } from '../features/auctions/analytics.js';
+import { fetchWalletBalance, fetchWalletTransactions } from '../features/wallet/wallet.js';
 
 const CACHE_KEY = 'sayiad_analytics_cache';
 
@@ -164,9 +166,9 @@ export default async function renderAuctioneerAnalytics(container) {
 
   try {
     const [dataResult, txnResult, walletResult] = await Promise.allSettled([
-      api.get("/auctions/dashboard"),
-      api.get("/wallet/transactions", { page: 1, pageSize: 20 }),
-      api.get("/wallet"),
+      fetchAuctionAnalytics(),
+      fetchWalletTransactions(1, 20),
+      fetchWalletBalance(),
     ]);
 
     const dash = (dataResult.status === 'fulfilled' ? dataResult.value : {}) || {};
