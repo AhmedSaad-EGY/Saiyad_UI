@@ -1,0 +1,62 @@
+/* ============================================================
+   SAYIAD — RTL OVERRIDES
+   Logical-property-first approach: most bidirectional support
+   is already handled via inline-start/end in the base styles.
+   This file handles the remaining flip cases.
+   ============================================================ */
+
+/* ── Tables: right-align in RTL ─────────────────────────────── */
+[dir="rtl"] th,
+[dir="rtl"] td {
+  text-align: right;
+}
+
+/* ── Dashboard sidebar: flip indicator border ───────────────── */
+[dir="rtl"] .dashboard-sidebar a,
+[dir="rtl"] .dash-link {
+  border-left: none;
+  border-right: 3px solid transparent;
+}
+[dir="rtl"] .dashboard-sidebar a:hover,
+[dir="rtl"] .dash-link:hover,
+[dir="rtl"] .dashboard-sidebar a.active,
+[dir="rtl"] .dash-link.active {
+  border-right-color: var(--primary);
+}
+
+/* ── Dropdowns: flip position ───────────────────────────────── */
+[dir="rtl"] .dropdown-item {
+  border-left: none;
+  border-right: 3px solid transparent;
+}
+[dir="rtl"] .dropdown-item:hover {
+  border-right-color: var(--primary);
+}
+
+/* ── Detail & card metas: flip row direction ────────────────── */
+[dir="rtl"] .detail-meta      { flex-direction: row-reverse; }
+[dir="rtl"] .product-card-meta { flex-direction: row-reverse; }
+
+/* ── Layouts: flip flex rows ────────────────────────────────── */
+[dir="rtl"] .search-bar    { flex-direction: row-reverse; }
+[dir="rtl"] .bid-input-group { flex-direction: row-reverse; }
+[dir="rtl"] .section-header { flex-direction: row-reverse; }
+
+/* ── Form labels ────────────────────────────────────────────── */
+[dir="rtl"] .form-group label,
+[dir="rtl"] .form-label { text-align: right; }
+
+/* ── Modal header ───────────────────────────────────────────── */
+[dir="rtl"] .modal-header { flex-direction: row-reverse; }
+
+/* ── Toast ──────────────────────────────────────────────────── */
+[dir="rtl"] .toast { left: var(--space-4); right: auto; }
+
+/* ── Back button arrow ──────────────────────────────────────── */
+[dir="rtl"] .back-btn i { transform: scaleX(-1); }
+
+/* ── Breadcrumb ─────────────────────────────────────────────── */
+[dir="rtl"] .breadcrumb { flex-direction: row-reverse; }
+
+/* ── Footer link hover offset ───────────────────────────────── */
+[dir="rtl"] .footer-link:hover { transform: translateX(-3px); }
