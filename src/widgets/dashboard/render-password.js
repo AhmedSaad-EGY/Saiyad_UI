@@ -1,5 +1,5 @@
 import { t } from '../../app/i18n.js';
-import { observeAnimations } from '../../shared/utils/dom.js';
+import { observeAnimations, escapeHtml } from '../../shared/utils/dom.js';
 
 export function renderChangePassword(content, { onSubmit } = {}) {
   content.innerHTML = `
@@ -43,7 +43,7 @@ export function renderChangePassword(content, { onSubmit } = {}) {
         }
         document.getElementById("passwordForm").reset();
       } catch (err) {
-        document.getElementById("passwordAlert").innerHTML = `<div class="alert alert-error">${err.message}</div>`;
+        document.getElementById("passwordAlert").innerHTML = `<div class="alert alert-error">${escapeHtml(err.message)}</div>`;
       } finally {
         submit.disabled = false;
         submit.textContent = t("dash.changePwBtn");

@@ -1,0 +1,173 @@
+SAIYAD_UI — FULL TECHNICAL AUDIT REPORT
+
+1. Executive Summary
+VERDICT: NOT PRODUCTION READY.
+The architecture is solid. The layering (app / features / widgets / shared), CSS partials, Alpine stores, API client deduplication, and disciplined use of escapeHtml throughout rendering are all above average for a graduation project. The developer clearly understands modern frontend patterns.
+However, there is a catastrophic class of bug that makes the current build non-deployable: inconsistent localStorage key names fragmented across three modules. Three separate files use 'accessToken', 'sayiad_accessToken', 'refreshToken', 'sayiad_refreshToken', 'user', and 'sayiad_user' to refer to the same logical tokens. The result is that isAuthenticated() always returns false for logged-in users, silent token refresh silently fails on every expiry, and user data persists in localStorage after logout.
+Beyond that, there are 4 additional high-severity issues, and a set of medium-severity logic bugs including a dead event listener that prevents notification counts from ever updating, notification polling that never starts after login, redundant auction polling running alongside SignalR, broken Vite chunking config, and a client-side-only wallet balance guard.
+The project is 4–6 focused hours away from production-deployable once the auth key mismatch is resolved.
+
+2. Critical Issues
+
+Issue 1 — Token localStorage key mismatch: auth system is completely broken
+Location: src/shared/api/client.js, src/app/auth-state.js, src/features/auth/login.js, src/features/auth/register.js, src/app/realtime.js, src/features/profile/index.js
+Why it is critical:
+Three modules write and read tokens under different key names, with zero cross-file awareness:
+client.js stores:       'accessToken', 'refreshToken', 'user'
+auth-state.js reads:    'sayiad_accessToken', 'sayiad_user'   ← MISMATCH
+login.js stores refresh: 'sayiad_refreshToken'
+client.js reads refresh: 'refreshToken'                        ← MISMATCH
+profile/index.js reads/writes: 'user'                         ← mismatches both
+realtime.js reads:      'accessToken'  (client.js key, at least consistent with 1 of 2)
+After a successful login, setAccessToken() in client.js writes to 'accessToken'. isAuthenticated() in auth-state.js checks 'sayiad_accessToken', which is always empty. Every authenticated user appears unauthenticated to the route guard system. On token expiry, refreshAccessToken() reads localStorage.getItem('refreshToken') — which is empty because login.js stored it as 'sayiad_refreshToken' — returns false immediately, clears all tokens, and forces logout. When the user logs out, clearTokens() removes 'user', but the data lives at 'sayiad_user', so the user object survives logout.
+Impact: Broken authentication state across the entire app. Users are force-logged-out on every token expiry. User data from the previous session remains accessible in localStorage to the next visitor on a shared device.
+Fix: Create a single constants file: src/shared/constants/storage-keys.js with export const KEYS = { accessToken: 'sayiad_accessToken', refreshToken: 'sayiad_refreshToken', user: 'sayiad_user' }. Import and use it in all 6 affected files. Replace every string literal. Run a global search for the old key names to catch any remaining stray references.
+
+Issue 2 — Concurrent 401 responses trigger parallel refresh token races
+Location: src/shared/api/client.js lines 65–71, 183–198
+Why it is critical:
+refreshAccessToken() has no concurrency guard. When a page loads and fires 3 simultaneous API calls (e.g., cart + notifications + wallet on the dashboard), all three may receive 401 at the same time. Each independently calls refreshAccessToken(). The first succeeds and invalidates the old refresh token. The second and third calls then try to use that same now-invalid token — the server rejects them — clearTokens() runs, auth:session-expired is emitted, and the user is force-logged-out despite having a perfectly valid session.
+Impact: Users are silently logged out mid-session on any page that fires multiple API calls concurrently. This reproduces reliably after token expiry on high-traffic pages like the dashboard.
+Fix: Add a refresh mutex at module level:
+jslet _refreshPromise = null;
+async function refreshAccessToken() {
+  if (_refreshPromise) return _refreshPromise;
+  _refreshPromise = _doRefresh().finally(() => { _refreshPromise = null; });
+  return _refreshPromise;
+}
+All concurrent 401 callers then await the same single refresh attempt.
+
+Issue 3 — Wallet balance check is client-side only: financial bypass
+Location: src/features/checkout/checkout.js line 80
+Why it is critical:
+jsif (this.availableBalance !== null && this.availableBalance < this.total) { // block checkout }
+this.availableBalance is an Alpine reactive property set from an API response at page load. Any user can open DevTools, find the Alpine component, and set availableBalance to an arbitrarily large value. The UI guard is bypassed and the order is submitted regardless of actual wallet balance. The backend must enforce this check independently.
+Impact: Financial integrity violation. Users can overdraw their wallet. If the backend does not independently enforce the balance check, this is a direct money bypass.
+Fix: This guard is acceptable as a UX hint only. The POST /orders backend endpoint must validate wallet balance atomically. Add a clear code comment: // UX hint only — backend enforces balance atomically. If the backend already does this, the comment is all that is needed.
+
+Issue 4 — File upload deduplication silently discards distinct uploads
+Location: src/shared/api/client.js lines 168–181
+Why it is critical:
+jsconst dedupKey = `UPLOAD:${url}`;
+if (_pendingRequests.has(dedupKey)) return _pendingRequests.get(dedupKey);
+Deduplication keys on URL only. All product image uploads share the same endpoint path. If a user uploads image A, then immediately starts uploading image B (a retry, or uploading two images for two different products), the second call matches the first pending promise. The second file is silently discarded. The caller receives the first file's server response as if the second upload succeeded. No error is thrown. The wrong image ends up on the product.
+Impact: Silent data corruption. Products end up with the wrong images. Invisible at the UX level — the upload spinner shows success for both files.
+Fix: Remove upload deduplication entirely. Upload mutations are never safe to deduplicate. Alternatively, deduplicate by ${url}:${file.name}:${file.size}:${file.lastModified} to make the key per-content rather than per-URL.
+
+3. High Severity Issues
+
+Issue 5 — CSP contains 'unsafe-inline' and 'unsafe-eval': entire policy is nullified
+Location: vercel.json — Content-Security-Policy header
+'unsafe-inline' in script-src permits any <script> tag and inline event handler to execute. 'unsafe-eval' permits eval() and new Function(). Together they make the CSP completely ineffective. The header exists, security scanners will flag it as present, but it provides zero actual XSS protection.
+Fix: Replace 'unsafe-inline' with a nonce for the single legitimate inline script (the theme flash script in index.html). Remove 'unsafe-eval' — Alpine.js v3 does not require it. Set Vite to inject the nonce at build time.
+
+Issue 6 — No SRI on CDN-loaded scripts: supply chain attack surface
+Location: src/index.html — <script src="cdnjs.cloudflare.com/.../purify.min.js"> and signalr.min.js
+Both scripts are loaded without integrity="" attributes. If the CDN is compromised, arbitrary code executes with full access to session tokens. The irony: DOMPurify — the script that sanitizes HTML — is itself unprotected from tampering. The fallback in safeSetHTML() (using textContent) stops working if an attacker replaces DOMPurify with a version that passes everything through.
+Fix: Add SRI hashes from cdnjs.com: integrity="sha384-[hash]" crossorigin="anonymous". Better: bundle DOMPurify via npm and eliminate the CDN dependency.
+
+Issue 7 — Raw err.message injected into innerHTML: server-reflected XSS
+Location: src/widgets/dashboard/render-password.js line 46, src/pages/order-detail.js line 77
+js// render-password.js
+passwordAlert.innerHTML = `<div class="alert alert-error">${err.message}</div>`;
+
+// order-detail.js
+document.getElementById("cancelOrderResult").innerHTML =
+  `<div class="alert alert-error">${err.message || t("order.cancelError")}</div>`;
+If the server returns an error message containing HTML or a script tag, it executes in the user's browser. This is a direct XSS path from server-controlled content.
+Fix: Apply escapeHtml(err.message) before insertion. Or wrap the entire assignment in safeSetHTML(), which passes through DOMPurify. Add an ESLint rule (no-unsanitized) to catch this pattern automatically.
+
+Issue 8 — CSRF implementation is security theater
+Location: src/shared/utils/csrf.js — ensureCsrfToken()
+The utility generates a random token client-side as a fallback and sends it as X-CSRF-Token on all mutating requests. CSRF protection only works if the server independently knows the expected token value. A token the client generates itself and the server has never seen provides zero protection — any cross-origin forged request can include any value it wants.
+Fix: Coordinate with the .NET Core backend to enable services.AddAntiForgery(). The backend must set the XSRF-TOKEN cookie on initial page load. The existing cookie-reading logic in getCsrfToken() is already correct for the ASP.NET Core double-submit pattern — it just needs the backend to emit the cookie. Remove the client-side random token fallback in ensureCsrfToken(): it is both useless and misleading.
+
+Issue 9 — Payment flow has no atomicity
+Location: src/features/checkout/checkout.js lines 127–136
+Three sequential awaits: POST /orders → POST /payments/initiate → POST /payments/{id}/confirm. Any failure between them leaves the system in a partially committed state. If the second call fails, an order exists with no payment. If the third fails, a payment is initiated but never confirmed. The UI shows an error but never attempts recovery or rollback.
+Fix: Implement a single POST /orders/checkout endpoint on the backend that handles payment atomically. The frontend calls one endpoint and receives one outcome. If backend refactor is out of scope: store the in-progress order ID and resume from the correct step on retry; display explicit in-progress state to users.
+
+4. Medium and Low Severity Issues
+
+Issue 10 — Vite manualChunks references non-existent paths
+Location: vite.config.js lines 39–43
+The config references /src/core/i18n/, /src/core/api/, /src/core/auth/, /src/core/router/, /src/core/events/. These directories do not exist. The actual paths are /src/app/i18n.js, /src/shared/api/, etc. All core chunking logic is dead code. The 1700+ line i18n.js file is almost certainly bundled into the main chunk, bloating every page load.
+Fix: Update paths to match the actual source tree. Verify output with npm run build and inspect dist/ chunk sizes.
+
+Issue 11 — Notification polling never starts after login
+Location: src/app/bootstrap.js line 19 vs. src/features/auth/login.js
+bootstrap.js registers on('notifications:start-polling', startNotifPolling). After login, auth:changed is emitted, triggering only updateNavbar(). Nobody emits notifications:start-polling. The notification badge stays at 0 permanently.
+Fix: In bootstrap.js, change the auth:changed handler to: () => { updateNavbar(); if (isAuthenticated()) startNotifPolling(); else stopNotifPolling(); }.
+
+Issue 12 — notif.store.js listens to 'notif:updated' — an event never emitted anywhere
+Location: src/shared/stores/notif.store.js line 8
+The store registers on('notif:updated', ...). A global search of the entire codebase confirms nothing emits 'notif:updated'. The store's reactive count never updates via the event bus.
+Fix: Either emit 'notif:updated' from the notification polling logic, or rename the listener to match the event name actually used elsewhere ('notifications:updated').
+
+Issue 13 — Auction detail runs 10-second polling AND SignalR simultaneously
+Location: src/features/auctions/bid.js — startAutoRefresh() lines 136–159
+Both mechanisms call animateBidCountUp(), which accesses this._rafId. Concurrent calls cancel each other's animations. At 100 concurrent viewers on a live auction, this generates 600 unnecessary API calls per minute.
+Fix: Remove startAutoRefresh(). The SignalR handlers already update state in real time. Keep a 60-second fallback only for the HubConnectionState.Disconnected case.
+
+Issue 14 — clearTokens() removes wrong key for user — user data survives logout
+Location: src/shared/api/client.js line 23
+clearTokens() calls localStorage.removeItem('user'). User data is stored as 'sayiad_user'. After logout, getUser() still reads the full user object including name, email, and role.
+Fix: Change localStorage.removeItem('user') to localStorage.removeItem('sayiad_user'). One character. (Resolved automatically once Issue 1's constants file is implemented.)
+
+Issue 15 — syncVipAttribute() fires API call on every cold start including for guests
+Location: src/app/app.js line 12
+syncVipAttribute() is called unconditionally at module load, firing GET /subscriptions/my for every page load including anonymous visitors, who receive a wasted 401.
+Fix: if (isAuthenticated()) syncVipAttribute().catch(() => {}); — one line.
+
+Issue 16 — Route guards read user.role from localStorage: trivially bypassed
+Location: src/shared/constants/routes.js — routeGuards
+Any user can open DevTools and change localStorage.sayiad_user.role to 'Admin' to bypass the admin route guard client-side.
+Note: This is architecturally acceptable IF the backend enforces authorization on every admin API endpoint independently. Verify that GET /admin/users, POST /users/{id}/toggle, POST /reports/{id}/resolve, etc. all require Admin role server-side. The client guard is a UX redirector, not a security boundary.
+
+Low Issues (Summary)
+#IssueLocationFix17Hardcoded fake WhatsApp number 201234567890src/index.html line 371Replace with real contact or remove18SW update banner has hardcoded English stringsrc/app/sw.js line 50Pass through t('sw.newVersion')19Recently-viewed items have no TTLsrc/shared/utils/recently-viewed.jsAdd timestamp + filter older than 30 days20observeAnimations() singleton disconnects previous observerssrc/shared/utils/dom.jsTrack observer per container, not globally21window.scrollTo({ behavior: 'smooth' }) called twice per routesrc/app/router.jsRemove the duplicate call22Confetti triggers on every reload if user is winnersrc/features/auctions/bid.jsGate on sessionStorage flag after first trigger23Two imports squashed on one line in router.jssrc/app/router.js line 1Separate into distinct import lines
+
+5. Architectural Breakdown
+Layering: The app / features / widgets / shared / pages structure is clean and the right approach for a vanilla SPA of this size. No major layering violations.
+Problems within the structure:
+
+features/auth/login.js contains the Alpine form component, logout(), requireAuth(), syncVipAttribute(), and re-exports — four unrelated concerns in one file. Split into auth/login.js (form), auth/session.js (logout, requireAuth), and leave auth-state.js alone.
+realtime.js imports getUser() from features/auth/login.js, pulling SignalR initialization into a dependency on an Alpine form component. Import from app/auth-state.js directly.
+The Vite manualChunks config references a src/core/ directory from a prior architecture iteration that no longer exists. The config was never updated.
+
+Design patterns that are good:
+
+createScopedBus() with registerRouteCleanup() is a correct and clean approach to component-scoped event listeners.
+GET request deduplication in the API client is a good pattern. The decision to not deduplicate mutations is correct.
+escapeHtml() is present and applied throughout most rendering paths — this is discipline that is rare in projects at this scale.
+
+
+6. Security Review
+SeverityVulnerabilityOWASPStatusCRITICALToken key collision → auth bypassA02 Crypto FailuresConfirmed brokenCRITICALClient-side balance check onlyA01 Broken Access ControlFinancial bypassHIGHCSP unsafe-inline + unsafe-evalA05 MisconfigurationCSP nullifiedHIGHNo SRI on CDN scriptsA08 Integrity FailuresSupply chain openHIGHerr.message → raw innerHTMLA03 Injection (XSS)2+ confirmed locationsHIGHClient-generated CSRF tokensA01 Broken Access ControlNon-functionalMEDIUMJWT in localStorageA02 Crypto FailuresAcceptable for SPA if HTTPS-onlyMEDIUMClient-side role-based routingA01 Broken Access ControlUX bypass only; verify backendLOWUser data after logout (wrong key)A07 Auth FailuresSurvives logoutINFO ✅HSTS, X-Frame, X-Content-Type headersA05Present and correct in vercel.jsonINFO ✅escapeHtml() used consistentlyA03Good discipline throughout
+
+7. Performance Review
+Bottlenecks:
+
+i18n.js at 1700+ lines is the largest single module and almost certainly in the main bundle due to the broken Vite chunking config. Fix Issue 10 or lazy-load translations per language.
+Redundant auction polling alongside SignalR (Issue 13) generates 600+ unnecessary API calls per minute at 100 concurrent viewers.
+syncVipAttribute() fires a failed network request before first paint for every anonymous visitor (Issue 15).
+
+Wasteful operations:
+
+The router waits 200ms before rendering every route (_navTimer). This artificial delay slows every navigation. Reduce or eliminate.
+window.scrollTo({ behavior: 'smooth' }) is called twice per route change.
+observeAnimations() creates a new IntersectionObserver on every render call. On pages with large grids, this creates observers watching hundreds of already-visible elements.
+
+
+8. Final Verdict
+Production ready: NO
+Minimum required fixes before deployment (in priority order):
+
+Fix token key names — create a shared KEYS constants file (Issue 1). One day of work.
+Add refresh token mutex — ~20 lines (Issue 2).
+Confirm backend enforces wallet balance check server-side (Issue 3).
+Fix or remove upload deduplication (Issue 4).
+Add SRI hashes to CDN script tags — 5-minute fix (Issue 6).
+Escape err.message before innerHTML in render-password.js and order-detail.js (Issue 7).
+Fix clearTokens() to remove 'sayiad_user' not 'user' — one line (Issue 14).
+Gate syncVipAttribute() on isAuthenticated() — one line (Issue 15).

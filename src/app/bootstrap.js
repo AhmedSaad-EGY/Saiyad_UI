@@ -8,6 +8,9 @@ import { fetchUnreadNotificationCount } from '../features/notifications/index.js
 setupGlobalErrorHandlers();
 initOcean();
 
+// Initialize CSRF token from backend (sets XSRF-TOKEN cookie via Antiforgery)
+fetch('/api/antiforgery/token', { credentials: 'include' }).catch(() => {});
+
 setNavbarDeps({
   fetchCartCount,
   fetchUnreadNotificationCount,

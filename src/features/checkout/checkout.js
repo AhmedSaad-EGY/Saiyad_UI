@@ -77,6 +77,7 @@ Alpine.data('checkoutPage', () => ({
     this.placing = true;
     this.alert = '';
 
+    // UX hint only — backend enforces balance atomically
     if (this.availableBalance !== null && this.availableBalance < this.total) {
       this.alert = `<div class="alert alert-error"><i class="fas fa-exclamation-circle" aria-hidden="true"></i> ${t('cart.insufficientWallet')} — <a href="#/wallet" style="color:inherit;text-decoration:underline"><i class="fas fa-plus small" aria-hidden="true"></i> ${t('wallet.deposit')}</a></div>`;
       this.placing = false;
@@ -124,17 +125,13 @@ Alpine.data('checkoutPage', () => ({
     }
 
     try {
-      const order = await api.post('/orders', { shippingAddressId: addr_id });
-      const payment = await api.post('/payments/initiate', {
-        orderId: order.id,
+      const result = await api.post('/orders/checkout', {
+        shippingAddressId: addr_id,
         paymentMethod: this.paymentMethod,
       });
-      if (payment?.id) {
-        await api.post(`/payments/${payment.id}/confirm`);
-      }
       document.dispatchEvent(new CustomEvent('cart-updated'));
       triggerConfetti();
-      this.orderSuccess = order.id;
+      this.orderSuccess = result.orderId;
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (err) {
       this.alert = `<div class="alert alert-error">${escapeHtml(err.message || t('cart.orderError'))}</div>`;

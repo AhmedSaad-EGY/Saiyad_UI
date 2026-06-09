@@ -4,28 +4,19 @@
  * Token source priority:
  * 1. XSRF-TOKEN cookie (ASP.NET Core standard — set by backend)
  * 2. sessionStorage (survives navigation within tab, cleared on close)
- * 3. Crypto-generated random token (fallback for initial requests)
  *
  * The token is sent as `X-CSRF-Token` header on mutating requests
  * (POST, PUT, PATCH, DELETE) via api/client.js.
+ *
+ * NOTE: Client-side token generation was removed — the backend MUST
+ * emit the XSRF-TOKEN cookie via AddAntiforgery(). See BACKEND_FIXES.md.
  */
 
 const STORAGE_KEY = 'sayiad_csrf_token';
 
-function generateToken() {
-  const arr = new Uint8Array(32);
-  crypto.getRandomValues(arr);
-  return Array.from(arr, b => b.toString(16).padStart(2, '0')).join('');
-}
-
 function readCookie() {
   const match = document.cookie.split('; ').find(row => row.startsWith('XSRF-TOKEN='));
   return match ? decodeURIComponent(match.split('=')[1]) : null;
-}
-
-function readMeta() {
-  const meta = document.querySelector('meta[name="csrf-token"]');
-  return meta ? meta.getAttribute('content') : null;
 }
 
 /**
@@ -37,34 +28,23 @@ export function getCsrfToken() {
   const stored = sessionStorage.getItem(STORAGE_KEY);
   if (stored) return stored;
 
-  // 2. Check XSRF-TOKEN cookie (ASP.NET Core standard)
+  // 2. Check XSRF-TOKEN cookie (ASP.NET Core standard — set by AntiForgeryController)
   const cookie = readCookie();
   if (cookie) {
     sessionStorage.setItem(STORAGE_KEY, cookie);
     return cookie;
   }
 
-  // 3. Check meta tag
-  const meta = readMeta();
-  if (meta) {
-    sessionStorage.setItem(STORAGE_KEY, meta);
-    return meta;
-  }
-
   return null;
 }
 
 /**
- * Ensure a CSRF token exists, generating one if needed.
- * Returns the token.
+ * Ensure a CSRF token exists (delegates to getCsrfToken).
+ * No longer generates client-side tokens — backend must emit the cookie.
+ * Returns the token or null.
  */
 export function ensureCsrfToken() {
-  const existing = getCsrfToken();
-  if (existing) return existing;
-
-  const token = generateToken();
-  sessionStorage.setItem(STORAGE_KEY, token);
-  return token;
+  return getCsrfToken();
 }
 
 /**
