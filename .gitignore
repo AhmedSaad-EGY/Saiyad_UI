@@ -42,6 +42,9 @@ dist/
 .trae/
 .windsurf/
 
+# Documentation — local only, not pushed to GitHub
+MDs/
+
 # Archives
 *.zip
 *.gz

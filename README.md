@@ -82,7 +82,7 @@ The frontend is built as a zero-framework SPA: vanilla JavaScript modules handle
 
 **UX & Accessibility**
 - Dark / light theme with `prefers-color-scheme` detection and manual toggle
-- `prefers-reduced-motion` respected by the canvas ocean animation
+- `prefers-reduced-motion` respected by all animations via CSS media query
 - ARIA live regions announce navigation changes to screen readers
 - Skip-to-content link, focus management on route change, keyboard-accessible modals
 - Swipe-back gesture (touch-aware, RTL-correct) mirrors browser back
@@ -115,7 +115,7 @@ The frontend is built as a zero-framework SPA: vanilla JavaScript modules handle
 | **UI Framework** | [Alpine.js](https://alpinejs.dev) | Reactive stores (auth, cart, wallet, notif, ui) |
 | **CSS Framework** | [Bootstrap 5](https://getbootstrap.com) | Layout, grid, utility classes |
 | **Design Tokens** | CSS Custom Properties + `oklch()` | Theme variables, dark/light mode |
-| **Animations** | [Animate.css](https://animate.style) + Canvas API | Page transitions, ocean background |
+| **Animations** | [Animate.css](https://animate.style) | Page transitions, entrance effects |
 | **Icons** | [Font Awesome 6](https://fontawesome.com) | UI iconography |
 | **Fonts** | Syne · Cairo · Inter | Display, Arabic body, Latin body |
 | **Real-Time** | [SignalR](https://learn.microsoft.com/aspnet/signalr) | Live auction bids and events |
@@ -131,37 +131,38 @@ The frontend is built as a zero-framework SPA: vanilla JavaScript modules handle
 ## Architecture
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│                        Browser                          │
-│                                                         │
-│  index.html (app shell: navbar, bottom-nav, modals)     │
-│       │                                                 │
-│  main.js ─── Alpine stores ─── core/app.js              │
-│                                     │                   │
-│              ┌──────────────────────┤                   │
-│              │                      │                   │
-│         router/index.js        realtime/index.js        │
-│              │                  (SignalR hub)            │
-│     hashchange event                │                   │
-│              │              BidPlaced / AuctionEnded     │
-│       dynamic import()              │                   │
-│              │                 events/bus.js             │
-│         pages/*.js  ─────────── (pub/sub)               │
-│              │                      │                   │
-│         api/client.js    ◄──────────┘                   │
-│    (fetch + JWT + CSRF + refresh)                       │
-│              │                                          │
-└──────────────┼──────────────────────────────────────────┘
-               │  HTTPS / WSS
-┌──────────────▼──────────────────────────────────────────┐
-│            ASP.NET Core Backend                          │
-│   REST API  ─────────────  SignalR /hubs/auction         │
-└─────────────────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────────────────┐
+│                        Browser                                 │
+│                                                                │
+│  index.html (app shell: navbar, bottom-nav, modals)            │
+│       │                                                        │
+│  main.js ─── Alpine stores ─── app/bootstrap.js                │
+│                                    │                           │
+│            ┌───────────────────────┤                           │
+│            │                       │                           │
+│      app/router.js            app/realtime.js                  │
+│            │                  (SignalR hub)                     │
+│   hashchange event                 │                           │
+│            │              BidPlaced / AuctionEnded              │
+│     dynamic import()               │                           │
+│            │                  app/events.js                    │
+│      pages/*.js  ─────────── (pub/sub)                        │
+│            │                       │                           │
+│      shared/api/client.js ◄────────┘                          │
+│    (fetch + JWT + CSRF + refresh)                              │
+│            │                                                   │
+└────────────┼───────────────────────────────────────────────────┘
+             │  HTTPS / WSS
+┌────────────▼───────────────────────────────────────────────────┐
+│            ASP.NET Core Backend                                 │
+│   REST API  ─────────────  SignalR /hubs/auction                │
+└────────────────────────────────────────────────────────────────┘
 ```
 
 **Key design decisions:**
 
-- **Zero global framework.** Each page is a plain async function that receives the `#app` container and renders itself. Alpine is used only for stores that need to be reactive across the navbar and multiple page instances (cart count, wallet balance, notification badge).
+- **Four-layer architecture.** `features/` = behavior, `widgets/` = presentation (HTML rendering), `pages/` = composition (wires features + widgets), `shared/` = infrastructure (API, stores, utilities).
+- **Zero global framework.** Each page is a plain async function that receives the `#app` container and renders itself via widgets. Alpine is used only for stores that need to be reactive across the navbar and multiple page instances (cart count, wallet balance, notification badge).
 - **Dynamic imports per route.** Every page module is imported on demand so the initial parse budget is tiny, and Vite can produce per-page chunks automatically.
 - **Scoped event bus.** Pages attach listeners to the DOM-backed bus via `createScopedBus()`, which exposes a `cleanup()` method. The router calls registered cleanups before mounting the next page, preventing listener leaks.
 - **CSRF + JWT dual-layer security.** Every mutation request carries both a `Bearer` token and an `X-CSRF-Token` header extracted from a cookie, so the API is protected against both token theft and cross-site request forgery.
@@ -172,51 +173,64 @@ The frontend is built as a zero-framework SPA: vanilla JavaScript modules handle
 
 ```
 src/
-├── core/                        # Framework-level infrastructure
-│   ├── api/
-│   │   ├── client.js            # HTTP client: JWT, refresh, CSRF, dedup
-│   │   └── config.js            # API & SignalR base URLs
-│   ├── auth/
-│   │   └── index.js             # Auth state, role helpers, navbar sync
-│   ├── events/
-│   │   └── bus.js               # App-wide event bus + scoped bus factory
-│   ├── i18n/
-│   │   └── index.js             # AR/EN translation map + setLanguage()
-│   ├── realtime/
-│   │   └── index.js             # SignalR connection lifecycle + event relay
-│   ├── router/
-│   │   └── index.js             # Hash router, route guards, history stack
-│   ├── stores/
-│   │   └── alpine.js            # Alpine.js stores (auth, cart, ui, wallet, notif)
-│   ├── utils/
-│   │   ├── csrf.js              # CSRF token read/write from cookie
-│   │   ├── dom.js               # Skeletons, animations, DOMPurify escaping
-│   │   ├── format.js            # Locale-aware price, date, number formatting
-│   │   ├── ocean.js             # Canvas ocean + fish background animation
-│   │   ├── seo.js               # Dynamic <title> and meta tag updates
-│   │   ├── swipe.js             # RTL-aware touch swipe gesture detector
-│   │   ├── ui.js                # Toasts, confirm dialogs, quick-view, lightbox
-│   │   └── validation.js        # Form validation + password strength scorer
-│   └── app.js                   # App bootstrap: navbar, drawer, theme, back-to-top
+├── app/                         # App-level init & orchestration
+│   ├── app.js                  # Entry module — imports all app modules
+│   ├── auth-state.js           # getUser, isAuthenticated, role helpers
+│   ├── bootstrap.js            # Global error handlers, event wiring
+│   ├── config.js               # Runtime configuration
+│   ├── events.js               # EventBus (pub/sub on DOM element)
+│   ├── global-ui.js            # Nav search, quick-add, hero tilt, role sync
+│   ├── i18n.js                 # AR/EN translation map + t() function
+│   ├── language.js             # Language toggle + RTL switching
+│   ├── navbar.js               # Scroll effect, dropdown, drawer, resize
+│   ├── offline.js              # Offline/online detection banners
+│   ├── realtime.js             # SignalR connection lifecycle + event relay
+│   ├── router.js               # Hash router, route guards, history stack
+│   ├── sw.js                   # Service Worker registration + update banner
+│   ├── swipe-back.js           # Edge swipe-back gesture navigation
+│   ├── theme.js                # Dark/light theme toggle
+│   └── tour.js                 # First-visit onboarding tour
 │
-├── css/                         # Modular stylesheet architecture
-│   ├── style.css                # Entry point — imports all partials
-│   ├── _variables.css           # OKLCH design tokens (colors, spacing, radius)
-│   ├── _base.css                # CSS reset + base element styles
-│   ├── _layout.css              # Navbar, off-canvas drawer, page containers
-│   ├── _components.css          # Cards, forms, badges, tables, toasts, modals
-│   ├── _bootstrap-overrides.css # Bootstrap variable remapping to custom tokens
-│   ├── _animations.css          # Skeleton loaders + custom keyframes
-│   └── _rtl.css                 # RTL-specific layout overrides
+├── features/                   # Feature-scoped business logic
+│   ├── admin/index.js
+│   ├── auctions/ (analytics, bid, create, requests, review)
+│   ├── auth/ (login, password, register, reset-password, verify-email)
+│   ├── cart/ (add, index, quantity)
+│   ├── checkout/checkout.js
+│   ├── dashboard/ (index, tabs)
+│   ├── home/index.js
+│   ├── notifications/index.js
+│   ├── orders/index.js
+│   ├── products/ (create, detail, edit, search)
+│   ├── profile/index.js
+│   ├── reviews/index.js
+│   ├── seller-profile/index.js
+│   ├── shipping/index.js
+│   ├── subscriptions/subscriptions.js
+│   ├── wallet/wallet.js
+│   └── wishlist/index.js
 │
-├── features/                    # Feature-scoped business logic
-│   ├── checkout/
-│   │   └── helpers.js
-│   └── subscriptions/
-│       └── helpers.js
+├── widgets/                    # Presentation — DOM rendering
+│   ├── admin/ (render-*.js)
+│   ├── auction-detail/ (render-main, render-states)
+│   ├── auctioneer-analytics/ (render-content, render-states)
+│   ├── auctions/ (render-grid, render-search, render-mobile-filter)
+│   ├── cards/ (product-card, auction-card, user-card)
+│   ├── checkout/ (render-checkout-form, render-states, render-success)
+│   ├── dashboard/ (render-*.js — overview, orders, products, etc.)
+│   ├── home/ (render-hero, render-auctions-section, render-products-section)
+│   ├── layout/ (navbar, footer, sidebar)
+│   ├── order-detail/ (render-details, render-timeline)
+│   ├── product-detail/ (render-gallery, render-detail-panel, etc.)
+│   ├── products/ (render-product-grid, render-search-bar, render-mobile-overlays)
+│   ├── profile/ (render-hero, render-links, render-stats)
+│   ├── seller-profile/ (render-public-profile, render-profile-form, etc.)
+│   ├── subscriptions/ (render-plans, render-states)
+│   ├── ui/ (modal, toast, loader, pagination)
+│   └── wallet/ (render-transactions, render-wallet-shell, modal)
 │
-├── pages/                       # One file per route — async page renderers
-│   ├── home.js
+├── pages/                      # One file per route — composition layer
+│   ├── home.js                 # Wires feature/home + widgets/home
 │   ├── products.js
 │   ├── product-detail.js
 │   ├── auctions.js
@@ -242,25 +256,75 @@ src/
 │   ├── terms.js
 │   └── privacy.js
 │
-├── public/                      # Static assets served at root
-│   ├── logo.png
-│   ├── manifest.json            # PWA web app manifest
-│   ├── robots.txt               # Crawl rules (private routes disallowed)
-│   └── sw.js                    # Service Worker (stale-while-revalidate)
-│
-├── shared/                      # Reusable modules across features
-│   ├── components/
-│   │   ├── modal.js             # Alpine modal component
-│   │   └── pagination.js        # Pagination component
+├── shared/                     # Reusable infrastructure
+│   ├── api/
+│   │   ├── client.js           # HTTP client: JWT, refresh, CSRF, dedup
+│   │   └── config.js           # API & SignalR base URLs
 │   ├── constants/
-│   │   ├── roles.js             # Role constants + role-set arrays
-│   │   └── routes.js            # Route map, guards, and title key map
-│   └── helpers/
-│       ├── errors.js            # API error normalizer + fallback UI renderer
-│       └── index.js             # JWT claim extractor + misc helpers
+│   │   ├── roles.js            # ROLES enum + role-set arrays
+│   │   └── routes.js           # Route map, guards, and title keys
+│   ├── stores/
+│   │   ├── auth.store.js       # Alpine auth store
+│   │   ├── cart.store.js       # Alpine cart store
+│   │   ├── ui.store.js         # Alpine UI store
+│   │   ├── wallet.store.js     # Alpine wallet store
+│   │   ├── notif.store.js      # Alpine notification store
+│   │   ├── bootstrap.js        # Store registration
+│   │   └── magic.js            # Alpine magic helpers ($t, $showToast)
+│   └── utils/
+│       ├── csrf.js             # CSRF token read/write from cookie
+│       ├── dom.js              # DOM helpers, animations, DOMPurify
+│       ├── errors.js           # API error normalizer + fallback UI
+│       ├── format.js           # Locale-aware price, date formatting
+│       ├── ocean.js            # Canvas ocean + fish animation
+│       ├── plans.js            # Subscription plan helpers
+│       ├── recently-viewed.js  # Recently viewed products tracking
+│       ├── seo.js              # Dynamic <title> and meta tag updates
+│       ├── swipe.js            # RTL-aware touch swipe gesture
+│       ├── ui.js               # Toasts, confirm dialogs, lightbox
+│       └── validation.js       # Form validation + password strength
 │
-├── index.html                   # App shell HTML (navbar, bottom nav, modals)
-└── main.js                      # Entry point: Bootstrap JS + Alpine + app init
+├── styles/                     # Modular stylesheet architecture
+│   ├── main.css                # Entry point — imports all partials
+│   ├── abstracts/
+│   │   ├── variables.css       # OKLCH design tokens + dark mode
+│   │   ├── animations.css      # Keyframes (skeleton, toast, form validation)
+│   │   └── rtl.css             # RTL-specific layout overrides
+│   ├── base/
+│   │   └── reset.css           # CSS reset + base element styles
+│   ├── layout/
+│   │   ├── navbar.css          # Navbar, off-canvas drawer, bottom nav
+│   │   ├── grid.css            # Main content container
+│   │   └── footer.css           # Footer, breadcrumb, back-to-top
+│   ├── components/
+│   │   ├── alerts.css          # Alerts, banners, toasts
+│   │   ├── badges.css          # Status badges, stock indicators
+│   │   ├── buttons.css         # Buttons + toggle buttons
+│   │   ├── cards.css           # Product cards, generic cards
+│   │   ├── forms.css           # Form inputs, validation, password meter
+│   │   ├── modals.css          # Modals, lightbox, filter sheet, tour
+│   │   ├── molecules.css       # Hero, sections, empty states, features
+│   │   ├── nav-search.css      # Nav search bar, dropdown
+│   │   ├── skeleton.css        # Skeleton loading placeholders
+│   │   ├── tables.css          # Data tables + mobile card layout
+│   │   └── utilities.css       # Utility classes
+│   ├── pages/
+│   │   ├── profile.css         # Profile page
+│   │   ├── dashboard.css       # Dashboard sidebar + tabs
+│   │   ├── cart.css            # Cart page + floating bar
+│   │   ├── wallet.css          # Wallet page
+│   │   ├── legal.css           # Terms & privacy pages
+│   │   └── seller.css          # Seller info card + order success
+│   └── vendors/
+│       └── bootstrap-overrides.css  # Bootstrap variable remapping
+│
+├── public/                     # Static assets served at root
+│   ├── manifest.json           # PWA web app manifest
+│   ├── robots.txt              # Crawl rules
+│   └── sw.js                   # Service Worker (stale-while-revalidate)
+│
+├── index.html                  # App shell HTML (navbar, bottom nav, modals)
+└── main.js                     # Entry point: imports app bootstrap + Alpine
 ```
 
 ---
@@ -311,10 +375,10 @@ Serves the `dist/` folder locally so you can verify the production build before 
 
 ## Configuration
 
-API endpoints and the SignalR hub URL are set in `src/core/api/config.js`:
+API endpoints and the SignalR hub URL are set in `src/shared/api/config.js`:
 
 ```js
-// src/core/api/config.js
+// src/shared/api/config.js
 export const APP_CONFIG = {
   apiBaseUrl:    'https://sayiad.runasp.net/api',
   swaggerUrl:    'https://sayiad.runasp.net/swagger/index.html',
@@ -391,7 +455,7 @@ MODERATOR_ROLES = [Auctioneer, Admin]
 
 ## Real-Time Auctions
 
-The `src/core/realtime/index.js` module manages a single shared SignalR connection per session. It starts automatically when a user logs in and is torn down on logout.
+The `src/app/realtime.js` module manages a single shared SignalR connection per session. It starts automatically when a user logs in and is torn down on logout.
 
 **Events emitted by the hub:**
 
@@ -405,7 +469,7 @@ The `src/core/realtime/index.js` module manages a single shared SignalR connecti
 Page modules subscribe to the app bus events rather than the hub directly, so they stay decoupled from the SignalR implementation:
 
 ```js
-import { on } from '../core/events/bus.js';
+import { on } from '../app/events.js';
 
 on('realtime:bid-placed', ({ detail }) => {
   // update bid list UI
@@ -416,10 +480,10 @@ on('realtime:bid-placed', ({ detail }) => {
 
 ## Internationalization
 
-All UI strings live in `src/core/i18n/index.js` as a flat key-value map under `en` and `ar` namespaces. The `t(key, vars?)` helper resolves keys at runtime and interpolates `{placeholder}` tokens.
+All UI strings live in `src/app/i18n.js` as a flat key-value map under `en` and `ar` namespaces. The `t(key, vars?)` helper resolves keys at runtime and interpolates `{placeholder}` tokens.
 
 ```js
-import { t, setLanguage } from './core/i18n/index.js';
+import { t, setLanguage } from './app/i18n.js';
 
 t('home.welcome');                       // "Welcome to Sayiad"
 t('auth.minAgeRequired', { minAge: 18 }); // "You must be at least 18 years old."

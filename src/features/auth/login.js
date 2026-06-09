@@ -4,6 +4,7 @@ import { clearCsrfToken } from '../../shared/utils/csrf.js';
 import { showToast } from '../../shared/utils/ui.js';
 import { t } from '../../app/i18n.js';
 import { isAuthenticated } from '../../app/auth-state.js';
+import { KEYS } from '../../shared/constants/storage-keys.js';
 import Alpine from 'alpinejs';
 export { getUser, isAuthenticated, getRoleFromToken, hasRole, hasAnyRole } from '../../app/auth-state.js';
 
@@ -49,8 +50,8 @@ Alpine.data('loginForm', () => ({
     try {
       const data = await api.post('/auth/login', { email: this.email, password: this.password });
       setAccessToken(data.accessToken);
-      if (data.refreshToken) localStorage.setItem('sayiad_refreshToken', data.refreshToken);
-      if (data.user) localStorage.setItem('sayiad_user', JSON.stringify(data.user));
+      if (data.refreshToken) localStorage.setItem(KEYS.REFRESH_TOKEN, data.refreshToken);
+      if (data.user) localStorage.setItem(KEYS.USER, JSON.stringify(data.user));
       emit('auth:changed');
       syncVipAttribute().catch(() => {});
       const redirect = new URLSearchParams(window.location.hash.split('?')[1] || '').get('redirect') || '';

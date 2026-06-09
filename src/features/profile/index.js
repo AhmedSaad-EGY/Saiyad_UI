@@ -5,6 +5,7 @@ import { ROLES, ECOMMERCE_ROLES } from '../../shared/constants/roles.js';
 import { showToast, showConfirm } from '../../shared/utils/ui.js';
 import { observeAnimations } from '../../shared/utils/dom.js';
 import { setPageMeta } from '../../shared/utils/seo.js';
+import { KEYS } from '../../shared/constants/storage-keys.js';
 import Alpine from 'alpinejs';
 
 export async function fetchProfileStats() {
@@ -44,9 +45,9 @@ export async function updateUserProfile(data) {
 
 export function cacheUserProfile(profileData) {
   try {
-    const existing = JSON.parse(localStorage.getItem('user') || '{}');
+    const existing = JSON.parse(localStorage.getItem(KEYS.USER) || '{}');
     Object.assign(existing, profileData);
-    localStorage.setItem('user', JSON.stringify(existing));
+    localStorage.setItem(KEYS.USER, JSON.stringify(existing));
   } catch { /* ignore storage errors */ }
 }
 
@@ -125,7 +126,7 @@ Alpine.data('profilePage', () => {
         });
 
         this.avatarUrl = imageUrl;
-        localStorage.setItem('user', JSON.stringify({ ...u, profileImage: imageUrl }));
+        localStorage.setItem(KEYS.USER, JSON.stringify({ ...u, profileImage: imageUrl }));
         showToast(t('profile.photoUpdated'), 'success');
       } catch (err) {
         showToast(err.message || t('common.error'), 'error');
@@ -143,7 +144,7 @@ Alpine.data('profilePage', () => {
         await api.delete('/users/profile/image');
         this.avatarUrl = null;
         const u = getUser();
-        localStorage.setItem('user', JSON.stringify({ ...u, profileImage: null }));
+        localStorage.setItem(KEYS.USER, JSON.stringify({ ...u, profileImage: null }));
         showToast(t('profile.photoRemoved'), 'success');
       } catch (err) {
         showToast(err.message || t('common.error'), 'error');

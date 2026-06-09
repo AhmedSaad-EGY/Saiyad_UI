@@ -1,15 +1,17 @@
+import { KEYS } from '../shared/constants/storage-keys.js';
+
 export function getUser() {
   try {
-    return JSON.parse(localStorage.getItem('sayiad_user'));
+    return JSON.parse(localStorage.getItem(KEYS.USER));
   } catch { return null; }
 }
 
 export function isAuthenticated() {
-  return !!localStorage.getItem('sayiad_accessToken');
+  return !!localStorage.getItem(KEYS.ACCESS_TOKEN);
 }
 
 export function getRoleFromToken() {
-  const token = localStorage.getItem('sayiad_accessToken');
+  const token = localStorage.getItem(KEYS.ACCESS_TOKEN);
   if (!token) return null;
   try {
     const payload = JSON.parse(atob(token.split('.')[1]));

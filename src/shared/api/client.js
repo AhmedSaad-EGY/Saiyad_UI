@@ -1,26 +1,27 @@
 import { APP_CONFIG } from './config.js';
 import { emit } from '../../app/events.js';
 import { getCsrfToken } from '../utils/csrf.js';
+import { KEYS } from '../constants/storage-keys.js';
 
 const _pendingRequests = new Map();
 
-let _cachedAccessToken = localStorage.getItem('accessToken') || null;
+let _cachedAccessToken = localStorage.getItem(KEYS.ACCESS_TOKEN) || null;
 
 export function getAccessToken() {
-  return _cachedAccessToken || localStorage.getItem('accessToken');
+  return _cachedAccessToken || localStorage.getItem(KEYS.ACCESS_TOKEN);
 }
 
 export function setAccessToken(token) {
   _cachedAccessToken = token;
-  if (token) localStorage.setItem('accessToken', token);
-  else localStorage.removeItem('accessToken');
+  if (token) localStorage.setItem(KEYS.ACCESS_TOKEN, token);
+  else localStorage.removeItem(KEYS.ACCESS_TOKEN);
 }
 
 export function clearTokens() {
   _cachedAccessToken = null;
-  localStorage.removeItem('accessToken');
-  localStorage.removeItem('refreshToken');
-  localStorage.removeItem('user');
+  localStorage.removeItem(KEYS.ACCESS_TOKEN);
+  localStorage.removeItem(KEYS.REFRESH_TOKEN);
+  localStorage.removeItem(KEYS.USER);
 }
 
 async function parseResponse(res) {
@@ -165,23 +166,19 @@ export const api = {
     requestWithDedup(url, { method: "PATCH", body: JSON.stringify(body) }),
   delete: (url) => requestWithDedup(url, { method: "DELETE" }),
   abort: () => new AbortController(),
-  upload: (url, formData) => {
-    const dedupKey = `UPLOAD:${url}`;
-    if (_pendingRequests.has(dedupKey)) {
-      return _pendingRequests.get(dedupKey);
-    }
-    const promise = doUpload(url, formData).finally(() => {
-      if (_pendingRequests.get(dedupKey) === promise) {
-        _pendingRequests.delete(dedupKey);
-      }
-    });
-    _pendingRequests.set(dedupKey, promise);
-    return promise;
-  },
+  upload: (url, formData) => doUpload(url, formData),
 };
 
+let _refreshPromise = null;
+
 async function refreshAccessToken() {
-  const refreshToken = localStorage.getItem("refreshToken");
+  if (_refreshPromise) return _refreshPromise;
+  _refreshPromise = _doRefresh().finally(() => { _refreshPromise = null; });
+  return _refreshPromise;
+}
+
+async function _doRefresh() {
+  const refreshToken = localStorage.getItem(KEYS.REFRESH_TOKEN);
   if (!refreshToken) return false;
   try {
     const res = await fetch(`${APP_CONFIG.apiBaseUrl}/auth/refresh`, {
@@ -192,7 +189,7 @@ async function refreshAccessToken() {
     if (!res.ok) throw new Error("Refresh failed");
     const data = await parseResponse(res);
     setAccessToken(data.token);
-    localStorage.setItem("refreshToken", data.refreshToken);
+    localStorage.setItem(KEYS.REFRESH_TOKEN, data.refreshToken);
     return true;
   } catch {
     clearTokens();

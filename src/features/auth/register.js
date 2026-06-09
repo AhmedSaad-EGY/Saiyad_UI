@@ -4,6 +4,7 @@ import { getPasswordStrengthResult, calculateAge, validateForm, clearAllFieldErr
 import { showToast } from '../../shared/utils/ui.js';
 import { t } from '../../app/i18n.js';
 import { emit } from '../../app/events.js';
+import { KEYS } from '../../shared/constants/storage-keys.js';
 import { syncVipAttribute } from './login.js';
 import { registerRouteCleanup } from '../../app/events.js';
 import Alpine from 'alpinejs';
@@ -47,8 +48,8 @@ Alpine.data('registerForm', () => ({
         licenseNumber: this.needsLicense ? this.licenseNumber : undefined,
       });
       setAccessToken(data.accessToken);
-      if (data.refreshToken) localStorage.setItem('sayiad_refreshToken', data.refreshToken);
-      if (data.user) localStorage.setItem('sayiad_user', JSON.stringify(data.user));
+      if (data.refreshToken) localStorage.setItem(KEYS.REFRESH_TOKEN, data.refreshToken);
+      if (data.user) localStorage.setItem(KEYS.USER, JSON.stringify(data.user));
       if (data.accessToken) showVerificationOverlay(this.email, this.password);
       else { emit('auth:changed'); window.location.hash = '#/'; }
     } catch (err) { showToast(err.message || t('auth.registerError'), 'error'); }
@@ -68,7 +69,7 @@ function showVerificationOverlay(email, password) {
       if (data.accessToken) {
         clearInterval(timer);
         setAccessToken(data.accessToken);
-        if (data.user) localStorage.setItem('sayiad_user', JSON.stringify(data.user));
+        if (data.user) localStorage.setItem(KEYS.USER, JSON.stringify(data.user));
         emit('auth:changed');
         syncVipAttribute().catch(() => {});
         window.location.hash = '#/';

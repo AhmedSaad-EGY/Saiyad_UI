@@ -1,4 +1,5 @@
 import { syncVipAttribute } from '../features/auth/login.js';
+import { isAuthenticated } from './auth-state.js';
 
 import './theme.js';
 import './language.js';
@@ -9,4 +10,4 @@ import './offline.js';
 import './tour.js';
 import './sw.js';
 
-syncVipAttribute().catch(err => console.warn('VIP sync failed:', err));
+if (isAuthenticated()) syncVipAttribute().catch(() => {});
