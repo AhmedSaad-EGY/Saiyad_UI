@@ -122,6 +122,17 @@
   flex-shrink: 0;
 }
 
+/* ── Toast swipe indicator arrow ───────────────────────────── */
+.toast-swipe-hint {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.8rem;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  pointer-events: none;
+}
+
 .sw-close-btn {
   background: none;
   border: none;
@@ -141,6 +152,64 @@
   flex-direction: column;
   gap: 10px;
   pointer-events: none;
+}
+
+[dir="rtl"] .toast-container {
+  left: 20px !important;
+  right: auto !important;
+}
+
+[dir="ltr"] .toast-container {
+  right: 20px !important;
+  left: auto !important;
+}
+
+/* ── Toast timer bar ────────────────────────────────────────── */
+.toast-timer {
+  position: absolute;
+  bottom: 0;
+  inset-inline: 0;
+  height: 3px;
+  background: oklch(1 0 0 / 0.30);
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+  overflow: hidden;
+}
+
+.toast-timer-bar {
+  height: 100%;
+  background: oklch(1 0 0 / 0.60);
+  width: 100%;
+  animation: toast-timer 3.5s linear forwards;
+  transform-origin: left;
+}
+
+[dir="rtl"] .toast-timer-bar {
+  transform-origin: right;
+}
+
+/* ── Toast entrance/exit ────────────────────────────────────── */
+.toast-base {
+  position: relative;
+  overflow: hidden;
+  animation: toast-slide-in-right 0.35s var(--ease-out) forwards;
+}
+
+.toast-base.toast-exit {
+  animation: toast-slide-out-right 0.25s var(--ease-out) forwards;
+}
+
+[dir="rtl"] .toast-base {
+  animation-name: toast-slide-in-left;
+}
+
+[dir="rtl"] .toast-base.toast-exit {
+  animation-name: toast-slide-out-left;
+}
+
+/* ── Swipe to dismiss ───────────────────────────────────────── */
+.toast-base.swiping {
+  transition: transform 0.05s linear, opacity 0.1s ease;
+  user-select: none;
 }
 .signalr-banner {
   position: fixed;

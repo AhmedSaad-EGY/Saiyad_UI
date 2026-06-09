@@ -33,6 +33,63 @@
 }
 
 /* ============================================================
+   FORM VALIDATION ANIMATIONS
+   ============================================================ */
+@keyframes form-error-slide {
+  0% {
+    opacity: 0;
+    transform: translateY(-4px) scaleY(0.9);
+    max-height: 0;
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scaleY(1);
+    max-height: 40px;
+  }
+}
+
+@keyframes input-shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 50%, 90% { transform: translateX(-4px); }
+  30%, 70% { transform: translateX(4px); }
+}
+
+@keyframes border-flash {
+  0%   { border-color: var(--danger); box-shadow: 0 0 0 3px var(--danger-bg); }
+  50%  { border-color: var(--danger-dark); box-shadow: 0 0 0 5px color-mix(in oklch, var(--danger) 20%, transparent); }
+  100% { border-color: var(--danger); box-shadow: 0 0 0 3px var(--danger-bg); }
+  200% { border-color: var(--danger); box-shadow: 0 0 0 3px var(--danger-bg); }
+}
+
+/* ============================================================
+   TOAST ANIMATIONS
+   ============================================================ */
+@keyframes toast-slide-in-right {
+  0%   { opacity: 0; transform: translateX(40px); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes toast-slide-out-right {
+  0%   { opacity: 1; transform: translateX(0); }
+  100% { opacity: 0; transform: translateX(40px); }
+}
+
+@keyframes toast-slide-in-left {
+  0%   { opacity: 0; transform: translateX(-40px); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes toast-slide-out-left {
+  0%   { opacity: 1; transform: translateX(0); }
+  100% { opacity: 0; transform: translateX(-40px); }
+}
+
+@keyframes toast-timer {
+  0%   { width: 100%; }
+  100% { width: 0%; }
+}
+
+/* ============================================================
    ALPINE.JS TRANSITION HELPERS
    Used with x-transition:enter / x-transition:leave directives.
    ============================================================ */

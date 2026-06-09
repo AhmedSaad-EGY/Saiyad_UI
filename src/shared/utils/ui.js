@@ -8,11 +8,9 @@ export function showToast(msg, type = "info") {
     (() => {
       const c = document.createElement("div");
       c.className = "toast-container";
-      const isRtl = document.documentElement.dir === "rtl";
       c.setAttribute("role", "status");
       c.setAttribute("aria-live", "polite");
       c.setAttribute("aria-atomic", "false");
-      c.style[isRtl ? "left" : "right"] = "20px";
       document.body.appendChild(c);
       return c;
     })();
@@ -34,39 +32,153 @@ export function showToast(msg, type = "info") {
   toast.setAttribute("role", "alert");
   toast.className = "toast-base";
   toast.style.background = colors[type] || colors.info;
+
   const iconEl = document.createElement("i");
   iconEl.className = `fas ${icons[type] || icons.info}`;
   iconEl.setAttribute("aria-hidden", "true");
+
   const textEl = document.createElement("span");
   textEl.textContent = msg;
+
   const closeBtn = document.createElement("button");
   closeBtn.innerHTML = "&times;";
   closeBtn.setAttribute("aria-label", t('common.close'));
   closeBtn.className = "toast-close-btn";
-  closeBtn.addEventListener("click", () => closeToast(toast));
+  closeBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    closeToast(toast);
+  });
+
   toast.appendChild(iconEl);
   toast.appendChild(textEl);
   toast.appendChild(closeBtn);
 
-  function closeToast(toastEl) {
-    toastEl.style.transition = "all 0.2s ease";
-    toastEl.style.opacity = "0";
-    toastEl.style.transform = "translateX(20px)";
-    setTimeout(() => toastEl.remove(), 250);
+  // Timer bar
+  const timerWrap = document.createElement("div");
+  timerWrap.className = "toast-timer";
+  const timerBar = document.createElement("div");
+  timerBar.className = "toast-timer-bar";
+  timerWrap.appendChild(timerBar);
+  toast.appendChild(timerWrap);
+
+  let dismissTimer = null;
+  let remaining = 3500;
+  let startTime = Date.now();
+  let paused = false;
+
+  function startTimer() {
+    if (dismissTimer) clearTimeout(dismissTimer);
+    startTime = Date.now();
+    paused = false;
+    timerBar.style.animationPlayState = "running";
+    dismissTimer = setTimeout(() => closeToast(toast), remaining);
   }
 
-  while (container.children.length >= 3) {
+  function pauseTimer() {
+    if (paused) return;
+    paused = true;
+    if (dismissTimer) clearTimeout(dismissTimer);
+    remaining -= Date.now() - startTime;
+    if (remaining < 0) remaining = 0;
+    timerBar.style.animationPlayState = "paused";
+  }
+
+  function resumeTimer() {
+    if (!paused) return;
+    paused = false;
+    timerBar.style.animation = "none";
+    timerBar.offsetHeight; // force reflow
+    timerBar.style.animation = `toast-timer ${remaining}ms linear forwards`;
+    startTimer();
+  }
+
+  function closeToast(toastEl) {
+    if (dismissTimer) clearTimeout(dismissTimer);
+    paused = true;
+    toastEl.classList.add("toast-exit");
+    toastEl.addEventListener("animationend", () => {
+      if (toastEl.isConnected) toastEl.remove();
+    }, { once: true });
+  }
+
+  // Swipe-to-dismiss (touch)
+  let touchStartX = 0;
+  let touchStartY = 0;
+  let swipeDeltaX = 0;
+  let isSwiping = false;
+
+  toast.addEventListener("touchstart", (e) => {
+    const touch = e.touches[0];
+    touchStartX = touch.clientX;
+    touchStartY = touch.clientY;
+    swipeDeltaX = 0;
+    isSwiping = false;
+  }, { passive: true });
+
+  toast.addEventListener("touchmove", (e) => {
+    const touch = e.touches[0];
+    const dx = touch.clientX - touchStartX;
+    const dy = touch.clientY - touchStartY;
+    if (Math.abs(dy) > Math.abs(dx) * 1.5) {
+      // Vertical scroll — not a swipe
+      if (isSwiping) {
+        toast.style.transform = "";
+        toast.style.opacity = "";
+        toast.classList.remove("swiping");
+        isSwiping = false;
+      }
+      return;
+    }
+    if (Math.abs(dx) < 10) return;
+    e.preventDefault();
+    isSwiping = true;
+    toast.classList.add("swiping");
+    swipeDeltaX = dx;
+    const isRtl = document.documentElement.dir === "rtl";
+    const swipeDir = isRtl ? dx < 0 : dx > 0;
+    if (!swipeDir) {
+      toast.style.transform = `translateX(${dx * 0.3}px)`;
+      toast.style.opacity = String(1 - Math.min(Math.abs(dx) / 300, 0.5));
+    } else {
+      toast.style.transform = `translateX(${dx}px)`;
+      toast.style.opacity = String(1 - Math.min(Math.abs(dx) / 250, 1));
+    }
+  }, { passive: false });
+
+  toast.addEventListener("touchend", () => {
+    if (!isSwiping) return;
+    toast.classList.remove("swiping");
+    const isRtl = document.documentElement.dir === "rtl";
+    const swipeDir = isRtl ? swipeDeltaX < 0 : swipeDeltaX > 0;
+    if (swipeDir && Math.abs(swipeDeltaX) > 80) {
+      closeToast(toast);
+    } else {
+      toast.style.transform = "";
+      toast.style.opacity = "";
+    }
+    isSwiping = false;
+  }, { passive: true });
+
+  // Pause auto-dismiss on hover/touch
+  toast.addEventListener("mouseenter", pauseTimer, { passive: true });
+  toast.addEventListener("mouseleave", resumeTimer, { passive: true });
+  toast.addEventListener("touchstart", pauseTimer, { passive: true });
+  toast.addEventListener("touchend", resumeTimer, { passive: true });
+
+  // Limit stacking: max 4
+  while (container.children.length >= 4) {
     const first = container.firstElementChild;
-    first.style.transition = "all 0.2s ease";
-    first.style.opacity = "0";
-    first.style.transform = "translateX(30px)";
-    setTimeout(() => first.remove(), 200);
+    first.classList.add("toast-exit");
+    first.addEventListener("animationend", () => {
+      if (first.isConnected) first.remove();
+    }, { once: true });
   }
   container.appendChild(toast);
-  animate(toast, 'bounceInRight', { duration: '0.4s' });
+
   const live = document.getElementById("ariaLive");
   if (live) live.textContent = msg;
-  setTimeout(() => closeToast(toast), 3500);
+
+  startTimer();
 }
 
 export function triggerConfetti() {
