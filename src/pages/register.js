@@ -1,4 +1,4 @@
-import { t } from '../app/i18n.js';
+import { t } from '../shared/utils/i18n.js';
 import { setPageMeta } from '../shared/utils/seo.js';
 import { escapeHtml } from '../shared/utils/dom.js';
 import '../features/auth/register.js';

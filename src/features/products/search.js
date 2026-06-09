@@ -1,5 +1,5 @@
 import { api } from '../../shared/api/client.js';
-import { t } from '../../app/i18n.js';
+import { t } from '../../shared/utils/i18n.js';
 import { escapeHtml, observeAnimations, initPullToRefresh, initInfiniteScroll } from '../../shared/utils/dom.js';
 import { formatPrice } from '../../shared/utils/format.js';
 import Alpine from 'alpinejs';

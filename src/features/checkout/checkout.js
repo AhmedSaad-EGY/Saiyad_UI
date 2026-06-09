@@ -1,5 +1,5 @@
 import { api } from '../../shared/api/client.js';
-import { t } from '../../app/i18n.js';
+import { t } from '../../shared/utils/i18n.js';
 import { escapeHtml } from '../../shared/utils/dom.js';
 import { showFieldError, clearFieldError, clearAllFieldErrors } from '../../shared/utils/validation.js';
 import { formatPrice } from '../../shared/utils/format.js';

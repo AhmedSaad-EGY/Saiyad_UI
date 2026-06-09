@@ -23,6 +23,7 @@ export async function fetchAnalyticsPageData() {
   const recent = rawDash.recentAuctions || rawDash.recent || [];
   const allTxns = txnResult.status === "fulfilled" ? txnResult.value?.items || [] : [];
   const feeTxns = allTxns.filter((txn) => txn.type === "PlatformFee");
+  const totalFees = feeTxns.reduce((s, txn) => s + Math.abs(txn.amount), 0);
   const wallet = walletResult.status === "fulfilled" ? walletResult.value : null;
 
   const dash = {
@@ -33,13 +34,21 @@ export async function fetchAnalyticsPageData() {
     totalRevenue: rawDash.totalRevenue,
   };
 
-  const result = { dash, feeTxns, recent, wallet };
+  const activePct = dash.activeAuctions && dash.totalAuctions
+    ? ((dash.activeAuctions ?? 0) / (dash.totalAuctions || 1)) * 100 : 0;
+  const finishedPct = dash.finishedAuctions && dash.totalAuctions
+    ? ((dash.finishedAuctions ?? 0) / (dash.totalAuctions || 1)) * 100 : 0;
+
+  const result = { dash, feeTxns, totalFees, activePct, finishedPct, recent, wallet };
 
   try {
     sessionStorage.setItem(
       ANALYTICS_CACHE_KEY,
       JSON.stringify({
         dash,
+        totalFees,
+        activePct,
+        finishedPct,
         feeTxns: feeTxns.map((txn) => ({
           createdAt: txn.createdAt,
           amount: txn.amount,

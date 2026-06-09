@@ -1,10 +1,11 @@
-import { t } from '../../app/i18n.js';
+import { t } from '../../shared/utils/i18n.js';
 import { formatPrice, statusClass, tStatus } from '../../shared/utils/format.js';
 import { escapeHtml, renderEmptyState, observeAnimations } from '../../shared/utils/dom.js';
 import { createModal } from '../ui/modal.js';
-import { registerRouteCleanup } from '../../app/events.js';
+import { registerRouteCleanup } from '../../shared/utils/events.js';
 import { animate } from '../../shared/utils/dom.js';
 import { getRecentlyViewed } from '../../shared/utils/recently-viewed.js';
+import { getProductLink, getRecentLink } from '../../features/products/routing.js';
 
 export function renderProductCards(container, products) {
   if (!products || !products.length) {
@@ -57,10 +58,7 @@ export function openQuickView(product) {
   const price = formatPrice(product.price || product.currentHighestBid || product.startingPrice);
   const image = product.primaryImageUrl || product.product?.primaryImageUrl || "";
   const desc = product.description || product.product?.description || "";
-  const id = product.id || product.productId;
-  const link = product.currentHighestBid != null
-    ? `#/auction-detail?id=${id}`
-    : `#/product-detail?id=${id}`;
+  const link = getProductLink(product);
 
   const { close, overlay } = createModal(`
       <div class="d-flex gap-4 flex-wrap">
@@ -96,7 +94,7 @@ export function renderRecentlyViewed(container) {
     </div>
     <div class="recently-viewed-strip">
       ${viewed.map((v) => `
-        <a href="${v.type === "auction" ? "#/auction-detail?id=" : "#/product-detail?id="}${v.id}" class="recently-viewed-item" title="${escapeHtml(v.title)}">
+        <a href="${getRecentLink(v)}" class="recently-viewed-item" title="${escapeHtml(v.title)}">
           ${v.image ? `<img src="${v.image}" alt="${escapeHtml(v.title)}" loading="lazy">` : '<div class="d-flex align-items-center justify-content-center text-muted" style="width:60px;height:60px;background:var(--body-bg);border-radius:var(--radius-sm)"><i class="fas fa-image"></i></div>'}
           <div class="recently-viewed-info">
             <span class="recently-viewed-title">${escapeHtml(v.title)}</span>

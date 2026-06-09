@@ -1,4 +1,4 @@
-import { t } from '../../app/i18n.js';
+import { t } from '../../shared/utils/i18n.js';
 import { formatPrice, statusClass, tStatus } from '../../shared/utils/format.js';
 import { escapeHtml, observeAnimations } from '../../shared/utils/dom.js';
 

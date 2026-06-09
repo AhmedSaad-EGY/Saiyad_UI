@@ -1,4 +1,4 @@
-import { t, getCurrentLang } from '../../app/i18n.js';
+import { t, getCurrentLang } from '../../shared/utils/i18n.js';
 
 export function renderDetailMain() {
   const dir = getCurrentLang() === "ar" ? "left" : "right";

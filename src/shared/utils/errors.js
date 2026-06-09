@@ -1,6 +1,6 @@
 import { showToast } from './ui.js';
-import { on } from '../../app/events.js';
-import { t } from '../../app/i18n.js';
+import { on } from './events.js';
+import { t } from './i18n.js';
 import { escapeHtml } from './dom.js';
 
 export function normalizeApiError(err) {

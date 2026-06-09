@@ -1,6 +1,10 @@
 import { api } from '../../shared/api/client.js';
 import { escapeHtml } from '../../shared/utils/dom.js';
 import { openLightbox } from '../../shared/utils/ui.js';
+import { isAuthenticated, getUser, hasAnyRole } from '../../shared/utils/auth-state.js';
+import { SELLER_ROLES } from '../../shared/constants/roles.js';
+import { fetchWishlist } from '../wishlist/index.js';
+import { fetchProductRating, fetchProductReviews } from '../reviews/index.js';
 
 export async function fetchProductById(id) {
   return api.get(`/products/${id}`);
@@ -33,6 +37,25 @@ export function initImageMagnifier(wrap, img, lens, primaryImageUrl, allImages) 
     lens.style.backgroundPosition = `-${(x * 2) - lensW / 2}px -${(y * 2) - lensH / 2}px`;
   });
   wrap.addEventListener("click", () => openLightbox(allImages, 0));
+}
+
+export async function loadProductDetailData(id) {
+  const [p, ratingData, reviewsData, wishlistData] = await Promise.all([
+    fetchProductById(id),
+    fetchProductRating(id),
+    fetchProductReviews(id),
+    isAuthenticated() ? fetchWishlist(200).catch(() => null) : Promise.resolve(null),
+  ]);
+  const isAvailable = p.status === "Available" || p.status === 0;
+  const wishlistItems = wishlistData?.items || wishlistData?.data || wishlistData || [];
+  const isWishlisted = Array.isArray(wishlistItems) && wishlistItems.some(w => w.productId === p.id || w.id === p.id);
+  const avgRating = ratingData?.averageRating;
+  const reviews = reviewsData?.items || reviewsData?.data || reviewsData || [];
+  const allImages = [p.primaryImageUrl, ...(p.images || p.additionalImages || []).map((img) => (typeof img === "string" ? img : img.url || img))].filter(Boolean);
+  const stockQty = p.stockQuantity ?? 0;
+  const stockLevel = stockQty > 50 ? 'high' : stockQty > 10 ? 'medium' : 'low';
+  const isSellerOwner = !p.isAuctioned && getUser()?.id === p.sellerId && hasAnyRole(...(SELLER_ROLES));
+  return { p, isAvailable, isWishlisted, avgRating, reviews, allImages, stockQty, stockLevel, isSellerOwner };
 }
 
 export function initGallerySwipe(wrap, allImages) {

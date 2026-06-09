@@ -1,4 +1,4 @@
-import { KEYS } from '../shared/constants/storage-keys.js';
+import { KEYS } from '../constants/storage-keys.js';
 
 export function getUser() {
   try {

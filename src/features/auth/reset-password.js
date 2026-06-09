@@ -1,8 +1,8 @@
 import { api } from '../../shared/api/client.js';
 import { getPasswordStrengthResult } from '../../shared/utils/validation.js';
 import { showToast } from '../../shared/utils/ui.js';
-import { t } from '../../app/i18n.js';
-import { registerRouteCleanup } from '../../app/events.js';
+import { t } from '../../shared/utils/i18n.js';
+import { registerRouteCleanup } from '../../shared/utils/events.js';
 import Alpine from 'alpinejs';
 
 Alpine.data('forgotPwPage', () => ({

@@ -1,4 +1,4 @@
-import { t } from './i18n.js';
+import { t } from '../shared/utils/i18n.js';
 import { animate } from '../shared/utils/dom.js';
 import { getUser, requireAuth } from '../features/auth/login.js';
 import { SELLER_ROLES } from '../shared/constants/roles.js';

@@ -1,4 +1,4 @@
-import { t } from '../../app/i18n.js';
+import { t } from '../../shared/utils/i18n.js';
 import { api } from '../../shared/api/client.js';
 import { getUser, hasAnyRole, hasRole } from '../auth/login.js';
 import { ROLES, ECOMMERCE_ROLES } from '../../shared/constants/roles.js';

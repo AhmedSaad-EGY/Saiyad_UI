@@ -1,4 +1,4 @@
-import { t } from '../app/i18n.js';
+import { t } from '../shared/utils/i18n.js';
 import { observeAnimations } from '../shared/utils/dom.js';
 import { registerRouteCleanup } from '../app/router.js';
 import { setPageMeta } from '../shared/utils/seo.js';

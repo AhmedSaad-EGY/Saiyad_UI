@@ -1,4 +1,4 @@
-import { t } from './i18n.js';
+import { t } from '../shared/utils/i18n.js';
 import { animate } from '../shared/utils/dom.js';
 import { registerRouteCleanup } from './router.js';
 

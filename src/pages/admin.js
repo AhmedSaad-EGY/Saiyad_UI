@@ -1,4 +1,4 @@
-import { t } from '../app/i18n.js';
+import { t } from '../shared/utils/i18n.js';
 import { getUser } from '../features/auth/login.js';
 import { ROLES } from '../shared/constants/roles.js';
 import { setPageMeta } from '../shared/utils/seo.js';
@@ -18,7 +18,8 @@ import {
   fetchPendingReviews, approveProduct, rejectProduct,
   fetchCategories, createCategory, deleteCategory,
   fetchWallet, fetchWalletTransactions,
-  fetchSubscriptionPlans, updateSubscriptionPlan, deleteSubscriptionPlan, createSubscriptionPlan
+  fetchSubscriptionPlans, updateSubscriptionPlan, deleteSubscriptionPlan,   createSubscriptionPlan,
+  computeFeeTotals,
 } from '../features/admin/index.js';
 
 export default async function renderAdmin(container) {
@@ -114,10 +115,15 @@ export default async function renderAdmin(container) {
         onAdd: async (data) => { await createSubscriptionPlan(data); loadTab(); }
       });
     } else if (activeTab === "revenue") {
-      renderRevenueWidget(content, {
-        fetchWallet,
-        fetchTransactions: fetchWalletTransactions
-      });
+      (async () => {
+        try {
+          const [wallet, txns] = await Promise.all([fetchWallet(), fetchWalletTransactions(1, 100)]);
+          const { feeTxns, totalFees } = computeFeeTotals(txns);
+          renderRevenueWidget(content, { wallet, feeTxns, totalFees });
+        } catch (err) {
+          content.innerHTML = `<div class="alert alert-error">${err.message}</div>`;
+        }
+      })();
     }
   }
 

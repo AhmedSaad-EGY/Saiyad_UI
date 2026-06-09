@@ -1,6 +1,6 @@
 import { api } from '../../shared/api/client.js';
 import { showToast } from '../../shared/utils/ui.js';
-import { t } from '../../app/i18n.js';
+import { t } from '../../shared/utils/i18n.js';
 
 export const MIN_DEPOSIT = 10;
 export const MAX_DEPOSIT = 50000;

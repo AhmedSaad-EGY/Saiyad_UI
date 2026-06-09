@@ -1,5 +1,5 @@
 import Alpine from 'alpinejs';
-import { t } from '../../app/i18n.js';
+import { t } from '../../shared/utils/i18n.js';
 import { api } from '../../shared/api/client.js';
 import { isAuthenticated, hasAnyRole, hasRole } from '../auth/login.js';
 import { ROLES, SELLER_ROLES } from '../../shared/constants/roles.js';

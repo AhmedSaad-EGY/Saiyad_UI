@@ -1,4 +1,4 @@
-import { t } from '../app/i18n.js';
+import { t } from '../shared/utils/i18n.js';
 import { getUser, hasAnyRole } from '../features/auth/login.js';
 import { MODERATOR_ROLES } from '../shared/constants/roles.js';
 import { setPageMeta } from '../shared/utils/seo.js';
@@ -16,14 +16,14 @@ export default async function renderAuctioneerAnalytics(container) {
 
   const cached = getCachedAnalyticsPageData();
   if (cached) {
-    renderContent(container, cached.dash, cached.feeTxns, cached.recent, cached.wallet);
+    renderContent(container, cached);
   } else {
     renderSkeleton(container);
   }
 
   try {
     const data = await fetchAnalyticsPageData();
-    renderContent(container, data.dash, data.feeTxns, data.recent, data.wallet);
+    renderContent(container, data);
   } catch {
     if (!cached) renderError(container);
   }

@@ -1,5 +1,5 @@
 import Alpine from 'alpinejs';
-import { t } from '../../app/i18n.js';
+import { t } from '../utils/i18n.js';
 import { formatPrice, formatDate } from '../utils/format.js';
 import { showToast } from '../utils/ui.js';
 import { escapeHtml } from '../utils/dom.js';

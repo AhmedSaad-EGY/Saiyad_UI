@@ -1,9 +1,9 @@
-import { t } from '../../app/i18n.js';
-import { getUser, hasAnyRole, hasRole } from '../../app/auth-state.js';
+import { t } from '../../shared/utils/i18n.js';
+import { getUser, hasAnyRole, hasRole } from '../../shared/utils/auth-state.js';
 import { ROLES, SELLER_ROLES, ECOMMERCE_ROLES, MODERATOR_ROLES } from '../../shared/constants/roles.js';
 import { showLoading } from '../../shared/utils/dom.js';
 import { showToast } from '../../shared/utils/ui.js';
-import { emit } from '../../app/events.js';
+import { emit } from '../../shared/utils/events.js';
 import { fetchMySellerProfile } from '../seller-profile/index.js';
 import { fetchOrders, cancelOrder } from '../orders/index.js';
 import { fetchMyProducts, updateProduct, deleteProduct, uploadFile, addProductImage, validateImage, saveProductDraft, loadProductDraft, clearProductDraft, fetchCategories } from '../products/edit.js';

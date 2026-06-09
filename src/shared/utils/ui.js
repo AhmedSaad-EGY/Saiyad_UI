@@ -1,6 +1,6 @@
-import { t } from '../../app/i18n.js';
+import { t } from './i18n.js';
 import { animate } from './dom.js';
-import { registerRouteCleanup } from '../../app/events.js';
+import { registerRouteCleanup } from './events.js';
 
 export function showToast(msg, type = "info") {
   const existing = document.querySelector(".toast-container");

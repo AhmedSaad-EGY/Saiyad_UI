@@ -1,8 +1,6 @@
-import { getUser, isAuthenticated } from '../../app/auth-state.js';
-import { SELLER_ROLES } from '../../shared/constants/roles.js';
-import { t } from '../../app/i18n.js';
-import { emit } from '../../app/events.js';
+import { emit } from '../../shared/utils/events.js';
 import { createSwipeGesture } from '../../shared/utils/swipe.js';
+import { syncCartBadgeCount } from '../../shared/utils/ui.js';
 
 let _drawerSwipe = null;
 let _fetchCartCount = async () => 0;
@@ -99,49 +97,10 @@ const _navIconMap = {
   'auction-requests-review': 'fa-clipboard-check', 'auctioneer-analytics': 'fa-chart-line',
 };
 
-export function updateNavbar() {
-  const auth = isAuthenticated();
-  const user = getUser();
-  document.querySelectorAll(".nav-guest").forEach(el => el.classList.toggle("hidden", auth));
-  document.querySelectorAll(".nav-auth").forEach(el => el.classList.toggle("hidden", !auth));
-  const userMenu = document.getElementById("userMenu");
-  if (userMenu) {
-    userMenu.innerHTML = user?.fullName || user?.name || user?.email || t('nav.profile');
-  }
-  const userRole = document.getElementById("userRole");
-  if (userRole) userRole.textContent = user?.role || '';
-  const avatarImg = document.getElementById("userAvatar");
-  if (avatarImg) {
-    if (user?.profileImageUrl) { avatarImg.src = user.profileImageUrl; avatarImg.hidden = false; }
-    else avatarImg.hidden = true;
-  }
-  document.querySelectorAll(".nav-seller").forEach(el => el.classList.toggle("hidden", !user || !SELLER_ROLES.includes(user.role)));
-  document.querySelectorAll(".nav-admin").forEach(el => el.classList.toggle("hidden", user?.role !== 'Admin'));
-  document.querySelectorAll(".nav-auctioneer").forEach(el => el.classList.toggle("hidden", user?.role !== 'Auctioneer'));
-
-  const sellLink = document.getElementById("sellLink");
-  if (sellLink) {
-    sellLink.href = user && SELLER_ROLES.includes(user.role) ? '#/dashboard' : '#/register';
-  }
-}
-
 let _cartCount = 0;
 
 export function invalidateCartCache() { _cartCount = 0; }
 export function setCachedCartCount(n) { _cartCount = n; }
-export function getCartItemCount(items) { return items.reduce((s, i) => s + (i.quantity || 0), 0); }
-
-export function syncCartBadgeCount(count) {
-  const badge = document.getElementById("cartBadge");
-  if (!badge) return;
-  if (count > 0) {
-    badge.textContent = count > 99 ? '99+' : count;
-    badge.classList.remove("hidden");
-  } else {
-    badge.classList.add("hidden");
-  }
-}
-
 export async function updateCartBadge(forceRefresh) {
   const badge = document.getElementById("cartBadge");
   if (!badge) return;

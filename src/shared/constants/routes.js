@@ -17,34 +17,6 @@ export const routeGuards = {
   'wallet': (user) => !!user,
 };
 
-export const routes = {
-  "": () => import('../../pages/home.js'),
-  login: () => import('../../pages/login.js'),
-  register: () => import('../../pages/register.js'),
-  "forgot-password": () => import('../../pages/forgot-password.js'),
-  "reset-password": () => import('../../pages/reset-password.js'),
-  products: () => import('../../pages/products.js'),
-  "product-detail": () => import('../../pages/product-detail.js'),
-  auctions: () => import('../../pages/auctions.js'),
-  "auction-detail": () => import('../../pages/auction-detail.js'),
-  cart: () => import('../../pages/cart.js'),
-  checkout: () => import('../../pages/checkout.js'),
-  dashboard: () => import('../../pages/dashboard.js'),
-  "verify-email": () => import('../../pages/verify-email.js'),
-  shipping: () => import('../../pages/shipping.js'),
-  "seller-profile": () => import('../../pages/seller-profile.js'),
-  "order-detail": () => import('../../pages/order-detail.js'),
-  admin: () => import('../../pages/admin.js'),
-  terms: () => import('../../pages/terms.js'),
-  privacy: () => import('../../pages/privacy.js'),
-  profile: () => import('../../pages/profile.js'),
-  "auction-requests": () => import('../../pages/auction-requests.js'),
-  "auction-requests-review": () => import('../../pages/auction-requests-review.js'),
-  "auctioneer-analytics": () => import('../../pages/auctioneer-analytics.js'),
-  subscriptions: () => import('../../pages/subscriptions.js'),
-  wallet: () => import('../../pages/wallet.js'),
-};
-
 export const routeTitleKeys = {
   "": "home.welcome",
   login: "nav.login",

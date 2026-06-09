@@ -1,12 +1,12 @@
 import { api, setAccessToken, clearTokens } from '../../shared/api/client.js';
-import { emit } from '../../app/events.js';
+import { emit } from '../../shared/utils/events.js';
 import { clearCsrfToken } from '../../shared/utils/csrf.js';
 import { showToast } from '../../shared/utils/ui.js';
-import { t } from '../../app/i18n.js';
-import { isAuthenticated } from '../../app/auth-state.js';
+import { t } from '../../shared/utils/i18n.js';
+import { isAuthenticated } from '../../shared/utils/auth-state.js';
 import { KEYS } from '../../shared/constants/storage-keys.js';
 import Alpine from 'alpinejs';
-export { getUser, isAuthenticated, getRoleFromToken, hasRole, hasAnyRole } from '../../app/auth-state.js';
+export { getUser, isAuthenticated, getRoleFromToken, hasRole, hasAnyRole } from '../../shared/utils/auth-state.js';
 
 export async function requireAuth() {
   if (isAuthenticated()) return true;

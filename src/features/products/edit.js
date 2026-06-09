@@ -8,7 +8,7 @@ export async function fetchMyProducts(pageSize = 50) {
 
 export async function fetchCategories() {
   try {
-    return await api.get('/Categories') || [];
+    return await api.get('/categories') || [];
   } catch { return []; }
 }
 

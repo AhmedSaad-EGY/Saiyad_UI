@@ -1,4 +1,4 @@
-import { t } from '../app/i18n.js';
+import { t } from '../shared/utils/i18n.js';
 import { requireAuth, hasAnyRole } from '../features/auth/login.js';
 import { SELLER_ROLES } from '../shared/constants/roles.js';
 import { showLoading, observeAnimations } from '../shared/utils/dom.js';

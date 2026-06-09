@@ -1,5 +1,5 @@
 import { APP_CONFIG } from './config.js';
-import { emit } from '../../app/events.js';
+import { emit } from '../utils/events.js';
 import { getCsrfToken } from '../utils/csrf.js';
 import { KEYS } from '../constants/storage-keys.js';
 

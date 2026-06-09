@@ -1,8 +1,8 @@
 import { APP_CONFIG } from '../shared/api/config.js';
 import { showToast } from '../widgets/ui/toast.js';
-import { t } from './i18n.js';
+import { t } from '../shared/utils/i18n.js';
 import { getUser } from '../features/auth/login.js';
-import { on, emit } from './events.js';
+import { on, emit } from '../shared/utils/events.js';
 import { KEYS } from '../shared/constants/storage-keys.js';
 
 let _connection = null;

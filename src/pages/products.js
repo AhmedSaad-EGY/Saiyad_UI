@@ -1,4 +1,4 @@
-import { t } from '../app/i18n.js';
+import { t } from '../shared/utils/i18n.js';
 import { setPageMeta } from '../shared/utils/seo.js';
 import '../features/products/search.js';
 import { renderSearchBar } from '../widgets/products/render-search-bar.js';

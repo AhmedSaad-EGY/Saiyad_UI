@@ -1,4 +1,4 @@
-import { t } from './i18n.js';
+import { t } from '../shared/utils/i18n.js';
 import { goBack } from './router.js';
 import { createSwipeGesture } from '../shared/utils/swipe.js';
 

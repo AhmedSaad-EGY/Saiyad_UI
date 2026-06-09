@@ -6,3 +6,10 @@ export function getPlanIcon(tier) {
 export function isPopularPlan(sortOrder) {
   return sortOrder === 3;
 }
+
+export function computePlanStatus(plan, mySubscription, walletBalance) {
+  const isCurrent = mySubscription && (mySubscription.tier === plan.tier || mySubscription.planName === plan.name);
+  const insufficient = !isCurrent && plan.price > 0 && walletBalance !== null && walletBalance < plan.price;
+  const isPop = isPopularPlan(plan.sortOrder);
+  return { isCurrent, insufficient, isPop };
+}

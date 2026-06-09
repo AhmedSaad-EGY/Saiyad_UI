@@ -1,4 +1,4 @@
-import { t } from '../../app/i18n.js';
+import { t } from '../../shared/utils/i18n.js';
 import { escapeHtml, observeAnimations } from '../../shared/utils/dom.js';
 
 export function renderProfile(content, user, { onSubmit } = {}) {

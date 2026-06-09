@@ -1,8 +1,7 @@
-import { t } from '../app/i18n.js';
-import { isAuthenticated, getUser, hasAnyRole, requireAuth } from '../features/auth/login.js';
+import { t } from '../shared/utils/i18n.js';
+import { isAuthenticated, getUser, requireAuth } from '../features/auth/login.js';
 import { updateCartBadge } from '../widgets/layout/navbar.js';
 import { setPageMeta } from '../shared/utils/seo.js';
-import { SELLER_ROLES } from '../shared/constants/roles.js';
 import { router, registerRouteCleanup } from '../app/router.js';
 import { showError, showLoading, escapeHtml, observeAnimations, fadeInContent, animate, safeSetHTML } from '../shared/utils/dom.js';
 import { formatDate, renderStars } from '../shared/utils/format.js';
@@ -11,10 +10,10 @@ import { createModal } from '../widgets/ui/modal.js';
 import { renderProductCards } from '../widgets/cards/product-card.js';
 import { trackRecentlyViewed } from '../features/home/index.js';
 import { addToCart } from '../features/cart/add.js';
-import { fetchProductById, fetchSimilarProducts, initImageMagnifier, initGallerySwipe } from '../features/products/detail.js';
-import { fetchWishlist, toggleWishlist } from '../features/wishlist/index.js';
+import { loadProductDetailData, fetchSimilarProducts, initImageMagnifier, initGallerySwipe } from '../features/products/detail.js';
+import { toggleWishlist } from '../features/wishlist/index.js';
 import { createAuction } from '../features/auctions/create.js';
-import { fetchProductRating, fetchProductReviews, submitReview, sortReviews, initStarRating } from '../features/reviews/index.js';
+import { submitReview, sortReviews, initStarRating } from '../features/reviews/index.js';
 import { clampQuantity } from '../features/cart/quantity.js';
 import { renderBreadcrumb, renderGallery, renderDetailPanel, renderReviewCards } from '../widgets/product-detail/index.js';
 
@@ -25,20 +24,8 @@ export default async function renderProductDetail(container, route, params) {
   showLoading(container, "detail");
 
   try {
-    const p = await fetchProductById(id);
-    const isAvailable = p.status === "Available" || p.status === 0;
-    const [ratingData, reviewsData, wishlistData] = await Promise.all([
-      fetchProductRating(id), fetchProductReviews(id),
-      isAuthenticated() ? fetchWishlist(200).catch(() => null) : Promise.resolve(null),
-    ]);
-    const wishlistItems = wishlistData?.items || wishlistData?.data || wishlistData || [];
-    let isWishlisted = Array.isArray(wishlistItems) && wishlistItems.some(w => w.productId === p.id || w.id === p.id);
-    const avgRating = ratingData?.averageRating;
-    const reviews = reviewsData?.items || reviewsData?.data || reviewsData || [];
-    const allImages = [p.primaryImageUrl, ...(p.images || p.additionalImages || []).map((img) => (typeof img === "string" ? img : img.url || img))].filter(Boolean);
-    const stockQty = p.stockQuantity ?? 0;
-    const stockLevel = stockQty > 50 ? 'high' : stockQty > 10 ? 'medium' : 'low';
-    const isSellerOwner = !p.isAuctioned && getUser()?.id === p.sellerId && hasAnyRole(...(SELLER_ROLES));
+    const { p, isAvailable, isWishlisted: initWishlisted, avgRating, reviews, allImages, stockQty, stockLevel, isSellerOwner } = await loadProductDetailData(id);
+    let isWishlisted = initWishlisted;
 
     container.innerHTML = `
       ${renderBreadcrumb(p)}

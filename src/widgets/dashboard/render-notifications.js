@@ -1,4 +1,4 @@
-import { t } from '../../app/i18n.js';
+import { t } from '../../shared/utils/i18n.js';
 import { $$, escapeHtml, renderEmptyState, observeAnimations } from '../../shared/utils/dom.js';
 import { formatDate } from '../../shared/utils/format.js';
 import { showToast } from '../ui/toast.js';

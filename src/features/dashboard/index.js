@@ -1,5 +1,5 @@
 import Alpine from 'alpinejs';
-import { t } from '../../app/i18n.js';
+import { t } from '../../shared/utils/i18n.js';
 import { setPageMeta } from '../../shared/utils/seo.js';
 import { showToast } from '../../shared/utils/ui.js';
 

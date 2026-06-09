@@ -1,4 +1,4 @@
-import { t } from '../app/i18n.js';
+import { t } from '../shared/utils/i18n.js';
 import '../features/auctions/requests.js';
 
 export default async function renderAuctionRequests(container) {

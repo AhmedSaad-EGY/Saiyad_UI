@@ -1,4 +1,4 @@
-import { t } from '../../app/i18n.js';
+import { t } from '../../shared/utils/i18n.js';
 import Alpine from 'alpinejs';
 
 Alpine.data('pagination', ({ page, totalPages, onPageChange } = {}) => ({

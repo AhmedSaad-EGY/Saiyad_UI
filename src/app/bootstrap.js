@@ -1,8 +1,9 @@
 import { setupGlobalErrorHandlers } from '../shared/utils/errors.js';
 import { initOcean } from '../shared/utils/ocean.js';
-import { isAuthenticated } from './auth-state.js';
-import { on } from './events.js';
-import { setNavbarDeps, updateNavbar, updateCartBadge, startNotifPolling, stopNotifPolling } from '../widgets/layout/navbar.js';
+import { isAuthenticated } from '../shared/utils/auth-state.js';
+import { on } from '../shared/utils/events.js';
+import { updateNavbar } from './navbar.js';
+import { setNavbarDeps, updateCartBadge, startNotifPolling, stopNotifPolling } from '../widgets/layout/navbar.js';
 import { fetchCartCount } from '../features/cart/index.js';
 import { fetchUnreadNotificationCount } from '../features/notifications/index.js';
 

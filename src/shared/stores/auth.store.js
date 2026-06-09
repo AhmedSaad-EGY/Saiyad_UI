@@ -1,5 +1,5 @@
 import Alpine from 'alpinejs';
-import { getUser, isAuthenticated, getRoleFromToken } from '../../app/auth-state.js';
+import { getUser, isAuthenticated, getRoleFromToken } from '../utils/auth-state.js';
 
 Alpine.store('auth', {
   get user() {

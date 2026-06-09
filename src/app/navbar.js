@@ -1,7 +1,35 @@
-import { t } from './i18n.js';
+import { t } from '../shared/utils/i18n.js';
+import { getUser, isAuthenticated } from '../shared/utils/auth-state.js';
+import { SELLER_ROLES } from '../shared/constants/roles.js';
 import { openDrawer, closeDrawer } from '../widgets/layout/navbar.js';
 import { showConfirm } from '../widgets/ui/modal.js';
 import { logout } from '../features/auth/login.js';
+
+export function updateNavbar() {
+  const auth = isAuthenticated();
+  const user = getUser();
+  document.querySelectorAll(".nav-guest").forEach(el => el.classList.toggle("hidden", auth));
+  document.querySelectorAll(".nav-auth").forEach(el => el.classList.toggle("hidden", !auth));
+  const userMenu = document.getElementById("userMenu");
+  if (userMenu) {
+    userMenu.innerHTML = user?.fullName || user?.name || user?.email || t('nav.profile');
+  }
+  const userRole = document.getElementById("userRole");
+  if (userRole) userRole.textContent = user?.role || '';
+  const avatarImg = document.getElementById("userAvatar");
+  if (avatarImg) {
+    if (user?.profileImageUrl) { avatarImg.src = user.profileImageUrl; avatarImg.hidden = false; }
+    else avatarImg.hidden = true;
+  }
+  document.querySelectorAll(".nav-seller").forEach(el => el.classList.toggle("hidden", !user || !SELLER_ROLES.includes(user.role)));
+  document.querySelectorAll(".nav-admin").forEach(el => el.classList.toggle("hidden", user?.role !== 'Admin'));
+  document.querySelectorAll(".nav-auctioneer").forEach(el => el.classList.toggle("hidden", user?.role !== 'Auctioneer'));
+
+  const sellLink = document.getElementById("sellLink");
+  if (sellLink) {
+    sellLink.href = user && SELLER_ROLES.includes(user.role) ? '#/dashboard' : '#/register';
+  }
+}
 
 let scrollTicking = false;
 window.addEventListener('scroll', () => {

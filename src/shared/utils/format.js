@@ -1,4 +1,4 @@
-import { t, getCurrentLang } from '../../app/i18n.js';
+import { t, getCurrentLang } from './i18n.js';
 
 export function getLocale() {
   return getCurrentLang() === "ar" ? "ar-EG" : "en-US";

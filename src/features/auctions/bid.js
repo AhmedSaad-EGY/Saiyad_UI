@@ -1,5 +1,5 @@
 import Alpine from 'alpinejs';
-import { t, getCurrentLang } from '../../app/i18n.js';
+import { t, getCurrentLang } from '../../shared/utils/i18n.js';
 import { api } from '../../shared/api/client.js';
 import { requireAuth, getUser, hasRole } from '../auth/login.js';
 import { ROLES } from '../../shared/constants/roles.js';
@@ -8,7 +8,7 @@ import { formatPrice, formatDate, statusClass, tStatus } from '../../shared/util
 import { escapeHtml, observeAnimations, animate, initPullToRefresh, initInfiniteScroll } from '../../shared/utils/dom.js';
 import { triggerConfetti, showConfirm } from '../../shared/utils/ui.js';
 import { trackRecentlyViewed } from '../home/index.js';
-import { createScopedBus } from '../../app/events.js';
+import { createScopedBus } from '../../shared/utils/events.js';
 import { joinAuctionGroup, leaveAuctionGroup, isSignalRConnected } from '../../app/realtime.js';
 
 Alpine.data('auctionDetailPage', () => ({

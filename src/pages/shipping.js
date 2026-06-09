@@ -1,4 +1,4 @@
-import { t } from '../app/i18n.js';
+import { t } from '../shared/utils/i18n.js';
 import { requireAuth } from '../features/auth/login.js';
 import '../features/shipping/index.js';
 

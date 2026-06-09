@@ -71,3 +71,11 @@ export async function deleteSubscriptionPlan(planId) {
 export async function createSubscriptionPlan(body) {
   return api.post('/subscriptionplans', body);
 }
+
+export function computeFeeTotals(txns) {
+  const feeTxns = (txns.items || txns.data || txns || []).filter(
+    txn => txn.type === "PlatformFee" || txn.type === "SubscriptionPayment"
+  );
+  const totalFees = feeTxns.reduce((sum, txn) => sum + Math.abs(txn.amount), 0);
+  return { feeTxns, totalFees };
+}

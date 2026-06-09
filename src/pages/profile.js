@@ -1,4 +1,4 @@
-import { t } from '../app/i18n.js';
+import { t } from '../shared/utils/i18n.js';
 import { isAuthenticated, getUser } from '../features/auth/login.js';
 import { ROLES, SELLER_ROLES, ECOMMERCE_ROLES } from '../shared/constants/roles.js';
 import { navigate } from '../app/router.js';

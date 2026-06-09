@@ -1,9 +1,8 @@
-import { t } from '../../app/i18n.js';
+import { t } from '../../shared/utils/i18n.js';
 import { formatPrice, formatDate, statusClass, tStatus } from '../../shared/utils/format.js';
 import { escapeHtml, observeAnimations } from '../../shared/utils/dom.js';
 
-export function renderContent(container, dash, feeTxns, recent, wallet) {
-  const totalFees = feeTxns.reduce((s, txn) => s + Math.abs(txn.amount), 0);
+export function renderContent(container, { dash, feeTxns, totalFees, activePct, finishedPct, recent, wallet }) {
   container.innerHTML = `
     <div class="section-header"><h2><i class="fas fa-chart-bar" aria-hidden="true"></i> ${t("analytics.title")}</h2></div>
     <div id="analyticsContent">
@@ -79,7 +78,7 @@ export function renderContent(container, dash, feeTxns, recent, wallet) {
                 <span class="fw-bold text-success">${dash.activeAuctions ?? 0} / ${dash.totalAuctions ?? 1}</span>
               </div>
               <div class="progress" style="height:12px;background:var(--border);border-radius:var(--radius-full);overflow:hidden">
-                <div class="progress-bar bg-success" style="width: ${((dash.activeAuctions ?? 0) / (dash.totalAuctions || 1)) * 100}%;height:100%;transition:width 0.6s var(--ease-out);background:var(--success)"></div>
+                <div class="progress-bar bg-success" style="width: ${activePct}%;height:100%;transition:width 0.6s var(--ease-out);background:var(--success)"></div>
               </div>
             </div>
             <div>
@@ -88,7 +87,7 @@ export function renderContent(container, dash, feeTxns, recent, wallet) {
                 <span class="fw-bold text-warning">${dash.finishedAuctions ?? 0} / ${dash.totalAuctions ?? 1}</span>
               </div>
               <div class="progress" style="height:12px;background:var(--border);border-radius:var(--radius-full);overflow:hidden">
-                <div class="progress-bar bg-warning" style="width: ${((dash.finishedAuctions ?? 0) / (dash.totalAuctions || 1)) * 100}%;height:100%;transition:width 0.6s var(--ease-out);background:var(--warning)"></div>
+                <div class="progress-bar bg-warning" style="width: ${finishedPct}%;height:100%;transition:width 0.6s var(--ease-out);background:var(--warning)"></div>
               </div>
             </div>
           </div>

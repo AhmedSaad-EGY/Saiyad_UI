@@ -1,8 +1,8 @@
-import { t } from '../app/i18n.js';
+import { t } from '../shared/utils/i18n.js';
 import { setPageMeta } from '../shared/utils/seo.js';
 import { escapeHtml } from '../shared/utils/dom.js';
 import { navigate } from '../app/router.js';
-import { registerRouteCleanup } from '../app/events.js';
+import { registerRouteCleanup } from '../shared/utils/events.js';
 import { verifyEmail } from '../features/auth/verify-email.js';
 
 export default function renderVerifyEmail(container) {

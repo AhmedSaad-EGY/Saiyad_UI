@@ -1,4 +1,4 @@
-import { t } from '../app/i18n.js';
+import { t } from '../shared/utils/i18n.js';
 import { requireAuth } from '../features/auth/login.js';
 import { fetchOrder, cancelOrder, calculateSubtotal } from '../features/orders/index.js';
 import { navigate, registerRouteCleanup } from '../app/router.js';

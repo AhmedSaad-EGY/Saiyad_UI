@@ -1,7 +1,7 @@
-import { t } from '../../app/i18n.js';
+import { t } from '../../shared/utils/i18n.js';
 import { formatPrice } from '../../shared/utils/format.js';
 import { escapeHtml } from '../../shared/utils/dom.js';
-import { getPlanIcon, isPopularPlan } from '../../shared/utils/plans.js';
+import { getPlanIcon, computePlanStatus } from '../../shared/utils/plans.js';
 
 export function renderPlans(container, { plans, mySubscription, walletBalance, info }, { onUpgrade }) {
   container.innerHTML = `
@@ -35,9 +35,7 @@ export function renderPlans(container, { plans, mySubscription, walletBalance, i
       ${plans.length > 0 ? `
       <div class="grid grid-3" style="align-items:stretch" id="plansGrid">
         ${plans.map((p) => {
-          const isCurrent = mySubscription && (mySubscription.tier === p.tier || mySubscription.planName === p.name);
-          const insufficient = !isCurrent && p.price > 0 && walletBalance !== null && walletBalance < p.price;
-          const isPop = isPopularPlan(p.sortOrder);
+          const { isCurrent, insufficient, isPop } = computePlanStatus(p, mySubscription, walletBalance);
           return `
           <div class="card" style="display:flex;flex-direction:column;position:relative;${isPop ? 'border:2px solid var(--primary)' : ''}">
             ${isPop ? `<span class="position-absolute" style="top:-10px;right:16px;background:var(--primary);color:var(--text-inverse);padding:2px 12px;border-radius:var(--radius-xl);font-size:0.78rem;font-weight:600">${t("subscriptions.popular")}</span>` : ''}

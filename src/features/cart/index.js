@@ -1,5 +1,5 @@
 import Alpine from 'alpinejs';
-import { t } from '../../app/i18n.js';
+import { t } from '../../shared/utils/i18n.js';
 import { api } from '../../shared/api/client.js';
 import { getCartItemCount, syncCartBadgeCount } from '../../shared/utils/ui.js';
 import { navigate } from '../../app/router.js';

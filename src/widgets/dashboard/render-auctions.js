@@ -1,5 +1,5 @@
-import { t } from '../../app/i18n.js';
-import { showAuctionModal } from './render-products.js';
+import { t } from '../../shared/utils/i18n.js';
+import { showAuctionModal } from '../../features/auctions/auction-modal.js';
 
 export function renderDashAuctions(content, { onStartAuction, onFetchUnauctionedProducts } = {}) {
   content.innerHTML = `

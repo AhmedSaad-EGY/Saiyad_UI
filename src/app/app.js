@@ -1,5 +1,5 @@
 import { syncVipAttribute } from '../features/auth/login.js';
-import { isAuthenticated } from './auth-state.js';
+import { isAuthenticated } from '../shared/utils/auth-state.js';
 
 import './theme.js';
 import './language.js';

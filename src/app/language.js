@@ -1,4 +1,4 @@
-import { setLanguage, getCurrentLang } from './i18n.js';
+import { setLanguage, getCurrentLang } from '../shared/utils/i18n.js';
 import { router } from './router.js';
 
 const initialLang = getCurrentLang();

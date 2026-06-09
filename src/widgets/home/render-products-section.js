@@ -1,4 +1,4 @@
-import { t } from '../../app/i18n.js';
+import { t } from '../../shared/utils/i18n.js';
 import { skeletonCard, SKELETON_ROW_CLASSES, CARD_ROW_CLASSES } from './render-skeleton.js';
 
 export function renderProductsSection() {

@@ -1,12 +1,13 @@
 import { getUser } from '../features/auth/login.js';
-import { updateNavbar } from '../widgets/layout/navbar.js';
-import { t } from "./i18n.js";
+import { updateNavbar } from './navbar.js';
+import { closeDrawer } from '../widgets/layout/navbar.js';
+import { t } from "../shared/utils/i18n.js";
 import { showLoading, observeAnimations } from '../shared/utils/dom.js';
 import { showErrorFallback } from '../shared/utils/errors.js';
-import { runRouteCleanups, registerRouteCleanup } from "./events.js";
+import { runRouteCleanups, registerRouteCleanup } from "../shared/utils/events.js";
+import { routes } from "./route-map.js";
 import {
   routeGuards,
-  routes,
   routeTitleKeys,
 } from "../shared/constants/routes.js";
 
@@ -18,22 +19,6 @@ let currentParams = {};
 const _routeHistory = [];
 const MAX_HISTORY = 50;
 let _initialLoad = true;
-
-// Close mobile nav drawer when route changes
-function closeDrawer() {
-  const drawer = document.getElementById("navDrawer");
-  const overlay = document.getElementById("navOverlay");
-  if (!drawer && !overlay) return;
-  drawer?.classList.remove("open");
-  overlay?.classList.remove("open");
-  document.body.classList.remove("nav-open");
-  const btn = document.getElementById("hamburger");
-  if (btn) {
-    btn.innerHTML = '<i class="fas fa-bars" aria-hidden="true"></i>';
-    btn.setAttribute("aria-expanded", "false");
-  }
-  btn?.focus();
-}
 
 let _navTimer = null;
 

@@ -1,6 +1,6 @@
 import Alpine from 'alpinejs';
 import { api } from '../api/client.js';
-import { on } from '../../app/events.js';
+import { on } from '../utils/events.js';
 
 Alpine.store('notif', {
   count: 0,

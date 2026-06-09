@@ -1,7 +1,7 @@
 import { requireAuth } from '../features/auth/login.js';
 import { setPageMeta } from '../shared/utils/seo.js';
 import { showToast } from '../widgets/ui/toast.js';
-import { t } from '../app/i18n.js';
+import { t } from '../shared/utils/i18n.js';
 
 import { fetchWalletBalance, fetchWalletTransactions, topUpWallet, extractBalance, extractTransactions, validateDepositAmount } from '../features/wallet/wallet.js';
 
