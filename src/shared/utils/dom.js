@@ -184,13 +184,16 @@ export function activateProgressiveImages(root = document) {
 }
 
 export function observeAnimations(root = document) {
-  if (_animObserver) {
-    _animObserver.disconnect();
-    _animObserver = null;
-  }
-
   const selector = ".animate-on-scroll:not(.visible)";
   const els = (root === document ? document : root).querySelectorAll(selector);
+
+  if (!els.length) return;
+
+  // If an observer already exists, just add new elements instead of replacing
+  if (_animObserver) {
+    els.forEach(el => _animObserver.observe(el));
+    return;
+  }
 
   if ("IntersectionObserver" in window) {
     _animObserver = new IntersectionObserver(

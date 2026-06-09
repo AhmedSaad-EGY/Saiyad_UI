@@ -9,7 +9,7 @@ import { escapeHtml, observeAnimations, animate, initPullToRefresh, initInfinite
 import { triggerConfetti, showConfirm } from '../../shared/utils/ui.js';
 import { trackRecentlyViewed } from '../home/index.js';
 import { createScopedBus } from '../../app/events.js';
-import { joinAuctionGroup, leaveAuctionGroup } from '../../app/realtime.js';
+import { joinAuctionGroup, leaveAuctionGroup, isSignalRConnected } from '../../app/realtime.js';
 
 Alpine.data('auctionDetailPage', () => ({
   auction: null,
@@ -89,7 +89,7 @@ Alpine.data('auctionDetailPage', () => ({
 
       if (this.isActive) {
         this.startCountdown();
-        this.startAutoRefresh();
+        this.startFallbackRefresh();
       }
 
       this._bus.on('realtime:bid-placed', ({ bid }) => {
@@ -132,8 +132,11 @@ Alpine.data('auctionDetailPage', () => ({
     }, 1000);
   },
 
-  startAutoRefresh() {
+  startFallbackRefresh() {
+    // 60-second fallback poll for when SignalR connection drops.
+    // SignalR handles real-time updates when connected.
     this._refreshInterval = setInterval(async () => {
+      if (isSignalRConnected()) return;
       try {
         const freshData = await api.get(`/auctions/${this._auctionId}`);
         const fresh = freshData.auction || freshData;
@@ -156,7 +159,7 @@ Alpine.data('auctionDetailPage', () => ({
           this._countdownInterval = null;
         }
       } catch { /* silently fail */ }
-    }, 10000);
+    }, 60000);
   },
 
   animateBidCountUp(start, end) {

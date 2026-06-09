@@ -1,4 +1,5 @@
-import { getUser } from '../features/auth/login.js'; import { updateNavbar } from '../widgets/layout/navbar.js';
+import { getUser } from '../features/auth/login.js';
+import { updateNavbar } from '../widgets/layout/navbar.js';
 import { t } from "./i18n.js";
 import { showLoading, observeAnimations } from '../shared/utils/dom.js';
 import { showErrorFallback } from '../shared/utils/errors.js';
@@ -168,7 +169,6 @@ export async function router(force = false) {
   app.style.transition = "opacity 0.25s ease, transform 0.25s ease";
 
   showLoading(app, "page");
-  window.scrollTo({ top: 0, behavior: "smooth" });
 
   // Set aria-current="page" on nav links
   const cleanPath = route.split("?")[0];

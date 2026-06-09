@@ -86,6 +86,11 @@ export function leaveAuctionGroup(auctionId) {
   }
 }
 
+export function isSignalRConnected() {
+  if (!_connection || !signalR) return false;
+  return _connection.state === signalR.HubConnectionState.Connected;
+}
+
 export function stopSignalR() {
   if (_connection) {
     _connection.stop().catch(() => { /* connection already closed */ });
