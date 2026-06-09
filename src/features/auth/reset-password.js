@@ -1,8 +1,6 @@
 import { api } from '../../shared/api/client.js';
 import { getPasswordStrengthResult } from '../../shared/utils/validation.js';
-import { showConfirm } from '../../widgets/ui/modal.js';
-import { showToast } from '../../widgets/ui/toast.js';
-import { showLoading } from '../../widgets/ui/loader.js';
+import { showToast } from '../../shared/utils/ui.js';
 import { t } from '../../app/i18n.js';
 import { registerRouteCleanup } from '../../app/events.js';
 import Alpine from 'alpinejs';

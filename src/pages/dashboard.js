@@ -1,16 +1,11 @@
 import { t } from '../app/i18n.js';
-import { requireAuth, getUser, hasAnyRole, hasRole } from '../features/auth/login.js';
+import { requireAuth } from '../features/auth/login.js';
 import { registerRouteCleanup } from '../app/router.js';
-import { showLoading } from '../shared/utils/dom.js';
-import { ROLES, SELLER_ROLES, ECOMMERCE_ROLES, MODERATOR_ROLES } from '../shared/constants/roles.js';
 import renderAuctionRequests from './auction-requests.js';
 import renderAuctionRequestsReview from './auction-requests-review.js';
 import renderAuctioneerAnalytics from './auctioneer-analytics.js';
+import { loadDashboardTab, getDashboardTabs } from '../features/dashboard/tabs.js';
 import '../features/dashboard/index.js';
-import {
-  renderOverview, renderOrders, renderMyProducts, renderDashAuctions,
-  renderWishlist, renderNotifications, renderProfile, renderChangePassword
-} from '../widgets/dashboard/index.js';
 
 const loadedTabs = new Set();
 
@@ -20,45 +15,20 @@ window.addEventListener('dashboard-tab-changed', (e) => {
   loadedTabs.add(tabId);
   const content = document.getElementById(`dashTab_${tabId}`);
   if (!content) return;
-  const user = getUser();
   const params = new URLSearchParams(location.hash.split('?')[1] || '');
   const route = { path: '/dashboard' };
-  const skeletonType = tabId === 'orders' ? 'table' : tabId === 'products' || tabId === 'profile' || tabId === 'password' ? 'form' : 'page';
-  showLoading(content, skeletonType);
   switch (tabId) {
-    case 'orders': renderOrders(content); break;
-    case 'products': renderMyProducts(content); break;
-    case 'auctions': renderDashAuctions(content); break;
     case 'auction-requests': if (typeof renderAuctionRequests === 'function') renderAuctionRequests(content, route, params); break;
     case 'auction-requests-review': if (typeof renderAuctionRequestsReview === 'function') renderAuctionRequestsReview(content, route, params); break;
     case 'auctioneer-analytics': if (typeof renderAuctioneerAnalytics === 'function') renderAuctioneerAnalytics(content, route, params); break;
-    case 'wishlist': renderWishlist(content); break;
-    case 'notifications': renderNotifications(content); break;
-    case 'profile': renderProfile(content, user); break;
-    case 'password': renderChangePassword(content); break;
-    default: renderOverview(content, user); break;
+    default: loadDashboardTab(tabId, content); break;
   }
 });
 
 export default async function renderDashboard(container, _route, _params) {
   if (!(await requireAuth())) return;
 
-  const isECommerceRole = hasAnyRole(...(ECOMMERCE_ROLES));
-  const isSellerRole = hasAnyRole(...(SELLER_ROLES));
-
-  const tabs = [
-    { id: 'overview', icon: 'fa-tachometer-alt', label: t('dash.overview') },
-    ...(isECommerceRole ? [{ id: 'orders', icon: 'fa-box', label: t('dash.orders') }] : []),
-    ...(isSellerRole ? [{ id: 'products', icon: 'fa-tag', label: t('dash.products') }] : []),
-    ...(hasRole(ROLES.AUCTIONEER) ? [{ id: 'auctions', icon: 'fa-gavel', label: t('dash.auctions') }] : []),
-    ...(hasAnyRole(ROLES.FISHERMAN) ? [{ id: 'auction-requests', icon: 'fa-file-export', label: t('auctionRequests.title') }] : []),
-    ...(hasAnyRole(...(MODERATOR_ROLES)) ? [{ id: 'auction-requests-review', icon: 'fa-clipboard-list', label: t('auctionRequestsReview.title') }] : []),
-    ...(hasAnyRole(...(MODERATOR_ROLES)) ? [{ id: 'auctioneer-analytics', icon: 'fa-chart-bar', label: t('analytics.title') }] : []),
-    ...(isECommerceRole ? [{ id: 'wishlist', icon: 'fa-heart', label: t('dash.wishlist') }] : []),
-    { id: 'notifications', icon: 'fa-bell', label: t('dash.notifications') },
-    { id: 'profile', icon: 'fa-user', label: t('dash.profile') },
-    { id: 'password', icon: 'fa-key', label: t('dash.changePassword') },
-  ];
+  const tabs = getDashboardTabs();
 
   container.innerHTML = `
     <style>

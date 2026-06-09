@@ -1,8 +1,6 @@
 import { t } from '../app/i18n.js';
 import { setPageMeta } from '../shared/utils/seo.js';
 import { escapeHtml } from '../shared/utils/dom.js';
-import { ROLES } from '../shared/constants/roles.js';
-import { navigate } from '../app/router.js';
 import '../features/auth/register.js';
 
 export default function renderRegister(container) {

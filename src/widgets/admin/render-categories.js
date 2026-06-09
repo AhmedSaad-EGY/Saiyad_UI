@@ -1,13 +1,12 @@
 import { t } from '../../app/i18n.js';
-import { showLoading, showError, renderEmptyState, escapeHtml } from '../../shared/utils/dom.js';
+import { showLoading, showError, escapeHtml } from '../../shared/utils/dom.js';
 import { showToast } from '../ui/toast.js';
 import { showConfirm } from '../ui/modal.js';
-import { fetchCategories, createCategory, deleteCategory } from '../../features/admin/index.js';
 
-export async function renderCategories(container) {
+export async function renderCategories(container, { fetchData, onAdd, onDelete } = {}) {
   showLoading(container);
   try {
-    const data = await fetchCategories();
+    const data = await fetchData();
     const cats = data.items || data.data || data || [];
 
     if (!cats.length) {
@@ -25,7 +24,7 @@ export async function renderCategories(container) {
           <h3>${t("admin.noCategories")}</h3>
           <p class="text-muted">${t("admin.createFirstCategory")}</p>
         </div>`;
-      setupCategoryForm(container);
+      setupCategoryForm(container, { fetchData, onAdd, onDelete });
       return;
     }
 
@@ -51,16 +50,16 @@ export async function renderCategories(container) {
         </tbody>
       </table></div>`;
 
-    setupCategoryForm(container);
+    setupCategoryForm(container, { fetchData, onAdd, onDelete });
 
     container.querySelectorAll(".delete-cat").forEach((btn) => {
       btn.addEventListener("click", async () => {
         const ok = await showConfirm(t("admin.confirmDeleteCategory"), t("admin.confirmDeleteCategoryDesc"), { type: "danger", confirmText: t("common.delete") });
         if (!ok) return;
         try {
-          await deleteCategory(btn.dataset.id);
+          await onDelete(btn.dataset.id);
           showToast(t("admin.categoryDeleted"), "success");
-          renderCategories(container);
+          renderCategories(container, { fetchData, onAdd, onDelete });
         } catch (err) {
           showToast(err.message, "error");
         }
@@ -71,19 +70,19 @@ export async function renderCategories(container) {
   }
 }
 
-function setupCategoryForm(container) {
+function setupCategoryForm(container, opts) {
   document.getElementById("showAddCat")?.addEventListener("click", () =>
     document.getElementById("addCatForm").classList.toggle("d-none")
   );
   document.getElementById("catForm")?.addEventListener("submit", async (e) => {
     e.preventDefault();
     try {
-      await createCategory(
+      await opts.onAdd(
         document.getElementById("catName").value.trim(),
         document.getElementById("catDesc").value.trim(),
       );
       showToast(t("admin.categoryAdded"), "success");
-      renderCategories(container);
+      renderCategories(container, opts);
     } catch (err) {
       showToast(err.message, "error");
     }

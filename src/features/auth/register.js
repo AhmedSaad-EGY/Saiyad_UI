@@ -1,14 +1,11 @@
 import { api, setAccessToken } from '../../shared/api/client.js';
-import { escapeHtml } from '../../shared/utils/dom.js';
 import { ensureCsrfToken } from '../../shared/utils/csrf.js';
 import { getPasswordStrengthResult, calculateAge, validateForm, clearAllFieldErrors } from '../../shared/utils/validation.js';
-import { showToast } from '../../widgets/ui/toast.js';
+import { showToast } from '../../shared/utils/ui.js';
 import { t } from '../../app/i18n.js';
-import { ROLES } from '../../shared/constants/roles.js';
-import { updateNavbar, startNotifPolling } from '../../widgets/layout/navbar.js';
+import { emit } from '../../app/events.js';
 import { syncVipAttribute } from './login.js';
 import { registerRouteCleanup } from '../../app/events.js';
-import { showLoading } from '../../widgets/ui/loader.js';
 import Alpine from 'alpinejs';
 
 Alpine.data('registerForm', () => ({
@@ -53,7 +50,7 @@ Alpine.data('registerForm', () => ({
       if (data.refreshToken) localStorage.setItem('sayiad_refreshToken', data.refreshToken);
       if (data.user) localStorage.setItem('sayiad_user', JSON.stringify(data.user));
       if (data.accessToken) showVerificationOverlay(this.email, this.password);
-      else { updateNavbar(); window.location.hash = '#/'; }
+      else { emit('auth:changed'); window.location.hash = '#/'; }
     } catch (err) { showToast(err.message || t('auth.registerError'), 'error'); }
     finally { this.loading = false; }
   },
@@ -72,7 +69,7 @@ function showVerificationOverlay(email, password) {
         clearInterval(timer);
         setAccessToken(data.accessToken);
         if (data.user) localStorage.setItem('sayiad_user', JSON.stringify(data.user));
-        updateNavbar();
+        emit('auth:changed');
         syncVipAttribute().catch(() => {});
         window.location.hash = '#/';
       }

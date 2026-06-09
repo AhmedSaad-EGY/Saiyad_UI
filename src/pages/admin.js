@@ -3,9 +3,23 @@ import { getUser } from '../features/auth/login.js';
 import { ROLES } from '../shared/constants/roles.js';
 import { setPageMeta } from '../shared/utils/seo.js';
 import {
-  renderUsers, renderReports, renderAdminProducts,
-  renderReviews, renderCategories, renderRevenue, renderPlans
+  renderUsers as renderUsersWidget,
+  renderReports as renderReportsWidget,
+  renderAdminProducts as renderAdminProductsWidget,
+  renderReviews as renderReviewsWidget,
+  renderCategories as renderCategoriesWidget,
+  renderRevenue as renderRevenueWidget,
+  renderPlans as renderPlansWidget
 } from '../widgets/admin/index.js';
+import {
+  fetchAdminUsers, toggleUserStatus,
+  fetchReports, resolveReport,
+  fetchAdminProducts, updateProductStatus,
+  fetchPendingReviews, approveProduct, rejectProduct,
+  fetchCategories, createCategory, deleteCategory,
+  fetchWallet, fetchWalletTransactions,
+  fetchSubscriptionPlans, updateSubscriptionPlan, deleteSubscriptionPlan, createSubscriptionPlan
+} from '../features/admin/index.js';
 
 export default async function renderAdmin(container) {
   const _u = getUser();
@@ -61,13 +75,50 @@ export default async function renderAdmin(container) {
   });
 
   function loadTab() {
-    if (activeTab === "users") { content.innerHTML = ''; renderUsers(content); }
-    else if (activeTab === "reports") renderReports(content);
-    else if (activeTab === "products") { content.innerHTML = ''; renderAdminProducts(content); }
-    else if (activeTab === "review") { content.innerHTML = ''; renderReviews(content); }
-    else if (activeTab === "categories") renderCategories(content);
-    else if (activeTab === "plans") { content.innerHTML = ''; renderPlans(content); }
-    else if (activeTab === "revenue") renderRevenue(content);
+    if (activeTab === "users") {
+      content.innerHTML = '';
+      renderUsersWidget(content, {
+        fetchUsers: fetchAdminUsers,
+        onToggleUser: async (id) => { await toggleUserStatus(id); loadTab(); }
+      });
+    } else if (activeTab === "reports") {
+      renderReportsWidget(content, {
+        fetchData: fetchReports,
+        onResolve: async (id) => { await resolveReport(id); loadTab(); }
+      });
+    } else if (activeTab === "products") {
+      content.innerHTML = '';
+      renderAdminProductsWidget(content, {
+        fetchProducts: fetchAdminProducts,
+        onUpdateProductStatus: async (id, status) => { await updateProductStatus(id, status); loadTab(); }
+      });
+    } else if (activeTab === "review") {
+      content.innerHTML = '';
+      renderReviewsWidget(content, {
+        fetchData: fetchPendingReviews,
+        onApprove: async (id) => { await approveProduct(id); loadTab(); },
+        onReject: async (id, reason) => { await rejectProduct(id, reason); loadTab(); }
+      });
+    } else if (activeTab === "categories") {
+      renderCategoriesWidget(content, {
+        fetchData: fetchCategories,
+        onAdd: async (name, desc) => { await createCategory(name, desc); loadTab(); },
+        onDelete: async (id) => { await deleteCategory(id); loadTab(); }
+      });
+    } else if (activeTab === "plans") {
+      content.innerHTML = '';
+      renderPlansWidget(content, {
+        fetchData: fetchSubscriptionPlans,
+        onUpdate: async (id, body) => { await updateSubscriptionPlan(id, body); loadTab(); },
+        onDelete: async (id) => { await deleteSubscriptionPlan(id); loadTab(); },
+        onAdd: async (data) => { await createSubscriptionPlan(data); loadTab(); }
+      });
+    } else if (activeTab === "revenue") {
+      renderRevenueWidget(content, {
+        fetchWallet,
+        fetchTransactions: fetchWalletTransactions
+      });
+    }
   }
 
   loadTab();

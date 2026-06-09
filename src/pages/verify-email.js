@@ -29,7 +29,6 @@ export default function renderVerifyEmail(container) {
           </div>
           </div>
         </div></div>`;
-      sessionStorage.removeItem("pendingLoginEmail");
       const timer = setTimeout(() => navigate("login"), 2000);
       registerRouteCleanup(() => clearTimeout(timer));
     } else {

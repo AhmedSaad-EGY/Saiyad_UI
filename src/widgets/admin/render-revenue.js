@@ -1,14 +1,13 @@
 import { t } from '../../app/i18n.js';
 import { showLoading, showError, escapeHtml } from '../../shared/utils/dom.js';
 import { formatPrice, formatDate } from '../../shared/utils/format.js';
-import { fetchWallet, fetchWalletTransactions } from '../../features/admin/index.js';
 
-export async function renderRevenue(container) {
+export async function renderRevenue(container, { fetchWallet, fetchTransactions } = {}) {
   showLoading(container);
   try {
     const [wallet, txns] = await Promise.all([
       fetchWallet(),
-      fetchWalletTransactions(1, 100),
+      fetchTransactions(1, 100),
     ]);
 
     const items = txns.items || txns.data || [];

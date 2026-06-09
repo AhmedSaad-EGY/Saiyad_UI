@@ -1,7 +1,5 @@
 import { t } from '../app/i18n.js';
 import { setPageMeta } from '../shared/utils/seo.js';
-import { showToast } from '../widgets/ui/toast.js';
-import { navigate } from '../app/router.js';
 import '../features/auth/login.js';
 
 export default function renderLogin(container) {

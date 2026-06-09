@@ -1,11 +1,9 @@
 import { api } from '../../shared/api/client.js';
 import { t } from '../../app/i18n.js';
 import { ROLES } from '../../shared/constants/roles.js';
+import { fetchWalletBalance } from '../wallet/wallet.js';
 
-export function getPlanIcon(tier) {
-  const icons = { 1: 'fa-fish', 2: 'fa-water', 3: 'fa-ship', 4: 'fa-crown' };
-  return icons[tier] || 'fa-fish';
-}
+export { getPlanIcon, isPopularPlan } from '../../shared/utils/plans.js';
 
 export function getRoleSubscriptionInfo(role) {
   const map = {
@@ -14,10 +12,6 @@ export function getRoleSubscriptionInfo(role) {
     [ROLES.AUCTIONEER]: { heading: t('subscriptions.auctioneerHeading'), desc: t('subscriptions.auctioneerDesc') },
   };
   return map[role] || { heading: '', desc: '' };
-}
-
-export function isPopularPlan(sortOrder) {
-  return sortOrder === 3;
 }
 
 export async function fetchPlans() {
@@ -34,4 +28,17 @@ export async function fetchMySubscription() {
 
 export async function upgradeSubscription(tier, paymentReference) {
   return api.post('/subscriptions/upgrade', { tier, paymentReference });
+}
+
+export async function fetchSubscriptionsPageData() {
+  const [plans, mySub, walletData] = await Promise.all([
+    fetchPlans(),
+    fetchMySubscription(),
+    fetchWalletBalance(),
+  ]);
+  return {
+    plans: plans || [],
+    mySubscription: mySub || null,
+    walletBalance: walletData?.availableBalance ?? null,
+  };
 }

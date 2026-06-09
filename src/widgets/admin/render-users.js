@@ -2,18 +2,17 @@ import { t } from '../../app/i18n.js';
 import { escapeHtml, renderEmptyState } from '../../shared/utils/dom.js';
 import { manualPaginationHtml, wirePagination } from '../ui/pagination.js';
 import { showToast } from '../ui/toast.js';
-import { fetchAdminUsers, toggleUserStatus } from '../../features/admin/index.js';
 
 let _page = 1;
 const PAGE_SIZE = 20;
 
-export async function renderUsers(container) {
+export async function renderUsers(container, { fetchUsers, onToggleUser } = {}) {
   container.innerHTML = `<div id="usersPanel">
     <div class="p-4 text-center"><i class="fas fa-spinner spinner" aria-hidden="true"></i> ${t("common.loading")}</div>
   </div>`;
   const panel = document.getElementById("usersPanel");
   try {
-    const data = await fetchAdminUsers(_page, PAGE_SIZE);
+    const data = await fetchUsers(_page, PAGE_SIZE);
     const users = data.items || data.data || [];
     const total = data.totalCount || data.total || users.length;
     const pages = Math.ceil(total / PAGE_SIZE);
@@ -57,15 +56,15 @@ export async function renderUsers(container) {
       </div>
       ${manualPaginationHtml({ page: _page, totalPages: pages, prefix: 'users' })}`;
 
-    wirePagination({ container: panel, prefix: 'users', onPrev() { if (_page > 1) { _page--; renderUsers(container); } }, onNext() { if (_page < pages) { _page++; renderUsers(container); } } });
+    wirePagination({ container: panel, prefix: 'users', onPrev() { if (_page > 1) { _page--; renderUsers(container, { fetchUsers, onToggleUser }); } }, onNext() { if (_page < pages) { _page++; renderUsers(container, { fetchUsers, onToggleUser }); } } });
 
     panel.querySelectorAll(".toggle-user-btn").forEach(btn => {
       btn.addEventListener("click", async () => {
         btn.disabled = true;
         try {
-          await toggleUserStatus(btn.dataset.userId);
+          await onToggleUser(btn.dataset.userId);
           showToast(t("admin.userToggled"), "success");
-          renderUsers(container);
+          renderUsers(container, { fetchUsers, onToggleUser });
         } catch (e) {
           showToast(e.message, "error");
           btn.disabled = false;

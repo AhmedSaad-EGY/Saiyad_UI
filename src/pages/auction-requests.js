@@ -1,121 +1,59 @@
 import { t } from '../app/i18n.js';
-import { getUser } from '../features/auth/login.js';
-import { escapeHtml } from '../shared/utils/dom.js';
-import { statusClass } from '../shared/utils/format.js';
-import { showToast } from '../widgets/ui/toast.js';
-import { validateForm, clearFieldError } from '../shared/utils/validation.js';
-import { ROLES } from '../shared/constants/roles.js';
-import { setPageMeta } from '../shared/utils/seo.js';
-
-import { fetchMyRequests, createAuctionRequest } from '../features/auctions/create.js';
+import '../features/auctions/requests.js';
 
 export default async function renderAuctionRequests(container) {
-  setPageMeta(t('auctionRequests.title'));
-  const _u = getUser();
-  if (!_u || _u.role !== ROLES.FISHERMAN) { window.location.hash = '#/'; return; }
+  container.innerHTML = `<div x-data="auctionRequestsPage">
+    <template x-if="loading && view === 'list'">
+      <div class="text-center p-4"><i class="fas fa-spinner spinner" aria-hidden="true"></i> ${t("common.loading")}</div>
+    </template>
 
-  container.innerHTML = `
-    <div class="section-header">
-      <h2><i class="fas fa-gavel" aria-hidden="true"></i> ${t("auctionRequests.title")}</h2>
-      <button class="btn btn-primary" id="newRequestBtn"><i class="fas fa-plus" aria-hidden="true"></i> ${t("auctionRequests.requestAuction")}</button>
+    <template x-if="!loading && error && view === 'list'">
+      <div class="empty-state"><i class="fas fa-exclamation-triangle" aria-hidden="true"></i><h3>${t("common.error")}</h3><p x-text="error"></p></div>
+    </template>
+
+    <div x-show="view === 'list' && !loading && !error">
+      <div class="section-header">
+        <h2><i class="fas fa-gavel" aria-hidden="true"></i> ${t("auctionRequests.title")}</h2>
+        <button class="btn btn-primary" @click="showForm(null)"><i class="fas fa-plus" aria-hidden="true"></i> ${t("auctionRequests.requestAuction")}</button>
+      </div>
+
+      <template x-if="items.length === 0">
+        <div class="empty-state"><i class="fas fa-gavel" aria-hidden="true"></i><h3>${t("auctionRequests.noRequests")}</h3><p>${t("auctionRequests.noRequestsDesc")}</p><button class="btn btn-primary" @click="showForm(null)"><i class="fas fa-plus" aria-hidden="true"></i> ${t("auctionRequests.requestAuction")}</button></div>
+      </template>
+
+      <template x-if="items.length > 0">
+        <div class="table-wrapper"><table class="table"><thead><tr><th>${t("auctionRequests.productTitle")}</th><th>${t("auctionRequests.fishType")}</th><th>${t("auctionRequests.quantityKg")}</th><th>${t("auctionRequests.estimatedValue")}</th><th>${t("auctionRequests.status")}</th><th>${t("auctionRequests.createdAt")}</th><th x-show="true">${t("auctionRequests.rejectionReason") || ''}</th></tr></thead>
+          <tbody><template x-for="r in items" :key="r.id"><tr>
+            <td x-text="r.productTitle"></td><td x-text="r.fishType"></td><td x-text="r.quantityKg"></td><td x-text="r.estimatedValue"></td>
+            <td><span :class="'status status-' + r.status.toLowerCase()" x-text="r.status"></span></td>
+            <td x-text="new Date(r.createdAt).toLocaleDateString()"></td>
+            <td x-text="r.status === 'Rejected' ? (r.rejectionReason || '-') : '-'"></td>
+          </tr></template></tbody>
+        </table></div>
+      </template>
     </div>
-    <div id="auctionAlert"></div>
-    <div id="auctionReqContent"><i class="fas fa-spinner spinner" aria-hidden="true"></i> ${t("common.loading")}</div>`;
 
-  document.getElementById("newRequestBtn").addEventListener("click", () => {
-    showForm(null);
-  });
-
-  await loadRequests();
-
-  async function loadRequests() {
-    const content = document.getElementById("auctionReqContent");
-    try {
-      const res = await fetchMyRequests(1, 50);
-      const items = res?.items || res?.data || [];
-      if (!items || items.length === 0) {
-        content.innerHTML = `<div class="empty-state"><i class="fas fa-gavel" aria-hidden="true"></i><h3>${t("auctionRequests.noRequests")}</h3><p>${t("auctionRequests.noRequestsDesc")}</p><button class="btn btn-primary" id="emptyRequestBtn"><i class="fas fa-plus" aria-hidden="true"></i> ${t("auctionRequests.requestAuction")}</button></div>`;
-        document.getElementById("emptyRequestBtn")?.addEventListener("click", () => showForm(null));
-        return;
-      }
-      content.innerHTML = `<div class="table-wrapper"><table class="table"><thead><tr><th>${t("auctionRequests.productTitle")}</th><th>${t("auctionRequests.fishType")}</th><th>${t("auctionRequests.quantityKg")}</th><th>${t("auctionRequests.estimatedValue")}</th><th>${t("auctionRequests.status")}</th><th>${t("auctionRequests.createdAt")}</th>${t("auctionRequests.rejectionReason") ? `<th>${  t("auctionRequests.rejectionReason")  }</th>` : ''}</tr></thead><tbody>${items.map(r => `<tr><td>${escapeHtml(r.productTitle)}</td><td>${escapeHtml(r.fishType)}</td><td>${r.quantityKg}</td><td>${r.estimatedValue}</td><td><span class="${statusClass(r.status)}">${t(`auctionRequests.${  r.status.toLowerCase()}`)}</span></td><td>${new Date(r.createdAt).toLocaleDateString()}</td><td>${r.status === 'Rejected' ? escapeHtml(r.rejectionReason || '-') : '-'}</td></tr>`).join("")}</tbody></table></div>`;
-    } catch (err) {
-      content.innerHTML = `<div class="empty-state"><i class="fas fa-exclamation-triangle" aria-hidden="true"></i><h3>${t("common.error")}</h3><p>${escapeHtml(err.message)}</p></div>`;
-    }
-  }
-
-  function showForm(existing) {
-    const content = document.getElementById("auctionReqContent");
-    content.innerHTML = `
+    <div x-show="view === 'form'" x-transition:enter="transition-fade" x-transition:enter-start="op-0" x-transition:enter-end="op-100">
       <div class="card" style="max-width:600px;margin-top:16px">
-        <div class="card-header">
-          <h3 class="mb-0">${existing ? t("auctionRequests.submit") : t("auctionRequests.submit")}</h3>
-        </div>
+        <div class="card-header"><h3 class="mb-0">${t("auctionRequests.submit")}</h3></div>
         <div class="card-body">
-        <form id="auctionReqForm" novalidate>
-          <div class="form-group"><label class="form-label" for="arProductTitle">${t("auctionRequests.productTitle")} *</label><input type="text" class="form-input form-control" id="arProductTitle" value="${escapeHtml(existing?.productTitle || '')}" required></div>
-          <div class="form-group"><label class="form-label" for="arFishType">${t("auctionRequests.fishType")} *</label><input type="text" class="form-input form-control" id="arFishType" value="${escapeHtml(existing?.fishType || '')}" required></div>
-          <div class="form-group"><label class="form-label" for="arQuantityKg">${t("auctionRequests.quantityKg")} *</label><input type="number" step="0.01" min="0.01" class="form-input form-control" id="arQuantityKg" value="${existing?.quantityKg || ''}" required></div>
-          <div class="form-group"><label class="form-label" for="arEstimatedValue">${t("auctionRequests.estimatedValue")} *</label><input type="number" step="0.01" min="0.01" class="form-input form-control" id="arEstimatedValue" value="${existing?.estimatedValue || ''}" required></div>
-          <div class="form-group"><label class="form-label" for="arDescription">${t("auctionRequests.productDescription")}</label><textarea class="form-textarea form-control" id="arDescription">${escapeHtml(existing?.productDescription || '')}</textarea></div>
-          <div class="form-group"><label class="form-label" for="arCatchLocation">${t("auctionRequests.catchLocation")}</label><input type="text" class="form-input form-control" id="arCatchLocation" value="${escapeHtml(existing?.catchLocation || '')}"></div>
-          <div class="form-group"><label class="form-label" for="arCatchDate">${t("auctionRequests.catchDate")}</label><input type="date" class="form-input form-control" id="arCatchDate" value="${existing?.catchDate ? existing.catchDate.split('T')[0] : ''}"></div>
-          <div class="form-group"><label class="form-label" for="arImageUrl">${t("auctionRequests.imageUrl")}</label><input type="url" class="form-input form-control" id="arImageUrl" value="${escapeHtml(existing?.imageUrl || '')}" placeholder="${t("auctionRequests.imageUrlHelp")}"></div>
-          <p style="font-size:0.85rem;color:var(--text-muted)">${t("auctionRequests.imageUrlHelp")}</p>
-          <div class="d-flex gap-2 mt-3">
-            <button type="submit" class="btn btn-primary" id="arSubmit">${t("auctionRequests.submit")}</button>
-            <button type="button" class="btn btn-ghost" id="arCancel">${t("common.cancel")}</button>
-          </div>
-        </form>
+          <form id="auctionReqForm" @submit="submitRequest" novalidate>
+            <div class="form-group"><label class="form-label" for="arProductTitle">${t("auctionRequests.productTitle")} *</label><input type="text" class="form-input form-control" id="arProductTitle" :value="existing?.productTitle || ''" required></div>
+            <div class="form-group"><label class="form-label" for="arFishType">${t("auctionRequests.fishType")} *</label><input type="text" class="form-input form-control" id="arFishType" :value="existing?.fishType || ''" required></div>
+            <div class="form-group"><label class="form-label" for="arQuantityKg">${t("auctionRequests.quantityKg")} *</label><input type="number" step="0.01" min="0.01" class="form-input form-control" id="arQuantityKg" :value="existing?.quantityKg || ''" required></div>
+            <div class="form-group"><label class="form-label" for="arEstimatedValue">${t("auctionRequests.estimatedValue")} *</label><input type="number" step="0.01" min="0.01" class="form-input form-control" id="arEstimatedValue" :value="existing?.estimatedValue || ''" required></div>
+            <div class="form-group"><label class="form-label" for="arDescription">${t("auctionRequests.productDescription")}</label><textarea class="form-textarea form-control" id="arDescription"></textarea></div>
+            <div class="form-group"><label class="form-label" for="arCatchLocation">${t("auctionRequests.catchLocation")}</label><input type="text" class="form-input form-control" id="arCatchLocation" :value="existing?.catchLocation || ''"></div>
+            <div class="form-group"><label class="form-label" for="arCatchDate">${t("auctionRequests.catchDate")}</label><input type="date" class="form-input form-control" id="arCatchDate" :value="existing?.catchDate ? existing.catchDate.split('T')[0] : ''"></div>
+            <div class="form-group"><label class="form-label" for="arImageUrl">${t("auctionRequests.imageUrl")}</label><input type="url" class="form-input form-control" id="arImageUrl" :value="existing?.imageUrl || ''" placeholder="${t("auctionRequests.imageUrlHelp")}"></div>
+            <p style="font-size:0.85rem;color:var(--text-muted)">${t("auctionRequests.imageUrlHelp")}</p>
+            <div class="d-flex gap-2 mt-3">
+              <button type="submit" class="btn btn-primary" id="arSubmit">${t("auctionRequests.submit")}</button>
+              <button type="button" class="btn btn-ghost" @click="cancelForm()">${t("common.cancel")}</button>
+            </div>
+          </form>
         </div>
-      </div>`;
-
-    const titleIn = document.getElementById("arProductTitle");
-    const fishIn = document.getElementById("arFishType");
-    const qtyIn = document.getElementById("arQuantityKg");
-    const estIn = document.getElementById("arEstimatedValue");
-
-    [titleIn, fishIn, qtyIn, estIn].forEach(el => {
-      el.addEventListener("input", () => clearFieldError(el));
-    });
-
-    document.getElementById("arCancel").addEventListener("click", () => loadRequests());
-    document.getElementById("auctionReqForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const form = e.target;
-
-      const valid = validateForm(form, [
-        { element: titleIn, required: true },
-        { element: fishIn, required: true },
-        { element: qtyIn, required: true, min: 0.01 },
-        { element: estIn, required: true, min: 0.01 },
-      ]);
-
-      if (!valid) return;
-
-      const submit = document.getElementById("arSubmit");
-      submit.disabled = true;
-      submit.innerHTML = `<i class="fas fa-spinner spinner" aria-hidden="true"></i> ${t("auctionRequests.submitting")}`;
-      const body = {
-        productTitle: titleIn.value.trim(),
-        productDescription: document.getElementById("arDescription").value.trim(),
-        estimatedValue: parseFloat(estIn.value),
-        quantityKg: parseFloat(qtyIn.value),
-        fishType: fishIn.value.trim(),
-        catchLocation: document.getElementById("arCatchLocation").value.trim(),
-        catchDate: document.getElementById("arCatchDate").value || null,
-        productImageUrl: document.getElementById("arImageUrl").value.trim() || null,
-      };
-      try {
-        await createAuctionRequest(body);
-        showToast(t("auctionRequests.submitted"), "success");
-        loadRequests();
-      } catch (err) {
-        showToast(err.message, "error");
-      } finally {
-        submit.disabled = false;
-        submit.textContent = t("auctionRequests.submit");
-      }
-    });
-  }
+      </div>
+    </div>
+  </div>`;
 }

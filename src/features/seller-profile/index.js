@@ -19,3 +19,10 @@ export async function createSellerProfile(body) {
 export async function updateSellerProfile(body) {
   return api.put('/seller-profile', body);
 }
+
+export async function saveSellerProfile(isNew, body) {
+  if (isNew) {
+    return createSellerProfile(body);
+  }
+  return updateSellerProfile(body);
+}

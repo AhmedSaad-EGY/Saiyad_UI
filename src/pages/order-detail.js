@@ -1,32 +1,20 @@
 import { t } from '../app/i18n.js';
 import { requireAuth } from '../features/auth/login.js';
-import { fetchOrder, cancelOrder } from '../features/orders/index.js';
+import { fetchOrder, cancelOrder, calculateSubtotal } from '../features/orders/index.js';
 import { navigate, registerRouteCleanup } from '../app/router.js';
-import { showLoading, escapeHtml, observeAnimations } from '../shared/utils/dom.js';
-import { formatPrice, formatDate, statusClass, tStatus } from '../shared/utils/format.js';
+import { showLoading, observeAnimations } from '../shared/utils/dom.js';
 import { showToast } from '../widgets/ui/toast.js'; import { showConfirm } from '../widgets/ui/modal.js';
 import { setPageMeta } from '../shared/utils/seo.js';
 
-function getTimelineSteps(status) {
-  const steps = [
-    { key: 'Confirmed', icon: 'fa-check', label: t('order.confirmed') },
-    { key: 'Processing', icon: 'fa-cog', label: t('order.processing') },
-    { key: 'Shipped', icon: 'fa-truck', label: t('order.shipped') },
-    { key: 'Delivered', icon: 'fa-box-open', label: t('order.delivered') },
-  ];
-  const statusOrder = ['Pending', 'Confirmed', 'Processing', 'Shipped', 'Delivered'];
-  const currentIdx = statusOrder.indexOf(status);
-  const cancelled = status === 'Cancelled';
-
-  return steps.map((step, _i) => {
-    const stepIdx = statusOrder.indexOf(step.key);
-    let cls = '';
-    if (cancelled) cls = '';
-    else if (stepIdx < currentIdx) cls = 'completed';
-    else if (stepIdx === currentIdx) cls = 'active';
-    return { ...step, cls };
-  });
-}
+import {
+  renderOrderTimeline,
+  renderOrderItems,
+  renderShippingInfo,
+  renderPaymentInfo,
+  renderOrderSummary,
+  renderQuickActions,
+  renderOrderNotFound,
+} from '../widgets/order-detail/index.js';
 
 export default async function renderOrderDetail(container) {
   if (!await requireAuth()) return;
@@ -40,9 +28,8 @@ export default async function renderOrderDetail(container) {
 
   try {
     const order = await fetchOrder(orderId);
-    const timelineSteps = getTimelineSteps(order.status);
     const items = order.items || [];
-    const subtotal = items.reduce((s, i) => s + (i.subtotal || (i.unitPrice * i.quantity)), 0);
+    const subtotal = calculateSubtotal(items);
 
     container.innerHTML = `
       <div class="section-header">
@@ -50,122 +37,20 @@ export default async function renderOrderDetail(container) {
         <a href="#/dashboard?tab=orders" class="btn btn-ghost btn-sm"><i class="fas fa-arrow-left" aria-hidden="true"></i> ${t('order.backToOrders')}</a>
       </div>
 
-      <!-- Order Timeline -->
-      ${order.status !== 'Cancelled' ? `
-      <div class="card mb-4 animate-on-scroll">
-        <div class="card-body">
-          <div class="order-timeline" role="list" aria-label="${t('order.status')}">
-            ${timelineSteps.map(step => `
-              <div class="order-timeline-step ${step.cls}" role="listitem">
-                <div class="order-timeline-icon">
-                  <i class="fas ${step.cls === 'completed' ? 'fa-check' : step.icon}" aria-hidden="true"></i>
-                </div>
-                <span class="order-timeline-label">${step.label}</span>
-              </div>
-            `).join('')}
-          </div>
-        </div>
-      </div>
-      ` : `
-      <div class="alert alert-error mb-4"><i class="fas fa-times-circle" aria-hidden="true"></i> ${t('order.cancelled')}</div>
-      `}
+      ${renderOrderTimeline(order.status)}
 
       <div class="row g-4">
-        <!-- Main content column -->
         <div class="col-lg-8">
-          <!-- Order Items -->
-          <div class="card mb-4 animate-on-scroll">
-            <div class="card-header">
-              <h3 class="mb-0"><i class="fas fa-box" aria-hidden="true"></i> ${t('order.items')} (${items.length})</h3>
-            </div>
-            <div class="card-body">
-              <div class="table-wrapper">
-                <table class="table">
-                  <thead><tr><th>${t('cart.product')}</th><th>${t('order.seller')}</th><th>${t('order.quantity')}</th><th>${t('order.price')}</th><th>${t('order.subtotal')}</th></tr></thead>
-                  <tbody>
-                    ${items.map(item => `
-                      <tr>
-                        <td>
-                          <div class="d-flex align-items-center gap-3">
-                            ${item.productImageUrl || item.imageUrl
-                              ? `<img src="${item.productImageUrl || item.imageUrl}" alt="${escapeHtml(item.productTitle || '')}" style="width:48px;height:48px;object-fit:cover;border-radius:var(--radius);border:1px solid var(--border)" loading="lazy">`
-                              : `<div style="width:48px;height:48px;display:flex;align-items:center;justify-content:center;background:var(--body-bg);border-radius:var(--radius);color:var(--text-muted)"><i class="fas fa-image" aria-hidden="true"></i></div>`
-                            }
-                            <a href="#/product-detail?id=${item.productId}" class="text-reset text-decoration-none fw-medium">${escapeHtml(item.productTitle || t('common.product'))}</a>
-                          </div>
-                        </td>
-                        <td>${item.sellerName ? `<a href="#/seller-profile?userId=${item.sellerId}" class="text-primary">${escapeHtml(item.sellerName)}</a>` : '-'}</td>
-                        <td>${item.quantity}</td>
-                        <td>${formatPrice(item.unitPrice)}</td>
-                        <td class="fw-semibold">${formatPrice(item.subtotal)}</td>
-                      </tr>
-                    `).join('')}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-
-          <!-- Shipping & Payment Info -->
+          ${renderOrderItems(order, items)}
           <div class="row g-4">
-            <div class="col-md-6">
-              <div class="card animate-on-scroll stagger-1">
-                <div class="card-header"><h3 class="mb-0"><i class="fas fa-truck" aria-hidden="true"></i> ${t('order.shippingInfo')}</h3></div>
-                <div class="card-body">
-                  <p class="mb-1"><strong>${escapeHtml(order.shippingAddress?.fullName || order.buyerName || 'N/A')}</strong></p>
-                  <p class="text-muted small mb-1">${escapeHtml(order.shippingAddress?.addressLine || order.address || '-')}</p>
-                  <p class="text-muted small mb-1">${escapeHtml(order.shippingAddress?.city || '')}${order.shippingAddress?.postalCode ? `, ${escapeHtml(order.shippingAddress.postalCode)}` : ''}</p>
-                  <p class="text-muted small">${escapeHtml(order.shippingAddress?.phone || '')}</p>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="card animate-on-scroll stagger-2">
-                <div class="card-header"><h3 class="mb-0"><i class="fas fa-credit-card" aria-hidden="true"></i> ${t('order.paymentInfo')}</h3></div>
-                <div class="card-body">
-                  <p class="mb-1"><strong>${t('order.method')}:</strong> ${escapeHtml(order.paymentMethod ?? '')}</p>
-                  <p class="mb-1"><strong>${t('order.date')}:</strong> ${formatDate(order.createdAt)}</p>
-                  <p class="mb-0"><strong>${t('order.status')}:</strong> <span class="status ${statusClass(order.status)}">${tStatus(order.status)}</span></p>
-                </div>
-              </div>
-            </div>
+            <div class="col-md-6">${renderShippingInfo(order)}</div>
+            <div class="col-md-6">${renderPaymentInfo(order)}</div>
           </div>
         </div>
-
-        <!-- Sidebar: Order Summary + Actions -->
         <div class="col-lg-4">
           <div class="checkout-sidebar">
-            <div class="card mb-4 animate-on-scroll">
-              <div class="card-header"><h3 class="mb-0"><i class="fas fa-receipt" aria-hidden="true"></i> ${t('order.summary')}</h3></div>
-              <div class="card-body">
-                <div class="d-flex justify-content-between mb-2">
-                  <span class="text-muted">${t('cart.subtotal')}</span>
-                  <span>${formatPrice(subtotal)}</span>
-                </div>
-                <div class="d-flex justify-content-between mb-2">
-                  <span class="text-muted">${t('order.shipping')}</span>
-                  <span>${formatPrice(order.shippingCost || 0)}</span>
-                </div>
-                <div class="d-flex justify-content-between mb-2">
-                  <span class="text-muted">${t('order.tax')}</span>
-                  <span>${formatPrice(order.tax || 0)}</span>
-                </div>
-                <hr style="border-color:var(--border);margin:12px 0">
-                <div class="d-flex justify-content-between">
-                  <strong>${t('cart.total')}</strong>
-                  <strong class="text-primary fs-5">${formatPrice(order.totalPrice)}</strong>
-                </div>
-              </div>
-            </div>
-
-            <!-- Quick Actions -->
-            <div class="d-flex flex-column gap-2 animate-on-scroll stagger-3">
-              ${order.status === 'Pending' || order.status === 'Confirmed' ? `
-                <button class="btn btn-outline-danger w-100" id="cancelOrderBtn"><i class="fas fa-times" aria-hidden="true"></i> ${t('order.cancel')}</button>
-              ` : ''}
-              <a href="#/products" class="btn btn-primary w-100"><i class="fas fa-redo" aria-hidden="true"></i> ${t('order.reorder')}</a>
-            </div>
-            <div id="cancelOrderResult" class="mt-3"></div>
+            ${renderOrderSummary(order, subtotal)}
+            ${renderQuickActions(order)}
           </div>
         </div>
       </div>`;
@@ -196,6 +81,6 @@ export default async function renderOrderDetail(container) {
       });
     }
   } catch {
-    container.innerHTML = `<div class="empty-state"><i class="fas fa-file-invoice" aria-hidden="true"></i><h3>${t('order.notFound')}</h3><a href="#/dashboard?tab=orders" class="btn btn-primary mt-3">${t('order.backToOrders')}</a></div>`;
+    container.innerHTML = renderOrderNotFound();
   }
 }

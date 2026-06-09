@@ -1,11 +1,7 @@
 import { t } from '../../app/i18n.js';
 import { escapeHtml, observeAnimations } from '../../shared/utils/dom.js';
-import { validateForm, clearFieldError } from '../../shared/utils/validation.js';
-import { showToast } from '../ui/toast.js';
-import { updateNavbar } from '../layout/navbar.js';
-import { updateUserProfile, cacheUserProfile } from '../../features/dashboard/index.js';
 
-export function renderProfile(content, user) {
+export function renderProfile(content, user, { onSubmit } = {}) {
   content.innerHTML = `
     <div class="card animate-on-scroll">
       <div class="card-header">
@@ -33,48 +29,26 @@ export function renderProfile(content, user) {
   `;
   observeAnimations();
 
-  const nameInput = document.getElementById("profileName");
-  const emailInput = document.getElementById("profileEmail");
-  const phoneInput = document.getElementById("profilePhone");
-
-  [nameInput, emailInput, phoneInput].forEach((el) => {
-    el?.addEventListener("input", () => clearFieldError(el));
-  });
-
   document
     .getElementById("profileForm")
     .addEventListener("submit", async (e) => {
       e.preventDefault();
-      const form = e.target;
       const submit = document.getElementById("profileSubmit");
-      const alertDiv = document.getElementById("profileAlert");
-
-      const valid = validateForm(form, [
-        {
-          element: nameInput,
-          required: true,
-          messages: { required: `${t("auth.fullName")} is required.` },
-        },
-        { element: emailInput, required: true, email: true },
-        { element: phoneInput, phone: true },
-      ]);
-
-      if (!valid) return;
+      const nameInput = document.getElementById("profileName");
+      const phoneInput = document.getElementById("profilePhone");
 
       submit.disabled = true;
       submit.innerHTML = `<i class="fas fa-spinner spinner" aria-hidden="true"></i> ${t("dash.updating")}`;
-      alertDiv.innerHTML = "";
 
       try {
-        const data = await updateUserProfile({
-          fullName: nameInput.value.trim(),
-          phone: phoneInput.value.trim(),
-        });
-        cacheUserProfile(data.user || data);
-        updateNavbar();
-        showToast(t("dash.profileUpdated"), "success");
+        if (onSubmit) {
+          await onSubmit({
+            fullName: nameInput.value.trim(),
+            phone: phoneInput.value.trim(),
+          });
+        }
       } catch (err) {
-        showToast(err.message, "error");
+        document.getElementById("profileAlert").innerHTML = `<div class="alert alert-error">${escapeHtml(err.message)}</div>`;
       } finally {
         submit.disabled = false;
         submit.textContent = t("dash.updateProfile");

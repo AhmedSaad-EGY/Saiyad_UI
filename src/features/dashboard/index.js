@@ -1,8 +1,7 @@
 import Alpine from 'alpinejs';
 import { t } from '../../app/i18n.js';
-import { getUser } from '../auth/login.js';
 import { setPageMeta } from '../../shared/utils/seo.js';
-import { showToast } from '../../widgets/ui/toast.js';
+import { showToast } from '../../shared/utils/ui.js';
 
 Alpine.data('dashboardPage', () => ({
   activeTab: 'overview',
@@ -87,6 +86,7 @@ Alpine.data('dashboardPage', () => ({
   },
 }));
 
+export { loadDashboardTab } from './tabs.js';
 export { createProduct } from '../products/create.js';
 export { fetchMyProducts, fetchCategories, updateProduct, deleteProduct, uploadFile, addProductImage, validateImage, DRAFT_KEY, DRAFT_FIELDS, loadProductDraft, saveProductDraft, clearProductDraft } from '../products/edit.js';
 export { fetchMySellerProfile } from '../seller-profile/index.js';

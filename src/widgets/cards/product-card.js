@@ -4,7 +4,7 @@ import { escapeHtml, renderEmptyState, observeAnimations } from '../../shared/ut
 import { createModal } from '../ui/modal.js';
 import { registerRouteCleanup } from '../../app/events.js';
 import { animate } from '../../shared/utils/dom.js';
-import { trackRecentlyViewed, getRecentlyViewed } from '../../features/home/index.js';
+import { getRecentlyViewed } from '../../shared/utils/recently-viewed.js';
 
 export function renderProductCards(container, products) {
   if (!products || !products.length) {

@@ -6,9 +6,8 @@ import { ROLES } from '../../shared/constants/roles.js';
 import { registerRouteCleanup, navigate } from '../../app/router.js';
 import { formatPrice, formatDate, statusClass, tStatus } from '../../shared/utils/format.js';
 import { escapeHtml, observeAnimations, animate, initPullToRefresh, initInfiniteScroll } from '../../shared/utils/dom.js';
-import { triggerConfetti } from '../../widgets/ui/toast.js';
+import { triggerConfetti, showConfirm } from '../../shared/utils/ui.js';
 import { trackRecentlyViewed } from '../home/index.js';
-import { showConfirm } from '../../widgets/ui/modal.js';
 import { createScopedBus } from '../../app/events.js';
 import { joinAuctionGroup, leaveAuctionGroup } from '../../app/realtime.js';
 

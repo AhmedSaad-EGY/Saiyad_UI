@@ -1,41 +1,11 @@
 import { api, setAccessToken, clearTokens } from '../../shared/api/client.js';
 import { emit } from '../../app/events.js';
 import { clearCsrfToken } from '../../shared/utils/csrf.js';
-import { animate } from '../../shared/utils/dom.js';
-import { showToast } from '../../widgets/ui/toast.js';
+import { showToast } from '../../shared/utils/ui.js';
 import { t } from '../../app/i18n.js';
-import { updateNavbar, startNotifPolling, stopNotifPolling } from '../../widgets/layout/navbar.js';
+import { isAuthenticated } from '../../app/auth-state.js';
 import Alpine from 'alpinejs';
-
-export function getUser() {
-  try {
-    return JSON.parse(localStorage.getItem('sayiad_user'));
-  } catch { return null; }
-}
-
-export function isAuthenticated() {
-  return !!localStorage.getItem('sayiad_accessToken');
-}
-
-export function getRoleFromToken() {
-  const token = localStorage.getItem('sayiad_accessToken');
-  if (!token) return null;
-  try {
-    const payload = JSON.parse(atob(token.split('.')[1]));
-    const role = payload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role']
-      || payload.role || payload.roles;
-    return Array.isArray(role) ? role[0] : role;
-  } catch { return null; }
-}
-
-export function hasRole(role) {
-  const user = getUser();
-  return (user && user.role === role) || getRoleFromToken() === role;
-}
-
-export function hasAnyRole(...roles) {
-  return roles.some(r => hasRole(r));
-}
+export { getUser, isAuthenticated, getRoleFromToken, hasRole, hasAnyRole } from '../../app/auth-state.js';
 
 export async function requireAuth() {
   if (isAuthenticated()) return true;
@@ -47,11 +17,10 @@ export async function logout() {
   try { await api.post('/auth/logout'); } catch { /* silent */ }
   clearTokens();
   clearCsrfToken();
-  stopNotifPolling();
-  updateNavbar();
+  emit('notifications:stop-polling');
+  emit('auth:changed');
   document.documentElement.removeAttribute('data-user-role');
   document.documentElement.removeAttribute('data-vip');
-  emit('auth:logged-out');
   window.location.hash = '#/';
 }
 
@@ -82,7 +51,7 @@ Alpine.data('loginForm', () => ({
       setAccessToken(data.accessToken);
       if (data.refreshToken) localStorage.setItem('sayiad_refreshToken', data.refreshToken);
       if (data.user) localStorage.setItem('sayiad_user', JSON.stringify(data.user));
-      updateNavbar();
+      emit('auth:changed');
       syncVipAttribute().catch(() => {});
       const redirect = new URLSearchParams(window.location.hash.split('?')[1] || '').get('redirect') || '';
       window.location.hash = redirect ? `#/${redirect}` : '#/';

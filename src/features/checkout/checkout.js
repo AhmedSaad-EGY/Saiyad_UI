@@ -3,7 +3,7 @@ import { t } from '../../app/i18n.js';
 import { escapeHtml } from '../../shared/utils/dom.js';
 import { showFieldError, clearFieldError, clearAllFieldErrors } from '../../shared/utils/validation.js';
 import { formatPrice } from '../../shared/utils/format.js';
-import { triggerConfetti } from '../../widgets/ui/toast.js';
+import { triggerConfetti } from '../../shared/utils/ui.js';
 import { setPageMeta } from '../../shared/utils/seo.js';
 import Alpine from 'alpinejs';
 

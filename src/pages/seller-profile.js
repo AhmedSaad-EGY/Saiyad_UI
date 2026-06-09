@@ -1,8 +1,7 @@
 import { t } from '../app/i18n.js';
 import { requireAuth, hasAnyRole } from '../features/auth/login.js';
 import { SELLER_ROLES } from '../shared/constants/roles.js';
-import { showLoading, escapeHtml, observeAnimations } from '../shared/utils/dom.js';
-import { renderStars } from '../shared/utils/format.js';
+import { showLoading, observeAnimations } from '../shared/utils/dom.js';
 import { showToast } from '../widgets/ui/toast.js';
 import { renderProductCards } from '../widgets/cards/product-card.js';
 import { setPageMeta } from '../shared/utils/seo.js';
@@ -10,9 +9,17 @@ import {
   fetchSellerProfile,
   fetchSellerProducts,
   fetchMySellerProfile,
-  createSellerProfile,
-  updateSellerProfile,
+  saveSellerProfile,
 } from '../features/seller-profile/index.js';
+
+import {
+  renderPublicProfile,
+  renderSellerNotFound,
+  renderNoProfile,
+  renderProductsSection,
+  renderProfileForm,
+  renderSavingButton,
+} from '../widgets/seller-profile/index.js';
 
 export default async function renderSellerProfile(container) {
   setPageMeta(t('seller.title'));
@@ -22,52 +29,29 @@ export default async function renderSellerProfile(container) {
     showLoading(container);
     try {
       const profile = await fetchSellerProfile(userId);
-      container.innerHTML = `
-        <div class="card mx-auto" style="max-width:600px">
-          <div class="card-body">
-          <div class="text-center mb-4">
-            <i class="fas fa-store mb-2 fs-1 text-primary" aria-hidden="true"></i>
-            <h2>${escapeHtml(profile.storeName)}</h2>
-            ${profile.description ? `<p style="color:var(--text-secondary)">${escapeHtml(profile.description)}</p>` : ''}
-          </div>
-          <div class="d-flex gap-3 justify-content-center flex-wrap mb-3">
-            ${profile.averageRating ? `<span><strong>${t('seller.rating')}:</strong> ${renderStars(profile.averageRating)} (${profile.averageRating.toFixed(1)})</span>` : ''}
-            <span><strong>${t('seller.totalSales')}:</strong> ${profile.totalSales || 0}</span>
-          </div>
-          <div class="pt-3 border-divider-top text-secondary-sm">
-            ${profile.contactEmail ? `<p><i class="fas fa-envelope" aria-hidden="true"></i> ${escapeHtml(profile.contactEmail)}</p>` : ''}
-            ${profile.contactPhone ? `<p><i class="fas fa-phone" aria-hidden="true"></i> ${escapeHtml(profile.contactPhone)}</p>` : ''}
-            ${profile.location ? `<p><i class="fas fa-map-marker-alt" aria-hidden="true"></i> ${escapeHtml(profile.location)}</p>` : ''}
-          </div>
-        </div>
-        </div>`;
+      container.innerHTML = renderPublicProfile(profile);
 
-    try {
-      const sellerProducts = await fetchSellerProducts(userId);
-      const items = sellerProducts.items || sellerProducts.data || [];
-      if (items.length) {
-        const productsSection = document.createElement("div");
-        productsSection.style.marginTop = "32px";
-        productsSection.innerHTML = `
-          <div class="section-header">
-            <h3><i class="fas fa-tag" aria-hidden="true"></i> ${t("seller.listings")}</h3>
-          </div>
-          <div class="product-card-grid product-card-grid-dense" id="sellerProductGrid"></div>
-        `;
-        container.appendChild(productsSection);
-        renderProductCards(document.getElementById("sellerProductGrid"), items);
-        observeAnimations();
-      }
-    } catch { /* inner products render failed */ }
+      try {
+        const sellerProducts = await fetchSellerProducts(userId);
+        const items = sellerProducts.items || sellerProducts.data || [];
+        if (items.length) {
+          const productsSection = document.createElement("div");
+          productsSection.style.marginTop = "32px";
+          productsSection.innerHTML = renderProductsSection();
+          container.appendChild(productsSection);
+          renderProductCards(document.getElementById("sellerProductGrid"), items);
+          observeAnimations();
+        }
+      } catch { /* inner products render failed */ }
     } catch {
-      container.innerHTML = `<div class="empty-state"><i class="fas fa-store" aria-hidden="true"></i><h3>${t('seller.notFound')}</h3></div>`;
+      container.innerHTML = renderSellerNotFound();
     }
     return;
   }
 
   if (!await requireAuth()) return;
   if (!hasAnyRole(...(SELLER_ROLES))) {
-    container.innerHTML = `<div class="empty-state"><i class="fas fa-store" aria-hidden="true"></i><h3>${t('seller.noProfile')}</h3></div>`;
+    container.innerHTML = renderNoProfile();
     return;
   }
 
@@ -82,27 +66,13 @@ export default async function renderSellerProfile(container) {
 
   function renderForm(profile) {
     const isNew = !profile;
-    container.innerHTML = `
-      <div class="section-header"><h2><i class="fas fa-store" aria-hidden="true"></i> ${isNew ? t('seller.create') : t('seller.myProfile')}</h2></div>
-      <div id="sellerAlert"></div>
-      <div class="card" style="max-width:520px">
-        <div class="card-body">
-        <form id="sellerForm" novalidate>
-          <div class="form-group"><label class="form-label">${t('seller.storeName')} *</label><input type="text" class="form-input form-control" id="sStoreName" value="${escapeHtml(profile?.storeName || '')}" required></div>
-          <div class="form-group"><label class="form-label">${t('seller.description')}</label><textarea class="form-textarea form-control" id="sDescription">${escapeHtml(profile?.description || '')}</textarea></div>
-          <div class="form-group"><label class="form-label">${t('seller.contactEmail')}</label><input type="email" class="form-input form-control" id="sEmail" value="${escapeHtml(profile?.contactEmail || '')}"></div>
-          <div class="form-group"><label class="form-label">${t('seller.contactPhone')}</label><input type="tel" class="form-input form-control" id="sPhone" value="${escapeHtml(profile?.contactPhone || '')}"></div>
-          <div class="form-group"><label class="form-label">${t('seller.location')}</label><input type="text" class="form-input form-control" id="sLocation" value="${escapeHtml(profile?.location || '')}"></div>
-          <button type="submit" class="btn btn-primary" id="sellerSubmit">${t('seller.save')}</button>
-        </form>
-        </div>
-      </div>`;
+    container.innerHTML = renderProfileForm(profile);
 
     document.getElementById('sellerForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const submit = document.getElementById('sellerSubmit');
       submit.disabled = true;
-      submit.innerHTML = `<i class="fas fa-spinner spinner" aria-hidden="true"></i> ${t('seller.saving')}`;
+      submit.innerHTML = renderSavingButton();
       const body = {
         storeName: document.getElementById('sStoreName').value.trim(),
         description: document.getElementById('sDescription').value.trim(),
@@ -111,11 +81,7 @@ export default async function renderSellerProfile(container) {
         location: document.getElementById('sLocation').value.trim(),
       };
       try {
-        if (isNew) {
-          await createSellerProfile(body);
-        } else {
-          await updateSellerProfile(body);
-        }
+        await saveSellerProfile(isNew, body);
         showToast(t('seller.saved'), 'success');
       } catch (err) {
         showToast(err.message, 'error');

@@ -4,19 +4,18 @@ import { formatPrice, formatDate } from '../../shared/utils/format.js';
 import { manualPaginationHtml, wirePagination } from '../ui/pagination.js';
 import { showToast } from '../ui/toast.js';
 import { showConfirm } from '../ui/modal.js';
-import { fetchPendingReviews, approveProduct, rejectProduct } from '../../features/admin/index.js';
 import { showFormModal } from './render-plans.js';
 
 let _page = 1;
 const PAGE_SIZE = 20;
 
-export async function renderReviews(container) {
+export async function renderReviews(container, { fetchData, onApprove, onReject } = {}) {
   container.innerHTML = `<div id="reviewPanel">
     <div class="p-4 text-center"><i class="fas fa-spinner spinner" aria-hidden="true"></i> ${t("common.loading")}</div>
   </div>`;
   const panel = document.getElementById("reviewPanel");
   try {
-    const data = await fetchPendingReviews(_page, PAGE_SIZE);
+    const data = await fetchData(_page, PAGE_SIZE);
     const products = data.items || data.data || [];
     const total = data.totalCount || data.total || products.length;
     const pages = Math.ceil(total / PAGE_SIZE);
@@ -60,7 +59,7 @@ export async function renderReviews(container) {
       </div>
       ${manualPaginationHtml({ page: _page, totalPages: pages, prefix: 'review' })}`;
 
-    wirePagination({ container: panel, prefix: 'review', onPrev() { if (_page > 1) { _page--; renderReviews(container); } }, onNext() { if (_page < pages) { _page++; renderReviews(container); } } });
+    wirePagination({ container: panel, prefix: 'review', onPrev() { if (_page > 1) { _page--; renderReviews(container, { fetchData, onApprove, onReject }); } }, onNext() { if (_page < pages) { _page++; renderReviews(container, { fetchData, onApprove, onReject }); } } });
 
     panel.querySelectorAll(".approve-review-btn").forEach((btn) => {
       btn.addEventListener("click", async () => {
@@ -68,9 +67,9 @@ export async function renderReviews(container) {
         const ok = await showConfirm(t("admin.confirmApprove"), t("admin.confirmApproveDesc"), { type: "success", confirmText: t("admin.approve") });
         if (!ok) { btn.disabled = false; return; }
         try {
-          await approveProduct(btn.dataset.productId);
+          await onApprove(btn.dataset.productId);
           showToast(t("admin.productApproved"), "success");
-          renderReviews(container);
+          renderReviews(container, { fetchData, onApprove, onReject });
         } catch (err) {
           showToast(err.message, "error");
           btn.disabled = false;
@@ -85,14 +84,14 @@ export async function renderReviews(container) {
             <label class="form-label">${t("admin.rejectionReason")}</label>
             <textarea class="form-textarea form-control" id="rejectionReasonInput" rows="3" required></textarea>
           </div>
-        `, async function onReject() {
+        `, async function handleReject() {
           const reasonText = document.getElementById("rejectionReasonInput")?.value?.trim();
           if (!reasonText) { showToast(`${t("admin.rejectionReason")} ${t("common.required")}`, "error"); return; }
           btn.disabled = true;
           try {
-            await rejectProduct(btn.dataset.productId, reasonText);
+            await onReject(btn.dataset.productId, reasonText);
             showToast(t("admin.productRejected"), "success");
-            renderReviews(container);
+            renderReviews(container, { fetchData, onApprove, onReject });
           } catch (err) {
             showToast(err.message, "error");
             btn.disabled = false;

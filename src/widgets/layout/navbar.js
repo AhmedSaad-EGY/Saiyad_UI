@@ -1,13 +1,17 @@
-import { getUser, isAuthenticated, getRoleFromToken, hasAnyRole, hasRole } from '../../features/auth/login.js';
+import { getUser, isAuthenticated } from '../../app/auth-state.js';
 import { SELLER_ROLES } from '../../shared/constants/roles.js';
-import { t, getCurrentLang } from '../../app/i18n.js';
-import { animate } from '../../shared/utils/dom.js';
-import { fetchCartCount } from '../../features/cart/index.js';
-import { fetchUnreadNotificationCount } from '../../features/notifications/index.js';
+import { t } from '../../app/i18n.js';
 import { createSwipeGesture } from '../../shared/utils/swipe.js';
 
 let _drawerSwipe = null;
+let _fetchCartCount = async () => 0;
+let _fetchUnreadCount = async () => 0;
 const _focusableSel = 'a, button, input, select, textarea, [tabindex]:not([tabindex="-1"])';
+
+export function setNavbarDeps(deps) {
+  if (deps.fetchCartCount) _fetchCartCount = deps.fetchCartCount;
+  if (deps.fetchUnreadCount) _fetchUnreadCount = deps.fetchUnreadCount;
+}
 
 function _getFocusable(el) {
   return [...el.querySelectorAll(_focusableSel)].filter(f => f.offsetParent !== null && !f.disabled);
@@ -141,13 +145,13 @@ export async function updateCartBadge(forceRefresh) {
   const badge = document.getElementById("cartBadge");
   if (!badge) return;
   if (!forceRefresh && _cartCount > 0) { syncCartBadgeCount(_cartCount); return; }
-  const count = await fetchCartCount();
+  const count = await _fetchCartCount();
   _cartCount = count;
   syncCartBadgeCount(count);
 }
 
 export async function updateNotifBadge() {
-  const count = await fetchUnreadNotificationCount();
+  const count = await _fetchUnreadCount();
   syncNotifBadgeCount(count);
 }
 

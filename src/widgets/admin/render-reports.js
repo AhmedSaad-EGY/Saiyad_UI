@@ -1,12 +1,11 @@
 import { t } from '../../app/i18n.js';
 import { showLoading, renderEmptyState, escapeHtml } from '../../shared/utils/dom.js';
 import { showToast } from '../ui/toast.js';
-import { fetchReports, resolveReport } from '../../features/admin/index.js';
 
-export async function renderReports(container) {
+export async function renderReports(container, { fetchData, onResolve } = {}) {
   showLoading(container);
   try {
-    const data = await fetchReports();
+    const data = await fetchData();
     const reports = data.items || data.data || data || [];
     if (!reports.length) {
       renderEmptyState(container, { icon: "fa-flag", title: t("admin.noReports") });
@@ -34,9 +33,9 @@ export async function renderReports(container) {
     container.querySelectorAll(".resolve-report").forEach((btn) => {
       btn.addEventListener("click", async () => {
         try {
-          await resolveReport(btn.dataset.id);
+          await onResolve(btn.dataset.id);
           showToast(t("admin.reportResolved"), "success");
-          renderReports(container);
+          renderReports(container, { fetchData, onResolve });
         } catch (err) {
           showToast(err.message, "error");
         }

@@ -1,4 +1,4 @@
-import { showToast } from '../../widgets/ui/toast.js';
+import { showToast } from './ui.js';
 import { on } from '../../app/events.js';
 import { t } from '../../app/i18n.js';
 import { escapeHtml } from './dom.js';

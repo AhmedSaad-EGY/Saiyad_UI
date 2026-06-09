@@ -3,7 +3,6 @@ import { escapeHtml, renderEmptyState } from '../../shared/utils/dom.js';
 import { formatPrice } from '../../shared/utils/format.js';
 import { showToast } from '../ui/toast.js';
 import { showConfirm } from '../ui/modal.js';
-import { fetchSubscriptionPlans, updateSubscriptionPlan, deleteSubscriptionPlan, createSubscriptionPlan } from '../../features/admin/index.js';
 
 export function showFormModal(title, html, onSave, options = {}) {
   const confirmText = options.confirmText || t("common.save");
@@ -30,13 +29,13 @@ export function showFormModal(title, html, onSave, options = {}) {
   return overlay;
 }
 
-export async function renderPlans(container) {
+export async function renderPlans(container, { fetchData, onUpdate, onDelete, onAdd } = {}) {
   container.innerHTML = `<div id="plansPanel">
     <div class="p-4 text-center"><i class="fas fa-spinner spinner" aria-hidden="true"></i> ${t("common.loading")}</div>
   </div>`;
   const panel = document.getElementById("plansPanel");
   try {
-    const plans = await fetchSubscriptionPlans();
+    const plans = await fetchData();
 
     if (!plans || !plans.length) {
       renderEmptyState(panel, { icon: "fa-crown", title: t("subscriptions.noPlans") });
@@ -98,9 +97,9 @@ export async function renderPlans(container) {
             else body[f.key] = document.getElementById(`ef-${f.key}`).value;
           });
           try {
-            await updateSubscriptionPlan(p.id, body);
+            await onUpdate(p.id, body);
             showToast(t("admin.planUpdated"), "success");
-            renderPlans(container);
+            renderPlans(container, { fetchData, onUpdate, onDelete, onAdd });
           } catch (err) { showToast(err.message, "error"); }
         });
       });
@@ -111,9 +110,9 @@ export async function renderPlans(container) {
         const ok = await showConfirm(t("admin.confirmDeletePlan"), `${t("common.delete")} "${btn.dataset.name}"? ${t("admin.confirmDeletePlanDesc")}`, { type: "danger", confirmText: t("common.delete") });
         if (!ok) return;
         try {
-          await deleteSubscriptionPlan(btn.dataset.id);
+          await onDelete(btn.dataset.id);
           showToast(t("admin.planDeleted"), "success");
-          renderPlans(container);
+          renderPlans(container, { fetchData, onUpdate, onDelete, onAdd });
         } catch (err) { showToast(err.message, "error"); }
       });
     });
@@ -132,7 +131,7 @@ export async function renderPlans(container) {
 
       showFormModal("Add Subscription Plan", formHtml, async function() {
         try {
-          await createSubscriptionPlan({
+          await onAdd({
             tier: document.getElementById("af-tier").value,
             name: document.getElementById("af-name").value,
             description: document.getElementById("af-desc").value,
@@ -146,7 +145,7 @@ export async function renderPlans(container) {
             sortOrder: parseInt(document.getElementById("af-sort").value) || 1,
           });
           showToast(t("admin.planCreated"), "success");
-          renderPlans(container);
+          renderPlans(container, { fetchData, onUpdate, onDelete, onAdd });
         } catch (err) { showToast(err.message, "error"); }
       });
     });

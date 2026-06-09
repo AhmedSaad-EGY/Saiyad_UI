@@ -1,11 +1,10 @@
 import Alpine from 'alpinejs';
 import { t } from '../../app/i18n.js';
 import { api } from '../../shared/api/client.js';
-import { getCartItemCount, syncCartBadgeCount } from '../../widgets/layout/navbar.js';
+import { getCartItemCount, syncCartBadgeCount } from '../../shared/utils/ui.js';
 import { navigate } from '../../app/router.js';
 import { formatPrice } from '../../shared/utils/format.js';
-import { showToast } from '../../widgets/ui/toast.js';
-import { showConfirm } from '../../widgets/ui/modal.js';
+import { showToast, showConfirm } from '../../shared/utils/ui.js';
 import { animate } from '../../shared/utils/dom.js';
 import { createSwipeReveal } from '../../shared/utils/swipe.js';
 import { setPageMeta } from '../../shared/utils/seo.js';

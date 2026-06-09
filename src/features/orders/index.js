@@ -11,3 +11,7 @@ export async function fetchOrders(page = 1, pageSize = 10) {
 export async function cancelOrder(orderId) {
   return api.put(`/orders/${orderId}/cancel`);
 }
+
+export function calculateSubtotal(items) {
+  return items.reduce((s, i) => s + (i.subtotal || (i.unitPrice * i.quantity)), 0);
+}

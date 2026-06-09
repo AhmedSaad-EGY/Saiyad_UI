@@ -1,6 +1,28 @@
 import { api } from '../../shared/api/client.js';
-import { showToast } from '../../widgets/ui/toast.js';
+import { showToast } from '../../shared/utils/ui.js';
 import { t } from '../../app/i18n.js';
+
+export const MIN_DEPOSIT = 10;
+export const MAX_DEPOSIT = 50000;
+
+export function validateDepositAmount(amount) {
+  if (!amount || isNaN(amount) || amount < MIN_DEPOSIT) {
+    return { valid: false, message: t('wallet.minAmountError') };
+  }
+  if (amount > MAX_DEPOSIT) {
+    return { valid: false, message: t('wallet.maxAmountError') };
+  }
+  return { valid: true };
+}
+
+export function extractBalance(res) {
+  const amount = res?.balance ?? res?.amount ?? res?.data?.balance ?? 0;
+  return Number(amount).toLocaleString('en-US', { minimumFractionDigits: 2 });
+}
+
+export function extractTransactions(res) {
+  return Array.isArray(res) ? res : (res?.data ?? res?.transactions ?? res?.items ?? []);
+}
 
 export async function fetchWalletBalance() {
   try {

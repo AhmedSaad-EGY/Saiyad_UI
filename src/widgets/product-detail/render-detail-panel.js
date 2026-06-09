@@ -1,6 +1,6 @@
 import { t, getCurrentLang } from '../../app/i18n.js';
 import { escapeHtml } from '../../shared/utils/dom.js';
-import { formatPrice, formatDate, statusClass, tStatus, tCondition, renderStars } from '../../shared/utils/format.js';
+import { formatPrice, statusClass, tStatus, tCondition, renderStars } from '../../shared/utils/format.js';
 
 export function renderDetailPanel(p, isAvailable, isWishlisted, stockLevel, stockPct, avgRating, isAuth, isSeller) {
   const dir = getCurrentLang() === "ar" ? "left" : "right";

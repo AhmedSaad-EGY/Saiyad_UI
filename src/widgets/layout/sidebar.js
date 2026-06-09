@@ -1,9 +1,7 @@
 import { t } from '../../app/i18n.js';
-import { hasAnyRole, getUser } from '../../features/auth/login.js';
 import { SELLER_ROLES, MODERATOR_ROLES } from '../../shared/constants/roles.js';
 
-export function renderDashboardSidebar(activeTab) {
-  const user = getUser();
+export function renderDashboardSidebar(activeTab, user) {
   const isSeller = user && SELLER_ROLES.includes(user.role);
   const isModerator = user && MODERATOR_ROLES.includes(user.role);
   const isAdmin = user?.role === 'Admin';
@@ -29,8 +27,8 @@ export function renderDashboardSidebar(activeTab) {
   );
   if (isAdmin) tabs.push({ key: 'admin', icon: 'fa-shield-alt', label: t('dashboard.admin') });
 
-  return tabs.map(t => `
-    <button class="dash-link${t.key === activeTab ? ' active' : ''}" data-tab="${t.key}">
-      <i class="fas ${t.icon}"></i> ${t.label}
+  return tabs.map(tab => `
+    <button class="dash-link${tab.key === activeTab ? ' active' : ''}" data-tab="${tab.key}">
+      <i class="fas ${tab.icon}"></i> ${tab.label}
     </button>`).join('');
 }

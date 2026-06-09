@@ -1,8 +1,7 @@
 import Alpine from 'alpinejs';
 import { t } from '../../app/i18n.js';
 import { api } from '../../shared/api/client.js';
-import { showToast } from '../../widgets/ui/toast.js';
-import { showConfirm } from '../../widgets/ui/modal.js';
+import { showToast, showConfirm } from '../../shared/utils/ui.js';
 import { setPageMeta } from '../../shared/utils/seo.js';
 
 export async function fetchAddresses() {

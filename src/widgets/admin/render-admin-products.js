@@ -3,19 +3,18 @@ import { escapeHtml, renderEmptyState } from '../../shared/utils/dom.js';
 import { formatPrice, tStatus } from '../../shared/utils/format.js';
 import { manualPaginationHtml, wirePagination } from '../ui/pagination.js';
 import { showToast } from '../ui/toast.js';
-import { fetchAdminProducts, updateProductStatus } from '../../features/admin/index.js';
 
 let _page = 1;
 const PAGE_SIZE = 20;
 const MODERATION_STATUSES = ["Available", "Draft", "Sold", "Rejected", "Suspended"];
 
-export async function renderAdminProducts(container) {
+export async function renderAdminProducts(container, { fetchProducts, onUpdateProductStatus } = {}) {
   container.innerHTML = `<div id="productsPanel">
     <div class="p-4 text-center"><i class="fas fa-spinner spinner" aria-hidden="true"></i> ${t("common.loading")}</div>
   </div>`;
   const panel = document.getElementById("productsPanel");
   try {
-    const data = await fetchAdminProducts(_page, PAGE_SIZE);
+    const data = await fetchProducts(_page, PAGE_SIZE);
     const products = data.items || data.data || [];
     const total = data.totalCount || data.total || products.length;
     const pages = Math.ceil(total / PAGE_SIZE);
@@ -62,7 +61,7 @@ export async function renderAdminProducts(container) {
       </div>
       ${manualPaginationHtml({ page: _page, totalPages: pages, prefix: 'admProducts' })}`;
 
-    wirePagination({ container: panel, prefix: 'admProducts', onPrev() { if (_page > 1) { _page--; renderAdminProducts(container); } }, onNext() { if (_page < pages) { _page++; renderAdminProducts(container); } } });
+    wirePagination({ container: panel, prefix: 'admProducts', onPrev() { if (_page > 1) { _page--; renderAdminProducts(container, { fetchProducts, onUpdateProductStatus }); } }, onNext() { if (_page < pages) { _page++; renderAdminProducts(container, { fetchProducts, onUpdateProductStatus }); } } });
 
     panel.querySelectorAll(".save-product-status").forEach((btn) => {
       btn.addEventListener("click", async () => {
@@ -72,9 +71,9 @@ export async function renderAdminProducts(container) {
         const oldText = btn.textContent;
         btn.innerHTML = `<i class="fas fa-spinner spinner" aria-hidden="true"></i>`;
         try {
-          await updateProductStatus(btn.dataset.productId, select.value);
+          await onUpdateProductStatus(btn.dataset.productId, select.value);
           showToast(t("admin.productStatusUpdated"), "success");
-          renderAdminProducts(container);
+          renderAdminProducts(container, { fetchProducts, onUpdateProductStatus });
         } catch (err) {
           showToast(err.message, "error");
           btn.disabled = false;
