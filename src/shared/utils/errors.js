@@ -66,6 +66,11 @@ export function showErrorFallback(container, message) {
 export function setupGlobalErrorHandlers() {
   on('api:error', ({ err }) => handleApiError(err));
 
+  // Global error retry button (no inline onclick for CSP compliance)
+  document.getElementById('globalError')?.addEventListener('click', (e) => {
+    if (e.target.closest('[data-action="refresh"]')) window.location.reload();
+  });
+
   window.addEventListener('unhandledrejection', (e) => {
     if (isNetworkError(e.reason) || e.reason?.message?.includes('Session expired')) return;
     if (e.reason?.message?.includes('ResizeObserver')) { e.preventDefault(); return; }

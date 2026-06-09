@@ -35,32 +35,16 @@
   <link rel="alternate" hreflang="en"        href="https://saiyad-eg.vercel.app">
   <link rel="alternate" hreflang="x-default" href="https://saiyad-eg.vercel.app">
 
-  <!-- Fonts: preconnect then non-blocking load -->
+  <!-- Fonts: preconnect then stylesheet (no inline onload handlers for CSP compliance) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
-    rel="preload"
     href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Cairo:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap"
-    as="style"
-    onload="this.onload=null;this.rel='stylesheet'"
+    rel="stylesheet"
   >
-  <noscript>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Cairo:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    >
-  </noscript>
 
   <!-- Icons & Animations -->
-  <link
-    rel="preload"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
-    as="style"
-    onload="this.onload=null;this.rel='stylesheet'"
-  >
-  <noscript>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  </noscript>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
 
   <!-- App styles -->
@@ -285,7 +269,7 @@
       <p data-i18n="error_service_unavailable_desc">
         We're having trouble connecting. Check your connection and try again.
       </p>
-      <button class="btn btn-primary" onclick="window.location.reload()" data-i18n="retry">
+      <button class="btn btn-primary" data-action="refresh" data-i18n="retry">
         Retry
       </button>
     </div>
