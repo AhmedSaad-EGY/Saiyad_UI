@@ -4,7 +4,7 @@
 
 /* ── Modal Overlay ──────────────────────────────────────────── */
 .modal-overlay {
-  display: none;
+  display: flex;
   position: fixed;
   inset: 0;
   background: var(--overlay);
@@ -13,10 +13,16 @@
   justify-content: center;
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity var(--duration-normal) var(--ease-out),
+    visibility var(--duration-normal) var(--ease-out);
 }
 
 .modal-overlay.show {
-  display: flex;
+  opacity: 1;
+  visibility: visible;
 }
 
 .drawer-overlay {
@@ -71,7 +77,14 @@
   box-shadow: var(--shadow-lg);
   color: var(--text);
   pointer-events: auto;
-  transition: background-color var(--theme-ease);
+  transform: scale(0.92) translateY(16px);
+  transition:
+    transform var(--duration-normal) var(--ease-out),
+    background-color var(--theme-ease);
+}
+
+.modal-overlay.show .modal {
+  transform: scale(1) translateY(0);
 }
 
 .modal-confirm {

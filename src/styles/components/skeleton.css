@@ -115,6 +115,7 @@
     var(--card-bg) 50%,
     var(--border) 75%);
   background-size: 200% 100%;
+  animation: skeleton-shimmer 1.8s ease-in-out infinite;
 }
 .gsk-bar--w60 { width: 60%; }
 .gsk-bar--w40 { width: 40%; }
@@ -132,6 +133,7 @@
     var(--card-bg) 50%,
     var(--border) 75%);
   background-size: 200% 100%;
+  animation: skeleton-shimmer 1.8s ease-in-out infinite;
 }
 
 /* ============================================================

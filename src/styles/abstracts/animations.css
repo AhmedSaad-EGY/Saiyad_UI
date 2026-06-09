@@ -27,6 +27,11 @@
   100% { transform: translateX(100%); }
 }
 
+@keyframes skeleton-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
 /* ============================================================
    ALPINE.JS TRANSITION HELPERS
    Used with x-transition:enter / x-transition:leave directives.

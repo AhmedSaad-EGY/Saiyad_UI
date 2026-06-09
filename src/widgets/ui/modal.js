@@ -22,7 +22,7 @@ Alpine.data('modal', ({ title, content, onClose } = {}) => ({
 export function createModal(htmlContent, { ariaLabel, onClose, closeOnOverlayClick } = {}) {
   const prevFocus = document.activeElement;
   const overlay = document.createElement("div");
-  overlay.className = "modal-overlay show";
+  overlay.className = "modal-overlay";
   document.body.classList.add("modal-open");
   overlay.setAttribute("role", "dialog");
   overlay.setAttribute("aria-modal", "true");
@@ -30,12 +30,14 @@ export function createModal(htmlContent, { ariaLabel, onClose, closeOnOverlayCli
   overlay.innerHTML = `<div class="modal" onclick="event.stopPropagation()">${htmlContent}</div>`;
 
   function close() {
+    overlay.classList.remove("show");
     document.body.classList.remove("modal-open");
-    overlay.remove();
     document.removeEventListener("keydown", onKey);
     document.removeEventListener("keydown", focusTrap);
     if (prevFocus && typeof prevFocus.focus === "function") prevFocus.focus();
     onClose?.();
+    // Wait for fade-out transition then remove
+    overlay.addEventListener("transitionend", () => overlay.remove(), { once: true });
   }
 
   function focusTrap(e) {
@@ -59,6 +61,11 @@ export function createModal(htmlContent, { ariaLabel, onClose, closeOnOverlayCli
   document.addEventListener("keydown", onKey);
   document.addEventListener("keydown", focusTrap);
   document.body.appendChild(overlay);
+
+  // Trigger entrance animation: append first, then add .show
+  requestAnimationFrame(() => {
+    overlay.classList.add("show");
+  });
 
   return { close, overlay };
 }
