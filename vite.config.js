@@ -36,11 +36,12 @@ export default defineConfig({
           if (id.includes('node_modules/bootstrap')) return 'vendor-bootstrap';
 
           // Core app chunks (loaded on every page)
-          if (id.includes('/src/core/i18n/')) return 'core-i18n';
-          if (id.includes('/src/core/api/') || id.includes('/src/core/auth/') ||
-              id.includes('/src/core/router/') || id.includes('/src/core/events/')) {
+          if (id.includes('/src/app/')) {
+            if (id.includes('i18n')) return 'core-i18n';
             return 'core-app';
           }
+          if (id.includes('/src/shared/api/')) return 'core-api';
+          if (id.includes('/src/shared/utils/')) return 'core-utils';
 
           // Page chunks (loaded only when route is visited)
           const pageMatch = id.match(/\/src\/pages\/([^/]+)\.js$/);

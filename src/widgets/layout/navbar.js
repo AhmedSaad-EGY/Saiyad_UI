@@ -1,6 +1,7 @@
 import { getUser, isAuthenticated } from '../../app/auth-state.js';
 import { SELLER_ROLES } from '../../shared/constants/roles.js';
 import { t } from '../../app/i18n.js';
+import { emit } from '../../app/events.js';
 import { createSwipeGesture } from '../../shared/utils/swipe.js';
 
 let _drawerSwipe = null;
@@ -153,6 +154,7 @@ export async function updateCartBadge(forceRefresh) {
 export async function updateNotifBadge() {
   const count = await _fetchUnreadCount();
   syncNotifBadgeCount(count);
+  emit('notifications:updated', { count });
 }
 
 export function syncNotifBadgeCount(count) {

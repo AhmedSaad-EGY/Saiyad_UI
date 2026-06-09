@@ -5,7 +5,7 @@ import { on } from '../../app/events.js';
 Alpine.store('notif', {
   count: 0,
   init() {
-    on('notif:updated', ({ count }) => { this.count = count; });
+    on('notifications:updated', (e) => { this.count = e.detail.count; });
   },
   async refresh() {
     try {
