@@ -26,6 +26,22 @@ node_modules/
 # Build output
 dist/
 
+# AI assistant skill directories (not project code)
+.agent/
+.claude/
+.codebuddy/
+.codex/
+.continue/
+.cursor/
+.gemini/
+.github/
+.kiro/
+.opencode/
+.qoder/
+.roo/
+.trae/
+.windsurf/
+
 # Archives
 *.zip
 *.gz
