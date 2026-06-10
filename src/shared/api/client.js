@@ -20,7 +20,6 @@ export function setAccessToken(token) {
 export function clearTokens() {
   _cachedAccessToken = null;
   sessionStorage.removeItem(KEYS.ACCESS_TOKEN);
-  localStorage.removeItem(KEYS.REFRESH_TOKEN);
   localStorage.removeItem(KEYS.USER);
 }
 

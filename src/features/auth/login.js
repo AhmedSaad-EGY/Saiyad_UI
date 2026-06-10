@@ -58,7 +58,7 @@ Alpine.data('loginForm', () => ({
     await ensureCsrfToken();
     try {
       const data = await api.post('/auth/login', { email: this.email, password: this.password });
-      setAccessToken(data.accessToken);
+      setAccessToken(data.token);
       if (data.user) localStorage.setItem(KEYS.USER, JSON.stringify(data.user));
       emit('auth:changed');
       syncVipAttribute().catch(() => {});

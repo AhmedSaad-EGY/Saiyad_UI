@@ -55,8 +55,7 @@ Alpine.data('registerForm', () => ({
       if (data.accessToken) {
         window.location.hash = '#/login?registered=1';
       } else {
-        setAccessToken(data.accessToken);
-        if (data.refreshToken) localStorage.setItem(KEYS.REFRESH_TOKEN, data.refreshToken);
+        setAccessToken(data.token);
         if (data.user) localStorage.setItem(KEYS.USER, JSON.stringify(data.user));
         emit('auth:changed');
         window.location.hash = '#/';

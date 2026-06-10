@@ -13,6 +13,5 @@
  */
 export const KEYS = Object.freeze({
   ACCESS_TOKEN: 'sayiad_accessToken',
-  REFRESH_TOKEN: 'sayiad_refreshToken',
   USER: 'sayiad_user',
 });
