@@ -39,12 +39,21 @@ export function getCsrfToken() {
 }
 
 /**
- * Ensure a CSRF token exists (delegates to getCsrfToken).
- * No longer generates client-side tokens — backend must emit the cookie.
- * Returns the token or null.
+ * Ensure a CSRF token exists — fetches from backend if not cached.
+ * Returns the token, or null if the fetch fails.
  */
-export function ensureCsrfToken() {
-  return getCsrfToken();
+export async function ensureCsrfToken() {
+  const existing = getCsrfToken();
+  if (existing) return existing;
+  try {
+    const res = await fetch('/api/antiforgery/token', { credentials: 'include' });
+    if (!res.ok) return null;
+    const cookie = readCookie();
+    if (cookie) sessionStorage.setItem(STORAGE_KEY, cookie);
+    return cookie;
+  } catch {
+    return null;
+  }
 }
 
 /**

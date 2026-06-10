@@ -1,3 +1,4 @@
+import * as signalR from '@microsoft/signalr';
 import { APP_CONFIG } from '../shared/api/config.js';
 import { showToast } from '../widgets/ui/toast.js';
 import { t } from '../shared/utils/i18n.js';
@@ -9,15 +10,10 @@ let _connection = null;
 let _connectionPromise = null;
 const _joinedGroups = new Set();
 
-const signalR = window.signalR;
-const HubConnectionState = signalR?.HubConnectionState;
+const { HubConnectionState } = signalR;
 
 function getConnection() {
   if (_connection) return _connection;
-  if (!signalR) {
-    console.warn('[realtime] SignalR SDK not available — skipping realtime features.');
-    return null;
-  }
   _connection = new signalR.HubConnectionBuilder()
     .withUrl(APP_CONFIG.signalrHubUrl, {
       accessTokenFactory: () => sessionStorage.getItem(KEYS.ACCESS_TOKEN) || "",

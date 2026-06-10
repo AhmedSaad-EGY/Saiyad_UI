@@ -17,7 +17,6 @@ export default [
         ...globals.browser,
         ...globals.es2022,
         Alpine: "readonly",   // Alpine.js global
-        signalR: "readonly",  // SignalR CDN global
       },
     },
     rules: {

@@ -1,4 +1,4 @@
-import { getUser } from '../features/auth/login.js';
+import { isAuthenticated } from '../features/auth/login.js';
 import { updateNavbar } from './navbar.js';
 import { closeDrawer } from '../widgets/layout/navbar.js';
 import { t } from "../shared/utils/i18n.js";
@@ -71,9 +71,8 @@ export async function router(force = false) {
   // Enforce route guards
   const guard = routeGuards[routeKey];
   if (guard) {
-    const user = getUser();
-    if (!guard(user)) {
-      window.location.hash = user ? "#/" : "#/login";
+    if (!guard()) {
+      window.location.hash = isAuthenticated() ? "#/" : "#/login";
       return;
     }
   }

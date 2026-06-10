@@ -5,8 +5,6 @@ import { showToast } from '../../shared/utils/ui.js';
 import { t } from '../../shared/utils/i18n.js';
 import { emit } from '../../shared/utils/events.js';
 import { KEYS } from '../../shared/constants/storage-keys.js';
-import { syncVipAttribute } from './login.js';
-import { registerRouteCleanup } from '../../shared/utils/events.js';
 import Alpine from '@alpinejs/csp';
 
 Alpine.data('registerForm', () => ({
@@ -29,6 +27,11 @@ Alpine.data('registerForm', () => ({
   pwToggleIcon() { return this.showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'; },
   togglePw() { this.showPassword = !this.showPassword; },
   async submit() {
+    if (!this.terms) {
+      showToast(t('auth.mustAcceptTerms'), 'error');
+      return;
+    }
+
     this.loading = true;
     const rules = [
       { element: this.$refs.fullName, required: true, messages: { required: t('validation.required') } },
@@ -36,11 +39,11 @@ Alpine.data('registerForm', () => ({
       { element: this.$refs.phone, required: true, phone: true, messages: { required: t('validation.required'), phone: t('validation.invalidPhone') } },
       { element: this.$refs.birthdate, required: true, minAge: 18, messages: { required: t('validation.required'), minAge: t('validation.minAge', { age: 18 }) } },
       { element: this.$refs.password, required: true, minLength: 8, messages: { required: t('validation.required'), minLength: t('validation.minLength', { n: 8 }) } },
-      { element: this.$refs.confirmPassword, required: true, matches: 'password', messages: { required: t('validation.required'), matches: t('validation.passwordsNotMatch') } },
+      { element: this.$refs.confirmPassword, required: true, matches: { element: this.$refs.password }, messages: { required: t('validation.required'), matches: t('validation.passwordsNotMatch') } },
     ];
     clearAllFieldErrors(this.$el);
-    const errors = validateForm(this.$el.id, rules);
-    if (errors) { this.loading = false; return; }
+    const isValid = validateForm(this.$el.id, rules);
+    if (!isValid) { this.loading = false; return; }
     await ensureCsrfToken();
     try {
       const data = await api.post('/auth/register', {
@@ -49,34 +52,18 @@ Alpine.data('registerForm', () => ({
         confirmPassword: this.confirmPassword, role: this.role,
         licenseNumber: this.needsLicense ? this.licenseNumber : undefined,
       });
-      setAccessToken(data.accessToken);
-      if (data.refreshToken) localStorage.setItem(KEYS.REFRESH_TOKEN, data.refreshToken);
-      if (data.user) localStorage.setItem(KEYS.USER, JSON.stringify(data.user));
-      if (data.accessToken) showVerificationOverlay(this.email, this.password);
-      else { emit('auth:changed'); window.location.hash = '#/'; }
+      if (data.accessToken) {
+        window.location.hash = '#/login?registered=1';
+      } else {
+        setAccessToken(data.accessToken);
+        if (data.refreshToken) localStorage.setItem(KEYS.REFRESH_TOKEN, data.refreshToken);
+        if (data.user) localStorage.setItem(KEYS.USER, JSON.stringify(data.user));
+        emit('auth:changed');
+        window.location.hash = '#/';
+      }
     } catch (err) { showToast(err.message || t('auth.registerError'), 'error'); }
     finally { this.loading = false; }
   },
 }));
 
-function showVerificationOverlay(email, password) {
-  const app = document.getElementById('app');
-  app.innerHTML = `<div class="verify-overlay"><div class="verify-card"><div class="verify-spinner"></div><h3>${t('auth.checkEmail')}</h3><p>${t('auth.verificationSent')}</p></div></div>`;
-  let attempts = 0;
-  const maxAttempts = 30;
-  const timer = setInterval(async () => {
-    attempts++;
-    try {
-      const data = await api.post('/auth/login', { email, password });
-      if (data.accessToken) {
-        clearInterval(timer);
-        setAccessToken(data.accessToken);
-        if (data.user) localStorage.setItem(KEYS.USER, JSON.stringify(data.user));
-        emit('auth:changed');
-        syncVipAttribute().catch(() => {});
-        window.location.hash = '#/';
-      }
-    } catch { if (attempts >= maxAttempts) { clearInterval(timer); window.location.hash = '#/login'; } }
-  }, 2000);
-  registerRouteCleanup(() => clearInterval(timer));
-}
+

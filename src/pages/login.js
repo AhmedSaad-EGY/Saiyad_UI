@@ -1,12 +1,18 @@
+import { showToast } from '../shared/utils/ui.js';
 import { t } from '../shared/utils/i18n.js';
 import { setPageMeta } from '../shared/utils/seo.js';
 import '../features/auth/login.js';
 
 export default function renderLogin(container) {
-  if (new URLSearchParams(window.location.hash.split('?')[1] || '').get('redirect')) {
+  const params = new URLSearchParams(window.location.hash.split('?')[1] || '');
+  if (params.get('redirect')) {
     setPageMeta(t('auth.loginRequired'));
   } else {
     setPageMeta(t('auth.login'));
+  }
+
+  if (params.get('registered') === '1') {
+    showToast(t('auth.registerSuccess'), 'success');
   }
 
   container.innerHTML = `

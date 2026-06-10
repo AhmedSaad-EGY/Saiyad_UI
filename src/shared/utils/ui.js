@@ -1,5 +1,5 @@
 import { t } from './i18n.js';
-import { animate } from './dom.js';
+import { animate, escapeHtml } from './dom.js';
 import { registerRouteCleanup } from './events.js';
 
 export function showToast(msg, type = "info") {
@@ -218,11 +218,11 @@ export function showConfirm(title, message, options = {}) {
         <div class="confirm-icon ${type}">
           <i class="fas ${icon}"></i>
         </div>
-        <h3>${title}</h3>
-        <p>${message}</p>
+        <h3>${escapeHtml(title)}</h3>
+        <p>${escapeHtml(message)}</p>
         <div class="modal-actions">
-          <button class="btn btn-ghost" id="confirmCancel">${cancelText}</button>
-          <button class="btn btn-${type}" id="confirmProceed">${confirmText}</button>
+          <button class="btn btn-ghost" id="confirmCancel">${escapeHtml(cancelText)}</button>
+          <button class="btn btn-${type}" id="confirmProceed">${escapeHtml(confirmText)}</button>
         </div>
       </div>`;
 

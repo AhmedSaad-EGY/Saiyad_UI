@@ -1,20 +1,21 @@
 import { ROLES, SELLER_ROLES, ECOMMERCE_ROLES, MODERATOR_ROLES } from './roles.js';
+import { getRoleFromToken, isAuthenticated } from '../utils/auth-state.js';
 
 export { ROLES, SELLER_ROLES, ECOMMERCE_ROLES, MODERATOR_ROLES };
 
 export const routeGuards = {
-  'admin': (user) => !!user && user.role === ROLES.ADMIN,
-  'cart': (user) => !!user && ECOMMERCE_ROLES.includes(user.role),
-  'checkout': (user) => !!user && ECOMMERCE_ROLES.includes(user.role),
-  'dashboard': (user) => !!user,
-  'shipping': (user) => !!user && ECOMMERCE_ROLES.includes(user.role),
-  'order-detail': (user) => !!user && ECOMMERCE_ROLES.includes(user.role),
-  'profile': (user) => !!user,
-  'auction-requests': (user) => !!user && user.role === ROLES.FISHERMAN,
-  'auction-requests-review': (user) => !!user && MODERATOR_ROLES.includes(user.role),
-  'auctioneer-analytics': (user) => !!user && MODERATOR_ROLES.includes(user.role),
-  'subscriptions': (user) => !!user && (ECOMMERCE_ROLES.includes(user.role) || user.role === ROLES.AUCTIONEER),
-  'wallet': (user) => !!user,
+  'admin': () => getRoleFromToken() === ROLES.ADMIN,
+  'cart': () => ECOMMERCE_ROLES.includes(getRoleFromToken()),
+  'checkout': () => ECOMMERCE_ROLES.includes(getRoleFromToken()),
+  'dashboard': () => isAuthenticated(),
+  'shipping': () => ECOMMERCE_ROLES.includes(getRoleFromToken()),
+  'order-detail': () => ECOMMERCE_ROLES.includes(getRoleFromToken()),
+  'profile': () => isAuthenticated(),
+  'auction-requests': () => getRoleFromToken() === ROLES.FISHERMAN,
+  'auction-requests-review': () => MODERATOR_ROLES.includes(getRoleFromToken()),
+  'auctioneer-analytics': () => MODERATOR_ROLES.includes(getRoleFromToken()),
+  'subscriptions': () => [...ECOMMERCE_ROLES, ROLES.AUCTIONEER].includes(getRoleFromToken()),
+  'wallet': () => isAuthenticated(),
 };
 
 export const routeTitleKeys = {

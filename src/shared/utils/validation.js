@@ -54,7 +54,10 @@ export function validateForm(formIdOrEl, rules) {
   const form = (typeof formIdOrEl === 'string')
     ? document.getElementById(formIdOrEl)
     : formIdOrEl;
-  if (!form) return true;
+  if (!form) {
+    console.warn("Validation target form element not found.");
+    return false;
+  }
   let valid = true;
   clearAllFieldErrors(form);
 

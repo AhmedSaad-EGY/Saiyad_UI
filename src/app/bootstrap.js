@@ -1,5 +1,6 @@
 import { setupGlobalErrorHandlers } from '../shared/utils/errors.js';
 import { initOcean } from '../shared/utils/ocean.js';
+import { ensureCsrfToken } from '../shared/utils/csrf.js';
 import { isAuthenticated } from '../shared/utils/auth-state.js';
 import { on } from '../shared/utils/events.js';
 import { updateNavbar } from './navbar.js';
@@ -11,7 +12,7 @@ setupGlobalErrorHandlers();
 initOcean();
 
 // Initialize CSRF token from backend (sets XSRF-TOKEN cookie via Antiforgery)
-fetch('https://sayiad.runasp.net/api/antiforgery/token', { credentials: 'include' }).catch(() => {});
+ensureCsrfToken();
 
 setNavbarDeps({
   fetchCartCount,

@@ -14,7 +14,7 @@ export default function renderRegister(container) {
   ];
 
   container.innerHTML = `
-    <div class="auth-page animate__animated animate__fadeIn" x-data="registerForm">
+    <div class="auth-page animate__animated animate__fadeIn">
       <div class="card">
         <div class="card-body">
           <div class="auth-header">
@@ -23,7 +23,7 @@ export default function renderRegister(container) {
             <p>${t('auth.registerDesc')}</p>
           </div>
 
-          <form id="registerForm" @submit.prevent="submit">
+          <form id="registerForm" x-data="registerForm" @submit.prevent="submit">
             <div class="form-group">
               <label for="regName">${t('auth.fullName')}</label>
               <input type="text" id="regName" class="form-input" x-ref="fullName" x-model="fullName" placeholder="${t('auth.fullNamePlaceholder')}" required autocomplete="name" :disabled="loading">
