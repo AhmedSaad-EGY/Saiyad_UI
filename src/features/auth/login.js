@@ -1,6 +1,6 @@
 import { api, setAccessToken, clearTokens } from '../../shared/api/client.js';
 import { emit } from '../../shared/utils/events.js';
-import { ensureCsrfToken, clearCsrfToken } from '../../shared/utils/csrf.js';
+import { clearCsrfToken } from '../../shared/utils/csrf.js';
 import { showToast } from '../../shared/utils/ui.js';
 import { t } from '../../shared/utils/i18n.js';
 import { isAuthenticated } from '../../shared/utils/auth-state.js';
@@ -47,7 +47,6 @@ Alpine.data('loginForm', () => ({
   clearError() { this.error = ''; },
   async submit() {
     this.loading = true; this.error = '';
-    await ensureCsrfToken();
     try {
       const data = await api.post('/auth/login', { email: this.email, password: this.password });
       setAccessToken(data.accessToken);
