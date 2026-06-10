@@ -10,10 +10,12 @@ export function updateNavbar() {
   const user = getUser();
   document.querySelectorAll(".nav-guest").forEach(el => el.classList.toggle("hidden", auth));
   document.querySelectorAll(".nav-auth").forEach(el => el.classList.toggle("hidden", !auth));
-  const userMenu = document.getElementById("userMenu");
-  if (userMenu) {
-    userMenu.innerHTML = user?.fullName || user?.name || user?.email || t('nav.profile');
+  const userNameEl = document.getElementById("userName");
+  if (userNameEl) {
+    userNameEl.textContent = user?.fullName || user?.name || user?.email || t('nav.profile');
   }
+  const userMenu = document.getElementById("userMenu");
+  if (userMenu) userMenu.classList.toggle("d-none", !auth);
   const userRole = document.getElementById("userRole");
   if (userRole) userRole.textContent = user?.role || '';
   const avatarImg = document.getElementById("userAvatar");
