@@ -40,6 +40,19 @@ Alpine.data('cartPage', () => ({
 
   formatPrice,
 
+  get showEmptyCart() { return !this.loading && this.empty; },
+  get showErrorCart() { return !this.loading && this.error; },
+  get showCartContent() { return !this.loading && !this.empty && !this.error; },
+
+  itemDisplayTitle(item) { return item.productTitle || `Product #${item.productId}`; },
+  itemUnitPrice(item) { return item.unitPrice || item.price || 0; },
+  itemQuantity(item) { return item.quantity || 1; },
+  itemSubtotal(item) { return this.itemUnitPrice(item) * this.itemQuantity(item); },
+  isMinQty(item) { return this.itemQuantity(item) <= 1; },
+  isMaxStock(item) { return item.stockQuantity != null && this.itemQuantity(item) >= item.stockQuantity; },
+  decrementQty(item) { this.updateQty(item.productId, this.itemQuantity(item) - 1); },
+  incrementQty(item) { this.updateQty(item.productId, this.itemQuantity(item) + 1); },
+
   async init() {
     setPageMeta(t('cart.title'), undefined, true);
     try {

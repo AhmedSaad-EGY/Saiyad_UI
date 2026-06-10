@@ -166,6 +166,11 @@ Alpine.data('productsPage', () => ({
     this.reload();
   },
 
+  clearFiltersAndClose() {
+    this.resetFilters();
+    this.filterSheetOpen = false;
+  },
+
   hasActiveFilters() {
     return this.search || this.categoryId || this.condition || this.minPrice || this.maxPrice || this.inStock;
   },

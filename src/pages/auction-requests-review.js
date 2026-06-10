@@ -26,7 +26,7 @@ export default function renderAuctionRequestsReview(container) {
         <td x-text="r.quantityKg"></td>
         <td x-text="r.estimatedValue"></td>
         <td><span :class="statusClass(r.status)" x-text="t('auctionRequests.' + (r.status || '').toLowerCase())"></span></td>
-        <td x-text="new Date(r.createdAt).toLocaleDateString()"></td>
+        <td x-text="formatDate(r.createdAt)"></td>
         <td>
           <button class="btn btn-sm btn-outline btn-icon" @click="showDetail(r)" aria-label="${t('common.view')}"><i class="fas fa-eye" aria-hidden="true"></i></button>
           <button class="btn btn-sm btn-success" @click="approveRequest(r.id)"><i class="fas fa-check" aria-hidden="true"></i> ${t("auctionRequestsReview.approve")}</button>
@@ -74,32 +74,32 @@ export default function renderAuctionRequestsReview(container) {
   <div class="modal-overlay drawer-overlay" x-effect="$el.classList.toggle('show', !!detailItem)" @click.self="closeDrawer">
     <div class="drawer-content" :class="{'drawer-open': !!detailItem}">
       <div class="modal-header d-flex justify-content-between align-items-center p-3 border-bottom">
-        <h3 class="mb-0 text-truncate" x-text="detailItem?.productTitle"></h3>
+        <h3 class="mb-0 text-truncate" x-text="detailProp('productTitle')"></h3>
         <button class="btn btn-ghost btn-icon p-1" @click="closeDrawer"><i class="fas fa-times fa-lg" aria-hidden="true"></i></button>
       </div>
       <div class="modal-body p-4 flex-grow-1">
-        <template x-if="detailItem?.imageUrl || detailItem?.productImageUrl">
-          <div class="mb-4 text-center"><img :src="detailItem.imageUrl || detailItem.productImageUrl" :alt="detailItem.productTitle" class="img-fluid rounded border"></div>
+        <template x-if="detailImage()">
+          <div class="mb-4 text-center"><img :src="detailImage()" :alt="detailProp('productTitle')" class="img-fluid rounded border"></div>
         </template>
         <div class="table-wrapper"><table class="table table-bordered">
           <tbody>
-            <tr><th scope="row">${t("auctionRequestsReview.fisherman")}</th><td x-text="detailItem?.fishermanName || '-'"></td></tr>
-            <tr><th scope="row">${t("auctionRequests.fishType")}</th><td x-text="detailItem?.fishType"></td></tr>
-            <tr><th scope="row">${t("auctionRequests.quantityKg")}</th><td class="fw-semibold"><span x-text="detailItem?.quantityKg"></span> ${t('common.kgUnit')}</td></tr>
-            <tr><th scope="row">${t("auctionRequests.estimatedValue")}</th><td class="fw-semibold text-primary" x-text="detailItem?.estimatedValue"></td></tr>
-            <tr><th scope="row">${t("auctionRequests.catchLocation")}</th><td x-text="detailItem?.catchLocation || '-'"></td></tr>
-            <tr><th scope="row">${t("auctionRequests.catchDate")}</th><td x-text="detailItem?.catchDate ? new Date(detailItem.catchDate).toLocaleDateString() : '-'"></td></tr>
-            <tr><th scope="row">${t("auctionRequests.status")}</th><td><span :class="statusClass(detailItem?.status)" x-text="t('auctionRequests.' + (detailItem?.status || '').toLowerCase())"></span></td></tr>
+            <tr><th scope="row">${t("auctionRequestsReview.fisherman")}</th><td x-text="detailProp('fishermanName', '-')"></td></tr>
+            <tr><th scope="row">${t("auctionRequests.fishType")}</th><td x-text="detailProp('fishType')"></td></tr>
+            <tr><th scope="row">${t("auctionRequests.quantityKg")}</th><td class="fw-semibold"><span x-text="detailProp('quantityKg')"></span> ${t('common.kgUnit')}</td></tr>
+            <tr><th scope="row">${t("auctionRequests.estimatedValue")}</th><td class="fw-semibold text-primary" x-text="detailProp('estimatedValue')"></td></tr>
+            <tr><th scope="row">${t("auctionRequests.catchLocation")}</th><td x-text="detailProp('catchLocation', '-')"></td></tr>
+            <tr><th scope="row">${t("auctionRequests.catchDate")}</th><td x-text="detailDate('catchDate')"></td></tr>
+            <tr><th scope="row">${t("auctionRequests.status")}</th><td><span :class="statusClass(detailProp('status'))" x-text="detailStatusText()"></span></td></tr>
           </tbody>
         </table></div>
         <div class="mt-3">
           <h4 class="h6 fw-bold">${t("auctionRequests.productDescription")}</h4>
-          <p class="text-secondary small bg-light p-3 rounded border" x-text="detailItem?.productDescription || ''"></p>
+          <p class="text-secondary small bg-light p-3 rounded border" x-text="detailProp('productDescription')"></p>
         </div>
       </div>
       <div class="modal-footer p-3 border-top d-flex gap-2 justify-content-end bg-light">
-        <button class="btn btn-success btn-sm" @click="const _id = detailItem.id; closeDrawer(); $nextTick(() => approveRequest(_id))"><i class="fas fa-check" aria-hidden="true"></i> ${t("auctionRequestsReview.approve")}</button>
-        <button class="btn btn-danger btn-sm" @click="const _id = detailItem.id; closeDrawer(); $nextTick(() => rejectRequest(_id))"><i class="fas fa-times" aria-hidden="true"></i> ${t("auctionRequestsReview.reject")}</button>
+        <button class="btn btn-success btn-sm" @click="closeAndApprove()"><i class="fas fa-check" aria-hidden="true"></i> ${t("auctionRequestsReview.approve")}</button>
+        <button class="btn btn-danger btn-sm" @click="closeAndReject()"><i class="fas fa-times" aria-hidden="true"></i> ${t("auctionRequestsReview.reject")}</button>
       </div>
     </div>
   </div>

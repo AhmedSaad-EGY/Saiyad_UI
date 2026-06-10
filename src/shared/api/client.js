@@ -181,13 +181,7 @@ async function refreshAccessToken() {
 
 async function _doRefresh() {
   try {
-    const res = await fetch(`${APP_CONFIG.apiBaseUrl}/auth/refresh`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-    });
-    if (!res.ok) throw new Error("Refresh failed");
-    const data = await parseResponse(res);
+    const data = await request('/auth/refresh', { method: "POST", _retry: true });
     setAccessToken(data.token);
     return true;
   } catch {

@@ -26,7 +26,7 @@ export default async function renderAuctionRequests(container) {
           <tbody><template x-for="r in items" :key="r.id"><tr>
             <td x-text="r.productTitle"></td><td x-text="r.fishType"></td><td x-text="r.quantityKg"></td><td x-text="r.estimatedValue"></td>
             <td><span :class="'status status-' + r.status.toLowerCase()" x-text="r.status"></span></td>
-            <td x-text="new Date(r.createdAt).toLocaleDateString()"></td>
+            <td x-text="formatDate(r.createdAt)"></td>
             <td x-text="r.status === 'Rejected' ? (r.rejectionReason || '-') : '-'"></td>
           </tr></template></tbody>
         </table></div>

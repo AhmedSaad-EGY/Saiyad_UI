@@ -57,7 +57,7 @@ export function renderMobileOverlays() {
           </label>
         </div>
         <div class="filter-sheet-footer">
-          <button class="btn btn-ghost" @click="resetFilters(); filterSheetOpen = false">${t('common.clearFilters')}</button>
+          <button class="btn btn-ghost" @click="clearFiltersAndClose()">${t('common.clearFilters')}</button>
           <button class="btn btn-primary" @click="applyMobileFilters()"><i class="fas fa-check"></i> ${t('common.showResults')}</button>
         </div>
       </div>

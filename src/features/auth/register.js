@@ -25,6 +25,8 @@ Alpine.data('registerForm', () => ({
     const r = getPasswordStrengthResult(this.password);
     this.strengthCls = r.cls; this.strengthLabel = r.label;
   },
+  submitLabel() { return this.loading ? t('common.loading') : t('auth.createAccount'); },
+  pwToggleIcon() { return this.showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'; },
   togglePw() { this.showPassword = !this.showPassword; },
   async submit() {
     this.loading = true;

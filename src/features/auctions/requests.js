@@ -46,6 +46,8 @@ Alpine.data('auctionRequestsPage', () => ({
     });
   },
 
+  formatDate(dateStr) { return dateStr ? new Date(dateStr).toLocaleDateString() : '-'; },
+
   cancelForm() {
     this.view = 'list';
   },

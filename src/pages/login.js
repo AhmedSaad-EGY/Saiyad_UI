@@ -33,7 +33,7 @@ export default function renderLogin(container) {
               <label for="loginPassword">${t('auth.password')}</label>
               <div class="password-wrapper">
                 <input :type="showPassword ? 'text' : 'password'" id="loginPassword" class="form-input" x-model="password" placeholder="${t('auth.passwordPlaceholder')}" required autocomplete="current-password" :disabled="loading">
-                <button type="button" class="toggle-pw" @click="togglePw" :aria-label="showPassword ? '${t('common.hidePassword')}' : '${t('common.showPassword')}'" tabindex="-1"><i :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i></button>
+                <button type="button" class="toggle-pw" @click="togglePw" :aria-label="pwToggleLabel()" tabindex="-1"><i :class="pwToggleIcon()"></i></button>
               </div>
             </div>
 
@@ -43,7 +43,7 @@ export default function renderLogin(container) {
 
             <button type="submit" class="btn btn-primary btn-block" :disabled="loading">
               <i class="fas fa-spinner spinner" x-show="loading" x-cloak aria-hidden="true"></i>
-              <span x-text="loading ? '${t('common.loading')}' : '${t('auth.login')}'"></span>
+              <span x-text="submitLabel()"></span>
             </button>
           </form>
 

@@ -18,7 +18,7 @@ export default async function renderCart(container) {
       <template x-if="loading">
         <div><i class="fas fa-spinner spinner" aria-hidden="true"></i> ${t('common.loading')}</div>
       </template>
-      <div x-show="!loading && empty" x-transition:enter="transition-fade" x-transition:enter-start="op-0" x-transition:enter-end="op-100">
+      <div x-show="showEmptyCart" x-transition:enter="transition-fade" x-transition:enter-start="op-0" x-transition:enter-end="op-100">
         <div>
           <div class="section-header animate__animated animate__fadeInUp"><h2><i class="fas fa-shopping-cart" aria-hidden="true"></i> ${t('cart.title')}</h2></div>
           <div class="empty-state">
@@ -29,7 +29,7 @@ export default async function renderCart(container) {
           </div>
         </div>
       </div>
-      <div x-show="!loading && error" x-transition:enter="transition-fade" x-transition:enter-start="op-0" x-transition:enter-end="op-100">
+      <div x-show="showErrorCart" x-transition:enter="transition-fade" x-transition:enter-start="op-0" x-transition:enter-end="op-100">
         <div>
           <div class="section-header animate__animated animate__fadeInUp"><h2><i class="fas fa-shopping-cart" aria-hidden="true"></i> ${t('cart.title')}</h2></div>
           <div class="empty-state">
@@ -39,7 +39,7 @@ export default async function renderCart(container) {
           </div>
         </div>
       </div>
-      <div x-show="!loading && !empty && !error" x-transition:enter="transition-fade" x-transition:enter-start="op-0" x-transition:enter-end="op-100">
+      <div x-show="showCartContent" x-transition:enter="transition-fade" x-transition:enter-start="op-0" x-transition:enter-end="op-100">
         <div>
           <div class="section-header animate__animated animate__fadeInUp">
             <h2><i class="fas fa-shopping-cart" aria-hidden="true"></i> ${t('cart.title')}</h2>
@@ -74,26 +74,26 @@ export default async function renderCart(container) {
                             <i class="fas fa-image text-muted fs-6" aria-hidden="true"></i>
                           </div>
                         </template>
-                        <span x-text="item.productTitle || ('Product #' + item.productId)"></span>
+                        <span x-text="itemDisplayTitle(item)"></span>
                       </a>
                     </td>
-                    <td class="cart-price-cell" x-text="formatPrice(item.unitPrice || item.price || 0)"></td>
+                    <td class="cart-price-cell" x-text="formatPrice(itemUnitPrice(item))"></td>
                     <td class="cart-qty-cell">
                       <div class="qty-btn-group">
                         <button type="button" class="qty-btn"
-                                @click="updateQty(item.productId, (item.quantity || 1) - 1)"
-                                :disabled="(item.quantity || 1) <= 1">−</button>
+                                @click="decrementQty(item)"
+                                :disabled="isMinQty(item)">−</button>
                         <input type="text" class="cart-qty-input"
-                               :value="item.quantity || 1" readonly
+                               :value="itemQuantity(item)" readonly
                                aria-label="${t('cart.quantity')}">
                         <button type="button" class="qty-btn"
-                                @click="updateQty(item.productId, (item.quantity || 1) + 1)"
-                                :disabled="item.stockQuantity != null && (item.quantity || 1) >= item.stockQuantity">+</button>
+                                @click="incrementQty(item)"
+                                :disabled="isMaxStock(item)">+</button>
                       </div>
-                      <span x-show="item.stockQuantity != null && (item.quantity || 1) >= item.stockQuantity"
-                            class="cart-max-label" x-text="'${t('cart.maxReached')}'"></span>
+                      <span x-show="isMaxStock(item)"
+                            class="cart-max-label">${t('cart.maxReached')}</span>
                     </td>
-                    <td class="cart-subtotal-cell" x-text="formatPrice((item.unitPrice || item.price || 0) * (item.quantity || 1))"></td>
+                    <td class="cart-subtotal-cell" x-text="formatPrice(itemSubtotal(item))"></td>
                     <td class="cart-remove-cell">
                       <button class="btn btn-ghost btn-icon remove-item text-danger" @click="removeItem(item.productId)" :aria-label="$t('common.remove')">
                         <i class="fas fa-times" aria-hidden="true"></i>

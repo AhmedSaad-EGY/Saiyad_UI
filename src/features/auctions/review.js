@@ -106,6 +106,26 @@ Alpine.data('auctionReviewPage', () => ({
   showDetail(item) { this.detailItem = item; },
   closeDrawer() { this.detailItem = null; },
 
+  detailProp(prop, def) { return this.detailItem?.[prop] ?? def; },
+  detailStatus() { return (this.detailItem?.status || '').toLowerCase(); },
+  detailStatusText() { return t(`auctionRequests.${this.detailStatus()}`); },
+  detailDate(prop) { const d = this.detailItem?.[prop]; return d ? new Date(d).toLocaleDateString() : '-'; },
+  detailImage() { return this.detailItem?.imageUrl || this.detailItem?.productImageUrl; },
+
+  closeAndApprove() {
+    const id = this.detailItem?.id;
+    this.closeDrawer();
+    if (id) { this.$nextTick(() => { this.approveRequest(id); }); }
+  },
+
+  closeAndReject() {
+    const id = this.detailItem?.id;
+    this.closeDrawer();
+    if (id) { this.$nextTick(() => { this.rejectRequest(id); }); }
+  },
+
+  formatDate(dateStr) { return dateStr ? new Date(dateStr).toLocaleDateString() : '-'; },
+
   statusClass(s) { return statusClass(s); },
   t(key) { return t(key); },
 }));

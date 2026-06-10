@@ -443,6 +443,11 @@ Alpine.data('auctionsPage', () => ({
     this.reload();
   },
 
+  clearFiltersAndClose() {
+    this.resetFilters();
+    this.filterSheetOpen = false;
+  },
+
   formatPrice(n) { return formatPrice(n); },
   statusClass(s) { return statusClass(s); },
   tStatus(s) { return tStatus(s, 'auction'); },

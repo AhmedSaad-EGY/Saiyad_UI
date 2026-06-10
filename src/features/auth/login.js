@@ -45,6 +45,9 @@ Alpine.data('loginForm', () => ({
   showPassword: false,
   unverifiedEmail: '',
   togglePw() { this.showPassword = !this.showPassword; },
+  submitLabel() { return this.loading ? t('common.loading') : t('auth.login'); },
+  pwToggleIcon() { return this.showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'; },
+  pwToggleLabel() { return this.showPassword ? t('common.hidePassword') : t('common.showPassword'); },
   clearError() { this.error = ''; },
   async submit() {
     this.loading = true; this.error = '';
