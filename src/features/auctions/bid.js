@@ -64,9 +64,7 @@ Alpine.data('auctionDetailPage', () => ({
         const minBidVal = a.currentHighestBid
           ? a.currentHighestBid + a.minimumIncrement
           : a.startingPrice;
-        const maxBidVal = a.reservePrice && a.reservePrice > minBidVal
-          ? a.reservePrice * 1.5
-          : minBidVal * 5;
+        const maxBidVal = minBidVal * 1000;
         this.minBid = minBidVal;
         this.maxBid = maxBidVal;
         this.bidAmount = minBidVal.toFixed(2);

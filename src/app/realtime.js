@@ -10,9 +10,14 @@ let _connectionPromise = null;
 const _joinedGroups = new Set();
 
 const signalR = window.signalR;
+const HubConnectionState = signalR?.HubConnectionState;
 
 function getConnection() {
   if (_connection) return _connection;
+  if (!signalR) {
+    console.warn('[realtime] SignalR SDK not available — skipping realtime features.');
+    return null;
+  }
   _connection = new signalR.HubConnectionBuilder()
     .withUrl(APP_CONFIG.signalrHubUrl, {
       accessTokenFactory: () => sessionStorage.getItem(KEYS.ACCESS_TOKEN) || "",
@@ -56,6 +61,7 @@ export function startIfNeeded() {
   if (!sessionStorage.getItem(KEYS.ACCESS_TOKEN)) return Promise.resolve();
   if (_connectionPromise) return _connectionPromise;
   const conn = getConnection();
+  if (!conn) return Promise.resolve();
   _connectionPromise = conn.start()
     .then(() => { hideSignalRBanner(); })
     .catch(() => { showSignalRBanner(); });
@@ -69,7 +75,7 @@ export function joinAuctionGroup(auctionId) {
 
   startIfNeeded().then(() => {
     const conn = getConnection();
-    if (conn.state === signalR.HubConnectionState.Connected) {
+    if (conn?.state === HubConnectionState?.Connected) {
       conn.invoke("JoinAuctionGroup", auctionId).catch(() => { /* connection may not be ready */ });
     }
   });
@@ -81,14 +87,14 @@ export function leaveAuctionGroup(auctionId) {
   _joinedGroups.delete(auctionId);
 
   if (!_connection) return;
-  if (_connection.state === signalR.HubConnectionState.Connected) {
+  if (_connection.state === HubConnectionState?.Connected) {
     _connection.invoke("LeaveAuctionGroup", auctionId).catch(() => { /* connection may not be ready */ });
   }
 }
 
 export function isSignalRConnected() {
-  if (!_connection || !signalR) return false;
-  return _connection.state === signalR.HubConnectionState.Connected;
+  if (!_connection || !HubConnectionState) return false;
+  return _connection.state === HubConnectionState.Connected;
 }
 
 export function stopSignalR() {
