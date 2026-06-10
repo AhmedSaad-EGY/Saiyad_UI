@@ -11,7 +11,7 @@ setupGlobalErrorHandlers();
 initOcean();
 
 // Initialize CSRF token from backend (sets XSRF-TOKEN cookie via Antiforgery)
-fetch('/api/antiforgery/token', { credentials: 'include' }).catch(() => {});
+fetch('https://sayiad.runasp.net/api/antiforgery/token', { credentials: 'include' }).catch(() => {});
 
 setNavbarDeps({
   fetchCartCount,
