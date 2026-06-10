@@ -35,7 +35,7 @@
  * is complete.  Doing so will INSTANTLY break every page that
  * uses Alpine reactivity.
  */
-import Alpine from 'alpinejs';
+import Alpine from '@alpinejs/csp';
 import '../shared/stores/cart.store.js';
 import '../shared/stores/ui.store.js';
 import '../shared/stores/wallet.store.js';

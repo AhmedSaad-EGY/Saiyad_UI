@@ -8,7 +8,7 @@ const _pendingRequests = new Map();
 let _cachedAccessToken = sessionStorage.getItem(KEYS.ACCESS_TOKEN) || null;
 
 export function getAccessToken() {
-  return _cachedAccessToken || localStorage.getItem(KEYS.ACCESS_TOKEN);
+  return _cachedAccessToken;
 }
 
 export function setAccessToken(token) {
@@ -57,6 +57,7 @@ async function request(endpoint, options = {}) {
     res = await fetch(`${APP_CONFIG.apiBaseUrl}${endpoint}`, {
       ...fetchOptions,
       headers,
+      credentials: "include",
       signal: signal || undefined,
     });
   } catch {
@@ -136,6 +137,7 @@ async function doUpload(url, formData) {
     res = await fetch(`${APP_CONFIG.apiBaseUrl}${url}`, {
       method: "POST",
       headers,
+      credentials: "include",
       body: formData,
     });
   } catch {
@@ -178,18 +180,15 @@ async function refreshAccessToken() {
 }
 
 async function _doRefresh() {
-  const refreshToken = localStorage.getItem(KEYS.REFRESH_TOKEN);
-  if (!refreshToken) return false;
   try {
     const res = await fetch(`${APP_CONFIG.apiBaseUrl}/auth/refresh`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ refreshToken }),
+      credentials: "include",
     });
     if (!res.ok) throw new Error("Refresh failed");
     const data = await parseResponse(res);
     setAccessToken(data.token);
-    localStorage.setItem(KEYS.REFRESH_TOKEN, data.refreshToken);
     return true;
   } catch {
     clearTokens();
