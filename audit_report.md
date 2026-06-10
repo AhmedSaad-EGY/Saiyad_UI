@@ -3,7 +3,7 @@
 **Date:** 2026-06-11
 **Scope:** 263 files (152 frontend + 111 backend)
 **Findings:** 95 defects (18 CRITICAL, 39 HIGH, 25 MEDIUM, 13 LOW)
-**Strike 3:** 9 fixed — 74 remaining
+**Strike 4:** 15 fixed — 63 remaining
 
 ---
 
@@ -46,6 +46,28 @@
 
 ---
 
+## Strike 4 — Completed (2026-06-11)
+
+| Issue | Fix | File:Line |
+|-------|-----|-----------|
+| F-021 | Replaced `innerHTML` for 404 page with `document.createElement` + `textContent` + `appendChild` | `router.js` |
+| F-022 | Replaced `innerHTML` for SW update banner with DOM methods | `sw.js` |
+| F-023 | Replaced `innerHTML` for swipe-back indicator with DOM methods | `swipe-back.js` |
+| F-024 | Replaced `innerHTML` for tour overlay with DOM methods | `tour.js` |
+| F-025 | Replaced `innerHTML` for offline/online banners with DOM methods | `offline.js` |
+| F-026 | Replaced `innerHTML` for SignalR reconnection banner with DOM methods | `realtime.js` |
+| F-027 | Replaced `innerHTML` for theme toggle icon with DOM methods | `theme.js` |
+| F-047 | Removed `onclick="event.stopPropagation()"` (redundant) | `render-plans.js:16` |
+| F-048 | Replaced `onclick` with `addEventListener` via `close()` ref | `product-card.js:71-72` |
+| F-049 | Replaced `onclick` with `addEventListener` via ID | `product-detail.js:116` |
+| F-050 | Replaced `onclick` with `addEventListener` via DOM methods | `loader.js:27-28` |
+| F-051 | Replaced `onclick="loadWalletTransactions()"` with ID-based `addEventListener` | `render-transactions.js:50`, `wallet.js` |
+| F-018 | Wrapped `async` logout handler in `try-catch` | `navbar.js:73-80` |
+| F-019 | Added `.catch()` to both `router()` call sites | `router.js` |
+| F-020 | Wrapped `setTimeout` async callback in `try-catch` | `router.js` |
+
+---
+
 ## Consolidated Defect Table
 
 | Issue ID | Layer | File Path | Line | Exact Technical Defect | Severity | Status |
@@ -80,16 +102,16 @@
 | F-015 | Frontend | `src/features/cart/index.js` | 186 | CSP violation: `deleteEl.innerHTML = '<i class="fas fa-trash-alt"></i>'` | CRITICAL | ✅ Fixed |
 | F-016 | Frontend | `src/features/seller-profile/index.js` | 8 | PascalCase query params: `SellerId`, `PageSize`, `Page` sent as-is — should be camelCase `sellerId`, `pageSize`, `page` | CRITICAL | ✅ Fixed |
 | F-017 | Frontend | `src/app/global-ui.js` | 28-41 | `async` click handler for `.quick-add-btn` — `await requireAuth()` outside `try-catch`; unhandled rejection | CRITICAL | ✅ Fixed |
-| F-018 | Frontend | `src/app/navbar.js` | 73-80 | `async` click handler for `#logoutBtn` — `await showConfirm()` outside `try-catch`; unhandled rejection | HIGH | Open |
-| F-019 | Frontend | `src/app/router.js` | 59, 216, 217 | `async router()` returns promise — called from `hashchange` and top-level without `.catch()` | HIGH | Open |
-| F-020 | Frontend | `src/app/router.js` | 174 | `setTimeout(async () => {...}, 200)` — async callback promise never caught | HIGH | Open |
-| F-021 | Frontend | `src/app/router.js` | 85-100 | CSP + XSS: `innerHTML` with unescaped `${t(...)}` interpolations + inline `style` attributes | HIGH | Open |
-| F-022 | Frontend | `src/app/sw.js` | 47-65 | CSP + XSS: `innerHTML` with unescaped `${t('common.dismiss')}` + inline `style` attributes | HIGH | Open |
-| F-023 | Frontend | `src/app/swipe-back.js` | 17 | CSP: `innerHTML` with unescaped `${t('common.back')}` | HIGH | Open |
-| F-024 | Frontend | `src/app/tour.js` | 15-26 | CSP + XSS: `innerHTML` with unescaped `${t(...)}` and step data | HIGH | Open |
-| F-025 | Frontend | `src/app/offline.js` | 13, 27 | CSP: `innerHTML` with unescaped translation strings | HIGH | Open |
-| F-026 | Frontend | `src/app/realtime.js` | 117 | CSP: `innerHTML` for reconnection banner | HIGH | Open |
-| F-027 | Frontend | `src/app/theme.js` | 18 | CSP: `innerHTML` for theme toggle icon | HIGH | Open |
+| F-018 | Frontend | `src/app/navbar.js` | 73-80 | `async` click handler for `#logoutBtn` — `await showConfirm()` outside `try-catch`; unhandled rejection | HIGH | ✅ Fixed |
+| F-019 | Frontend | `src/app/router.js` | 59, 216, 217 | `async router()` returns promise — called from `hashchange` and top-level without `.catch()` | HIGH | ✅ Fixed |
+| F-020 | Frontend | `src/app/router.js` | 174 | `setTimeout(async () => {...}, 200)` — async callback promise never caught | HIGH | ✅ Fixed |
+| F-021 | Frontend | `src/app/router.js` | 85-100 | CSP + XSS: `innerHTML` with unescaped `${t(...)}` interpolations + inline `style` attributes | HIGH | ✅ Fixed |
+| F-022 | Frontend | `src/app/sw.js` | 47-65 | CSP + XSS: `innerHTML` with unescaped `${t('common.dismiss')}` + inline `style` attributes | HIGH | ✅ Fixed |
+| F-023 | Frontend | `src/app/swipe-back.js` | 17 | CSP: `innerHTML` with unescaped `${t('common.back')}` | HIGH | ✅ Fixed |
+| F-024 | Frontend | `src/app/tour.js` | 15-26 | CSP + XSS: `innerHTML` with unescaped `${t(...)}` and step data | HIGH | ✅ Fixed |
+| F-025 | Frontend | `src/app/offline.js` | 13, 27 | CSP: `innerHTML` with unescaped translation strings | HIGH | ✅ Fixed |
+| F-026 | Frontend | `src/app/realtime.js` | 117 | CSP: `innerHTML` for reconnection banner | HIGH | ✅ Fixed |
+| F-027 | Frontend | `src/app/theme.js` | 18 | CSP: `innerHTML` for theme toggle icon | HIGH | ✅ Fixed |
 | F-028 | Frontend | `src/shared/api/client.js` | 8 | Stale `_cachedAccessToken` on new tab — `sessionStorage` not shared across tabs, no re-hydration | HIGH | Open |
 | F-029 | Frontend | `src/shared/api/client.js` | 130-158 | `doUpload()` lacks 401 retry — upload fails hard on session expiry; no `_retry` logic | HIGH | Open |
 | F-030 | Frontend | `src/shared/utils/auth-state.js` | 20-22 | `isAuthenticated()` returns `true` for tokens with falsy `exp` (epoch-0 or missing `exp`) | HIGH | Open |
@@ -109,11 +131,11 @@
 | F-044 | Frontend | `src/pages/dashboard.js` | 12 | Global `dashboard-tab-changed` event listener never removed — registers each navigation | HIGH | Open |
 | F-045 | Frontend | `src/pages/profile.js` | 23-28 | Alpine template references `completionPercent` — never defined on `profilePage` component; renders `NaN%` | HIGH | Open |
 | F-046 | Frontend | `src/widgets/profile/render-stats.js` | 11 | Alpine template references `stats.key` — `stats` object never defined on `profilePage` | HIGH | Open |
-| F-047 | Frontend | `src/widgets/admin/render-plans.js` | 16 | CSP: `onclick="event.stopPropagation()"` inline handler in HTML attribute | HIGH | Open |
-| F-048 | Frontend | `src/widgets/cards/product-card.js` | 71-72 | CSP: `onclick="..."` inline handlers in modal overlay HTML | HIGH | Open |
-| F-049 | Frontend | `src/pages/product-detail.js` | 116 | CSP: `onclick="..."` inline handler in createModal HTML | HIGH | Open |
-| F-050 | Frontend | `src/widgets/ui/loader.js` | 27-28 | CSP: `onclick` inline handlers for hash redirect and page reload | HIGH | Open |
-| F-051 | Frontend | `src/widgets/wallet/render-transactions.js` | 50 | CSP: `onclick="loadWalletTransactions()"` inline handler | HIGH | Open |
+| F-047 | Frontend | `src/widgets/admin/render-plans.js` | 16 | CSP: `onclick="event.stopPropagation()"` inline handler in HTML attribute | HIGH | ✅ Fixed |
+| F-048 | Frontend | `src/widgets/cards/product-card.js` | 71-72 | CSP: `onclick="..."` inline handlers in modal overlay HTML | HIGH | ✅ Fixed |
+| F-049 | Frontend | `src/pages/product-detail.js` | 116 | CSP: `onclick="..."` inline handler in createModal HTML | HIGH | ✅ Fixed |
+| F-050 | Frontend | `src/widgets/ui/loader.js` | 27-28 | CSP: `onclick` inline handlers for hash redirect and page reload | HIGH | ✅ Fixed |
+| F-051 | Frontend | `src/widgets/wallet/render-transactions.js` | 50 | CSP: `onclick="loadWalletTransactions()"` inline handler | HIGH | ✅ Fixed |
 | F-052 | Frontend | `src/widgets/auction-detail/render-main.js` | 166 | CSP: `x-html="bidAlert"` — unsanitized HTML from component state via Alpine | HIGH | ✅ Fixed |
 | F-053 | Frontend | `src/widgets/checkout/render-checkout-form.js` | 165 | CSP: `x-html="alert"` — unsanitized HTML from component state via Alpine | HIGH | ✅ Fixed |
 | F-054 | Frontend | `src/widgets/admin/render-admin-products.js` | 47 | Duplicate `class` attribute on `<select>` — second overwrites first, losing `product-status-select` | HIGH | Open |
@@ -166,14 +188,14 @@
 | Severity | Original | Fixed | Remaining |
 |----------|----------|-------|-----------|
 | CRITICAL | 18 | 15 | 3 |
-| HIGH | 39 | 2 | 37 |
+| HIGH | 39 | 17 | 22 |
 | MEDIUM | 25 | 0 | 25 |
 | LOW | 13 | 0 | 13 |
-| **Total** | **95** | **17** | **78** |
+| **Total** | **95** | **32** | **63** |
 
-## Top 3 Systemic Issues (Post-Strike-3)
+## Top 3 Systemic Issues (Post-Strike-4)
 
-1. **CSP-x-html contamination** — 10+ remaining `innerHTML` violations (F-021–F-027); 5 inline `onclick` handlers (F-047–F-051). The app imports `@alpinejs/csp` but most rendering bypasses it. *(Strike 2: 6 items fixed. Strike 3: 3 items fixed: F-013, F-014, F-015)*
+1. **CSP-x-html contamination** — All `innerHTML` violations and inline `onclick` handlers in `src/app/` (F-021–F-027) and `src/widgets/` (F-047–F-051) eliminated. Remaining ~130 `innerHTML` uses are in feature/page files outside targeted scope. *(Strike 2: 6 fixed. Strike 3: 3 fixed. Strike 4: 12 fixed)*
 
 2. **Backend contract gaps** — `RegisterRequest` silently drops `birthdate`/`confirmPassword`; `AuthResponse.Token` serializes as `"token"` but frontend dead-branch already fixed; CSRF `/api/api/` URL already fixed; registration role hard-locked. *(3 of 4 items resolved)*
 
