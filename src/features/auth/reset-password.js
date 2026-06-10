@@ -3,7 +3,7 @@ import { getPasswordStrengthResult } from '../../shared/utils/validation.js';
 import { showToast } from '../../shared/utils/ui.js';
 import { t } from '../../shared/utils/i18n.js';
 import { registerRouteCleanup } from '../../shared/utils/events.js';
-import Alpine from 'alpinejs';
+import Alpine from '@alpinejs/csp';
 
 Alpine.data('forgotPwPage', () => ({
   step: 1, email: '', code: '', newPassword: '', confirmPassword: '',

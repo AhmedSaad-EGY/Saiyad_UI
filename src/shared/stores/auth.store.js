@@ -1,4 +1,4 @@
-import Alpine from 'alpinejs';
+import Alpine from '@alpinejs/csp';
 import { getUser, isAuthenticated, getRoleFromToken } from '../utils/auth-state.js';
 
 Alpine.store('auth', {

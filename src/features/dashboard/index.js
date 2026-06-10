@@ -1,4 +1,4 @@
-import Alpine from 'alpinejs';
+import Alpine from '@alpinejs/csp';
 import { t } from '../../shared/utils/i18n.js';
 import { setPageMeta } from '../../shared/utils/seo.js';
 import { showToast } from '../../shared/utils/ui.js';

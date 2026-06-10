@@ -1,4 +1,4 @@
-import Alpine from 'alpinejs';
+import Alpine from '@alpinejs/csp';
 
 Alpine.store('cart', {
   count: 0,

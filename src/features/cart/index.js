@@ -1,4 +1,4 @@
-import Alpine from 'alpinejs';
+import Alpine from '@alpinejs/csp';
 import { t } from '../../shared/utils/i18n.js';
 import { api } from '../../shared/api/client.js';
 import { getCartItemCount, syncCartBadgeCount } from '../../shared/utils/ui.js';

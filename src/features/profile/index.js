@@ -6,7 +6,7 @@ import { showToast, showConfirm } from '../../shared/utils/ui.js';
 import { observeAnimations } from '../../shared/utils/dom.js';
 import { setPageMeta } from '../../shared/utils/seo.js';
 import { KEYS } from '../../shared/constants/storage-keys.js';
-import Alpine from 'alpinejs';
+import Alpine from '@alpinejs/csp';
 
 export async function fetchProfileStats() {
   const s = {

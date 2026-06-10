@@ -6,7 +6,7 @@ import { t } from '../../shared/utils/i18n.js';
 import { isAuthenticated } from '../../shared/utils/auth-state.js';
 import { routes } from '../../app/route-map.js';
 import { KEYS } from '../../shared/constants/storage-keys.js';
-import Alpine from 'alpinejs';
+import Alpine from '@alpinejs/csp';
 export { getUser, isAuthenticated, getRoleFromToken, hasRole, hasAnyRole } from '../../shared/utils/auth-state.js';
 
 export async function requireAuth() {

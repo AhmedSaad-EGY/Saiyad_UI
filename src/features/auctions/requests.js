@@ -1,4 +1,4 @@
-import Alpine from 'alpinejs';
+import Alpine from '@alpinejs/csp';
 import { t } from '../../shared/utils/i18n.js';
 import { getUser } from '../auth/login.js';
 import { clearFieldError, validateForm } from '../../shared/utils/validation.js';

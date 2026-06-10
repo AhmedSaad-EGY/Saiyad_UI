@@ -7,7 +7,7 @@ import { emit } from '../../shared/utils/events.js';
 import { KEYS } from '../../shared/constants/storage-keys.js';
 import { syncVipAttribute } from './login.js';
 import { registerRouteCleanup } from '../../shared/utils/events.js';
-import Alpine from 'alpinejs';
+import Alpine from '@alpinejs/csp';
 
 Alpine.data('registerForm', () => ({
   fullName: '', email: '', phone: '', birthdate: '', password: '',

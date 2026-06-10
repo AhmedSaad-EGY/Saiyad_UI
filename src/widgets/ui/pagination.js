@@ -1,5 +1,5 @@
 import { t } from '../../shared/utils/i18n.js';
-import Alpine from 'alpinejs';
+import Alpine from '@alpinejs/csp';
 
 Alpine.data('pagination', ({ page, totalPages, onPageChange } = {}) => ({
   currentPage: page || 1,

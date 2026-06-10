@@ -5,7 +5,7 @@ import { showFieldError, clearFieldError, clearAllFieldErrors } from '../../shar
 import { formatPrice } from '../../shared/utils/format.js';
 import { triggerConfetti } from '../../shared/utils/ui.js';
 import { setPageMeta } from '../../shared/utils/seo.js';
-import Alpine from 'alpinejs';
+import Alpine from '@alpinejs/csp';
 
 export function createPaymentReference(prefix = 'PAY') {
   return `${prefix}-${crypto.randomUUID()}`;
