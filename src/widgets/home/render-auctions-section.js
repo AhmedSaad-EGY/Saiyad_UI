@@ -44,5 +44,30 @@ export function renderAuctionsSection() {
       <h3>${t("home.noAuctions")}</h3>
     </div>
 
-    <div x-show="!loading && recentlyViewedHtml" x-html="recentlyViewedHtml"></div>`;
+    <template x-if="recentlyViewed.length">
+      <div>
+        <div class="section-header section-header-offset animate-on-scroll">
+          <h2><i class="fas fa-history"></i> ${t('common.recentlyViewed')}</h2>
+        </div>
+        <div class="recently-viewed-strip">
+          <template x-for="v in recentlyViewed" :key="v.id">
+            <a :href="v.href" class="recently-viewed-item" :title="v.title">
+              <template x-if="v.image">
+                <img :src="v.image" :alt="v.title" loading="lazy">
+              </template>
+              <template x-if="!v.image">
+                <div class="recently-viewed-img-fallback"><i class="fas fa-image"></i></div>
+              </template>
+              <div class="recently-viewed-info">
+                <span class="recently-viewed-title" x-text="v.title"></span>
+                <span x-show="v.price != null" class="recently-viewed-price" x-text="formatPrice(v.price)"></span>
+                <span class="recently-viewed-type text-muted text-uppercase">
+                  <i :class="'fas ' + v.icon"></i> <span x-text="v.typeLabel"></span>
+                </span>
+              </div>
+            </a>
+          </template>
+        </div>
+      </div>
+    </template>`;
 }

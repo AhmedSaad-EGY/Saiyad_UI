@@ -8,38 +8,18 @@ import { formatPrice, statusClass, tStatus } from '../../shared/utils/format.js'
 import { getRecentlyViewed } from '../../shared/utils/recently-viewed.js';
 export { trackRecentlyViewed, getRecentlyViewed } from '../../shared/utils/recently-viewed.js';
 
-function buildRecentlyViewedHtml() {
+function buildRecentlyViewedItems() {
   const viewed = getRecentlyViewed();
-  if (!viewed.length) return '';
-
-  const items = viewed
-    .map((v) => {
-      const href = v.type === 'auction' ? `#/auction-detail?id=${v.id}` : `#/product-detail?id=${v.id}`;
-      const icon = v.type === 'auction' ? 'fa-gavel' : 'fa-tag';
-      const typeLabel = v.type === 'auction' ? t('nav.auctions') : t('nav.products');
-      const thumb = v.image
-        ? `<img src="${v.image}" alt="${escapeHtml(v.title)}" loading="lazy">`
-        : `<div class="recently-viewed-img-fallback"><i class="fas fa-image" aria-hidden="true"></i></div>`;
-
-      return `
-      <a href="${href}" class="recently-viewed-item" title="${escapeHtml(v.title)}">
-        ${thumb}
-        <div class="recently-viewed-info">
-          <span class="recently-viewed-title">${escapeHtml(v.title)}</span>
-          ${v.price != null ? `<span class="recently-viewed-price">${formatPrice(v.price)}</span>` : ''}
-          <span class="recently-viewed-type text-muted text-uppercase">
-            <i class="fas ${icon}" aria-hidden="true"></i> ${typeLabel}
-          </span>
-        </div>
-      </a>`;
-    })
-    .join('');
-
-  return `
-    <div class="section-header section-header-offset animate-on-scroll">
-      <h2><i class="fas fa-history" aria-hidden="true"></i> ${t('common.recentlyViewed')}</h2>
-    </div>
-    <div class="recently-viewed-strip">${items}</div>`;
+  if (!viewed.length) return [];
+  return viewed.map((v) => ({
+    id: v.id,
+    title: v.title,
+    image: v.image || null,
+    price: v.price != null ? v.price : null,
+    href: v.type === 'auction' ? `#/auction-detail?id=${v.id}` : `#/product-detail?id=${v.id}`,
+    icon: v.type === 'auction' ? 'fa-gavel' : 'fa-tag',
+    typeLabel: v.type === 'auction' ? t('nav.auctions') : t('nav.products'),
+  }));
 }
 
 Alpine.data('homePage', () => ({
@@ -49,7 +29,7 @@ Alpine.data('homePage', () => ({
   auctions: [],
   roleLinks: [],
   isAuth: false,
-  recentlyViewedHtml: '',
+  recentlyViewed: [],
 
   async init() {
     this.isAuth = isAuthenticated();
@@ -88,7 +68,7 @@ Alpine.data('homePage', () => ({
       this.error = err.message || t('common.error');
     } finally {
       this.loading = false;
-      this.recentlyViewedHtml = buildRecentlyViewedHtml();
+      this.recentlyViewed = buildRecentlyViewedItems();
       this.$nextTick(() => observeAnimations());
     }
   },

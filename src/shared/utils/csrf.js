@@ -12,6 +12,8 @@
  * emit the XSRF-TOKEN cookie via AddAntiforgery(). See BACKEND_FIXES.md.
  */
 
+import { APP_CONFIG } from '../api/config.js';
+
 const STORAGE_KEY = 'sayiad_csrf_token';
 
 function readCookie() {
@@ -46,7 +48,7 @@ export async function ensureCsrfToken() {
   const existing = getCsrfToken();
   if (existing) return existing;
   try {
-    const res = await fetch('/api/antiforgery/token', { credentials: 'include' });
+    const res = await fetch(`${APP_CONFIG.apiBaseUrl}/api/antiforgery/token`, { credentials: 'include' });
     if (!res.ok) return null;
     const cookie = readCookie();
     if (cookie) sessionStorage.setItem(STORAGE_KEY, cookie);

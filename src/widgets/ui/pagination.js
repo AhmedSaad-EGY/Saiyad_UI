@@ -32,7 +32,7 @@ Alpine.data('pagination', ({ page, totalPages, onPageChange } = {}) => ({
 export function alpinePaginationHtml() {
   return `
     <div class="d-flex align-items-center justify-content-center gap-2 mt-4"
-         x-data="pagination({ page, totalPages, onPageChange: goToPage })">
+         x-data="pagination({ page: page, totalPages: totalPages, onPageChange: goToPage })">
       <template x-for="p in pages" :key="p">
         <span>
           <button x-show="p !== '...'"

@@ -64,7 +64,7 @@ export function renderAuctionGrid() {
       <button class="btn btn-primary mt-3" @click="resetFilters()">${t('common.clearFilters')}</button>
     </div>
 
-    <div x-show="!loading && auctions.length" x-data="pagination({ page, totalPages, onPageChange: goToPage })">
+    <div x-show="!loading && auctions.length" x-data="pagination({ page: page, totalPages: totalPages, onPageChange: goToPage })">
       <div class="d-flex align-items-center justify-content-center gap-2 mt-4">
         <template x-for="p in pages" :key="p">
           <span>
