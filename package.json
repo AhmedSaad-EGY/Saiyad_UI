@@ -15,7 +15,8 @@
   },
   "dependencies": {
     "alpinejs": "^3.14.8",
-    "bootstrap": "^5.3.8"
+    "bootstrap": "^5.3.8",
+    "dompurify": "^3.4.8"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

@@ -375,18 +375,14 @@ export function manageFocus(container, announcement) {
  * ALWAYS use safeSetHTML() instead of element.innerHTML = userContent
  * for any content received from the API or typed by a user.
  */
+import DOMPurify from 'dompurify';
+
 export function safeSetHTML(element, htmlString) {
   if (!element) return;
-  if (typeof DOMPurify !== 'undefined') {
-    element.innerHTML = DOMPurify.sanitize(htmlString, {
+  element.innerHTML = DOMPurify.sanitize(htmlString, {
       ALLOWED_TAGS: ['b','i','em','strong','a','br','p','span','ul','ol','li','div','small','h1','h2','h3','h4','h5','h6','section','nav','header','footer','main','aside','figure','figcaption','table','thead','tbody','tfoot','tr','th','td','caption','col','colgroup','form','button','input','label','select','option','textarea','img','video','source','hr','pre','code','blockquote','cite','q','dl','dt','dd','sub','sup','time','mark','ins','del','s','u','abbr'],
       ALLOWED_ATTR: ['href','target','rel','class','id','src','alt','title','width','height','style','data-*','aria-*','role','type','name','value','placeholder','min','max','step','disabled','checked','selected','readonly','for','action','method','enctype','autocomplete','novalidate','colspan','rowspan','scope','headers']
-    });
-  } else {
-    const d = document.createElement('div');
-    d.textContent = typeof htmlString === 'string' ? htmlString : '';
-    element.textContent = d.textContent;
-  }
+  });
 }
 
 export function animate(el, animation, opts = {}) {
