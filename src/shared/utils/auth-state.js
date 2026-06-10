@@ -7,11 +7,11 @@ export function getUser() {
 }
 
 export function isAuthenticated() {
-  return !!localStorage.getItem(KEYS.ACCESS_TOKEN);
+  return !!sessionStorage.getItem(KEYS.ACCESS_TOKEN);
 }
 
 export function getRoleFromToken() {
-  const token = localStorage.getItem(KEYS.ACCESS_TOKEN);
+  const token = sessionStorage.getItem(KEYS.ACCESS_TOKEN);
   if (!token) return null;
   try {
     const payload = JSON.parse(atob(token.split('.')[1]));

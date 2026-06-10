@@ -15,7 +15,7 @@ function getConnection() {
   if (_connection) return _connection;
   _connection = new signalR.HubConnectionBuilder()
     .withUrl(APP_CONFIG.signalrHubUrl, {
-      accessTokenFactory: () => localStorage.getItem(KEYS.ACCESS_TOKEN) || "",
+      accessTokenFactory: () => sessionStorage.getItem(KEYS.ACCESS_TOKEN) || "",
     })
     .withAutomaticReconnect([0, 2000, 5000, 10000, 20000, 30000])
     .configureLogging(signalR.LogLevel.Warning)
@@ -53,7 +53,7 @@ function getConnection() {
 }
 
 export function startIfNeeded() {
-  if (!localStorage.getItem(KEYS.ACCESS_TOKEN)) return Promise.resolve();
+  if (!sessionStorage.getItem(KEYS.ACCESS_TOKEN)) return Promise.resolve();
   if (_connectionPromise) return _connectionPromise;
   const conn = getConnection();
   _connectionPromise = conn.start()

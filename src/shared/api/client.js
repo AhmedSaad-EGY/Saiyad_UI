@@ -5,7 +5,7 @@ import { KEYS } from '../constants/storage-keys.js';
 
 const _pendingRequests = new Map();
 
-let _cachedAccessToken = localStorage.getItem(KEYS.ACCESS_TOKEN) || null;
+let _cachedAccessToken = sessionStorage.getItem(KEYS.ACCESS_TOKEN) || null;
 
 export function getAccessToken() {
   return _cachedAccessToken || localStorage.getItem(KEYS.ACCESS_TOKEN);
@@ -13,13 +13,13 @@ export function getAccessToken() {
 
 export function setAccessToken(token) {
   _cachedAccessToken = token;
-  if (token) localStorage.setItem(KEYS.ACCESS_TOKEN, token);
-  else localStorage.removeItem(KEYS.ACCESS_TOKEN);
+  if (token) sessionStorage.setItem(KEYS.ACCESS_TOKEN, token);
+  else sessionStorage.removeItem(KEYS.ACCESS_TOKEN);
 }
 
 export function clearTokens() {
   _cachedAccessToken = null;
-  localStorage.removeItem(KEYS.ACCESS_TOKEN);
+  sessionStorage.removeItem(KEYS.ACCESS_TOKEN);
   localStorage.removeItem(KEYS.REFRESH_TOKEN);
   localStorage.removeItem(KEYS.USER);
 }
