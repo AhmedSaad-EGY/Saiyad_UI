@@ -4,6 +4,7 @@ import { clearCsrfToken } from '../../shared/utils/csrf.js';
 import { showToast } from '../../shared/utils/ui.js';
 import { t } from '../../shared/utils/i18n.js';
 import { isAuthenticated } from '../../shared/utils/auth-state.js';
+import { routes } from '../../app/route-map.js';
 import { KEYS } from '../../shared/constants/storage-keys.js';
 import Alpine from 'alpinejs';
 export { getUser, isAuthenticated, getRoleFromToken, hasRole, hasAnyRole } from '../../shared/utils/auth-state.js';
@@ -55,7 +56,10 @@ Alpine.data('loginForm', () => ({
       emit('auth:changed');
       syncVipAttribute().catch(() => {});
       const redirect = new URLSearchParams(window.location.hash.split('?')[1] || '').get('redirect') || '';
-      window.location.hash = redirect ? `#/${redirect}` : '#/';
+      const redirectPath = redirect.split('?')[0].replace(/^\//, '');
+      window.location.hash = redirectPath && routes[redirectPath]
+        ? `#/${redirect}`
+        : '#/';
     } catch (err) {
       if (err.message && err.message.includes('verify')) {
         this.unverifiedEmail = this.email;

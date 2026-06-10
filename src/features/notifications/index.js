@@ -13,18 +13,20 @@ export async function fetchNotifications(pageSize = 50) {
 }
 
 export function normalizeNotifications(data) {
-  const source =
-    Array.isArray(data) ? data
-      : Array.isArray(data?.items) ? data.items
-        : Array.isArray(data?.data) ? data.data
-          : Array.isArray(data?.data?.items) ? data.data.items
-            : Array.isArray(data?.data?.data) ? data.data.data
-              : Array.isArray(data?.notifications) ? data.notifications
-                : Array.isArray(data?.results) ? data.results
-                  : Array.isArray(data?.value) ? data.value
-                    : [];
+  const source = Array.isArray(data)
+    ? data
+    : Array.isArray(data?.items)
+      ? data.items
+      : Array.isArray(data?.data)
+        ? data.data
+        : null;
 
-  return source.map((n) => {
+  if (source === null && data) {
+    console.warn('[notifications] Unexpected API response shape — expected array, { items }, or { data }', data);
+    return [];
+  }
+
+  return (source || []).map((n) => {
     const id = n.id ?? n.notificationId ?? n.notificationID ?? '';
     const isRead = Boolean(n.isRead ?? n.read ?? n.readAt ?? n.readOn ?? n.dateRead);
     const title = n.title ?? n.subject ?? n.type ?? t('notif.title');
