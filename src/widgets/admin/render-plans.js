@@ -13,7 +13,7 @@ export function showFormModal(title, html, onSave, options = {}) {
   overlay.setAttribute("aria-modal", "true");
   overlay.setAttribute("aria-label", title);
   overlay.innerHTML = `
-    <div class="modal mw-xl" onclick="event.stopPropagation()">
+    <div class="modal mw-xl">
       <div class="modal-header"><h3>${title}</h3></div>
       <div class="modal-body p-3">${html}</div>
       <div class="modal-actions d-flex gap-2 justify-content-end p-3 pt-2 border-divider-top">

@@ -21,9 +21,9 @@ export function showAuctionModal(productId, productTitle, opts = {}) {
   const needsProductPicker = !productId;
 
   overlay.innerHTML = `
-    <div class="modal mw-md" onclick="event.stopPropagation()">
+    <div class="modal mw-md">
       <h3><i class="fas fa-gavel" aria-hidden="true"></i> ${t("auctions.title")}${productTitle ? ` — ${escapeHtml(productTitle)}` : ""}</h3>
-      <div id="auctionModalAlert"></div>
+      <div id="auctionModalAlert" role="alert"></div>
       <form id="auctionModalForm" novalidate>
         ${needsProductPicker ? `
         <div class="form-group">
@@ -50,7 +50,7 @@ export function showAuctionModal(productId, productTitle, opts = {}) {
         </div>
         <div class="modal-actions">
           <button type="button" class="btn btn-ghost" id="auctionModalCancel">${t("common.cancel")}</button>
-          <button type="submit" class="btn btn-primary" id="auctionModalSubmit"><i class="fas fa-gavel" aria-hidden="true"></i> ${t("auctions.title")}</button>
+          <button type="submit" class="btn btn-primary" id="auctionModalSubmit"><i class="fas fa-gavel" aria-hidden="true"></i><i class="fas fa-spinner spinner d-none" id="submitSpinner" aria-hidden="true"></i><span id="submitText">${t("auctions.title")}</span></button>
         </div>
       </form>
     </div>
@@ -64,10 +64,23 @@ export function showAuctionModal(productId, productTitle, opts = {}) {
   if (needsProductPicker && onFetchUnauctionedProducts) {
     const select = document.getElementById("auctionProductSelect");
     onFetchUnauctionedProducts().then(items => {
-      select.innerHTML = `<option value="">-- ${t("common.select")} --</option>${
-         items.map(p => `<option value="${p.id}">${escapeHtml(p.title)} - ${formatPrice(p.price)}</option>`).join("")}`;
+      select.textContent = "";
+      const def = document.createElement("option");
+      def.value = "";
+      def.textContent = `-- ${t("common.select")} --`;
+      select.appendChild(def);
+      items.forEach(p => {
+        const opt = document.createElement("option");
+        opt.value = p.id;
+        opt.textContent = `${p.title} - ${formatPrice(p.price)}`;
+        select.appendChild(opt);
+      });
     }).catch(() => {
-      select.innerHTML = `<option value="">${t("common.error")}</option>`;
+      select.textContent = "";
+      const errOpt = document.createElement("option");
+      errOpt.value = "";
+      errOpt.textContent = t("common.error");
+      select.appendChild(errOpt);
     });
   }
 
@@ -86,9 +99,12 @@ export function showAuctionModal(productId, productTitle, opts = {}) {
     e.preventDefault();
     const submit = document.getElementById("auctionModalSubmit");
     const alertDiv = document.getElementById("auctionModalAlert");
-    alertDiv.innerHTML = "";
+    alertDiv.textContent = "";
     submit.disabled = true;
-    submit.innerHTML = `<i class="fas fa-spinner spinner" aria-hidden="true"></i> ${t("auction.placingBid")}`;
+    submit.querySelector(".fa-gavel").style.display = "none";
+    document.getElementById("submitSpinner").classList.remove("d-none");
+    document.getElementById("submitSpinner").removeAttribute("style");
+    document.getElementById("submitText").textContent = t("auction.placingBid");
 
     try {
       const selectedId = needsProductPicker
@@ -107,10 +123,13 @@ export function showAuctionModal(productId, productTitle, opts = {}) {
       showToast(`${t("auctions.title")} started!`, "success");
       close();
     } catch (err) {
-      alertDiv.innerHTML = `<div class="alert alert-error" role="alert">${escapeHtml(err.message)}</div>`;
+      alertDiv.className = "alert alert-error";
+      alertDiv.textContent = err.message;
     } finally {
       submit.disabled = false;
-      submit.textContent = t("auctions.title");
+      submit.querySelector(".fa-gavel").style.display = "";
+      document.getElementById("submitSpinner").classList.add("d-none");
+      document.getElementById("submitText").textContent = t("auctions.title");
     }
   });
 }

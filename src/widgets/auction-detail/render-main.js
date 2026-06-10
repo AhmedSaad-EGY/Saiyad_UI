@@ -163,7 +163,7 @@ export function renderDetailMain() {
               </div>
 
               <div x-show="bidAlert" class="mt-2">
-                <div :class="'alert alert-' + bidAlertType" x-html="bidAlert"></div>
+                <div :class="'alert alert-' + bidAlertType" x-text="bidAlert"></div>
               </div>
             </div>
           </template>

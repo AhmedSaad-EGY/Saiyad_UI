@@ -5,7 +5,7 @@ export async function fetchSellerProfile(userId) {
 }
 
 export async function fetchSellerProducts(userId, pageSize = 8, page = 1) {
-  return api.get('/products', { SellerId: userId, PageSize: pageSize, Page: page });
+  return api.get('/products', { sellerId: userId, pageSize, page });
 }
 
 export async function fetchMySellerProfile() {

@@ -10,7 +10,10 @@ import { animate } from '../shared/utils/dom.js';
     if (online) {
       el.id = 'onlineBanner';
       el.className = 'online-banner';
-      el.innerHTML = `<i class="fas fa-wifi"></i> ${t('common.backOnline')}`;
+      const wifiIcon = document.createElement("i");
+      wifiIcon.className = "fas fa-wifi";
+      el.appendChild(wifiIcon);
+      el.appendChild(document.createTextNode(` ${t("common.backOnline")}`));
       setTimeout(() => {
         el.addEventListener('animationend', () => el.remove(), { once: true });
         animate(el, 'slideOutUp', { duration: '0.3s' });
@@ -20,11 +23,16 @@ import { animate } from '../shared/utils/dom.js';
     el.id = 'offlineBanner';
     el.className = 'offline-banner';
     const close = document.createElement('button');
-    close.innerHTML = '&times;';
+    close.textContent = '\u00D7';
     close.setAttribute('aria-label', 'Dismiss');
     close.className = 'sw-close-btn';
     close.addEventListener('click', () => { el.remove(); banner = null; });
-    el.innerHTML = `<i class="fas fa-plug"></i> <span>${t('common.offline')}</span>`;
+    const plugIcon = document.createElement("i");
+    plugIcon.className = "fas fa-plug";
+    el.appendChild(plugIcon);
+    const offSpan = document.createElement("span");
+    offSpan.textContent = t("common.offline");
+    el.appendChild(offSpan);
     el.appendChild(close);
     return el;
   }

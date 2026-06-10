@@ -50,6 +50,7 @@ async function loadWalletTransactions() {
     container.innerHTML = renderTransactions(extractTransactions(res));
   } catch {
     container.innerHTML = renderTransactionsError();
+    document.getElementById("txnRetryBtn")?.addEventListener("click", loadWalletTransactions);
   }
 }
 

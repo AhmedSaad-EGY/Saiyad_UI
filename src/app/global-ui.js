@@ -30,9 +30,9 @@ document.addEventListener('click', async (e) => {
   if (!btn) return;
   e.preventDefault();
   e.stopPropagation();
-  if (!(await requireAuth())) return;
-  const productId = parseInt(btn.dataset.quickAdd);
   try {
+    if (!(await requireAuth())) return;
+    const productId = parseInt(btn.dataset.quickAdd);
     await addToCart(productId, 1);
     showToast(t('product.addedToCart'), 'success');
   } catch (err) {

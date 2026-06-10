@@ -12,18 +12,50 @@ import { registerRouteCleanup } from './router.js';
   let step = 0;
   const overlay = document.createElement('div');
   overlay.className = 'tour-overlay';
-  overlay.innerHTML = `
-    <div class="tour-card">
-      <div class="tour-icon"><i class="fas ${steps[0].icon}"></i></div>
-      <h3 class="tour-title">${steps[0].title}</h3>
-      <p class="tour-desc">${steps[0].desc}</p>
-      <div class="tour-dots">${steps.map((_, i) => `<span class="tour-dot${i === 0 ? ' active' : ''}"></span>`).join('')}</div>
-      <div class="tour-actions">
-        <button class="btn btn-ghost btn-sm tour-skip">${t('common.cancel')}</button>
-        <button class="btn btn-primary btn-sm tour-next">${t('common.next')}</button>
-      </div>
-    </div>
-  `;
+  const card = document.createElement("div");
+  card.className = "tour-card";
+
+  const iconWrap = document.createElement("div");
+  iconWrap.className = "tour-icon";
+  const tIcon = document.createElement("i");
+  tIcon.className = `fas ${steps[0].icon}`;
+  iconWrap.appendChild(tIcon);
+  card.appendChild(iconWrap);
+
+  const tTitle = document.createElement("h3");
+  tTitle.className = "tour-title";
+  tTitle.textContent = steps[0].title;
+  card.appendChild(tTitle);
+
+  const tDesc = document.createElement("p");
+  tDesc.className = "tour-desc";
+  tDesc.textContent = steps[0].desc;
+  card.appendChild(tDesc);
+
+  const dots = document.createElement("div");
+  dots.className = "tour-dots";
+  steps.forEach((_, i) => {
+    const dot = document.createElement("span");
+    dot.className = `tour-dot${i === 0 ? " active" : ""}`;
+    dots.appendChild(dot);
+  });
+  card.appendChild(dots);
+
+  const actions = document.createElement("div");
+  actions.className = "tour-actions";
+
+  const skip = document.createElement("button");
+  skip.className = "btn btn-ghost btn-sm tour-skip";
+  skip.textContent = t("common.cancel");
+  actions.appendChild(skip);
+
+  const next = document.createElement("button");
+  next.className = "btn btn-primary btn-sm tour-next";
+  next.textContent = t("common.next");
+  actions.appendChild(next);
+
+  card.appendChild(actions);
+  overlay.appendChild(card);
   document.body.appendChild(overlay);
   registerRouteCleanup(() => {
     if (overlay.isConnected) overlay.remove();

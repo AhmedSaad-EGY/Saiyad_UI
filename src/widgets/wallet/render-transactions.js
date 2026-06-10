@@ -47,6 +47,6 @@ export function renderTransactionsError() {
     <div class="error-state" role="alert">
       <i class="fas fa-exclamation-circle" aria-hidden="true"></i>
       <p data-i18n="wallet.loadError">Failed to load transactions. Please try again.</p>
-      <button class="btn btn-secondary" onclick="loadWalletTransactions()" data-i18n="common.retry">Retry</button>
+      <button class="btn btn-secondary" data-i18n="common.retry" id="txnRetryBtn">Retry</button>
     </div>`;
 }

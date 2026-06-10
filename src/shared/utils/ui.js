@@ -271,22 +271,48 @@ export function openLightbox(images, startIndex = 0) {
   const render = () => {
     const total = images.length;
     const isRtl = document.documentElement.dir === "rtl";
-    lb.innerHTML = `
-      <button class="lightbox-close" aria-label="${t('common.close')}"><i class="fas fa-times"></i></button>
-      ${total > 1 ? `<button class="lightbox-nav lightbox-prev" aria-label="${t('common.previous')}"><i class="fas fa-chevron-${isRtl ? "right" : "left"}"></i></button>` : ""}
-      <img class="lightbox-img" src="${images[current]}" alt="">
-      ${total > 1 ? `<button class="lightbox-nav lightbox-next" aria-label="${t('common.next')}"><i class="fas fa-chevron-${isRtl ? "left" : "right"}"></i></button>` : ""}
-      ${total > 1 ? `<div class="lightbox-counter">${current + 1} / ${total}</div>` : ""}`;
 
-    lb.querySelector(".lightbox-close")?.addEventListener("click", close);
-    lb.querySelector(".lightbox-prev")?.addEventListener("click", () => {
-      current = (current - 1 + total) % total;
-      render();
-    });
-    lb.querySelector(".lightbox-next")?.addEventListener("click", () => {
-      current = (current + 1) % total;
-      render();
-    });
+    lb.textContent = "";
+
+    const closeBtn = document.createElement("button");
+    closeBtn.className = "lightbox-close";
+    closeBtn.setAttribute("aria-label", t("common.close"));
+    const closeI = document.createElement("i");
+    closeI.className = "fas fa-times";
+    closeBtn.appendChild(closeI);
+    closeBtn.addEventListener("click", close);
+    lb.appendChild(closeBtn);
+
+    if (total > 1) {
+      const prev = document.createElement("button");
+      prev.className = "lightbox-nav lightbox-prev";
+      prev.setAttribute("aria-label", t("common.previous"));
+      const prevI = document.createElement("i");
+      prevI.className = `fas fa-chevron-${isRtl ? "right" : "left"}`;
+      prev.appendChild(prevI);
+      prev.addEventListener("click", () => { current = (current - 1 + total) % total; render(); });
+      lb.appendChild(prev);
+
+      const next = document.createElement("button");
+      next.className = "lightbox-nav lightbox-next";
+      next.setAttribute("aria-label", t("common.next"));
+      const nextI = document.createElement("i");
+      nextI.className = `fas fa-chevron-${isRtl ? "left" : "right"}`;
+      next.appendChild(nextI);
+      next.addEventListener("click", () => { current = (current + 1) % total; render(); });
+      lb.appendChild(next);
+
+      const counter = document.createElement("div");
+      counter.className = "lightbox-counter";
+      counter.textContent = `${current + 1} / ${total}`;
+      lb.appendChild(counter);
+    }
+
+    const img = document.createElement("img");
+    img.className = "lightbox-img";
+    img.src = images[current];
+    img.alt = "";
+    lb.appendChild(img);
   };
 
   function onKey(e) {
@@ -323,8 +349,8 @@ export function openLightbox(images, startIndex = 0) {
   render();
   document.body.appendChild(lb);
   animate(lb, 'fadeIn', { duration: '0.2s' });
-  const img = lb.querySelector('.lightbox-img');
-  if (img) animate(img, 'zoomIn', { duration: '0.3s' });
+  const lightboxImg = lb.querySelector('.lightbox-img');
+  if (lightboxImg) animate(lightboxImg, 'zoomIn', { duration: '0.3s' });
   document.addEventListener("keydown", onKey);
   document.addEventListener("keydown", focusTrap);
   registerRouteCleanup(() => {

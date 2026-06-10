@@ -5,7 +5,7 @@ import { requireAuth, getUser, hasRole } from '../auth/login.js';
 import { ROLES } from '../../shared/constants/roles.js';
 import { registerRouteCleanup, navigate } from '../../app/router.js';
 import { formatPrice, formatDate, statusClass, tStatus } from '../../shared/utils/format.js';
-import { escapeHtml, observeAnimations, animate, initPullToRefresh, initInfiniteScroll } from '../../shared/utils/dom.js';
+import { observeAnimations, animate, initPullToRefresh, initInfiniteScroll } from '../../shared/utils/dom.js';
 import { triggerConfetti, showConfirm } from '../../shared/utils/ui.js';
 import { trackRecentlyViewed } from '../home/index.js';
 import { createScopedBus } from '../../shared/utils/events.js';
@@ -241,7 +241,7 @@ Alpine.data('auctionDetailPage', () => ({
       this.bidAlertType = 'success';
       setTimeout(() => this.refreshAuction(), 1000);
     } catch (e) {
-      this.bidAlert = escapeHtml(e.message);
+      this.bidAlert = e.message;
       this.bidAlertType = 'error';
     } finally {
       this.placingBid = false;

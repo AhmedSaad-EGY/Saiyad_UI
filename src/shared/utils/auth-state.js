@@ -10,7 +10,7 @@ function _decodeToken() {
   const token = sessionStorage.getItem(KEYS.ACCESS_TOKEN);
   if (!token) return null;
   try {
-    return JSON.parse(atob(token.split('.')[1]));
+    return JSON.parse(atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
   } catch { return null; }
 }
 

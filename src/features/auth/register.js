@@ -1,9 +1,8 @@
-import { api, setAccessToken } from '../../shared/api/client.js';
+import { api } from '../../shared/api/client.js';
 import { ensureCsrfToken } from '../../shared/utils/csrf.js';
 import { getPasswordStrengthResult, calculateAge, validateForm, clearAllFieldErrors } from '../../shared/utils/validation.js';
 import { showToast } from '../../shared/utils/ui.js';
 import { t } from '../../shared/utils/i18n.js';
-import { emit } from '../../shared/utils/events.js';
 import { KEYS } from '../../shared/constants/storage-keys.js';
 import Alpine from '@alpinejs/csp';
 
@@ -52,14 +51,10 @@ Alpine.data('registerForm', () => ({
         confirmPassword: this.confirmPassword, role: this.role,
         licenseNumber: this.needsLicense ? this.licenseNumber : undefined,
       });
-      if (data.accessToken) {
-        window.location.hash = '#/login?registered=1';
-      } else {
-        setAccessToken(data.token);
-        if (data.user) localStorage.setItem(KEYS.USER, JSON.stringify(data.user));
-        emit('auth:changed');
-        window.location.hash = '#/';
-      }
+      // F-007: Always redirect to login after registration — do NOT store access token
+      // (prevents auto-login for unverified accounts per HIGH-04)
+      if (data.user) localStorage.setItem(KEYS.USER, JSON.stringify(data.user));
+      window.location.hash = '#/login?registered=1';
     } catch (err) { showToast(err.message || t('auth.registerError'), 'error'); }
     finally { this.loading = false; }
   },

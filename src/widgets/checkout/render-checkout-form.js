@@ -135,7 +135,7 @@ export function renderCheckoutForm() {
                       <div class="d-flex gap-2">
                         <div style="width:40px;height:40px;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border)">
                           <div style="position:relative;width:100%;height:100%">
-                            <img :src="item.product?.primaryImageUrl || item.productImageUrl || item.imageUrl || ''" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none';var n=this.parentElement.querySelector('.fa-image');if(n)n.style.display='block'">
+                            <img :src="item.product?.primaryImageUrl || item.productImageUrl || item.imageUrl || ''" style="width:100%;height:100%;object-fit:cover" @error="imgError">
                             <i class="fas fa-image" style="display:none;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:1.2rem;color:var(--text-muted)"></i>
                           </div>
                         </div>
@@ -162,7 +162,17 @@ export function renderCheckoutForm() {
                   <span class="text-primary" x-text="formatPrice(total)"></span>
                 </div>
 
-                <div x-html="alert" x-show="alert" x-cloak></div>
+                <div x-show="alertMessage" x-cloak>
+                  <div class="alert" :class="'alert-' + alertType">
+                    <i class="fas fa-exclamation-circle" aria-hidden="true"></i>
+                    <span x-text="alertMessage"></span>
+                    <template x-if="showDepositLink">
+                      <a href="#/wallet" style="color:inherit;text-decoration:underline">
+                        <i class="fas fa-plus small" aria-hidden="true"></i> ${t('wallet.deposit')}
+                      </a>
+                    </template>
+                  </div>
+                </div>
                 <button class="btn btn-primary w-100 btn-lg mt-3" @click="placeOrder()" :disabled="placing">
                   <i class="fas fa-lock" x-show="!placing"></i>
                   <i class="fas fa-spinner spinner" x-show="placing" x-cloak></i>

@@ -14,7 +14,13 @@ import { createSwipeGesture } from '../shared/utils/swipe.js';
       indicator.id = 'swipeBackIndicator';
       indicator.setAttribute('role', 'status');
       indicator.setAttribute('aria-live', 'polite');
-      indicator.innerHTML = `<i class="fas fa-arrow-left" aria-hidden="true"></i><span>${t('common.back')}</span>`;
+      const sIcon = document.createElement("i");
+      sIcon.className = "fas fa-arrow-left";
+      sIcon.setAttribute("aria-hidden", "true");
+      indicator.appendChild(sIcon);
+      const sSpan = document.createElement("span");
+      sSpan.textContent = t("common.back");
+      indicator.appendChild(sSpan);
       document.body.appendChild(indicator);
     }
     const clampedProgress = Math.min(progress, 1);

@@ -114,8 +114,14 @@ function showSignalRBanner() {
     b.setAttribute('role', 'status');
     b.setAttribute('aria-live', 'polite');
     b.className = 'signalr-banner';
-    b.innerHTML = '<i class="fas fa-wifi" aria-hidden="true"></i>'
-                + '<span data-i18n="reconnecting">Reconnecting to auction…</span>';
+    const rIcon = document.createElement("i");
+    rIcon.className = "fas fa-wifi";
+    rIcon.setAttribute("aria-hidden", "true");
+    b.appendChild(rIcon);
+    const rSpan = document.createElement("span");
+    rSpan.setAttribute("data-i18n", "reconnecting");
+    rSpan.textContent = "Reconnecting to auction…";
+    b.appendChild(rSpan);
     document.body.appendChild(b);
   }
   b.style.display = 'flex';

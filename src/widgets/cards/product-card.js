@@ -68,12 +68,14 @@ export function openQuickView(product) {
           <div class="fw-bold text-primary" style="font-size:1.4rem;margin:8px 0">${price}</div>
           <p class="text-secondary-sm" style="display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden">${escapeHtml(desc) || t("product.noDescription")}</p>
           <div class="modal-actions mt-4">
-            <a href="${link}" class="btn btn-primary" onclick="this.closest('.modal-overlay').remove()"><i class="fas fa-eye"></i> ${t("common.page")}</a>
-            <button class="btn btn-ghost" onclick="this.closest('.modal-overlay').remove()">${t("common.close")}</button>
+            <a href="${link}" class="btn btn-primary qv-page-btn"><i class="fas fa-eye"></i> ${t("common.page")}</a>
+            <button class="btn btn-ghost qv-close-btn">${t("common.close")}</button>
           </div>
         </div>
       </div>`, { ariaLabel: "Quick view" });
 
+  overlay.querySelector('.qv-page-btn')?.addEventListener('click', close);
+  overlay.querySelector('.qv-close-btn')?.addEventListener('click', close);
   registerRouteCleanup(() => close());
   animate(overlay, 'fadeIn', { duration: '0.2s' });
   const qvModal = overlay.querySelector('.modal');

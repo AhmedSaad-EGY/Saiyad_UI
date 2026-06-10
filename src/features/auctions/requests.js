@@ -70,7 +70,12 @@ Alpine.data('auctionRequestsPage', () => ({
 
     const submit = document.getElementById('arSubmit');
     submit.disabled = true;
-    submit.innerHTML = `<i class="fas fa-spinner spinner" aria-hidden="true"></i> ${t("auctionRequests.submitting")}`;
+    submit.textContent = "";
+    const spinner = document.createElement("i");
+    spinner.className = "fas fa-spinner spinner";
+    spinner.setAttribute("aria-hidden", "true");
+    submit.appendChild(spinner);
+    submit.appendChild(document.createTextNode(` ${t("auctionRequests.submitting")}`));
 
     try {
       await createAuctionRequest({
@@ -89,6 +94,8 @@ Alpine.data('auctionRequestsPage', () => ({
       showToast(err.message, 'error');
     } finally {
       submit.disabled = false;
+      const sp = submit.querySelector(".fa-spinner");
+      if (sp) sp.remove();
       submit.textContent = t('auctionRequests.submit');
     }
   },

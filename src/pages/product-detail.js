@@ -113,11 +113,12 @@ export default async function renderProductDetail(container, route, params) {
           <div class="form-group"><label class="form-label">${t("auction.reservePrice")}</label><input type="number" class="form-input form-control" id="auctionReservePrice" min="0" step="0.01" value="0"></div>
           <div class="form-group"><label class="form-label">${t("auction.minIncrement")} *</label><input type="number" class="form-input form-control" id="auctionMinIncrement" min="0.01" step="0.01" value="1" required></div>
           <div class="modal-actions">
-            <button type="button" class="btn btn-ghost" id="auctionModalCancel" onclick="this.closest('.modal-overlay').remove()">${t("common.cancel")}</button>
+            <button type="button" class="btn btn-ghost" id="auctionModalCancel">${t("common.cancel")}</button>
             <button type="submit" class="btn btn-primary" id="auctionModalSubmit"><i class="fas fa-gavel" aria-hidden="true"></i> ${t("auctions.title")}</button>
           </div>
         </form></div>`, { ariaLabel: t("product.startAuction") });
       animate(overlay, 'fadeIn', { duration: '0.2s' });
+      document.getElementById('auctionModalCancel')?.addEventListener('click', close);
       registerRouteCleanup(() => close());
       document.getElementById("auctionModalForm").addEventListener("submit", async (e) => {
         e.preventDefault();

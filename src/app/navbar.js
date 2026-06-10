@@ -72,11 +72,13 @@ document.getElementById('userDropdown')?.addEventListener('click', (e) => {
 
 document.getElementById('logoutBtn')?.addEventListener('click', async (e) => {
   e.preventDefault();
-  const ok = await showConfirm(t('auth.logoutTitle'), t('auth.logoutConfirm'), {
-    type: 'danger',
-    confirmText: t('nav.logout'),
-  });
-  if (ok) logout();
+  try {
+    const ok = await showConfirm(t('auth.logoutTitle'), t('auth.logoutConfirm'), {
+      type: 'danger',
+      confirmText: t('nav.logout'),
+    });
+    if (ok) logout();
+  } catch { /* user stays logged in */ }
 });
 
 document.getElementById('hamburger')?.addEventListener('click', () => {

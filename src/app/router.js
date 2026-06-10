@@ -82,27 +82,87 @@ export async function router(force = false) {
     app.style.opacity = "1";
     app.style.transform = "translateY(0)";
     app.style.transition = "";
-    app.innerHTML = `
-      <div class="not-found-page animate-on-scroll">
-        <div class="not-found-fish"><i class="fas fa-fish fs-1 text-muted opacity-50"></i></div>
-        <h1>404</h1>
-        <h2>${t("common.pageNotFound")}</h2>
-        <p>${t("common.pageNotFoundDesc")}</p>
-        <div class="search-bar mx-auto mt-4" class="justify-content-center" style="max-width:380px">
-          <input type="text" id="notFoundSearch" class="form-input" placeholder="${t("products.search")}" style="max-width:240px">
-          <button class="btn btn-primary" id="notFoundSearchBtn"><i class="fas fa-search"></i> ${t("common.search")}</button>
-        </div>
-        <div class="d-flex gap-2 justify-content-center flex-wrap mt-2">
-          <a href="#/" class="btn btn-primary btn-lg"><i class="fas fa-home"></i> ${t("common.goHome")}</a>
-          <a href="#/products" class="btn btn-outline btn-lg"><i class="fas fa-store"></i> ${t("nav.products")}</a>
-          <a href="#/auctions" class="btn btn-outline btn-lg"><i class="fas fa-gavel"></i> ${t("nav.auctions")}</a>
-        </div>
-      </div>`;
+
+    const page = document.createElement("div");
+    page.className = "not-found-page animate-on-scroll";
+
+    const fish = document.createElement("div");
+    fish.className = "not-found-fish";
+    const fishI = document.createElement("i");
+    fishI.className = "fas fa-fish fs-1 text-muted opacity-50";
+    fish.appendChild(fishI);
+    page.appendChild(fish);
+
+    const h1 = document.createElement("h1");
+    h1.textContent = "404";
+    page.appendChild(h1);
+
+    const h2 = document.createElement("h2");
+    h2.textContent = t("common.pageNotFound");
+    page.appendChild(h2);
+
+    const p = document.createElement("p");
+    p.textContent = t("common.pageNotFoundDesc");
+    page.appendChild(p);
+
+    const searchBar = document.createElement("div");
+    searchBar.className = "search-bar mx-auto mt-4 justify-content-center";
+    searchBar.style.maxWidth = "380px";
+
+    const si = document.createElement("input");
+    si.type = "text";
+    si.id = "notFoundSearch";
+    si.className = "form-input";
+    si.placeholder = t("products.search");
+    si.style.maxWidth = "240px";
+    searchBar.appendChild(si);
+
+    const sb = document.createElement("button");
+    sb.id = "notFoundSearchBtn";
+    sb.className = "btn btn-primary";
+    const sbIcon = document.createElement("i");
+    sbIcon.className = "fas fa-search";
+    sb.appendChild(sbIcon);
+    sb.appendChild(document.createTextNode(` ${t("common.search")}`));
+    searchBar.appendChild(sb);
+    page.appendChild(searchBar);
+
+    const links = document.createElement("div");
+    links.className = "d-flex gap-2 justify-content-center flex-wrap mt-2";
+
+    const homeLink = document.createElement("a");
+    homeLink.href = "#/";
+    homeLink.className = "btn btn-primary btn-lg";
+    const homeIcon = document.createElement("i");
+    homeIcon.className = "fas fa-home";
+    homeLink.appendChild(homeIcon);
+    homeLink.appendChild(document.createTextNode(` ${t("common.goHome")}`));
+    links.appendChild(homeLink);
+
+    const prodLink = document.createElement("a");
+    prodLink.href = "#/products";
+    prodLink.className = "btn btn-outline btn-lg";
+    const prodIcon = document.createElement("i");
+    prodIcon.className = "fas fa-store";
+    prodLink.appendChild(prodIcon);
+    prodLink.appendChild(document.createTextNode(` ${t("nav.products")}`));
+    links.appendChild(prodLink);
+
+    const auctLink = document.createElement("a");
+    auctLink.href = "#/auctions";
+    auctLink.className = "btn btn-outline btn-lg";
+    const auctIcon = document.createElement("i");
+    auctIcon.className = "fas fa-gavel";
+    auctLink.appendChild(auctIcon);
+    auctLink.appendChild(document.createTextNode(` ${t("nav.auctions")}`));
+    links.appendChild(auctLink);
+
+    page.appendChild(links);
+
+    app.textContent = "";
+    app.appendChild(page);
     observeAnimations();
-    setTimeout(() => {
-      const si = document.getElementById("notFoundSearch");
-      const sb = document.getElementById("notFoundSearchBtn");
-      if (si && sb) {
+    if (si && sb) {
         const go = () => {
           const q = si.value.trim();
           if (q)
@@ -113,7 +173,6 @@ export async function router(force = false) {
           if (e.key === "Enter") go();
         });
       }
-    }, 0);
     return;
   }
 
@@ -172,14 +231,14 @@ export async function router(force = false) {
   });
   if (_navTimer) clearTimeout(_navTimer);
   _navTimer = setTimeout(async () => {
-    _navTimer = null;
-    const { route: curRoute } = getRoute();
-    if (
-      routeKey !== (curRoute.includes("/") ? curRoute.split("/")[0] : curRoute)
-    )
-      return;
-    const fullPath = route;
     try {
+      _navTimer = null;
+      const { route: curRoute } = getRoute();
+      if (
+        routeKey !== (curRoute.includes("/") ? curRoute.split("/")[0] : curRoute)
+      )
+        return;
+      const fullPath = route;
       const pageModule = await dynamicImport();
       await pageModule.default(app, fullPath, params);
     } catch (err) {
@@ -213,5 +272,5 @@ export async function router(force = false) {
   }, 200);
 }
 
-window.addEventListener("hashchange", () => router());
-router();
+window.addEventListener("hashchange", () => { router().catch(() => {}); });
+router().catch(() => {});

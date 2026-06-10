@@ -183,7 +183,10 @@ Alpine.data('cartPage', () => ({
         if (!deleteEl) {
           deleteEl = document.createElement('div');
           deleteEl.className = 'cart-swipe-delete';
-          deleteEl.innerHTML = '<i class="fas fa-trash-alt" aria-hidden="true"></i>';
+          const icon = document.createElement("i");
+          icon.className = "fas fa-trash-alt";
+          icon.setAttribute("aria-hidden", "true");
+          deleteEl.appendChild(icon);
           row.appendChild(deleteEl);
           row.style.position = 'relative';
           row.style.overflow = 'hidden';

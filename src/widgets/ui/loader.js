@@ -19,13 +19,43 @@ export function showError(container, msg) {
 }
 
 export function showErrorFallback(container, message) {
-  container.innerHTML = `
-    <div class="global-error" role="alert">
-      <i class="fas fa-exclamation-triangle" style="font-size:2rem;color:var(--danger)"></i>
-      <p style="margin:12px 0;color:var(--text-primary)">${message || t('common.errorOccurred')}</p>
-      <div class="d-flex gap-2 justify-content-center" style="margin-top:8px">
-        <button class="btn btn-primary" onclick="window.location.hash='#/'"><i class="fas fa-home"></i> ${t('common.goHome')}</button>
-        <button class="btn btn-outline" onclick="window.location.reload()"><i class="fas fa-redo"></i> ${t('common.tryAgain')}</button>
-      </div>
-    </div>`;
+  const errDiv = document.createElement("div");
+  errDiv.className = "global-error";
+  errDiv.setAttribute("role", "alert");
+
+  const errIcon = document.createElement("i");
+  errIcon.className = "fas fa-exclamation-triangle";
+  errIcon.style.cssText = "font-size:2rem;color:var(--danger)";
+  errDiv.appendChild(errIcon);
+
+  const errMsg = document.createElement("p");
+  errMsg.style.cssText = "margin:12px 0;color:var(--text-primary)";
+  errMsg.textContent = message || t("common.errorOccurred");
+  errDiv.appendChild(errMsg);
+
+  const btnGroup = document.createElement("div");
+  btnGroup.className = "d-flex gap-2 justify-content-center";
+  btnGroup.style.marginTop = "8px";
+
+  const homeBtn = document.createElement("button");
+  homeBtn.className = "btn btn-primary";
+  const homeIcon = document.createElement("i");
+  homeIcon.className = "fas fa-home";
+  homeBtn.appendChild(homeIcon);
+  homeBtn.appendChild(document.createTextNode(` ${t("common.goHome")}`));
+  homeBtn.addEventListener("click", () => { window.location.hash = "#/"; });
+  btnGroup.appendChild(homeBtn);
+
+  const retryBtn = document.createElement("button");
+  retryBtn.className = "btn btn-outline";
+  const retryIcon = document.createElement("i");
+  retryIcon.className = "fas fa-redo";
+  retryBtn.appendChild(retryIcon);
+  retryBtn.appendChild(document.createTextNode(` ${t("common.tryAgain")}`));
+  retryBtn.addEventListener("click", () => { window.location.reload(); });
+  btnGroup.appendChild(retryBtn);
+
+  errDiv.appendChild(btnGroup);
+  container.textContent = "";
+  container.appendChild(errDiv);
 }

@@ -15,10 +15,11 @@ function applyTheme(theme) {
   syncThemeColor();
   const toggle = document.getElementById('themeToggle');
   if (toggle) {
-    toggle.innerHTML =
-      theme === 'dark'
-        ? '<i class="fas fa-sun" aria-hidden="true"></i>'
-        : '<i class="fas fa-moon" aria-hidden="true"></i>';
+    toggle.textContent = "";
+    const thIcon = document.createElement("i");
+    thIcon.className = theme === "dark" ? "fas fa-sun" : "fas fa-moon";
+    thIcon.setAttribute("aria-hidden", "true");
+    toggle.appendChild(thIcon);
     toggle.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
     toggle.setAttribute(
       'aria-label',

@@ -17,6 +17,16 @@ export default function renderVerifyEmail(container) {
 
   container.innerHTML = `<div class="auth-page animate__animated animate__fadeIn"><div class="card"><div class="card-body"><div class="loading"><i class="fas fa-spinner spinner" aria-hidden="true"></i><p>${t("common.loading")}</p></div></div></div></div>`;
 
+  const renderError = (msg) => {
+    container.innerHTML = `
+      <div class="auth-page animate__animated animate__fadeIn"><div class="card">
+        <div class="card-body">
+        <div class="empty-state"><i class="fas fa-exclamation-triangle" aria-hidden="true"></i><h3>${t("verify.error")}</h3>
+        <p style="font-size:var(--text-sm);opacity:0.7;margin-top:4px">${escapeHtml(msg || "")}</p>
+        <a href="#/login" class="btn btn-primary mt-3">${t("auth.login")}</a>
+      </div></div></div></div>`;
+  };
+
   verifyEmail(token).then((result) => {
     if (result.success) {
       container.innerHTML = `
@@ -32,13 +42,9 @@ export default function renderVerifyEmail(container) {
       const timer = setTimeout(() => navigate("login"), 2000);
       registerRouteCleanup(() => clearTimeout(timer));
     } else {
-      container.innerHTML = `
-        <div class="auth-page animate__animated animate__fadeIn"><div class="card">
-          <div class="card-body">
-          <div class="empty-state"><i class="fas fa-exclamation-triangle" aria-hidden="true"></i><h3>${t("verify.error")}</h3>
-          <p style="font-size:var(--text-sm);opacity:0.7;margin-top:4px">${escapeHtml(result.message || "")}</p>
-          <a href="#/login" class="btn btn-primary mt-3">${t("auth.login")}</a>
-        </div></div></div></div>`;
+      renderError(result.message);
     }
+  }).catch((err) => {
+    renderError(err.message || t("common.error"));
   });
 }

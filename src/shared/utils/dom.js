@@ -89,52 +89,92 @@ export function renderEmptyState(
     actionClass = "btn btn-primary",
   } = {},
 ) {
-  const btnId = `es_btn_${  Math.random().toString(36).slice(2, 8)}`;
-  const wrapId = `es_wrap_${  Math.random().toString(36).slice(2, 8)}`;
-  const cta = actionHref
-    ? `<a href="${actionHref}" class="${actionClass} mt-3">${actionText}</a>`
-    : actionFn
-      ? `<button id="${btnId}" class="${actionClass} mt-3">${actionText}</button>`
-      : "";
+  const wrap = document.createElement("div");
+  wrap.className = "empty-state";
 
-  let visual;
-  if (!icon) {
-    visual = emptyIllustration("products");
-  } else if (icon.trim().startsWith("<svg")) {
-    visual = icon;
-  } else if (icon.match(/^(https?:\/\/|\/|\.\/)/) || icon.includes(".")) {
-    visual = `<img src="${icon}" alt="" class="mb-2" style="width:120px;max-height:120px;object-fit:contain">`;
-  } else {
-    const illMap = {
-      "fa-shopping-cart": "cart",
-      "fa-box-open": "products",
-      "fa-gavel": "auctions",
-      "fa-bell": "bell",
-      "fa-box": "orders",
-      "fa-search": "search",
-      "fa-heart": "heart",
-      "fa-exclamation-triangle": "search",
-    };
-    const mappedType = illMap[icon];
-    if (mappedType) {
-      visual = emptyIllustration(mappedType);
-    } else if (icon.startsWith("fa-")) {
-      visual = `<i class="fas ${icon} mb-2 d-block text-muted fs-hero"></i>`;
+  const visWrap = document.createElement("div");
+  visWrap.className = "empty-state-visual mb-3";
+
+  if (icon) {
+    const trimmed = icon.trim();
+    if (trimmed.startsWith("<svg")) {
+      const tmp = document.createElement("div");
+      safeSetHTML(tmp, icon);
+      const el = tmp.firstElementChild;
+      if (el) visWrap.appendChild(el);
+    } else if (icon.match(/^(https?:\/\/|\/|\.\/)/) || icon.includes(".")) {
+      const img = document.createElement("img");
+      img.src = icon;
+      img.alt = "";
+      img.className = "mb-2";
+      img.style.cssText = "width:120px;max-height:120px;object-fit:contain";
+      visWrap.appendChild(img);
     } else {
-      visual = emptyIllustration(icon);
+      const illMap = {
+        "fa-shopping-cart": "cart",
+        "fa-box-open": "products",
+        "fa-gavel": "auctions",
+        "fa-bell": "bell",
+        "fa-box": "orders",
+        "fa-search": "search",
+        "fa-heart": "heart",
+        "fa-exclamation-triangle": "search",
+      };
+      const mappedType = illMap[icon];
+      if (mappedType) {
+        const tmp = document.createElement("div");
+        safeSetHTML(tmp, emptyIllustration(mappedType));
+        const el = tmp.firstElementChild;
+        if (el) visWrap.appendChild(el);
+      } else if (icon.startsWith("fa-")) {
+        const i = document.createElement("i");
+        i.className = `fas ${icon} mb-2 d-block text-muted fs-hero`;
+        visWrap.appendChild(i);
+      } else {
+        const tmp = document.createElement("div");
+        safeSetHTML(tmp, emptyIllustration(icon));
+        const el = tmp.firstElementChild;
+        if (el) visWrap.appendChild(el);
+      }
     }
+  } else {
+    const tmp = document.createElement("div");
+    safeSetHTML(tmp, emptyIllustration("products"));
+    const el = tmp.firstElementChild;
+    if (el) visWrap.appendChild(el);
   }
 
-  container.innerHTML = `
-    <div class="empty-state" id="${wrapId}">
-      <div class="empty-state-visual mb-3">${visual}</div>
-      ${title ? `<h3>${title}</h3>` : ""}
-      ${desc ? `<p>${desc}</p>` : ""}
-      ${cta}
-    </div>`;
+  wrap.appendChild(visWrap);
 
-  if (actionFn)
-    document.getElementById(btnId)?.addEventListener("click", actionFn);
+  if (title) {
+    const h3 = document.createElement("h3");
+    h3.textContent = title;
+    wrap.appendChild(h3);
+  }
+
+  if (desc) {
+    const p = document.createElement("p");
+    p.textContent = desc;
+    wrap.appendChild(p);
+  }
+
+  if (actionHref) {
+    const a = document.createElement("a");
+    a.href = actionHref;
+    a.className = `${actionClass} mt-3`;
+    a.textContent = actionText || "";
+    wrap.appendChild(a);
+  } else if (actionFn) {
+    const btnId = `es_btn_${Math.random().toString(36).slice(2, 8)}`;
+    const btn = document.createElement("button");
+    btn.id = btnId;
+    btn.className = `${actionClass} mt-3`;
+    btn.textContent = actionText || "";
+    btn.addEventListener("click", actionFn);
+    wrap.appendChild(btn);
+  }
+
+  container.appendChild(wrap);
 }
 
 export function escapeHtml(str) {

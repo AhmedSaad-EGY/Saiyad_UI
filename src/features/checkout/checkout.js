@@ -1,6 +1,5 @@
 import { api } from '../../shared/api/client.js';
 import { t } from '../../shared/utils/i18n.js';
-import { escapeHtml } from '../../shared/utils/dom.js';
 import { showFieldError, clearFieldError, clearAllFieldErrors } from '../../shared/utils/validation.js';
 import { formatPrice } from '../../shared/utils/format.js';
 import { triggerConfetti } from '../../shared/utils/ui.js';
@@ -21,7 +20,9 @@ Alpine.data('checkoutPage', () => ({
   paymentMethod: 'CreditCard',
   loading: true,
   placing: false,
-  alert: '',
+  alertMessage: '',
+  alertType: '',
+  showDepositLink: false,
   addrFullName: '',
   addrPhone: '',
   addrAddressLine: '',
@@ -75,11 +76,15 @@ Alpine.data('checkoutPage', () => ({
 
   async placeOrder() {
     this.placing = true;
-    this.alert = '';
+    this.alertMessage = '';
+    this.alertType = '';
+    this.showDepositLink = false;
 
     // UX hint only — backend enforces balance atomically
     if (this.availableBalance !== null && this.availableBalance < this.total) {
-      this.alert = `<div class="alert alert-error"><i class="fas fa-exclamation-circle" aria-hidden="true"></i> ${t('cart.insufficientWallet')} — <a href="#/wallet" style="color:inherit;text-decoration:underline"><i class="fas fa-plus small" aria-hidden="true"></i> ${t('wallet.deposit')}</a></div>`;
+      this.alertMessage = t('cart.insufficientWallet');
+      this.alertType = 'error';
+      this.showDepositLink = true;
       this.placing = false;
       return;
     }
@@ -118,7 +123,9 @@ Alpine.data('checkoutPage', () => ({
         });
         addr_id = addr.id;
       } catch (err) {
-        this.alert = `<div class="alert alert-error">${escapeHtml(err.message)}</div>`;
+        this.alertMessage = err.message;
+        this.alertType = 'error';
+        this.showDepositLink = false;
         this.placing = false;
         return;
       }
@@ -134,10 +141,18 @@ Alpine.data('checkoutPage', () => ({
       this.orderSuccess = result.orderId;
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (err) {
-      this.alert = `<div class="alert alert-error">${escapeHtml(err.message || t('cart.orderError'))}</div>`;
+      this.alertMessage = err.message || t('cart.orderError');
+      this.alertType = 'error';
+      this.showDepositLink = false;
     } finally {
       this.placing = false;
     }
+  },
+
+  imgError(e) {
+    e.target.style.display = "none";
+    const fallback = e.target.parentElement.querySelector(".fa-image");
+    if (fallback) fallback.style.display = "block";
   },
 
   validateField(id) {

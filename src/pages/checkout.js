@@ -20,5 +20,4 @@ export default async function renderCheckout(container) {
         ${renderCheckoutSuccess()}
       </div>
     </div>`;
-  Alpine.initTree?.(container);
 }
