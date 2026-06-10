@@ -48,3 +48,11 @@ MDs/
 # Archives
 *.zip
 *.gz
+
+# Text file clutter (specific files, not robots.txt)
+New Text Document.txt
+*.txt
+!src/public/robots.txt
+
+# Agent configuration directory (local machines only)
+.agents/
