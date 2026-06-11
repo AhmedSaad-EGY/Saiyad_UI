@@ -100,8 +100,15 @@ export function validateForm(formIdOrEl, rules) {
         valid = false;
         break;
       }
-      if (check.matches && check.matches.element) {
-        const matchVal = (check.matches.element.value || "").trim();
+      if (check.matches) {
+        const matchEl = check.matches.element;
+        if (!matchEl || matchEl.value === undefined) {
+          const msg = check.messages?.matches || t("validation.invalid");
+          showFieldError(resolvedField, msg);
+          valid = false;
+          break;
+        }
+        const matchVal = (matchEl.value || "").trim();
         if (value !== matchVal) {
           const msg = check.messages?.matches || t("validation.invalid");
           showFieldError(resolvedField, msg);

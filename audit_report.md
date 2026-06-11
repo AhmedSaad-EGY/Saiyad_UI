@@ -3,7 +3,7 @@
 **Date:** 2026-06-11
 **Scope:** 263 files (152 frontend + 111 backend)
 **Findings:** 95 defects (18 CRITICAL, 39 HIGH, 25 MEDIUM, 13 LOW)
-**Strike 8:** All 10 backend HIGH + B-001 CRITICAL + B-026 fixed — 36 remaining
+**Strike 11:** Strikes 1-10 + 7 frontend null-safety/security fixes — 32 remaining
 
 ---
 
@@ -185,18 +185,18 @@
 | F-053 | Frontend | `src/widgets/checkout/render-checkout-form.js` | 165 | CSP: `x-html="alert"` — unsanitized HTML from component state via Alpine | HIGH | ✅ Fixed |
 | F-054 | Frontend | `src/widgets/admin/render-admin-products.js` | 47 | Duplicate `class` attribute on `<select>` — second overwrites first, losing `product-status-select` | HIGH | ✅ D |
 | F-055 | Frontend | `src/features/auctions/create.js` | 4, 8 | Endpoint casing: `/Auctions/requests` (capital A) | HIGH | ✅ C2 |
-| F-056 | Frontend | `src/shared/utils/validation.js` | 103 | `check.matches.element.value` — no guard that `check.matches.element` is a DOM element with `.value` | MEDIUM | Open |
-| F-057 | Frontend | `src/shared/utils/dom.js` | 382-386 | `safeSetHTML` allows `style` attribute via DOMPurify — CSS exfiltration risk | MEDIUM | Open |
+| F-056 | Frontend | `src/shared/utils/validation.js` | 103 | `check.matches.element.value` — no guard that `check.matches.element` is a DOM element with `.value` | MEDIUM | ✅ Fixed |
+| F-057 | Frontend | `src/shared/utils/dom.js` | 382-386 | `safeSetHTML` allows `style` attribute via DOMPurify — CSS exfiltration risk | MEDIUM | ✅ Fixed |
 | F-058 | Frontend | `src/shared/utils/format.js` | 27-35 | `formatPrice` hardcodes `"en-US"` locale — ignores Arabic locale setting | MEDIUM | Open |
 | F-059 | Frontend | `src/shared/utils/i18n.js` | 1-1721 | No pluralization support — Arabic has complex plural rules (singular, dual, plural 3-10, plural 11+) | MEDIUM | Open |
-| F-060 | Frontend | `src/shared/utils/recently-viewed.js` | 4 | `JSON.parse(localStorage.getItem(...))` without `try-catch` — throws on corrupt localStorage data | MEDIUM | Open |
-| F-061 | Frontend | `src/shared/utils/ui.js` | 341-343 | `getCartItemCount` calls `items.reduce()` — throws TypeError if `items` is null/undefined | MEDIUM | Open |
+| F-060 | Frontend | `src/shared/utils/recently-viewed.js` | 4 | `JSON.parse(localStorage.getItem(...))` without `try-catch` — throws on corrupt localStorage data | MEDIUM | ✅ Fixed |
+| F-061 | Frontend | `src/shared/utils/ui.js` | 341-343 | `getCartItemCount` calls `items.reduce()` — throws TypeError if `items` is null/undefined | MEDIUM | ✅ Fixed |
 | F-062 | Frontend | `src/features/auctions/bid.js` | 10 | Cross-feature import: `trackRecentlyViewed` from `../home/index.js` instead of `../../shared/utils/recently-viewed.js` | MEDIUM | Open |
 | F-063 | Frontend | `src/features/auctions/bid.js` | data() | Alpine `_rafId`, `_ptrCleanup`, `_scrollCleanup` used but not declared in `data()` return | MEDIUM | Open |
 | F-064 | Frontend | `src/features/products/search.js` | data() | Alpine `_ptrCleanup`, `_scrollCleanup` used but not declared in `data()` return | MEDIUM | Open |
 | F-065 | Frontend | `src/features/products/search.js` | 132 | `data.total ?? 0` — if missing, `totalPages = 0`, pagination display shows 0 pages | MEDIUM | Open |
 | F-066 | Frontend | `src/features/dashboard/tabs.js` | 238-243 | `handlePasswordChange()` throws bare errors — no `try-catch` wrapping | MEDIUM | Open |
-| F-067 | Frontend | `src/features/auctions/requests.js` | 43-44 | `document.getElementById(id)` could be null — `.addEventListener()` called on null | MEDIUM | Open |
+| F-067 | Frontend | `src/features/auctions/requests.js` | 43-44 | `document.getElementById(id)` could be null — `.addEventListener()` called on null | MEDIUM | ✅ Fixed |
 | F-068 | Frontend | `src/features/analytics.js` | 37-40 | `dash.totalAuctions \|\| 1` — percentage calculation when total is 0 gives wrong result | MEDIUM | Open |
 | F-069 | Frontend | `src/shared/stores/ui.store.js` | 4-5 | Hardcoded `'sayiad_theme'` and `'sayiad_lang'` instead of `KEYS` constants | MEDIUM | Open |
 | F-070 | Frontend | `src/shared/constants/routes.js` | 7-19 | `routeGuards` function keys not validated against actual route definitions | LOW | Open |
@@ -221,8 +221,8 @@
 | B-031 | Backend | `Sayiad.API/Controllers/SubscriptionPlansController.cs` | 37, 45, 53 | Hardcoded `"Admin"` string instead of `nameof(UserRole.Admin)` — brittle | LOW | Open |
 | B-032 | Backend | `Sayiad.API/Controllers/UsersController.cs` | 60-67 | `GET ~/api/user` duplicates `GET /api/Users/profile` | LOW | Open |
 | B-033 | Backend | `Sayiad.API/Program.cs` | 175-178 | Middleware order: ExceptionMiddleware last — exceptions in itself uncatchable | LOW | Open |
-| F-072 | Frontend | `src/app/app.js` | 15 | `ensureCsrfToken()` called without `await` — if async and rejects, unhandled | MEDIUM | Open |
-| F-073 | Frontend | `src/app/language.js` | 21 | `document.getElementById('app')` without null check before `.style` access | MEDIUM | Open |
+| F-072 | Frontend | `src/app/app.js` | 15 | `ensureCsrfToken()` called without `await` — if async and rejects, unhandled | MEDIUM | ✅ Fixed |
+| F-073 | Frontend | `src/app/language.js` | 21 | `document.getElementById('app')` without null check before `.style` access | MEDIUM | ✅ Fixed |
 | F-074 | Frontend | `src/shared/utils/ui.js` | 95-102 | `closeToast` may leak event listener on double call | LOW | Open |
 | F-075 | Frontend | `src/widgets/wallet/modal.js` | 31, 43 | Modal cleanup performs fresh query — stale element reference on close | MEDIUM | Open |
 
@@ -234,13 +234,13 @@
 |----------|----------|-------|-----------|
 | CRITICAL | 18 | 16 | 2 |
 | HIGH ¹ | 39 | 36 | 1 |
-| MEDIUM | 25 | 2 | 23 |
+| MEDIUM | 25 | 9 | 16 |
 | LOW | 13 | 0 | 13 |
-| **Total** | **95** | **54** | **39** |
+| **Total** | **95** | **61** | **32** |
 
 ¹ 3 HIGH items identified as false positives (F-045, F-046, B-013) — excluded from remaining.
 
-## Top 3 Systemic Issues (Post-Strike-7)
+## Top 3 Systemic Issues (Post-Strike-11)
 
 1. **CSP-x-html contamination** — All `innerHTML` violations and inline `onclick` handlers in `src/app/` (F-021–F-027) and `src/widgets/` (F-047–F-051) eliminated. Remaining ~130 `innerHTML` uses are in feature/page files outside targeted scope. *(Strike 2-4: 21 fixed)*
 

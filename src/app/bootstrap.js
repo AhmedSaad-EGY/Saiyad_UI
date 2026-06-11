@@ -12,7 +12,7 @@ setupGlobalErrorHandlers();
 initOcean();
 
 // Initialize CSRF token from backend (sets XSRF-TOKEN cookie via Antiforgery)
-ensureCsrfToken();
+ensureCsrfToken().catch(() => {});
 
 setNavbarDeps({
   fetchCartCount,

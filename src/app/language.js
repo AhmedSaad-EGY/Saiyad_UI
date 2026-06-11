@@ -19,6 +19,7 @@ function applyLanguage(lang) {
 
 function handleLangChange(next) {
   const app = document.getElementById('app');
+  if (!app) return;
   app.style.transition = 'opacity 0.12s ease';
   app.style.opacity = '0';
 

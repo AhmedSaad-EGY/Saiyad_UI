@@ -69,34 +69,36 @@ Alpine.data('auctionRequestsPage', () => ({
     if (!valid) return;
 
     const submit = document.getElementById('arSubmit');
-    submit.disabled = true;
-    submit.textContent = "";
-    const spinner = document.createElement("i");
-    spinner.className = "fas fa-spinner spinner";
-    spinner.setAttribute("aria-hidden", "true");
-    submit.appendChild(spinner);
-    submit.appendChild(document.createTextNode(` ${t("auctionRequests.submitting")}`));
+    if (submit) {
+      submit.disabled = true;
+      submit.textContent = "";
+      const spinner = document.createElement("i");
+      spinner.className = "fas fa-spinner spinner";
+      spinner.setAttribute("aria-hidden", "true");
+      submit.appendChild(spinner);
+      submit.appendChild(document.createTextNode(` ${t("auctionRequests.submitting")}`));
 
-    try {
-      await createAuctionRequest({
-        productTitle: titleIn.value.trim(),
-        productDescription: document.getElementById('arDescription')?.value.trim() || '',
-        estimatedValue: parseFloat(estIn.value),
-        quantityKg: parseFloat(qtyIn.value),
-        fishType: fishIn.value.trim(),
-        catchLocation: document.getElementById('arCatchLocation')?.value.trim() || '',
-        catchDate: document.getElementById('arCatchDate')?.value || null,
-        productImageUrl: document.getElementById('arImageUrl')?.value.trim() || null,
-      });
-      showToast(t('auctionRequests.submitted'), 'success');
-      this.loadRequests();
-    } catch (err) {
-      showToast(err.message, 'error');
-    } finally {
-      submit.disabled = false;
-      const sp = submit.querySelector(".fa-spinner");
-      if (sp) sp.remove();
-      submit.textContent = t('auctionRequests.submit');
+      try {
+        await createAuctionRequest({
+          productTitle: titleIn.value.trim(),
+          productDescription: document.getElementById('arDescription')?.value.trim() || '',
+          estimatedValue: parseFloat(estIn.value),
+          quantityKg: parseFloat(qtyIn.value),
+          fishType: fishIn.value.trim(),
+          catchLocation: document.getElementById('arCatchLocation')?.value.trim() || '',
+          catchDate: document.getElementById('arCatchDate')?.value || null,
+          productImageUrl: document.getElementById('arImageUrl')?.value.trim() || null,
+        });
+        showToast(t('auctionRequests.submitted'), 'success');
+        this.loadRequests();
+      } catch (err) {
+        showToast(err.message, 'error');
+      } finally {
+        submit.disabled = false;
+        const sp = submit.querySelector(".fa-spinner");
+        if (sp) sp.remove();
+        submit.textContent = t('auctionRequests.submit');
+      }
     }
   },
 }));

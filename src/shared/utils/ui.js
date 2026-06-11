@@ -365,6 +365,7 @@ export function openLightbox(images, startIndex = 0) {
 }
 
 export function getCartItemCount(items) {
+  if (!Array.isArray(items)) return 0;
   return items.reduce((s, i) => s + (i.quantity || 0), 0);
 }
 
