@@ -34,10 +34,12 @@ export async function fetchAnalyticsPageData() {
     totalRevenue: rawDash.totalRevenue,
   };
 
-  const activePct = dash.activeAuctions && dash.totalAuctions
-    ? ((dash.activeAuctions ?? 0) / (dash.totalAuctions || 1)) * 100 : 0;
-  const finishedPct = dash.finishedAuctions && dash.totalAuctions
-    ? ((dash.finishedAuctions ?? 0) / (dash.totalAuctions || 1)) * 100 : 0;
+  const activePct = dash.totalAuctions === 0
+    ? 0
+    : Math.round((dash.activeAuctions / dash.totalAuctions) * 100);
+  const finishedPct = dash.totalAuctions === 0
+    ? 0
+    : Math.round((dash.finishedAuctions / dash.totalAuctions) * 100);
 
   const result = { dash, feeTxns, totalFees, activePct, finishedPct, recent, wallet };
 

@@ -17,6 +17,8 @@ export function setAccessToken(token) {
 export function clearTokens() {
   sessionStorage.removeItem(KEYS.ACCESS_TOKEN);
   localStorage.removeItem(KEYS.USER);
+  localStorage.removeItem('sayiad_refreshToken');
+  sessionStorage.removeItem('sayiad_refreshToken');
 }
 
 async function parseResponse(res) {

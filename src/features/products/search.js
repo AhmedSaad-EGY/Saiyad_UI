@@ -16,7 +16,7 @@ Alpine.data('productsPage', () => ({
   products: [],
   categories: [],
   page: 1,
-  totalPages: 1,
+  totalPages: 0,
   pageSize: 12,
   loading: true,
   error: null,
@@ -27,6 +27,8 @@ Alpine.data('productsPage', () => ({
 
   isListView: false,
   totalItems: 0,
+  _ptrCleanup: null,
+  _scrollCleanup: null,
 
   async init() {
     const params = new URLSearchParams(location.hash.split('?')[1] || '');
@@ -57,8 +59,8 @@ Alpine.data('productsPage', () => ({
   },
 
   destroy() {
-    if (this._ptrCleanup) this._ptrCleanup();
-    if (this._scrollCleanup) this._scrollCleanup();
+    if (typeof this._ptrCleanup === 'function') this._ptrCleanup();
+    if (typeof this._scrollCleanup === 'function') this._scrollCleanup();
   },
 
   async loadCategories() {
@@ -138,7 +140,7 @@ Alpine.data('productsPage', () => ({
   },
 
   goToPage(n) {
-    if (n < 1 || n > this.totalPages || n === this.page) return;
+    if (this.totalPages === 0 || n < 1 || n > this.totalPages || n === this.page) return;
     this.page = n;
     this.loadProducts();
     window.scrollTo({ top: 0, behavior: 'smooth' });

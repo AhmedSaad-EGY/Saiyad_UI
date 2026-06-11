@@ -101,7 +101,10 @@ export function validateForm(formIdOrEl, rules) {
         break;
       }
       if (check.matches) {
-        const matchEl = check.matches.element;
+        const matchEl = check.matches.element
+          || (typeof check.matches === 'string'
+            ? form.querySelector(`[name="${check.matches}"]`) || document.getElementById(check.matches)
+            : null);
         if (!matchEl || matchEl.value === undefined) {
           const msg = check.messages?.matches || t("validation.invalid");
           showFieldError(resolvedField, msg);

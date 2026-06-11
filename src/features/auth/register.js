@@ -40,8 +40,9 @@ Alpine.data('registerForm', () => ({
       { element: this.$refs.password, required: true, minLength: 8, messages: { required: t('validation.required'), minLength: t('validation.minLength', { n: 8 }) } },
       { element: this.$refs.confirmPassword, required: true, matches: { element: this.$refs.password }, messages: { required: t('validation.required'), matches: t('validation.passwordsNotMatch') } },
     ];
-    clearAllFieldErrors(this.$el);
-    const isValid = validateForm(this.$el.id, rules);
+    const formEl = this.$el.querySelector('form') || this.$el;
+    clearAllFieldErrors(formEl);
+    const isValid = validateForm(formEl, rules);
     if (!isValid) { this.loading = false; return; }
     await ensureCsrfToken();
     try {
@@ -53,7 +54,7 @@ Alpine.data('registerForm', () => ({
       });
       // F-007: Always redirect to login after registration — do NOT store access token
       // (prevents auto-login for unverified accounts per HIGH-04)
-      if (data.user) localStorage.setItem(KEYS.USER, JSON.stringify(data.user));
+      if (data.user) { const { role, ...safeUser } = data.user; localStorage.setItem(KEYS.USER, JSON.stringify(safeUser)); }
       window.location.hash = '#/login?registered=1';
     } catch (err) { showToast(err.message || t('auth.registerError'), 'error'); }
     finally { this.loading = false; }

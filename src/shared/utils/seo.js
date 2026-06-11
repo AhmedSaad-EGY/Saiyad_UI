@@ -27,7 +27,7 @@ function setPageMeta(title, description, noIndex = false) {
   set('meta[name="description"]', "content", desc);
   set('meta[property="og:title"]', "content", document.title);
   set('meta[property="og:description"]', "content", desc);
-  set('link[rel="canonical"]', "href", window.location.href);
+  set('link[rel="canonical"]', "href", window.location.origin + window.location.pathname + (window.location.hash || ''));
 
   // noindex for private/auth-required pages
   let robotsMeta = document.querySelector('meta[name="robots"]');

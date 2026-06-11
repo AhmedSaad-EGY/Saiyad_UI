@@ -93,6 +93,8 @@ export function showToast(msg, type = "info") {
   }
 
   function closeToast(toastEl) {
+    if (toastEl._closing) return;
+    toastEl._closing = true;
     if (dismissTimer) clearTimeout(dismissTimer);
     paused = true;
     toastEl.classList.add("toast-exit");

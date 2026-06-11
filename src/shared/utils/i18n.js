@@ -1721,7 +1721,9 @@ export const translations = {
   },
 };
 
-let currentLang = localStorage.getItem("sayiad_lang") || "en";
+import { KEYS } from '../constants/storage-keys.js';
+
+let currentLang = localStorage.getItem(KEYS.LANG) || "en";
 
 export function t(key, replacements = {}) {
   let message = translations[currentLang]?.[key] || translations.en[key] || key;
@@ -1729,6 +1731,15 @@ export function t(key, replacements = {}) {
     message = message.replace(`{${placeholder}}`, replacements[placeholder]);
   }
   return message;
+}
+
+export function pluralize(key, count, lang = currentLang) {
+  const rule = new Intl.PluralRules(lang === 'ar' ? 'ar-EG' : 'en-US');
+  const category = rule.select(count);
+  const pluralKey = `${key}.${category}`;
+  const msg = t(pluralKey);
+  const finalMsg = msg === pluralKey ? t(key) : msg;
+  return finalMsg.replace('{count}', count);
 }
 
 export function setLanguage(lang) {

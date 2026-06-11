@@ -1,6 +1,8 @@
 import { t } from '../../shared/utils/i18n.js';
 import { getUser, hasAnyRole, hasRole } from '../../shared/utils/auth-state.js';
 import { ROLES, SELLER_ROLES, ECOMMERCE_ROLES, MODERATOR_ROLES } from '../../shared/constants/roles.js';
+
+let _passwordSubmitting = false;
 import { showLoading } from '../../shared/utils/dom.js';
 import { showToast } from '../../shared/utils/ui.js';
 import { emit } from '../../shared/utils/events.js';
@@ -236,8 +238,16 @@ async function handleProfileUpdate(content, formData) {
 }
 
 async function handlePasswordChange(oldPassword, newPassword) {
-  if (!oldPassword || !newPassword) throw new Error("All fields are required.");
-  if (newPassword.length < 6) throw new Error("Password must be at least 6 characters.");
-  await changePassword(oldPassword, newPassword);
-  showToast(t("dash.passwordChanged"), "success");
+  _passwordSubmitting = true;
+  try {
+    if (!oldPassword || !newPassword) throw new Error("All fields are required.");
+    if (newPassword.length < 6) throw new Error("Password must be at least 6 characters.");
+    await changePassword(oldPassword, newPassword);
+    showToast(t("dash.passwordChanged"), "success");
+  } catch (err) {
+    showToast(err.message, "error");
+    throw err;
+  } finally {
+    _passwordSubmitting = false;
+  }
 }

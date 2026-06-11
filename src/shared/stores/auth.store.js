@@ -3,7 +3,8 @@ import { getUser, isAuthenticated, getRoleFromToken } from '../utils/auth-state.
 
 Alpine.store('auth', {
   get user() {
-    return getUser();
+    const u = getUser();
+    return u ? { ...u, role: getRoleFromToken() } : null;
   },
   get isAuthenticated() {
     return isAuthenticated();

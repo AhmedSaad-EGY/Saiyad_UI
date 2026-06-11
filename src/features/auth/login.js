@@ -59,7 +59,7 @@ Alpine.data('loginForm', () => ({
     try {
       const data = await api.post('/auth/login', { email: this.email, password: this.password });
       setAccessToken(data.token);
-      if (data.user) localStorage.setItem(KEYS.USER, JSON.stringify(data.user));
+      if (data.user) { const { role, ...safeUser } = data.user; localStorage.setItem(KEYS.USER, JSON.stringify(safeUser)); }
       emit('auth:changed');
       syncVipAttribute().catch(() => {});
       const redirect = new URLSearchParams(window.location.hash.split('?')[1] || '').get('redirect') || '';

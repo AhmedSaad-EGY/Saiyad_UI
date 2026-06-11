@@ -1,5 +1,16 @@
 import { ROLES, SELLER_ROLES, ECOMMERCE_ROLES, MODERATOR_ROLES } from './roles.js';
 import { getRoleFromToken, isAuthenticated } from '../utils/auth-state.js';
+import { routes } from '../../app/route-map.js';
+
+if (import.meta.env.DEV) {
+  const activeRouteKeys = new Set(Object.keys(routes));
+  Object.keys(routeGuards).forEach(key => {
+    if (!activeRouteKeys.has(key)) console.warn(`routeGuards definition error: unknown path "${key}"`);
+  });
+  Object.keys(routeTitleKeys).forEach(key => {
+    if (!activeRouteKeys.has(key)) console.warn(`routeTitleKeys definition error: unknown path "${key}"`);
+  });
+}
 
 export { ROLES, SELLER_ROLES, ECOMMERCE_ROLES, MODERATOR_ROLES };
 

@@ -42,7 +42,7 @@ export default [
 
       // --- Async ---
       "no-async-promise-executor": "error",
-      "require-atomic-updates": "off", // too many false positives
+      "require-atomic-updates": "error",
 
       // --- Best practices ---
       "no-else-return": ["warn", { allowElseIf: false }],

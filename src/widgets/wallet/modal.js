@@ -1,5 +1,7 @@
 import { t } from '../../shared/utils/i18n.js';
 
+let activeModalInstance = null;
+
 export function openTopUpModal() {
   const overlay = document.getElementById('topUpModalOverlay');
   overlay.classList.add('show');
@@ -7,6 +9,7 @@ export function openTopUpModal() {
   document.getElementById('topUpAmount').focus();
 
   const modal = document.querySelector("#topUpModalOverlay .modal");
+  activeModalInstance = modal;
   if (modal) {
     const focusable = modal.querySelectorAll(
       'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
@@ -40,7 +43,7 @@ export function openTopUpModal() {
 }
 
 export function closeTopUpModal() {
-  const modal = document.querySelector("#topUpModalOverlay .modal");
+  const modal = activeModalInstance || document.querySelector('#topUpModalOverlay .modal');
   if (modal) {
     if (modal._trapFocus) {
       modal.removeEventListener("keydown", modal._trapFocus);
@@ -59,4 +62,5 @@ export function closeTopUpModal() {
   if (errEl) { errEl.classList.add('hidden'); errEl.textContent = ''; }
   const btn = document.getElementById('topUpConfirmBtn');
   if (btn) { btn.disabled = false; btn.innerHTML = t('wallet.confirmTopUp'); }
+  activeModalInstance = null;
 }

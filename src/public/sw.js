@@ -84,8 +84,12 @@ self.addEventListener("fetch", (event) => {
 <body>
   <div class="card">
     <div class="icon">🎣</div>
-    <h1>You are offline</h1>
-    <p>No internet connection. Check your network and try again.</p>
+    <div dir="auto" style="text-align: center; font-family: sans-serif;">
+      <h1 lang="ar">لا يوجد اتصال بالإنترنت</h1>
+      <h1 lang="en">No Internet Connection</h1>
+      <p lang="ar">يرجى التحقق من الشبكة وإعادة المحاولة لاحقاً.</p>
+      <p lang="en">Please check your network and try again later.</p>
+    </div>
     <a href="/" onclick="location.reload();return false;">Retry</a>
   </div>
 </body>

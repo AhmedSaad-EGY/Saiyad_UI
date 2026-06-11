@@ -178,10 +178,16 @@ export function renderEmptyState(
 }
 
 export function escapeHtml(str) {
-  if (!str) return "";
-  const d = document.createElement("div");
-  d.textContent = str;
-  return d.innerHTML;
+  if (typeof str !== 'string') return str;
+  const matchHtmlRegExp = /[&<>"']/g;
+  const escapeMap = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  };
+  return str.replace(matchHtmlRegExp, (match) => escapeMap[match]);
 }
 
 export function progressiveImg(src, alt = "", className = "") {
@@ -206,19 +212,30 @@ export function activateProgressiveImages(root = document) {
       img.style.transform = 'scale(1)';
       img.removeAttribute('data-pi-id');
     } else {
-      img.addEventListener('load', function onImgLoad() {
+      const onImgLoad = () => {
         placeholder.style.opacity = '0';
         img.style.opacity = '1';
         img.style.transform = 'scale(1)';
         img.removeAttribute('data-pi-id');
-        img.removeEventListener('load', onImgLoad);
-      });
-      img.addEventListener('error', function onImgError() {
+        detachListeners();
+      };
+
+      const onImgError = () => {
         placeholder.style.opacity = '0';
         img.style.opacity = '0.3';
         img.removeAttribute('data-pi-id');
+        detachListeners();
+      };
+
+      const detachListeners = () => {
+        img.removeEventListener('load', onImgLoad);
         img.removeEventListener('error', onImgError);
-      });
+        if (safetyTimeout) clearTimeout(safetyTimeout);
+      };
+
+      img.addEventListener('load', onImgLoad);
+      img.addEventListener('error', onImgError);
+      const safetyTimeout = setTimeout(detachListeners, 30000);
     }
   });
 }

@@ -26,7 +26,7 @@ export function formatDate(dateStr) {
 
 export function formatPrice(n) {
   try {
-    return new Intl.NumberFormat("en-US", {
+    return new Intl.NumberFormat(getLocale(), {
       style: "currency",
       currency: getCurrency(),
     }).format(n || 0);

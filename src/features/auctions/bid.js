@@ -7,7 +7,7 @@ import { registerRouteCleanup, navigate } from '../../app/router.js';
 import { formatPrice, formatDate, statusClass, tStatus } from '../../shared/utils/format.js';
 import { observeAnimations, animate, initPullToRefresh, initInfiniteScroll } from '../../shared/utils/dom.js';
 import { triggerConfetti, showConfirm } from '../../shared/utils/ui.js';
-import { trackRecentlyViewed } from '../home/index.js';
+import { trackRecentlyViewed } from '../../shared/utils/recently-viewed.js';
 import { createScopedBus } from '../../shared/utils/events.js';
 import { joinAuctionGroup, leaveAuctionGroup, isSignalRConnected } from '../../app/realtime.js';
 
@@ -37,6 +37,7 @@ Alpine.data('auctionDetailPage', () => ({
   _user: null,
   _countdownInterval: null,
   _refreshInterval: null,
+  _rafId: null,
 
   async init() {
     this._auctionId = new URLSearchParams(location.hash.split('?')[1] || '').get('id');
@@ -313,6 +314,10 @@ Alpine.data('auctionDetailPage', () => ({
       this._rafId = null;
     }
   },
+
+  destroy() {
+    this.cleanup();
+  },
 }));
 
 Alpine.data('auctionsPage', () => ({
@@ -320,7 +325,7 @@ Alpine.data('auctionsPage', () => ({
   status: 'Active',
   auctions: [],
   page: 1,
-  totalPages: 1,
+  totalPages: 0,
   pageSize: 12,
   loading: true,
   error: null,
@@ -420,7 +425,7 @@ Alpine.data('auctionsPage', () => ({
   },
 
   goToPage(n) {
-    if (n < 1 || n > this.totalPages || n === this.page) return;
+    if (this.totalPages === 0 || n < 1 || n > this.totalPages || n === this.page) return;
     this.page = n;
     this.load();
     window.scrollTo({ top: 0, behavior: 'smooth' });
