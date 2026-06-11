@@ -3,7 +3,7 @@
 **Date:** 2026-06-11
 **Scope:** 263 files (152 frontend + 111 backend)
 **Findings:** 95 defects (18 CRITICAL, 39 HIGH, 25 MEDIUM, 13 LOW)
-**Strike 7:** All 10 backend HIGH + B-001 CRITICAL fixed — 36 remaining
+**Strike 8:** All 10 backend HIGH + B-001 CRITICAL + B-026 fixed — 36 remaining
 
 ---
 
@@ -213,7 +213,7 @@
 | B-023 | Backend | `Sayiad.API/Middleware/ExceptionMiddleware.cs` | 5 | Only 4 exception types handled — `ArgumentException`, `FormatException`, `DbUpdateException` fall to 500 | MEDIUM | Open |
 | B-024 | Backend | `Sayiad.API/Program.cs` | 118-119 | `AddFluentValidationAutoValidation` — DTOs without validators silently accept invalid data | MEDIUM | Open |
 | B-025 | Backend | `Sayiad.API/Program.cs` | 138-151 | `db.Database.MigrateAsync()` on startup — multi-instance race condition on migrations | MEDIUM | Open |
-| B-026 | Backend | `Sayiad.API/Controllers/AuthController.cs` | 56-61 | `GET /api/auth/verify-email` — verification token in query string leaks to logs/referrer | MEDIUM | Open |
+| B-026 | Backend | `Sayiad.API/Controllers/AuthController.cs` | 56-61 | `GET /api/auth/verify-email` — verification token in query string leaks to logs/referrer | MEDIUM | ✅ Fixed |
 | B-027 | Backend | `Sayiad.API/Middleware/ApiErrorResponse.cs` | 7-10 | `Errors` serialized as `"errors": null` when null — no `JsonIgnoreCondition.WhenWritingNull` | LOW | Open |
 | B-028 | Backend | `Sayiad.API/Program.cs` | 187 | `UseHttpsRedirection()` after `UseStaticFiles()` — static files served before HTTPS redirect | LOW | Open |
 | B-029 | Backend | `Sayiad.API/Program.cs` | 153-173 | Admin wallet created unconditionally on startup — no existence check | LOW | Open |

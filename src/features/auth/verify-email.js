@@ -3,7 +3,7 @@ import { t } from '../../shared/utils/i18n.js';
 
 export async function verifyEmail(token) {
   try {
-    const data = await api.get(`/auth/verify-email?token=${encodeURIComponent(token)}`);
+    const data = await api.post('/auth/verify-email', { token });
     sessionStorage.removeItem("pendingLoginEmail");
     return { success: true, message: data.message || t('auth.emailVerified') };
   } catch (err) {
