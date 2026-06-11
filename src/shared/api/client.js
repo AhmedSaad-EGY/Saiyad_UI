@@ -73,6 +73,11 @@ async function request(endpoint, options = {}) {
 
   const data = await parseResponse(res);
 
+  if (res.status === 400 && !options._csrfRetry && data?.message === "Invalid or missing anti-forgery token.") {
+    await ensureCsrfToken();
+    return request(endpoint, { ...options, _csrfRetry: true });
+  }
+
   if (!res.ok) {
     let msg =
       data?.message ||
