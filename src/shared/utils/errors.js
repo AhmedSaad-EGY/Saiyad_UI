@@ -43,6 +43,33 @@ export function handleApiError(err) {
   showToast(message, 'error');
 }
 
+let _errorOverlayActive = false;
+
+export function showErrorOverlay(message) {
+  if (_errorOverlayActive) return;
+  _errorOverlayActive = true;
+  const overlay = document.createElement('div');
+  overlay.id = 'globalErrorOverlay';
+  Object.assign(overlay.style, {
+    position: 'fixed',
+    inset: '0',
+    zIndex: '9999',
+    background: 'rgba(255,255,255,0.95)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  });
+  const inner = document.createElement('div');
+  inner.className = 'text-center p-4';
+  inner.innerHTML = `
+    <h2>${t('common.somethingWentWrong')}</h2>
+    <p class="text-muted mt-2">${escapeHtml(message || t('common.errorFallbackDesc'))}</p>
+    <button class="btn btn-primary mt-3" id="errorOverlayRefresh">${t('common.refresh')}</button>`;
+  inner.querySelector('#errorOverlayRefresh')?.addEventListener('click', () => window.location.reload());
+  overlay.appendChild(inner);
+  document.body.appendChild(overlay);
+}
+
 export function showErrorFallback(container, message) {
   container.innerHTML = `
     <div class="d-flex flex-column align-items-center justify-content-center text-center py-5 px-3 min-vh-50">
@@ -75,8 +102,7 @@ export function setupGlobalErrorHandlers() {
     if (isNetworkError(e.reason) || e.reason?.message?.includes('Session expired')) return;
     if (e.reason?.message?.includes('ResizeObserver')) { e.preventDefault(); return; }
     console.warn('Unhandled Promise Rejection:', e.reason);
-    const app = document.getElementById('app');
-    if (app) showErrorFallback(app, e.reason?.message);
+    showErrorOverlay(e.reason?.message);
   });
 
   window.addEventListener('error', (e) => {
@@ -85,7 +111,6 @@ export function setupGlobalErrorHandlers() {
       return;
     }
     console.warn('Global Error:', e.message);
-    const app = document.getElementById('app');
-    if (app) showErrorFallback(app, e.message);
+    showErrorOverlay(e.message);
   });
 }

@@ -285,6 +285,15 @@ export function initOcean() {
         requestAnimationFrame(draw);
       }
 
+      const observer = new MutationObserver(() => {
+        resize();
+      });
+      observer.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ["data-theme", "dir"],
+      });
+      window.addEventListener("beforeunload", () => observer.disconnect());
+
       document.addEventListener("visibilitychange", () => {
         visibility = !document.hidden;
         if (document.hidden) {
@@ -296,15 +305,6 @@ export function initOcean() {
           });
         }
       });
-
-      const observer = new MutationObserver(() => {
-        resize();
-      });
-      observer.observe(document.documentElement, {
-        attributes: true,
-        attributeFilter: ["data-theme", "dir"],
-      });
-      window.addEventListener("beforeunload", () => observer.disconnect());
 
       let resizeTimer;
       window.addEventListener("resize", () => {

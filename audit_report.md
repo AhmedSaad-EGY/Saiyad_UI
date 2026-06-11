@@ -70,12 +70,22 @@
 
 ## Strike 5 — In Progress (2026-06-11)
 
+### Group A — Auth & Security
+
 | Issue | Fix | File:Line |
 |-------|-----|-----------|
 | F-030 | Replaced falsy `if (payload.exp)` check with explicit `undefined`/`null` guard; `return false` for missing/zero `exp` | `auth-state.js:20-23` |
 | F-028 | Removed module-level `_cachedAccessToken` cache; `getAccessToken()` reads `sessionStorage` directly every call | `client.js:8-15` |
 | F-029 | Added 401 → `refreshAccessToken()` → retry guard in `doUpload()`, matching `request()` pattern | `client.js:141-149` |
 | F-031 | Changed `ensureCsrfToken()` to read token from response body `res.json().token` instead of `readCookie()` (HttpOnly cookie invisible to JS) | `csrf.js:53-55` |
+
+### Group B — Error Handling & State
+
+| Issue | Fix | File:Line |
+|-------|-----|-----------|
+| F-034 | Moved `const observer` declaration before `visibilitychange` listener to eliminate TDZ | `ocean.js:288-306` |
+| F-035 | Added `localStorage.setItem(...)` in both `toggleTheme()` and `toggleLang()` | `ui.store.js:7-11` |
+| F-032 | Added `showErrorOverlay()` — renders fixed overlay on `document.body` instead of replacing `#app` content; global handlers now use it | `errors.js:46-89` |
 
 ---
 
@@ -127,10 +137,10 @@
 | F-029 | Frontend | `src/shared/api/client.js` | 130-158 | `doUpload()` lacks 401 retry — upload fails hard on session expiry; no `_retry` logic | HIGH | ✅ Fixed |
 | F-030 | Frontend | `src/shared/utils/auth-state.js` | 20-22 | `isAuthenticated()` returns `true` for tokens with falsy `exp` (epoch-0 or missing `exp`) | HIGH | ✅ Fixed |
 | F-031 | Frontend | `src/shared/utils/csrf.js` | 47-59 | `ensureCsrfToken()` always returns null due to wrong URL — no console warning | HIGH | ✅ Fixed |
-| F-032 | Frontend | `src/shared/utils/errors.js` | 74-80 | `unhandledrejection` handler replaces full app UI via `showErrorFallback` on minor rejections | HIGH | Open |
+| F-032 | Frontend | `src/shared/utils/errors.js` | 74-80 | `unhandledrejection` handler replaces full app UI via `showErrorFallback` on minor rejections | HIGH | ✅ Fixed |
 | F-033 | Frontend | `src/shared/utils/seo.js` | 30 | Canonical URL strips hash fragment — all hash-routed pages share same canonical URL | HIGH | Open |
-| F-034 | Frontend | `src/shared/utils/ocean.js` | 288 | `observer` referenced before `const` declaration (TDZ) in `visibilitychange` handler — ReferenceError | HIGH | Open |
-| F-035 | Frontend | `src/shared/stores/ui.store.js` | 7-11 | `toggleTheme()` and `toggleLang()` do NOT persist to localStorage — preference lost on reload | HIGH | Open |
+| F-034 | Frontend | `src/shared/utils/ocean.js` | 288 | `observer` referenced before `const` declaration (TDZ) in `visibilitychange` handler — ReferenceError | HIGH | ✅ Fixed |
+| F-035 | Frontend | `src/shared/stores/ui.store.js` | 7-11 | `toggleTheme()` and `toggleLang()` do NOT persist to localStorage — preference lost on reload | HIGH | ✅ Fixed |
 | F-036 | Frontend | `src/features/auctions/analytics.js` | 17, 75, 79, 83 | Endpoint casing: `/Auctions/` (capital A) — other files use `/auctions/` (lowercase) | HIGH | Open |
 | F-037 | Frontend | `src/features/auctions/create.js` | 12 | PascalCase query params: `IsAuctioned`, `PageSize` — should be `isAuctioned`, `pageSize` | HIGH | Open |
 | F-038 | Frontend | `src/features/auctions/bid.js` | 379, 410 | PascalCase query param: `SearchTerm` — should be `searchTerm` | HIGH | Open |
@@ -199,10 +209,10 @@
 | Severity | Original | Fixed | Remaining |
 |----------|----------|-------|-----------|
 | CRITICAL | 18 | 15 | 3 |
-| HIGH | 39 | 21 | 18 |
+| HIGH | 39 | 24 | 15 |
 | MEDIUM | 25 | 0 | 25 |
 | LOW | 13 | 0 | 13 |
-| **Total** | **95** | **36** | **59** |
+| **Total** | **95** | **39** | **56** |
 
 ## Top 3 Systemic Issues (Post-Strike-5)
 
