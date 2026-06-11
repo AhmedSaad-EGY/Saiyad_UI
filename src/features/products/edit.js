@@ -2,7 +2,7 @@ import { api } from '../../shared/api/client.js';
 
 export async function fetchMyProducts(pageSize = 50) {
   try {
-    return await api.get('/Products/my', { pageSize }) || [];
+    return await api.get('/products/my', { pageSize }) || [];
   } catch { return { items: [], data: [] }; }
 }
 

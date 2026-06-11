@@ -44,7 +44,7 @@ export async function renderAdminProducts(container, { fetchProducts, onUpdatePr
                 <td>${escapeHtml(p.categoryName || "-")}</td>
                 <td class="fw-semibold">${formatPrice(p.price || 0)}</td>
                 <td>
-                  <select class="form-select product-status-select" data-product-id="${p.id}" class="w-auto" style="min-width:130px">
+                  <select class="form-select product-status-select w-auto" data-product-id="${p.id}" style="min-width:130px">
                     ${MODERATION_STATUSES.map((status) => `
                       <option value="${status}" ${p.status === status ? "selected" : ""}>${tStatus(status, "product")}</option>
                     `).join("")}

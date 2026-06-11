@@ -73,7 +73,7 @@ export async function createSubscriptionPlan(body) {
 }
 
 export function computeFeeTotals(txns) {
-  const feeTxns = (txns.items || txns.data || txns || []).filter(
+  const feeTxns = (txns?.items || txns?.data || []).filter(
     txn => txn.type === "PlatformFee" || txn.type === "SubscriptionPayment"
   );
   const totalFees = feeTxns.reduce((sum, txn) => sum + Math.abs(txn.amount), 0);

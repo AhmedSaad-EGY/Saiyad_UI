@@ -9,7 +9,7 @@ import '../features/dashboard/index.js';
 
 const loadedTabs = new Set();
 
-window.addEventListener('dashboard-tab-changed', (e) => {
+function handleDashboardTabChange(e) {
   const { tabId, firstLoad } = e.detail;
   if (loadedTabs.has(tabId) && !firstLoad) return;
   loadedTabs.add(tabId);
@@ -23,7 +23,9 @@ window.addEventListener('dashboard-tab-changed', (e) => {
     case 'auctioneer-analytics': if (typeof renderAuctioneerAnalytics === 'function') renderAuctioneerAnalytics(content, route, params); break;
     default: loadDashboardTab(tabId, content); break;
   }
-});
+}
+
+window.addEventListener('dashboard-tab-changed', handleDashboardTabChange);
 
 export default async function renderDashboard(container, _route, _params) {
   if (!(await requireAuth())) return;
@@ -135,6 +137,7 @@ export default async function renderDashboard(container, _route, _params) {
     document.body.classList.remove('has-bottom-bar');
     document.body.classList.remove('has-floating-bar');
   });
+  registerRouteCleanup(() => window.removeEventListener('dashboard-tab-changed', handleDashboardTabChange));
 }
 
 

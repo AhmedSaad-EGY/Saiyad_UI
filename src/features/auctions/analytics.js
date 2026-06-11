@@ -14,7 +14,7 @@ export function getCachedAnalyticsPageData() {
 
 export async function fetchAnalyticsPageData() {
   const [dataResult, txnResult, walletResult] = await Promise.allSettled([
-    api.get("/Auctions/dashboard"),
+    api.get("/auctions/dashboard"),
     fetchWalletTransactions(1, 20),
     fetchWalletBalance(),
   ]);
@@ -72,13 +72,13 @@ export async function fetchAnalyticsPageData() {
 }
 
 export async function approveAuctionRequest(requestId, body = {}) {
-  return api.post(`/Auctions/requests/${requestId}/approve`, body);
+  return api.post(`/auctions/requests/${requestId}/approve`, body);
 }
 
 export async function rejectAuctionRequest(requestId, reason) {
-  return api.post(`/Auctions/requests/${requestId}/reject`, { reason });
+  return api.post(`/auctions/requests/${requestId}/reject`, { reason });
 }
 
 export async function fetchPendingRequests(page = 1, pageSize = 10) {
-  return api.get("/Auctions/requests/pending", { page, pageSize });
+  return api.get("/auctions/requests/pending", { page, pageSize });
 }

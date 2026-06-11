@@ -58,8 +58,8 @@ Alpine.data('homePage', () => ({
       }
 
       const [productsRes, auctionsRes] = await Promise.all([
-        api.get('/products', { PageSize: 4 }),
-        api.get('/auctions', { PageSize: 4 }),
+        api.get('/products', { pageSize: 4 }),
+        api.get('/auctions', { pageSize: 4 }),
       ]);
 
       this.products = productsRes?.items ?? productsRes?.data ?? [];

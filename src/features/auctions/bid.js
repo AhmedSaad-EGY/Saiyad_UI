@@ -376,7 +376,7 @@ Alpine.data('auctionsPage', () => ({
 
     try {
       const apiParams = { page: this.page, pageSize: this.pageSize };
-      if (this.search) apiParams.SearchTerm = this.search;
+      if (this.search) apiParams.searchTerm = this.search;
       if (this.status) apiParams.status = this.status;
       if (this.endingSoonOnly) {
         apiParams.endingSoon = true;
@@ -407,7 +407,7 @@ Alpine.data('auctionsPage', () => ({
     this.loading = true;
     try {
       const apiParams = { page: this.page, pageSize: this.pageSize };
-      if (this.search) apiParams.SearchTerm = this.search;
+      if (this.search) apiParams.searchTerm = this.search;
       if (this.status) apiParams.status = this.status;
       const data = await api.get('/auctions', apiParams);
       const items = data.items || data.data || [];

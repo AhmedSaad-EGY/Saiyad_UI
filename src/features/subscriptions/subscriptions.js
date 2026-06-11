@@ -16,7 +16,7 @@ export function getRoleSubscriptionInfo(role) {
 
 export async function fetchPlans() {
   try {
-    return await api.get('/SubscriptionPlans') || [];
+    return await api.get('/subscriptionplans') || [];
   } catch { return []; }
 }
 

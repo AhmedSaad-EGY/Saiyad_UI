@@ -93,17 +93,17 @@
 
 | Issue ID | Layer | File Path | Line | Exact Technical Defect | Severity | Status |
 |----------|-------|-----------|------|------------------------|----------|--------|
-| B-001 | Backend | `Sayiad.Domain/Dtos/AuthDtos/AuthDto.cs` | 3 | `RegisterRequest` missing `birthdate` and `confirmPassword` — frontend sends them, backend silently drops them | CRITICAL | Open |
+| B-001 | Backend | `Sayiad.Domain/Dtos/AuthDtos/AuthDto.cs` | 3 | `RegisterRequest` missing `birthdate` and `confirmPassword` — frontend sends them, backend silently drops them | CRITICAL | ✅ Fixed |
 | B-002 | Backend | `Sayiad.Domain/Dtos/AuthDtos/AuthDto.cs` | 3 | Client-controlled `Role` parameter allows self-registration as `"Admin"` — no server-side enum restriction at DTO level | CRITICAL | ✅ Fixed |
 | B-003 | Backend | `Sayiad.API/Middleware/ExceptionMiddleware.cs` | 35-38 | Generic `Exception` handler leaks `ex.Message` (file paths, SQL, stack) into HTTP response body | CRITICAL | ✅ Fixed |
-| B-004 | Backend | `Sayiad.API/Middleware/ExceptionMiddleware.cs` | 14-18 | No `response.HasStarted` guard — double exception crashes pipeline on streaming responses | HIGH | Open |
-| B-005 | Backend | `Sayiad.API/Middleware/InputSanitizationMiddleware.cs` | 16-24, 27-44 | Only sanitizes Form/Query data, NOT JSON request bodies — XSS bypass | HIGH | Open |
-| B-006 | Backend | `Sayiad.API/Program.cs` | 43-52 | JWT token accepted from `access_token` query param — token leaks into server logs | HIGH | Open |
-| B-007 | Backend | `Sayiad.API/Controllers/AuthController.cs` | 40-44 | No refresh token rotation or invalidation after use — replay attack vector | HIGH | Open |
-| B-008 | Backend | `Sayiad.API/Program.cs` | — | No audit logging for security-critical operations (login, admin actions, payments) | HIGH | Open |
-| B-009 | Backend | `Sayiad.API/Program.cs` | — | No security headers: CSP, HSTS, X-Frame-Options, X-Content-Type-Options, Referrer-Policy | HIGH | Open |
-| B-010 | Backend | `Sayiad.API/Program.cs` | 180-184 | Swagger enabled in production — full API surface (endpoints, schemas, auth) exposed | HIGH | Open |
-| B-011 | Backend | `Sayiad.Domain/Dtos/WalletDtos/WalletResponse.cs` | 3 | `DepositRequest` has no FluentValidation validator — zero/negative amounts accepted | HIGH | Open |
+| B-004 | Backend | `Sayiad.API/Middleware/ExceptionMiddleware.cs` | 14-18 | No `response.HasStarted` guard — double exception crashes pipeline on streaming responses | HIGH | ✅ 6 |
+| B-005 | Backend | `Sayiad.API/Middleware/InputSanitizationMiddleware.cs` | 16-24, 27-44 | Only sanitizes Form/Query data, NOT JSON request bodies — XSS bypass | HIGH | ✅ Fixed |
+| B-006 | Backend | `Sayiad.API/Program.cs` | 43-52 | JWT token accepted from `access_token` query param — token leaks into server logs | HIGH | ✅ Fixed |
+| B-007 | Backend | `Sayiad.API/Controllers/AuthController.cs` | 40-44 | No refresh token rotation or invalidation after use — replay attack vector | HIGH | ✅ Fixed |
+| B-008 | Backend | `Sayiad.API/Program.cs` | — | No audit logging for security-critical operations (login, admin actions, payments) | HIGH | ✅ Fixed |
+| B-009 | Backend | `Sayiad.API/Program.cs` | — | No security headers: CSP, HSTS, X-Frame-Options, X-Content-Type-Options, Referrer-Policy | HIGH | ✅ Fixed |
+| B-010 | Backend | `Sayiad.API/Program.cs` | 180-184 | Swagger enabled in production — full API surface (endpoints, schemas, auth) exposed | HIGH | ✅ Fixed |
+| B-011 | Backend | `Sayiad.Domain/Dtos/WalletDtos/WalletResponse.cs` | 3 | `DepositRequest` has no FluentValidation validator — zero/negative amounts accepted | HIGH | ✅ Fixed |
 | B-012 | Backend | All 18 `*Controller.cs` files | — | `int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!)` — null + format exception on missing claim | HIGH | Open |
 | B-013 | Backend | `Sayiad.Domain/Dtos/AuthDtos/AuthDto.cs` | 7 | `AuthResponse.Token` serializes as `"token"` — frontend reads `data.accessToken` in `register.js:55` | HIGH | Open |
 | F-001 | Frontend | `src/shared/utils/auth-state.js` | 13 | JWT base64url decoding uses `atob()` — fails on standard JWT base64url chars (`-`, `_`) | CRITICAL | ✅ Fixed |
@@ -138,20 +138,20 @@
 | F-030 | Frontend | `src/shared/utils/auth-state.js` | 20-22 | `isAuthenticated()` returns `true` for tokens with falsy `exp` (epoch-0 or missing `exp`) | HIGH | ✅ Fixed |
 | F-031 | Frontend | `src/shared/utils/csrf.js` | 47-59 | `ensureCsrfToken()` always returns null due to wrong URL — no console warning | HIGH | ✅ Fixed |
 | F-032 | Frontend | `src/shared/utils/errors.js` | 74-80 | `unhandledrejection` handler replaces full app UI via `showErrorFallback` on minor rejections | HIGH | ✅ Fixed |
-| F-033 | Frontend | `src/shared/utils/seo.js` | 30 | Canonical URL strips hash fragment — all hash-routed pages share same canonical URL | HIGH | Open |
+| F-033 | Frontend | `src/shared/utils/seo.js` | 30 | Canonical URL strips hash fragment — all hash-routed pages share same canonical URL | HIGH | ✅ E |
 | F-034 | Frontend | `src/shared/utils/ocean.js` | 288 | `observer` referenced before `const` declaration (TDZ) in `visibilitychange` handler — ReferenceError | HIGH | ✅ Fixed |
 | F-035 | Frontend | `src/shared/stores/ui.store.js` | 7-11 | `toggleTheme()` and `toggleLang()` do NOT persist to localStorage — preference lost on reload | HIGH | ✅ Fixed |
-| F-036 | Frontend | `src/features/auctions/analytics.js` | 17, 75, 79, 83 | Endpoint casing: `/Auctions/` (capital A) — other files use `/auctions/` (lowercase) | HIGH | Open |
-| F-037 | Frontend | `src/features/auctions/create.js` | 12 | PascalCase query params: `IsAuctioned`, `PageSize` — should be `isAuctioned`, `pageSize` | HIGH | Open |
-| F-038 | Frontend | `src/features/auctions/bid.js` | 379, 410 | PascalCase query param: `SearchTerm` — should be `searchTerm` | HIGH | Open |
-| F-039 | Frontend | `src/features/home/index.js` | 61 | PascalCase query param: `PageSize` — should be `pageSize` | HIGH | Open |
-| F-040 | Frontend | `src/features/products/edit.js` | 5 | Endpoint casing: `/Products/my` (capital P) — should be `/products/my` | HIGH | Open |
-| F-041 | Frontend | `src/features/subscriptions/subscriptions.js` | 19 | Endpoint casing: `/SubscriptionPlans` vs `/subscriptionplans` in `admin/index.js:60` | HIGH | Open |
-| F-042 | Frontend | `src/features/admin/index.js` | 76-78 | Broken null guard: `txns.items \|\| txns.data \|\| txns \|\| []` — throws TypeError if `txns` is null | HIGH | Open |
-| F-043 | Frontend | `src/app/navbar.js` | 19, 21, 30 | Dead DOM references: `#userRole`, `#userAvatar`, `#sellLink` — no elements exist in any HTML | MEDIUM | Open |
-| F-044 | Frontend | `src/pages/dashboard.js` | 12 | Global `dashboard-tab-changed` event listener never removed — registers each navigation | HIGH | Open |
-| F-045 | Frontend | `src/pages/profile.js` | 23-28 | Alpine template references `completionPercent` — never defined on `profilePage` component; renders `NaN%` | HIGH | Open |
-| F-046 | Frontend | `src/widgets/profile/render-stats.js` | 11 | Alpine template references `stats.key` — `stats` object never defined on `profilePage` | HIGH | Open |
+| F-036 | Frontend | `src/features/auctions/analytics.js` | 17, 75, 79, 83 | Endpoint casing: `/Auctions/` (capital A) — other files use `/auctions/` (lowercase) | HIGH | ✅ C1 |
+| F-037 | Frontend | `src/features/auctions/create.js` | 12 | PascalCase query params: `IsAuctioned`, `PageSize` — should be `isAuctioned`, `pageSize` | HIGH | ✅ C2 |
+| F-038 | Frontend | `src/features/auctions/bid.js` | 379, 410 | PascalCase query param: `SearchTerm` — should be `searchTerm` | HIGH | ✅ C5 |
+| F-039 | Frontend | `src/features/home/index.js` | 61 | PascalCase query param: `PageSize` — should be `pageSize` | HIGH | ✅ C6 |
+| F-040 | Frontend | `src/features/products/edit.js` | 5 | Endpoint casing: `/Products/my` (capital P) — should be `/products/my` | HIGH | ✅ C3 |
+| F-041 | Frontend | `src/features/subscriptions/subscriptions.js` | 19 | Endpoint casing: `/SubscriptionPlans` vs `/subscriptionplans` in `admin/index.js:60` | HIGH | ✅ C4 |
+| F-042 | Frontend | `src/features/admin/index.js` | 76-78 | Broken null guard: `txns.items \|\| txns.data \|\| txns \|\| []` — throws TypeError if `txns` is null | HIGH | ✅ D |
+| F-043 | Frontend | `src/app/navbar.js` | 19, 21, 30 | Dead DOM references: `#userRole`, `#userAvatar`, `#sellLink` — no elements exist in any HTML | MEDIUM | ✅ Fixed (Strike 4) |
+| F-044 | Frontend | `src/pages/dashboard.js` | 12 | Global `dashboard-tab-changed` event listener never removed — registers each navigation | HIGH | ✅ D |
+| F-045 | Frontend | `src/pages/profile.js` | 23-28 | Alpine template references `completionPercent` — never defined on `profilePage` component; renders `NaN%` | HIGH | ❌ False positive |
+| F-046 | Frontend | `src/widgets/profile/render-stats.js` | 11 | Alpine template references `stats.key` — `stats` object never defined on `profilePage` | HIGH | ❌ False positive |
 | F-047 | Frontend | `src/widgets/admin/render-plans.js` | 16 | CSP: `onclick="event.stopPropagation()"` inline handler in HTML attribute | HIGH | ✅ Fixed |
 | F-048 | Frontend | `src/widgets/cards/product-card.js` | 71-72 | CSP: `onclick="..."` inline handlers in modal overlay HTML | HIGH | ✅ Fixed |
 | F-049 | Frontend | `src/pages/product-detail.js` | 116 | CSP: `onclick="..."` inline handler in createModal HTML | HIGH | ✅ Fixed |
@@ -159,8 +159,8 @@
 | F-051 | Frontend | `src/widgets/wallet/render-transactions.js` | 50 | CSP: `onclick="loadWalletTransactions()"` inline handler | HIGH | ✅ Fixed |
 | F-052 | Frontend | `src/widgets/auction-detail/render-main.js` | 166 | CSP: `x-html="bidAlert"` — unsanitized HTML from component state via Alpine | HIGH | ✅ Fixed |
 | F-053 | Frontend | `src/widgets/checkout/render-checkout-form.js` | 165 | CSP: `x-html="alert"` — unsanitized HTML from component state via Alpine | HIGH | ✅ Fixed |
-| F-054 | Frontend | `src/widgets/admin/render-admin-products.js` | 47 | Duplicate `class` attribute on `<select>` — second overwrites first, losing `product-status-select` | HIGH | Open |
-| F-055 | Frontend | `src/features/auctions/create.js` | 4, 8 | Endpoint casing: `/Auctions/requests` (capital A) | HIGH | Open |
+| F-054 | Frontend | `src/widgets/admin/render-admin-products.js` | 47 | Duplicate `class` attribute on `<select>` — second overwrites first, losing `product-status-select` | HIGH | ✅ D |
+| F-055 | Frontend | `src/features/auctions/create.js` | 4, 8 | Endpoint casing: `/Auctions/requests` (capital A) | HIGH | ✅ C2 |
 | F-056 | Frontend | `src/shared/utils/validation.js` | 103 | `check.matches.element.value` — no guard that `check.matches.element` is a DOM element with `.value` | MEDIUM | Open |
 | F-057 | Frontend | `src/shared/utils/dom.js` | 382-386 | `safeSetHTML` allows `style` attribute via DOMPurify — CSS exfiltration risk | MEDIUM | Open |
 | F-058 | Frontend | `src/shared/utils/format.js` | 27-35 | `formatPrice` hardcodes `"en-US"` locale — ignores Arabic locale setting | MEDIUM | Open |
@@ -209,10 +209,12 @@
 | Severity | Original | Fixed | Remaining |
 |----------|----------|-------|-----------|
 | CRITICAL | 18 | 15 | 3 |
-| HIGH | 39 | 24 | 15 |
-| MEDIUM | 25 | 0 | 25 |
+| HIGH ¹ | 39 | 32 | 5 |
+| MEDIUM | 25 | 1 | 24 |
 | LOW | 13 | 0 | 13 |
-| **Total** | **95** | **39** | **56** |
+| **Total** | **95** | **48** | **45** |
+
+¹ 2 HIGH items identified as false positives (F-045, F-046) — excluded from remaining.
 
 ## Top 3 Systemic Issues (Post-Strike-5)
 
