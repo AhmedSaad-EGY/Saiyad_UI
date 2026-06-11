@@ -213,4 +213,8 @@ Alpine.data('productsPage', () => ({
   escapeHtml(str) {
     return escapeHtml(str);
   },
+
+  str(val) {
+    return String(val);
+  },
 }));

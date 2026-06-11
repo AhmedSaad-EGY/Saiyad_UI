@@ -50,6 +50,7 @@ Alpine.data('loginForm', () => ({
   pwToggleLabel() { return this.showPassword ? t('common.hidePassword') : t('common.showPassword'); },
   clearError() { this.error = ''; },
   async submit() {
+    if (this.loading) return;
     if (!this.email || !this.password) {
       this.error = t('validation.required');
       return;

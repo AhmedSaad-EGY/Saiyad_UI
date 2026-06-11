@@ -49,7 +49,7 @@ export function renderSearchBar() {
       </template>
       <template x-if="categoryId">
         <span class="filter-chip" @click="removeFilter('categoryId')">
-          <i class="fas fa-tag"></i> <span x-text="categories.find(c => String(c.id) === String(categoryId))?.name || $t('common.category')"></span> <i class="fas fa-times"></i>
+          <i class="fas fa-tag"></i> <span x-text="categories.find(c => str(c.id) === str(categoryId))?.name || $t('common.category')"></span> <i class="fas fa-times"></i>
         </span>
       </template>
       <template x-if="condition">

@@ -82,7 +82,6 @@ Alpine.data('cartPage', () => ({
     const ok = await showConfirm(t('cart.removeItemTitle'), t('cart.removeItemConfirm'), { type: 'danger', confirmText: t('common.remove') });
     if (!ok) return;
     const prevTotal = this.total;
-    const prevItems = [...this.items];
     this.items = this.items.filter(i => i.productId !== productId);
     this.empty = this.items.length === 0;
     this.computeTotal();
@@ -91,35 +90,26 @@ Alpine.data('cartPage', () => ({
     try {
       await api.delete(`/cart/items/${productId}`);
       showToast(t('cart.itemRemoved'), 'success');
-      this.refresh();
+      await this.refresh();
     } catch (e) {
-      this.items = prevItems;
-      this.empty = this.items.length === 0;
-      this.computeTotal();
-      syncCartBadgeCount(getCartItemCount(this.items));
+      await this.refresh();
       showToast(e.message, 'error');
     }
   },
 
   async updateQty(productId, qty) {
     const prevTotal = this.total;
-    const prevItems = this.items.map(i => ({ ...i }));
     const item = this.items.find(i => i.productId === productId);
     if (!item) return;
-    const prevQty = item.quantity;
     item.quantity = parseInt(qty) || 1;
     this.computeTotal();
     animateCartTotal(prevTotal, this.total);
     syncCartBadgeCount(getCartItemCount(this.items));
     try {
       await api.put(`/cart/items/${productId}`, { quantity: parseInt(qty) || 1 });
-      this.refresh();
+      await this.refresh();
     } catch (e) {
-      const restored = prevItems.find(i => i.productId === productId);
-      if (restored) restored.quantity = prevQty;
-      this.items = prevItems;
-      this.computeTotal();
-      syncCartBadgeCount(getCartItemCount(this.items));
+      await this.refresh();
       const msg = e.status === 400 ? t('cart.insufficientStock', { stock: item.stockQuantity || 0 }) : e.message;
       showToast(msg, 'error');
     }
@@ -129,7 +119,6 @@ Alpine.data('cartPage', () => ({
     const ok = await showConfirm(t('cart.clear'), t('cart.clearConfirm'), { type: 'danger' });
     if (!ok) return;
     const prevTotal = this.total;
-    const prevItems = [...this.items];
     this.items = [];
     this.empty = true;
     this.total = 0;
@@ -138,12 +127,9 @@ Alpine.data('cartPage', () => ({
     try {
       await api.delete('/cart');
       showToast(t('cart.cleared'), 'success');
-      this.refresh();
+      await this.refresh();
     } catch (e) {
-      this.items = prevItems;
-      this.empty = this.items.length === 0;
-      this.computeTotal();
-      syncCartBadgeCount(getCartItemCount(this.items));
+      await this.refresh();
       showToast(e.message, 'error');
     }
   },

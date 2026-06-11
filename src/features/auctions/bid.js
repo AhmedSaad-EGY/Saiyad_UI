@@ -206,33 +206,32 @@ Alpine.data('auctionDetailPage', () => ({
   },
 
   async placeBid() {
-    if (!await requireAuth()) return;
-    const amount = parseFloat(this.bidAmount);
-    if (!amount || amount <= 0) {
-      this.bidAlert = t('auction.invalidBid');
-      this.bidAlertType = 'error';
-      return;
-    }
-
-    const confirmed = await showConfirm(
-      t('auction.confirmBidTitle'),
-      `${t('auction.confirmBidMsg')} ${formatPrice(amount)}? ${t('auction.bidIrreversible')}`,
-      { type: 'warning', confirmText: t('auction.placeBid') }
-    );
-    if (!confirmed) return;
-
+    if (this.placingBid) return;
     this.placingBid = true;
     this.bidAlert = '';
     this.bidAlertType = '';
-
     try {
+      if (!await requireAuth()) return;
+      const amount = parseFloat(this.bidAmount);
+      if (!amount || amount <= 0) {
+        this.bidAlert = t('auction.invalidBid');
+        this.bidAlertType = 'error';
+        return;
+      }
+
+      const confirmed = await showConfirm(
+        t('auction.confirmBidTitle'),
+        `${t('auction.confirmBidMsg')} ${formatPrice(amount)}? ${t('auction.bidIrreversible')}`,
+        { type: 'warning', confirmText: t('auction.placeBid') }
+      );
+      if (!confirmed) return;
+
       const body = { amount };
       if (this.autoBidEnabled) {
         const maxBid = parseFloat(this.autoBidMax);
         if (!maxBid || maxBid <= amount) {
           this.bidAlert = t("auction.autoBidMaxRequired");
           this.bidAlertType = 'error';
-          this.placingBid = false;
           return;
         }
         body.maxAutoBidAmount = maxBid;

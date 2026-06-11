@@ -17,8 +17,8 @@ export function setAccessToken(token) {
 export function clearTokens() {
   sessionStorage.removeItem(KEYS.ACCESS_TOKEN);
   localStorage.removeItem(KEYS.USER);
-  localStorage.removeItem('sayiad_refreshToken');
-  sessionStorage.removeItem('sayiad_refreshToken');
+  localStorage.removeItem(KEYS.REFRESH_TOKEN);
+  sessionStorage.removeItem(KEYS.REFRESH_TOKEN);
 }
 
 async function parseResponse(res) {
@@ -110,7 +110,14 @@ async function requestWithDedup(endpoint, options = {}) {
     if (_pendingRequests.has(dedupKey)) {
       return _pendingRequests.get(dedupKey);
     }
-    const promise = request(endpoint, options).finally(() => {
+    let promise;
+    try {
+      promise = request(endpoint, options);
+    } catch (e) {
+      _pendingRequests.delete(dedupKey);
+      throw e;
+    }
+    promise = promise.finally(() => {
       if (_pendingRequests.get(dedupKey) === promise) {
         _pendingRequests.delete(dedupKey);
       }

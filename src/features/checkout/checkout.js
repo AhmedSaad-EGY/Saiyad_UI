@@ -3,6 +3,7 @@ import { t } from '../../shared/utils/i18n.js';
 import { showFieldError, clearFieldError, clearAllFieldErrors } from '../../shared/utils/validation.js';
 import { formatPrice } from '../../shared/utils/format.js';
 import { triggerConfetti } from '../../shared/utils/ui.js';
+import { emit } from '../../shared/utils/events.js';
 import { setPageMeta } from '../../shared/utils/seo.js';
 import Alpine from '@alpinejs/csp';
 
@@ -75,6 +76,7 @@ Alpine.data('checkoutPage', () => ({
   },
 
   async placeOrder() {
+    if (this.placing) return;
     this.placing = true;
     this.alertMessage = '';
     this.alertType = '';
@@ -94,12 +96,13 @@ Alpine.data('checkoutPage', () => ({
     if (this.selectedAddressId) {
       addr_id = this.selectedAddressId;
     } else {
-      clearAllFieldErrors(document.getElementById('addressForm'));
+      const formEl = this.$el.querySelector('#addressForm');
+      if (formEl) clearAllFieldErrors(formEl);
       const fields = [
-        { id: 'addrFullName', el: document.getElementById('addrFullName') },
-        { id: 'addrPhone', el: document.getElementById('addrPhone') },
-        { id: 'addrAddressLine', el: document.getElementById('addrAddressLine') },
-        { id: 'addrCity', el: document.getElementById('addrCity') },
+        { id: 'addrFullName', el: this.$el.querySelector('#addrFullName') },
+        { id: 'addrPhone', el: this.$el.querySelector('#addrPhone') },
+        { id: 'addrAddressLine', el: this.$el.querySelector('#addrAddressLine') },
+        { id: 'addrCity', el: this.$el.querySelector('#addrCity') },
       ];
       let valid = true;
       for (const f of fields) {
@@ -136,7 +139,7 @@ Alpine.data('checkoutPage', () => ({
         shippingAddressId: addr_id,
         paymentMethod: this.paymentMethod,
       });
-      document.dispatchEvent(new CustomEvent('cart-updated'));
+      emit('cart:updated');
       triggerConfetti();
       this.orderSuccess = result.orderId;
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -156,7 +159,7 @@ Alpine.data('checkoutPage', () => ({
   },
 
   validateField(id) {
-    const el = document.getElementById(id);
+    const el = this.$el.querySelector(`#${id}`);
     if (!el) return;
     if (!el.value.trim() && id !== 'addrPost') {
       showFieldError(el, t('validation.required'));

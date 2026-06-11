@@ -54,7 +54,12 @@ async function loadWalletTransactions() {
   }
 }
 
+let _toppingUp = false;
+
 async function handleTopUp() {
+  if (_toppingUp) return;
+  _toppingUp = true;
+
   const input  = document.getElementById('topUpAmount');
   const errEl  = document.getElementById('topUpAmountError');
   const btn    = document.getElementById('topUpConfirmBtn');
@@ -68,6 +73,7 @@ async function handleTopUp() {
     errEl.textContent = validation.message;
     errEl.classList.remove('hidden');
     input.focus();
+    _toppingUp = false;
     return;
   }
 
@@ -84,6 +90,8 @@ async function handleTopUp() {
     errEl.classList.remove('hidden');
     btn.disabled = false;
     btn.innerHTML = t('wallet.confirmTopUp');
+  } finally {
+    _toppingUp = false;
   }
 }
 

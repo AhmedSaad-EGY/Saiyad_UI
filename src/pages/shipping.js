@@ -35,7 +35,7 @@ export default async function renderShipping(container) {
                   scrolling="no" 
                   marginheight="0" 
                   marginwidth="0" 
-                  :src="'https://maps.google.com/maps?q=' + encodeURIComponent(form.city + ' ' + form.addressLine) + '&t=&z=14&ie=UTF8&iwloc=&output=embed'"
+                  :src="'https://maps.google.com/maps?q=' + encodeUri(form.city + ' ' + form.addressLine) + '&t=&z=14&ie=UTF8&iwloc=&output=embed'"
                   style="border: none;">
                 </iframe>
               </div>

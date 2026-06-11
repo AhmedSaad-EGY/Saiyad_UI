@@ -135,7 +135,7 @@ export function renderCheckoutForm() {
                       <div class="d-flex gap-2">
                         <div style="width:40px;height:40px;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border)">
                           <div style="position:relative;width:100%;height:100%">
-                            <img :src="item.product?.primaryImageUrl || item.productImageUrl || item.imageUrl || ''" style="width:100%;height:100%;object-fit:cover" @error="imgError">
+                            <img :src="item.imageUrl || ''" style="width:100%;height:100%;object-fit:cover" @error="imgError">
                             <i class="fas fa-image" style="display:none;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:1.2rem;color:var(--text-muted)"></i>
                           </div>
                         </div>

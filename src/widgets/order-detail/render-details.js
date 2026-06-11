@@ -17,8 +17,8 @@ export function renderOrderItems(order, items) {
                 <tr>
                   <td>
                     <div class="d-flex align-items-center gap-3">
-                      ${item.productImageUrl || item.imageUrl
-                        ? `<img src="${item.productImageUrl || item.imageUrl}" alt="${escapeHtml(item.productTitle || '')}" style="width:48px;height:48px;object-fit:cover;border-radius:var(--radius);border:1px solid var(--border)" loading="lazy">`
+                      ${item.imageUrl
+                        ? `<img src="${item.imageUrl}" alt="${escapeHtml(item.productTitle || '')}" style="width:48px;height:48px;object-fit:cover;border-radius:var(--radius);border:1px solid var(--border)" loading="lazy">`
                         : `<div style="width:48px;height:48px;display:flex;align-items:center;justify-content:center;background:var(--body-bg);border-radius:var(--radius);color:var(--text-muted)"><i class="fas fa-image" aria-hidden="true"></i></div>`
                       }
                       <a href="#/product-detail?id=${item.productId}" class="text-reset text-decoration-none fw-medium">${escapeHtml(item.productTitle || t('common.product'))}</a>

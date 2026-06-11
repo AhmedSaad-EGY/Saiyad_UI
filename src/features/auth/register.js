@@ -26,6 +26,7 @@ Alpine.data('registerForm', () => ({
   pwToggleIcon() { return this.showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'; },
   togglePw() { this.showPassword = !this.showPassword; },
   async submit() {
+    if (this.loading) return;
     if (!this.terms) {
       showToast(t('auth.mustAcceptTerms'), 'error');
       return;

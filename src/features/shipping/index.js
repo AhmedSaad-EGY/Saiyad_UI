@@ -85,6 +85,10 @@ Alpine.data('shippingPage', () => ({
     }
   },
 
+  encodeUri(val) {
+    return encodeURIComponent(val);
+  },
+
   cancelForm() {
     this.form = { fullName: '', phone: '', city: '', addressLine: '', postalCode: '' };
     this.editingId = null;
