@@ -50,9 +50,10 @@ export async function ensureCsrfToken() {
   try {
     const res = await fetch(`${APP_CONFIG.apiBaseUrl}/antiforgery/token`, { credentials: 'include' });
     if (!res.ok) return null;
-    const cookie = readCookie();
-    if (cookie) sessionStorage.setItem(STORAGE_KEY, cookie);
-    return cookie;
+    const data = await res.json();
+    const token = data?.token || null;
+    if (token) sessionStorage.setItem(STORAGE_KEY, token);
+    return token;
   } catch {
     return null;
   }

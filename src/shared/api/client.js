@@ -5,20 +5,16 @@ import { KEYS } from '../constants/storage-keys.js';
 
 const _pendingRequests = new Map();
 
-let _cachedAccessToken = sessionStorage.getItem(KEYS.ACCESS_TOKEN) || null;
-
 export function getAccessToken() {
-  return _cachedAccessToken;
+  return sessionStorage.getItem(KEYS.ACCESS_TOKEN) || null;
 }
 
 export function setAccessToken(token) {
-  _cachedAccessToken = token;
   if (token) sessionStorage.setItem(KEYS.ACCESS_TOKEN, token);
   else sessionStorage.removeItem(KEYS.ACCESS_TOKEN);
 }
 
 export function clearTokens() {
-  _cachedAccessToken = null;
   sessionStorage.removeItem(KEYS.ACCESS_TOKEN);
   localStorage.removeItem(KEYS.USER);
 }
@@ -127,7 +123,7 @@ function buildQuery(params) {
   return q ? `?${q}` : "";
 }
 
-async function doUpload(url, formData) {
+async function doUpload(url, formData, _retry = false) {
   const token = getAccessToken();
   const headers = { ...getCsrfHeader('POST') };
   if (token) headers['Authorization'] = `Bearer ${token}`;
@@ -141,6 +137,15 @@ async function doUpload(url, formData) {
     });
   } catch {
     throw new Error("Network error. Please check your connection.");
+  }
+  if (res.status === 401 && !_retry && !url.includes("/auth/login")) {
+    const refreshed = await refreshAccessToken();
+    if (refreshed) {
+      return doUpload(url, formData, true);
+    }
+    clearTokens();
+    emit('auth:session-expired');
+    throw new Error("Session expired. Please log in again.");
   }
   const data = await parseResponse(res);
   if (!res.ok) {

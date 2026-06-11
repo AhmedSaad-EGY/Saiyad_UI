@@ -3,7 +3,7 @@
 **Date:** 2026-06-11
 **Scope:** 263 files (152 frontend + 111 backend)
 **Findings:** 95 defects (18 CRITICAL, 39 HIGH, 25 MEDIUM, 13 LOW)
-**Strike 4:** 15 fixed — 63 remaining
+**Strike 5:** 4 fixed — 59 remaining
 
 ---
 
@@ -68,6 +68,17 @@
 
 ---
 
+## Strike 5 — In Progress (2026-06-11)
+
+| Issue | Fix | File:Line |
+|-------|-----|-----------|
+| F-030 | Replaced falsy `if (payload.exp)` check with explicit `undefined`/`null` guard; `return false` for missing/zero `exp` | `auth-state.js:20-23` |
+| F-028 | Removed module-level `_cachedAccessToken` cache; `getAccessToken()` reads `sessionStorage` directly every call | `client.js:8-15` |
+| F-029 | Added 401 → `refreshAccessToken()` → retry guard in `doUpload()`, matching `request()` pattern | `client.js:141-149` |
+| F-031 | Changed `ensureCsrfToken()` to read token from response body `res.json().token` instead of `readCookie()` (HttpOnly cookie invisible to JS) | `csrf.js:53-55` |
+
+---
+
 ## Consolidated Defect Table
 
 | Issue ID | Layer | File Path | Line | Exact Technical Defect | Severity | Status |
@@ -112,10 +123,10 @@
 | F-025 | Frontend | `src/app/offline.js` | 13, 27 | CSP: `innerHTML` with unescaped translation strings | HIGH | ✅ Fixed |
 | F-026 | Frontend | `src/app/realtime.js` | 117 | CSP: `innerHTML` for reconnection banner | HIGH | ✅ Fixed |
 | F-027 | Frontend | `src/app/theme.js` | 18 | CSP: `innerHTML` for theme toggle icon | HIGH | ✅ Fixed |
-| F-028 | Frontend | `src/shared/api/client.js` | 8 | Stale `_cachedAccessToken` on new tab — `sessionStorage` not shared across tabs, no re-hydration | HIGH | Open |
-| F-029 | Frontend | `src/shared/api/client.js` | 130-158 | `doUpload()` lacks 401 retry — upload fails hard on session expiry; no `_retry` logic | HIGH | Open |
-| F-030 | Frontend | `src/shared/utils/auth-state.js` | 20-22 | `isAuthenticated()` returns `true` for tokens with falsy `exp` (epoch-0 or missing `exp`) | HIGH | Open |
-| F-031 | Frontend | `src/shared/utils/csrf.js` | 47-59 | `ensureCsrfToken()` always returns null due to wrong URL — no console warning | HIGH | Open |
+| F-028 | Frontend | `src/shared/api/client.js` | 8 | Stale `_cachedAccessToken` on new tab — `sessionStorage` not shared across tabs, no re-hydration | HIGH | ✅ Fixed |
+| F-029 | Frontend | `src/shared/api/client.js` | 130-158 | `doUpload()` lacks 401 retry — upload fails hard on session expiry; no `_retry` logic | HIGH | ✅ Fixed |
+| F-030 | Frontend | `src/shared/utils/auth-state.js` | 20-22 | `isAuthenticated()` returns `true` for tokens with falsy `exp` (epoch-0 or missing `exp`) | HIGH | ✅ Fixed |
+| F-031 | Frontend | `src/shared/utils/csrf.js` | 47-59 | `ensureCsrfToken()` always returns null due to wrong URL — no console warning | HIGH | ✅ Fixed |
 | F-032 | Frontend | `src/shared/utils/errors.js` | 74-80 | `unhandledrejection` handler replaces full app UI via `showErrorFallback` on minor rejections | HIGH | Open |
 | F-033 | Frontend | `src/shared/utils/seo.js` | 30 | Canonical URL strips hash fragment — all hash-routed pages share same canonical URL | HIGH | Open |
 | F-034 | Frontend | `src/shared/utils/ocean.js` | 288 | `observer` referenced before `const` declaration (TDZ) in `visibilitychange` handler — ReferenceError | HIGH | Open |
@@ -188,15 +199,15 @@
 | Severity | Original | Fixed | Remaining |
 |----------|----------|-------|-----------|
 | CRITICAL | 18 | 15 | 3 |
-| HIGH | 39 | 17 | 22 |
+| HIGH | 39 | 21 | 18 |
 | MEDIUM | 25 | 0 | 25 |
 | LOW | 13 | 0 | 13 |
-| **Total** | **95** | **32** | **63** |
+| **Total** | **95** | **36** | **59** |
 
-## Top 3 Systemic Issues (Post-Strike-4)
+## Top 3 Systemic Issues (Post-Strike-5)
 
 1. **CSP-x-html contamination** — All `innerHTML` violations and inline `onclick` handlers in `src/app/` (F-021–F-027) and `src/widgets/` (F-047–F-051) eliminated. Remaining ~130 `innerHTML` uses are in feature/page files outside targeted scope. *(Strike 2: 6 fixed. Strike 3: 3 fixed. Strike 4: 12 fixed)*
 
 2. **Backend contract gaps** — `RegisterRequest` silently drops `birthdate`/`confirmPassword`; `AuthResponse.Token` serializes as `"token"` but frontend dead-branch already fixed; CSRF `/api/api/` URL already fixed; registration role hard-locked. *(3 of 4 items resolved)*
 
-3. **Broken auth/refresh chain** — JWT `atob()` base64url bug fixed; duplicated CSRF URL fixed; missing refresh token rotation + no admin audit logging still open. *(2 of 4 items resolved)*
+3. **Broken auth/refresh chain** — JWT `atob()` base64url bug fixed; duplicated CSRF URL fixed; stale token cache eliminated; upload 401 retry added; CSRF token now reads from response body. Missing refresh token rotation + no admin audit logging still open. *(4 of 6 items resolved)*

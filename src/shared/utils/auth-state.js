@@ -17,10 +17,10 @@ function _decodeToken() {
 export function isAuthenticated() {
   const payload = _decodeToken();
   if (!payload) return false;
-  if (payload.exp) {
+  if (payload.exp !== undefined && payload.exp !== null) {
     return payload.exp * 1000 > Date.now();
   }
-  return true;
+  return false;
 }
 
 export function getRoleFromToken() {
