@@ -26,7 +26,7 @@ export function renderAuctionGrid() {
     <div x-show="!loading && !error && auctions.length" class="row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-4 g-3">
       <template x-for="(a, i) in auctions" :key="a.id">
         <div class="col">
-          <a :href="'#/auction-detail?id='+a.id" class="product-card card animate-on-scroll" :class="'stagger-' + Math.min(i + 1, 8)" :aria-label="(a.productTitle || $t('auction.item')) + ' — ' + formatPrice(a.currentHighestBid || a.startingPrice)" style="position:relative;overflow:hidden">
+          <a :href="'#/auction-detail?id='+a.id" class="product-card card animate-on-scroll" :class="'stagger-' + (i + 1 > 8 ? 8 : i + 1)" :aria-label="(a.productTitle || $t('auction.item')) + ' — ' + formatPrice(a.currentHighestBid || a.startingPrice)" style="position:relative;overflow:hidden">
             <template x-if="a.bidCount >= 5 || timeLeft(a.endTime).urgent">
               <div class="ribbon-badge" style="position:absolute;top:10px;left:10px;background:var(--primary);color:var(--text-inverse);font-size:0.75rem;padding:2px 8px;border-radius:var(--radius-full);z-index:2;font-weight:bold;box-shadow:var(--shadow-sm)">
                 <i class="fas fa-fire"></i> ${t('common.hot')}

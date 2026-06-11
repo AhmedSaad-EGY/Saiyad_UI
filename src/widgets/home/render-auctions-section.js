@@ -16,7 +16,7 @@ export function renderAuctionsSection() {
         <div class="col">
           <a :href="'#/auction-detail?id=' + a.id"
              class="product-card card animate-on-scroll"
-             :class="'stagger-' + Math.min(i + 1, 8)"
+             :class="'stagger-' + (i + 1 > 8 ? 8 : i + 1)"
              :aria-label="(a.productTitle || $t('auction.item')) + ' — ' + formatPrice(a.currentHighestBid || a.startingPrice)">
             <div class="product-card-img">
               <img :src="a.productImageUrl || ''" :alt="a.productTitle || $t('auction.item')" loading="lazy">

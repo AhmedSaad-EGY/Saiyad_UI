@@ -23,7 +23,7 @@ export function renderProductsSection() {
         <div class="col">
           <a :href="'#/product-detail?id=' + p.id"
              class="product-card card animate-on-scroll"
-             :class="'stagger-' + Math.min(i + 1, 8)"
+             :class="'stagger-' + (i + 1 > 8 ? 8 : i + 1)"
              :aria-label="escapeHtml(p.title || $t('common.product')) + ' — ' + formatPrice(p.price)">
             <div class="product-card-img">
               <img :src="p.primaryImageUrl || p.imageUrl || ''" :alt="escapeHtml(p.title || $t('common.product'))" loading="lazy">
