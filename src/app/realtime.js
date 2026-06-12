@@ -26,8 +26,8 @@ function getConnection() {
     emit('realtime:bid-placed', { bid });
 
     const userId = getUser()?.id;
-    const bidderId = bid.bidderId || bid.userId;
-    if (userId && bidderId && bidderId !== parseInt(userId)) {
+    const bidderId = bid.userId;
+    if (userId && bidderId !== undefined && bidderId !== parseInt(userId)) {
       showToast(t("auction.outbid"), "warning");
     } else {
       showToast(t("auction.newBid"), "info");

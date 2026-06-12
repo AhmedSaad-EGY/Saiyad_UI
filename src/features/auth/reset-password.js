@@ -32,7 +32,7 @@ Alpine.data('forgotPwPage', () => ({
   async verifyCode() {
     this.loading = true; this.error = '';
     try {
-      await api.post('/auth/verify-reset-code', { email: this.email, code: this.code });
+      await api.post('/auth/verify-reset-code', { email: this.email, token: this.code });
       this.step = 3;
     } catch (err) { this.error = err.message || t('auth.invalidCode'); }
     finally { this.loading = false; }
@@ -41,7 +41,7 @@ Alpine.data('forgotPwPage', () => ({
     if (this.newPassword !== this.confirmPassword) { this.error = t('validation.passwordsNotMatch'); return; }
     this.loading = true; this.error = '';
     try {
-      await api.post('/auth/reset-password', { email: this.email, code: this.code, newPassword: this.newPassword, confirmPassword: this.confirmPassword });
+      await api.post('/auth/reset-password', { email: this.email, token: this.code, newPassword: this.newPassword, confirmPassword: this.confirmPassword });
       this.success = true;
       showToast(t('auth.passwordResetSuccess'), 'success');
       setTimeout(() => { window.location.hash = '#/login'; }, 2000);
@@ -66,7 +66,7 @@ Alpine.data('resetPwForm', () => ({
     this.loading = true; this.error = '';
     try {
       const params = new URLSearchParams(window.location.hash.split('?')[1] || '');
-      await api.post('/auth/reset-password', { email: this.email || params.get('email') || '', code: params.get('code') || '', newPassword: this.password, confirmPassword: this.confirmPassword });
+      await api.post('/auth/reset-password', { email: this.email || params.get('email') || '', token: params.get('code') || '', newPassword: this.password, confirmPassword: this.confirmPassword });
       this.success = true;
       showToast(t('auth.passwordResetSuccess'), 'success');
       setTimeout(() => window.location.hash = '#/login', 2000);

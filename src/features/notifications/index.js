@@ -17,23 +17,15 @@ export function normalizeNotifications(data) {
     ? data
     : Array.isArray(data?.items)
       ? data.items
-      : Array.isArray(data?.data)
-        ? data.data
-        : null;
+      : [];
 
-  if (source === null && data) {
-    console.warn('[notifications] Unexpected API response shape — expected array, { items }, or { data }', data);
-    return [];
-  }
-
-  return (source || []).map((n) => {
-    const id = n.id ?? n.notificationId ?? n.notificationID ?? '';
-    const isRead = Boolean(n.isRead ?? n.read ?? n.readAt ?? n.readOn ?? n.dateRead);
-    const title = n.title ?? n.subject ?? n.type ?? t('notif.title');
-    const message = n.message ?? n.body ?? n.content ?? n.description ?? '';
-    const createdAt = n.createdAt ?? n.createdOn ?? n.createdDate ?? n.dateCreated ?? n.timestamp ?? n.sentAt;
-    return { id, isRead, title, message, createdAt };
-  });
+  return source.map((n) => ({
+    id: n.id ?? '',
+    isRead: Boolean(n.isRead),
+    title: n.title ?? t('notif.title'),
+    message: n.message ?? '',
+    createdAt: n.createdAt ?? null,
+  }));
 }
 
 export function countUnreadNotifications(notifs) {
@@ -41,17 +33,9 @@ export function countUnreadNotifications(notifs) {
 }
 
 export async function markNotificationRead(id) {
-  try {
-    await api.put(`/notifications/${id}/read`);
-  } catch {
-    await api.post(`/notifications/${id}/read`, {});
-  }
+  await api.put(`/notifications/${id}/read`);
 }
 
 export async function markAllNotificationsRead() {
-  try {
-    await api.put('/notifications/read-all');
-  } catch {
-    await api.post('/notifications/read-all', {});
-  }
+  await api.put('/notifications/read-all');
 }

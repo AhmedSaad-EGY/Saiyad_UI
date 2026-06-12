@@ -1,6 +1,5 @@
 import { APP_CONFIG } from './config.js';
 import { emit } from '../utils/events.js';
-import { getCsrfToken } from '../utils/csrf.js';
 import { KEYS } from '../constants/storage-keys.js';
 
 const _pendingRequests = new Map();
@@ -36,16 +35,10 @@ async function parseResponse(res) {
   return res.ok ? text : { message: text };
 }
 
-function getCsrfHeader(method) {
-  if (!['POST', 'PUT', 'PATCH', 'DELETE'].includes(method)) return {};
-  const csrfToken = getCsrfToken();
-  return csrfToken ? { 'X-CSRF-Token': csrfToken } : {};
-}
-
 async function request(endpoint, options = {}) {
   const token = getAccessToken();
   const method = options.method || 'GET';
-  const headers = { 'Content-Type': 'application/json', ...getCsrfHeader(method), ...options.headers };
+  const headers = { 'Content-Type': 'application/json', ...options.headers };
   if (token) headers['Authorization'] = `Bearer ${token}`;
   const { signal, ...fetchOptions } = options;
 
@@ -72,11 +65,6 @@ async function request(endpoint, options = {}) {
   }
 
   const data = await parseResponse(res);
-
-  if (res.status === 400 && !options._csrfRetry && data?.message === "Invalid or missing anti-forgery token.") {
-    await ensureCsrfToken();
-    return request(endpoint, { ...options, _csrfRetry: true });
-  }
 
   if (!res.ok) {
     let msg =
@@ -139,7 +127,7 @@ function buildQuery(params) {
 
 async function doUpload(url, formData, _retry = false) {
   const token = getAccessToken();
-  const headers = { ...getCsrfHeader('POST') };
+  const headers = {};
   if (token) headers['Authorization'] = `Bearer ${token}`;
   let res;
   try {

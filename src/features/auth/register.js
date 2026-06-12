@@ -1,5 +1,4 @@
 import { api } from '../../shared/api/client.js';
-import { ensureCsrfToken } from '../../shared/utils/csrf.js';
 import { getPasswordStrengthResult, calculateAge, validateForm, clearAllFieldErrors } from '../../shared/utils/validation.js';
 import { showToast } from '../../shared/utils/ui.js';
 import { t } from '../../shared/utils/i18n.js';
@@ -45,7 +44,6 @@ Alpine.data('registerForm', () => ({
     clearAllFieldErrors(formEl);
     const isValid = validateForm(formEl, rules);
     if (!isValid) { this.loading = false; return; }
-    await ensureCsrfToken();
     try {
       const data = await api.post('/auth/register', {
         fullName: this.fullName, email: this.email, phone: this.phone,

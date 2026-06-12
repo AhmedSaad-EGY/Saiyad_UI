@@ -1,6 +1,6 @@
 import { api, setAccessToken, clearTokens } from '../../shared/api/client.js';
 import { emit } from '../../shared/utils/events.js';
-import { ensureCsrfToken, clearCsrfToken } from '../../shared/utils/csrf.js';
+
 import { showToast } from '../../shared/utils/ui.js';
 import { t } from '../../shared/utils/i18n.js';
 import { isAuthenticated } from '../../shared/utils/auth-state.js';
@@ -18,7 +18,6 @@ export async function requireAuth() {
 export async function logout() {
   try { await api.post('/auth/logout'); } catch { /* silent */ }
   clearTokens();
-  clearCsrfToken();
   emit('notifications:stop-polling');
   emit('auth:changed');
   document.documentElement.removeAttribute('data-user-role');
@@ -29,7 +28,7 @@ export async function logout() {
 export async function syncVipAttribute() {
   try {
     const data = await api.get('/subscriptions/my').catch(() => null);
-    if (data && (data.isActive || data.status === 'Active')) {
+    if (data?.isActive) {
       document.documentElement.setAttribute('data-vip', 'true');
     } else {
       document.documentElement.removeAttribute('data-vip');
@@ -56,7 +55,6 @@ Alpine.data('loginForm', () => ({
       return;
     }
     this.loading = true; this.error = '';
-    await ensureCsrfToken();
     try {
       const data = await api.post('/auth/login', { email: this.email, password: this.password });
       setAccessToken(data.token);

@@ -17,7 +17,7 @@ Alpine.store('wallet', {
       try {
         const data = await api.get('/wallet');
         if (data) {
-          this.balance = data.totalBalance || 0;
+          this.balance = data.balance ?? 0;
           this.available = data.availableBalance || 0;
         }
       } catch {

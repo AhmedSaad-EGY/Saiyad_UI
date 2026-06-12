@@ -92,13 +92,13 @@ Alpine.data('auctionDetailPage', () => ({
       }
 
       this._bus.on('realtime:bid-placed', ({ bid }) => {
-        const baId = bid.auctionId || bid.auction_id;
+        const baId = bid.auctionId;
         if (baId && parseInt(baId) !== parseInt(this._auctionId)) return;
         this.onBidPlaced(bid);
       });
 
       this._bus.on('realtime:auction-ended', ({ auction: endedAuction }) => {
-        const eaId = endedAuction.id || endedAuction.auctionId;
+        const eaId = endedAuction.id;
         if (eaId && parseInt(eaId) !== parseInt(this._auctionId)) return;
         this.onAuctionEnded(endedAuction);
       });
