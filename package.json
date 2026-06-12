@@ -14,7 +14,7 @@
     "lint:css": "stylelint \"src/css/**/*.css\""
   },
   "dependencies": {
-    "@alpinejs/csp": "^3.15.12",
+    "alpinejs": "^3.15.12",
     "@microsoft/signalr": "^8.0.17",
     "bootstrap": "^5.3.8",
     "dompurify": "^3.4.8"

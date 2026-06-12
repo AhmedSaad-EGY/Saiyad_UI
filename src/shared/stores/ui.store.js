@@ -1,4 +1,4 @@
-import Alpine from '@alpinejs/csp';
+import Alpine from 'alpinejs';
 import { KEYS } from '../../shared/constants/storage-keys.js';
 
 Alpine.store('ui', {

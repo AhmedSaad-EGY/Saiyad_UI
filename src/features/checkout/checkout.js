@@ -5,7 +5,7 @@ import { formatPrice } from '../../shared/utils/format.js';
 import { triggerConfetti } from '../../shared/utils/ui.js';
 import { emit } from '../../shared/utils/events.js';
 import { setPageMeta } from '../../shared/utils/seo.js';
-import Alpine from '@alpinejs/csp';
+import Alpine from 'alpinejs';
 
 export function createPaymentReference(prefix = 'PAY') {
   return `${prefix}-${crypto.randomUUID()}`;

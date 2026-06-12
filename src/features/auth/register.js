@@ -3,7 +3,7 @@ import { getPasswordStrengthResult, calculateAge, validateForm, clearAllFieldErr
 import { showToast } from '../../shared/utils/ui.js';
 import { t } from '../../shared/utils/i18n.js';
 import { KEYS } from '../../shared/constants/storage-keys.js';
-import Alpine from '@alpinejs/csp';
+import Alpine from 'alpinejs';
 
 Alpine.data('registerForm', () => ({
   fullName: '', email: '', phone: '', birthdate: '', password: '',

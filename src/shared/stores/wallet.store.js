@@ -1,4 +1,4 @@
-import Alpine from '@alpinejs/csp';
+import Alpine from 'alpinejs';
 import { api } from '../api/client.js';
 import { on } from '../utils/events.js';
 

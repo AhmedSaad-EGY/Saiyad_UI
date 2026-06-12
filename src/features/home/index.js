@@ -1,4 +1,4 @@
-import Alpine from '@alpinejs/csp';
+import Alpine from 'alpinejs';
 import { t } from '../../shared/utils/i18n.js';
 import { api } from '../../shared/api/client.js';
 import { isAuthenticated, hasAnyRole, hasRole } from '../auth/login.js';

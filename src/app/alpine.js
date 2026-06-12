@@ -1,4 +1,4 @@
-import Alpine from '@alpinejs/csp';
+import Alpine from 'alpinejs';
 import '../shared/stores/cart.store.js';
 import '../shared/stores/ui.store.js';
 import '../shared/stores/wallet.store.js';

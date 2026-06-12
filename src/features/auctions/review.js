@@ -1,4 +1,4 @@
-import Alpine from '@alpinejs/csp';
+import Alpine from 'alpinejs';
 import { t } from '../../shared/utils/i18n.js';
 import { getUser } from '../auth/login.js';
 import { MODERATOR_ROLES } from '../../shared/constants/roles.js';

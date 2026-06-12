@@ -2,7 +2,7 @@ import { api } from '../../shared/api/client.js';
 import { t } from '../../shared/utils/i18n.js';
 import { escapeHtml, observeAnimations, initPullToRefresh, initInfiniteScroll } from '../../shared/utils/dom.js';
 import { formatPrice } from '../../shared/utils/format.js';
-import Alpine from '@alpinejs/csp';
+import Alpine from 'alpinejs';
 
 Alpine.data('productsPage', () => ({
   search: '',
