@@ -24,7 +24,7 @@ export function renderOrderItems(order, items) {
                       <a href="#/product-detail?id=${item.productId}" class="text-reset text-decoration-none fw-medium">${escapeHtml(item.productTitle || t('common.product'))}</a>
                     </div>
                   </td>
-                  <td>${item.sellerName ? `<a href="#/seller-profile?userId=${item.sellerId}" class="text-primary">${escapeHtml(item.sellerName)}</a>` : '-'}</td>
+                  <td>${item.sellerName ? `<a href="#/seller-profile?sellerId=${item.sellerId}" class="text-primary">${escapeHtml(item.sellerName)}</a>` : '-'}</td>
                   <td>${item.quantity}</td>
                   <td>${formatPrice(item.unitPrice)}</td>
                   <td class="fw-semibold">${formatPrice(item.subtotal)}</td>

@@ -2,15 +2,18 @@ import { api } from '../../shared/api/client.js';
 import { getPasswordStrengthResult, calculateAge, validateForm, clearAllFieldErrors } from '../../shared/utils/validation.js';
 import { showToast } from '../../shared/utils/ui.js';
 import { t } from '../../shared/utils/i18n.js';
+import { ROLES, SELLER_ROLES } from '../../shared/constants/roles.js';
 import { KEYS } from '../../shared/constants/storage-keys.js';
 import Alpine from 'alpinejs';
 
 Alpine.data('registerForm', () => ({
   fullName: '', email: '', phone: '', birthdate: '', password: '',
-  confirmPassword: '', role: 'Customer', terms: false, showPassword: false,
+  confirmPassword: '', role: ROLES.CUSTOMER, terms: false, showPassword: false,
   loading: false, ageDisplay: '', ageColor: 'var(--text-secondary)',
   strengthCls: '', strengthLabel: '', licenseNumber: '',
-  get needsLicense() { return ['Fisherman', 'BaitSeller'].includes(this.role); },
+  pendingUpgrade: false, pendingRole: '',
+  get needsLicense() { return SELLER_ROLES.includes(this.role); },
+  get isAuctioneer() { return this.role === ROLES.AUCTIONEER; },
   computeAge() {
     if (!this.birthdate) { this.ageDisplay = ''; return; }
     const age = calculateAge(this.birthdate);
@@ -51,6 +54,11 @@ Alpine.data('registerForm', () => ({
         confirmPassword: this.confirmPassword, role: this.role,
         licenseNumber: this.needsLicense ? this.licenseNumber : undefined,
       });
+      if (data.pendingRoleUpgrade) {
+        this.pendingUpgrade = true;
+        this.pendingRole = data.pendingRoleUpgrade;
+        return;
+      }
       // F-007: Always redirect to login after registration — do NOT store access token
       // (prevents auto-login for unverified accounts per HIGH-04)
       if (data.user) { const { role, ...safeUser } = data.user; localStorage.setItem(KEYS.USER, JSON.stringify(safeUser)); }

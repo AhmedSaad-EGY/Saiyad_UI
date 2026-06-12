@@ -97,7 +97,7 @@ export function renderDetailMain() {
           </div>
 
           <template x-if="auction.sellerName || auction.auctioneerName">
-            <a :href="'#/seller-profile?userId=' + (auction.sellerId || auction.auctioneerId || '')" class="seller-info-card" style="text-decoration:none;color:inherit">
+            <a :href="'#/seller-profile?sellerId=' + (auction.sellerId || auction.auctioneerId || '')" class="seller-info-card" style="text-decoration:none;color:inherit">
               <div class="seller-avatar" x-text="(auction.sellerName || auction.auctioneerName || $t('common.unknown')).charAt(0).toUpperCase()"></div>
               <div class="seller-info-details">
                 <div class="seller-info-name" x-text="auction.sellerName || auction.auctioneerName"></div>

@@ -43,11 +43,11 @@ export function renderDetailPanel(p, isAvailable, isWishlisted, stockLevel, stoc
             ${isWishlisted ? t('product.removeFromWishlist') : t("product.wishlist")}
           </button>
           ${p.isAuctioned && p.auctionId ? `<a href="#/auction-detail?id=${p.auctionId}" class="btn btn-success btn-lg"><i class="fas fa-gavel"></i> ${t("product.viewAuction")}</a>` : !p.isAuctioned && isSeller ? `<button class="btn btn-primary btn-lg" id="startAuctionBtn"><i class="fas fa-gavel"></i> ${t("auction.startAuction")}</button>` : ""}
-          ${p.sellerId ? `<a href="#/seller-profile?userId=${p.sellerId}" class="btn btn-outline btn-lg"><i class="fas fa-envelope"></i> ${t("product.contactSeller")}</a>` : ""}
+          ${p.sellerId ? `<a href="#/seller-profile?sellerId=${p.sellerId}" class="btn btn-outline btn-lg"><i class="fas fa-envelope"></i> ${t("product.contactSeller")}</a>` : ""}
         </div>
 
         ${p.sellerId ? `
-        <a href="#/seller-profile?userId=${p.sellerId}" class="seller-info-card mt-4" style="text-decoration:none;color:inherit">
+        <a href="#/seller-profile?sellerId=${p.sellerId}" class="seller-info-card mt-4" style="text-decoration:none;color:inherit">
           <div class="seller-avatar">${escapeHtml(p.sellerName || t('common.unknown')).charAt(0).toUpperCase()}</div>
           <div class="seller-info-details">
             <div class="seller-info-name">${escapeHtml(p.sellerName || t("common.N/A"))}</div>

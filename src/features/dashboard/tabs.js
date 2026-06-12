@@ -31,7 +31,7 @@ export function getDashboardTabs() {
     ...(isECommerceRole ? [{ id: 'orders', icon: 'fa-box', label: t('dash.orders') }] : []),
     ...(isSellerRole ? [{ id: 'products', icon: 'fa-tag', label: t('dash.products') }] : []),
     ...(hasRole(ROLES.AUCTIONEER) ? [{ id: 'auctions', icon: 'fa-gavel', label: t('dash.auctions') }] : []),
-    ...(hasAnyRole(ROLES.FISHERMAN) ? [{ id: 'auction-requests', icon: 'fa-file-export', label: t('auctionRequests.title') }] : []),
+    ...(hasRole(ROLES.FISHERMAN) ? [{ id: 'auction-requests', icon: 'fa-file-export', label: t('auctionRequests.title') }] : []),
     ...(hasAnyRole(...(MODERATOR_ROLES)) ? [{ id: 'auction-requests-review', icon: 'fa-clipboard-list', label: t('auctionRequestsReview.title') }] : []),
     ...(hasAnyRole(...(MODERATOR_ROLES)) ? [{ id: 'auctioneer-analytics', icon: 'fa-chart-bar', label: t('analytics.title') }] : []),
     ...(isECommerceRole ? [{ id: 'wishlist', icon: 'fa-heart', label: t('dash.wishlist') }] : []),
@@ -67,7 +67,7 @@ async function loadOverview(content, user) {
     stats.usersCount = 0;
     stats.sellerProfileExists = false;
 
-    const isAdmin = user?.role === 'Admin';
+    const isAdmin = user?.role === ROLES.ADMIN;
     if (isAdmin) {
       try {
         const pending = await fetchPendingReviews(1, 1);

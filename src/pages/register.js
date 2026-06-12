@@ -1,16 +1,17 @@
 import { t } from '../shared/utils/i18n.js';
 import { setPageMeta } from '../shared/utils/seo.js';
 import { escapeHtml } from '../shared/utils/dom.js';
+import { ROLES } from '../shared/constants/roles.js';
 import '../features/auth/register.js';
 
 export default function renderRegister(container) {
   setPageMeta(t('auth.register'));
 
   const roleOptions = [
-    { value: 'Customer', label: t('register.customer'), desc: t('register.customerDesc') },
-    { value: 'Fisherman', label: t('register.fisherman'), desc: t('register.fishermanDesc') },
-    { value: 'BaitSeller', label: t('register.baitSeller'), desc: t('register.baitSellerDesc') },
-    { value: 'Auctioneer', label: t('register.auctioneer'), desc: t('register.auctioneerDesc') },
+    { value: ROLES.CUSTOMER, label: t('register.customer'), desc: t('register.customerDesc') },
+    { value: ROLES.FISHERMAN, label: t('register.fisherman'), desc: t('register.fishermanDesc') },
+    { value: ROLES.BAIT_SELLER, label: t('register.baitSeller'), desc: t('register.baitSellerDesc') },
+    { value: ROLES.AUCTIONEER, label: t('register.auctioneer'), desc: t('register.auctioneerDesc') },
   ];
 
   container.innerHTML = `
@@ -23,7 +24,7 @@ export default function renderRegister(container) {
             <p>${t('auth.registerDesc')}</p>
           </div>
 
-          <form id="registerForm" x-data="registerForm" @submit.prevent="submit">
+          <form id="registerForm" x-data="registerForm" @submit.prevent="submit" x-show="!pendingUpgrade">
             <div class="form-group">
               <label for="regName">${t('auth.fullName')}</label>
               <input type="text" id="regName" class="form-input" x-ref="fullName" x-model="fullName" placeholder="${t('auth.fullNamePlaceholder')}" required autocomplete="name" :disabled="loading">
@@ -59,6 +60,13 @@ export default function renderRegister(container) {
               </div>
             </template>
 
+            <template x-if="isAuctioneer">
+              <div class="form-hint auctioneer-notice" style="background:var(--bg-secondary);padding:12px;border-radius:8px;margin-bottom:16px;font-size:0.9rem">
+                <i class="fas fa-info-circle" style="margin-right:6px"></i>
+                <span>${t('register.auctioneerNotice')}</span>
+              </div>
+            </template>
+
             <div class="form-group">
               <label for="regPassword">${t('auth.password')}</label>
               <div class="password-wrapper">
@@ -88,6 +96,15 @@ export default function renderRegister(container) {
               <span x-text="loading ? '${t('common.loading')}' : '${t('auth.createAccount')}'"></span>
             </button>
           </form>
+
+          <template x-if="pendingUpgrade">
+            <div class="text-center" style="padding:2rem 0">
+              <i class="fas fa-clock" style="font-size:3rem;color:var(--primary);margin-bottom:1rem"></i>
+              <h3>${t('auth.createAccount')}</h3>
+              <p style="color:var(--text-secondary);max-width:400px;margin:1rem auto">${t('register.pendingUpgrade')}</p>
+              <a href="#/login" class="btn btn-primary">${t('register.goToLogin')}</a>
+            </div>
+          </template>
 
           <div class="auth-footer">
             <span>${t('auth.haveAccount')}</span>

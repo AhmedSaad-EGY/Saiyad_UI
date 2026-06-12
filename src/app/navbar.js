@@ -1,6 +1,6 @@
 import { t } from '../shared/utils/i18n.js';
-import { getUser, isAuthenticated } from '../shared/utils/auth-state.js';
-import { SELLER_ROLES } from '../shared/constants/roles.js';
+import { getUser, isAuthenticated, getRoleFromToken } from '../shared/utils/auth-state.js';
+import { ROLES, SELLER_ROLES } from '../shared/constants/roles.js';
 import { openDrawer, closeDrawer } from '../widgets/layout/navbar.js';
 import { showConfirm } from '../widgets/ui/modal.js';
 import { logout } from '../features/auth/login.js';
@@ -24,13 +24,29 @@ export function updateNavbar() {
     else avatarImg.hidden = true;
   }
   document.querySelectorAll(".nav-seller").forEach(el => el.classList.toggle("hidden", !user || !SELLER_ROLES.includes(user.role)));
-  document.querySelectorAll(".nav-admin").forEach(el => el.classList.toggle("hidden", user?.role !== 'Admin'));
-  document.querySelectorAll(".nav-auctioneer").forEach(el => el.classList.toggle("hidden", user?.role !== 'Auctioneer'));
+  document.querySelectorAll(".nav-admin").forEach(el => el.classList.toggle("hidden", user?.role !== ROLES.ADMIN));
+  document.querySelectorAll(".nav-auctioneer").forEach(el => el.classList.toggle("hidden", user?.role !== ROLES.AUCTIONEER));
 
   const sellLink = document.getElementById("sellLink");
   if (sellLink) {
     sellLink.href = user && SELLER_ROLES.includes(user.role) ? '#/dashboard' : '#/register';
   }
+
+  applyDropdownRoleVisibility();
+}
+
+function applyDropdownRoleVisibility() {
+  const role = getRoleFromToken();
+  const auth = isAuthenticated();
+  document.querySelectorAll('[data-roles]').forEach(el => {
+    const roles = el.getAttribute('data-roles');
+    if (roles === 'all') {
+      el.classList.toggle('hidden', !auth);
+    } else {
+      const list = roles.split(',').map(r => r.trim());
+      el.classList.toggle('hidden', !role || !list.includes(role));
+    }
+  });
 }
 
 let scrollTicking = false;

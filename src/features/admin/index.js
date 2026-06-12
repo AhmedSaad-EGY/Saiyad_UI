@@ -72,6 +72,22 @@ export async function createSubscriptionPlan(body) {
   return api.post('/subscriptionplans', body);
 }
 
+export async function approveRoleRequest(userId) {
+  return api.patch(`/users/${userId}/approve-role-request`);
+}
+
+export async function rejectRoleRequest(userId, reason) {
+  return api.patch(`/users/${userId}/reject-role-request`, { reason: reason || null });
+}
+
+export async function fetchProductReviews(productId) {
+  return api.get(`/reviews/product/${productId}`);
+}
+
+export async function adminDeleteReview(reviewId, reason) {
+  return api.delete(`/reviews/${reviewId}/admin`, { reason: reason || null });
+}
+
 export function computeFeeTotals(txns) {
   const feeTxns = (txns?.items || txns?.data || []).filter(
     txn => txn.type === "PlatformFee" || txn.type === "SubscriptionPayment"

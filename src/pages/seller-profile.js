@@ -1,5 +1,6 @@
 import { t } from '../shared/utils/i18n.js';
-import { requireAuth, hasAnyRole } from '../features/auth/login.js';
+import { getUser } from '../shared/utils/auth-state.js';
+import { requireAuth } from '../features/auth/login.js';
 import { SELLER_ROLES } from '../shared/constants/roles.js';
 import { showLoading, observeAnimations } from '../shared/utils/dom.js';
 import { showToast } from '../widgets/ui/toast.js';
@@ -24,15 +25,16 @@ import {
 export default async function renderSellerProfile(container) {
   setPageMeta(t('seller.title'));
   const params = new URLSearchParams(location.hash.split('?')[1] || '');
-  const userId = params.get('userId');
-  if (userId) {
+  const sellerId = params.get('sellerId');
+
+  if (sellerId) {
     showLoading(container);
     try {
-      const profile = await fetchSellerProfile(userId);
+      const profile = await fetchSellerProfile(sellerId);
       container.innerHTML = renderPublicProfile(profile);
 
       try {
-        const sellerProducts = await fetchSellerProducts(userId);
+        const sellerProducts = await fetchSellerProducts(sellerId);
         const items = sellerProducts.items || sellerProducts.data || [];
         if (items.length) {
           const productsSection = document.createElement("div");
@@ -49,12 +51,15 @@ export default async function renderSellerProfile(container) {
     return;
   }
 
-  if (!await requireAuth()) return;
-  if (!hasAnyRole(...(SELLER_ROLES))) {
-    container.innerHTML = renderNoProfile();
+  const currentUser = getUser();
+  const isSeller = currentUser && SELLER_ROLES.includes(currentUser.role);
+
+  if (!isSeller) {
+    window.location.hash = '#/';
     return;
   }
 
+  if (!await requireAuth()) return;
   showLoading(container);
 
   try {

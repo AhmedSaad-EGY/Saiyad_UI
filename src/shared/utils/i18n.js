@@ -70,6 +70,11 @@ export const translations = {
     "auth.createAccount": "Create Account",
     "auth.creatingAccount": "Creating account...",
     "auth.hasAccount": "Already have an account?",
+    "register.auctioneerNotice":
+      "Auctioneer accounts require Admin approval before activation. You will be able to use basic Customer features immediately and will be notified when approved.",
+    "register.pendingUpgrade":
+      "Your Auctioneer role request has been submitted. You can log in now and use Customer features while you wait for Admin approval.",
+    "register.goToLogin": "Go to Login",
     "auth.registerSuccess":
       "Account created! Check your email to verify before logging in.",
     "auth.loginSuccess": "Login successful!",
@@ -211,6 +216,9 @@ export const translations = {
     "product.statusRejected": "Rejected",
     "product.statusSuspended": "Suspended",
     "product.statusPendingReview": "Pending Review",
+    "product.rating": "Rating",
+    "product.comment": "Comment",
+    "product.productId": "Product ID",
 
     // Auctions
     "auctions.title": "Auctions",
@@ -411,6 +419,7 @@ export const translations = {
     "seller.recentOrders": "Recent Orders",
     "seller.noProfile": "You haven't created a seller profile yet.",
     "seller.becomeSeller": "Become a Seller",
+    "seller.memberSince": "Member Since",
     "seller.listings": "Listings",
     "seller.setupRequired": "Set up your seller profile",
     "seller.setupDesc": "Complete your seller profile before listing products.",
@@ -565,6 +574,7 @@ export const translations = {
     "common.search": "Search",
     "common.select": "Select",
     "common.required": "Required",
+    "common.optional": "Optional",
     "common.linkCopied": "Link copied to clipboard!",
     "common.refreshing": "Refreshing...",
     "common.pullToRefresh": "Pull to refresh",
@@ -786,6 +796,16 @@ export const translations = {
     "admin.noUsers": "No users found",
     "admin.totalRevenue": "Total Revenue",
     "admin.totalUsers": "Total Users",
+    "admin.pendingRoleRequests": "Pending Role Requests",
+    "admin.roleApproved": "Role request approved!",
+    "admin.roleRejected": "Role request rejected",
+    "admin.rejectRoleRequest": "Reject Role Request",
+    "admin.manageUserReviews": "Manage User Reviews",
+    "admin.enterProductId": "Enter Product ID",
+    "admin.noUserReviews": "No reviews found for this product",
+    "admin.removeReview": "Remove Review",
+    "admin.confirmRemoveReview": "Remove review by {userName}?",
+    "admin.reviewRemovedNotified": "Review removed. Author has been notified.",
 
     // Auction
     "auction.anonymousBidder": "Anonymous Bidder",
@@ -938,6 +958,11 @@ export const translations = {
     "auth.createAccount": "إنشاء حساب",
     "auth.creatingAccount": "جارٍ إنشاء الحساب...",
     "auth.hasAccount": "لديك حساب بالفعل؟",
+    "register.auctioneerNotice":
+      "حسابات المزاد العلني تتطلب موافقة المشرف قبل التفعيل. ستتمكن من استخدام ميزات العميل الأساسية فوراً وستتلقى إشعاراً عند الموافقة.",
+    "register.pendingUpgrade":
+      "تم تقديم طلب دور المزاد العلني. يمكنك تسجيل الدخول الآن واستخدام ميزات العميل أثناء انتظار موافقة المشرف.",
+    "register.goToLogin": "انتقال إلى تسجيل الدخول",
     "auth.registerSuccess":
       "تم إنشاء الحساب! تحقق من بريدك الإلكتروني للتحقق قبل تسجيل الدخول.",
     "auth.loginSuccess": "تم تسجيل الدخول بنجاح!",
@@ -1077,6 +1102,9 @@ export const translations = {
     "product.statusRejected": "مرفوض",
     "product.statusSuspended": "موقوف",
     "product.statusPendingReview": "قيد المراجعة",
+    "product.rating": "التقييم",
+    "product.comment": "التعليق",
+    "product.productId": "معرف المنتج",
 
     // Auctions
     "auctions.title": "المزادات",
@@ -1274,6 +1302,7 @@ export const translations = {
     "seller.recentOrders": "الطلبات الأخيرة",
     "seller.noProfile": "لم تقم بإنشاء ملف بائع بعد.",
     "seller.becomeSeller": "كن بائعاً",
+    "seller.memberSince": "عضو منذ",
     "seller.listings": "المنتجات المعروضة",
     "seller.setupRequired": "قم بإعداد ملف البائع",
     "seller.setupDesc": "أكمل ملف البائع قبل إدراج المنتجات.",
@@ -1425,6 +1454,7 @@ export const translations = {
     "common.search": "بحث",
     "common.select": "اختيار",
     "common.required": "مطلوب",
+    "common.optional": "اختياري",
     "common.linkCopied": "تم نسخ الرابط!",
     "common.refreshing": "جارٍ التحديث...",
     "common.pullToRefresh": "اسحب للتحديث",
@@ -1640,6 +1670,16 @@ export const translations = {
     "admin.noUsers": "لم يتم العثور على مستخدمين",
     "admin.totalRevenue": "إجمالي الإيرادات",
     "admin.totalUsers": "إجمالي المستخدمين",
+    "admin.pendingRoleRequests": "طلبات ترقية الدور المعلقة",
+    "admin.roleApproved": "تمت الموافقة على طلب الدور!",
+    "admin.roleRejected": "تم رفض طلب الدور",
+    "admin.rejectRoleRequest": "رفض طلب الدور",
+    "admin.manageUserReviews": "إدارة تقييمات المستخدمين",
+    "admin.enterProductId": "أدخل معرف المنتج",
+    "admin.noUserReviews": "لا توجد تقييمات لهذا المنتج",
+    "admin.removeReview": "إزالة التقييم",
+    "admin.confirmRemoveReview": "إزالة تقييم {userName}؟",
+    "admin.reviewRemovedNotified": "تم إزالة التقييم. تم إبلاغ الكاتب.",
 
     // Auction
     "auction.anonymousBidder": "مزايد مجهول",

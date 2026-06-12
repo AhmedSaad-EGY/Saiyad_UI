@@ -1,9 +1,9 @@
 import { t } from '../../shared/utils/i18n.js';
-import { SELLER_ROLES } from '../../shared/constants/roles.js';
+import { ROLES, SELLER_ROLES } from '../../shared/constants/roles.js';
 import { escapeHtml, observeAnimations } from '../../shared/utils/dom.js';
 
 export function renderOverview(content, user, stats) {
-  const isAdmin = user?.role === 'Admin';
+  const isAdmin = user?.role === ROLES.ADMIN;
   const sellerRoles = user && SELLER_ROLES.includes(user.role);
 
   content.innerHTML = `

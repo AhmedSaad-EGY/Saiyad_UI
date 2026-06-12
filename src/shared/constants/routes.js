@@ -25,7 +25,7 @@ export const routeGuards = {
   'auction-requests': () => getRoleFromToken() === ROLES.FISHERMAN,
   'auction-requests-review': () => MODERATOR_ROLES.includes(getRoleFromToken()),
   'auctioneer-analytics': () => MODERATOR_ROLES.includes(getRoleFromToken()),
-  'subscriptions': () => [...ECOMMERCE_ROLES, ROLES.AUCTIONEER].includes(getRoleFromToken()),
+  'subscriptions': () => ECOMMERCE_ROLES.includes(getRoleFromToken()),
   'wallet': () => isAuthenticated(),
 };
 

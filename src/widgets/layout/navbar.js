@@ -1,6 +1,8 @@
 import { emit } from '../../shared/utils/events.js';
 import { createSwipeGesture } from '../../shared/utils/swipe.js';
 import { syncCartBadgeCount } from '../../shared/utils/ui.js';
+import { getUser } from '../../shared/utils/auth-state.js';
+import { ROLES } from '../../shared/constants/roles.js';
 
 let _drawerSwipe = null;
 let _fetchCartCount = async () => 0;
@@ -104,6 +106,8 @@ export function setCachedCartCount(n) { _cartCount = n; }
 export async function updateCartBadge(forceRefresh) {
   const badge = document.getElementById("cartBadge");
   if (!badge) return;
+  const user = getUser();
+  if (user?.role === ROLES.ADMIN) { badge.classList.add("hidden"); _cartCount = 0; return; }
   if (!forceRefresh && _cartCount > 0) { syncCartBadgeCount(_cartCount); return; }
   const count = await _fetchCartCount();
   _cartCount = count;
