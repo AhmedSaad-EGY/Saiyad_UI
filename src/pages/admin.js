@@ -9,12 +9,13 @@ import {
   renderReviews as renderReviewsWidget,
   renderCategories as renderCategoriesWidget,
   renderRevenue as renderRevenueWidget,
-  renderPlans as renderPlansWidget
+  renderPlans as renderPlansWidget,
+  renderOrders as renderOrdersWidget
 } from '../widgets/admin/index.js';
 import {
   fetchAdminUsers, toggleUserStatus,
   fetchReports, resolveReport,
-  fetchAdminProducts, updateProductStatus,
+  fetchAdminOrders, fetchAdminProducts, updateProductStatus,
   fetchPendingReviews, approveProduct, rejectProduct,
   fetchCategories, createCategory, deleteCategory,
   fetchWallet, fetchWalletTransactions,
@@ -32,6 +33,7 @@ export default async function renderAdmin(container) {
     { id: "reports", icon: "fa-flag", label: t("admin.reports") },
     { id: "products", icon: "fa-store", label: t("admin.products") },
     { id: "review", icon: "fa-clipboard-check", label: t("admin.review") },
+    { id: "orders", icon: "fa-box", label: t("admin.orders") },
     { id: "categories", icon: "fa-tags", label: t("admin.categories") },
     { id: "plans", icon: "fa-crown", label: t("admin.plans") },
     { id: "revenue", icon: "fa-chart-line", label: t("admin.revenue") },
@@ -93,6 +95,9 @@ export default async function renderAdmin(container) {
         fetchProducts: fetchAdminProducts,
         onUpdateProductStatus: async (id, status) => { await updateProductStatus(id, status); loadTab(); }
       });
+    } else if (activeTab === "orders") {
+      content.innerHTML = '';
+      renderOrdersWidget(content, { fetchOrders: fetchAdminOrders });
     } else if (activeTab === "review") {
       content.innerHTML = '';
       renderReviewsWidget(content, {

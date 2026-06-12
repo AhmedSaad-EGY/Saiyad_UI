@@ -5,3 +5,4 @@ export { renderReviews } from './render-reviews.js';
 export { renderCategories } from './render-categories.js';
 export { renderRevenue } from './render-revenue.js';
 export { renderPlans } from './render-plans.js';
+export { renderOrders } from './render-orders.js';

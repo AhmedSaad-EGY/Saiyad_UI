@@ -12,7 +12,7 @@ Alpine.data('registerForm', () => ({
   loading: false, ageDisplay: '', ageColor: 'var(--text-secondary)',
   strengthCls: '', strengthLabel: '', licenseNumber: '',
   pendingUpgrade: false, pendingRole: '',
-  get needsLicense() { return SELLER_ROLES.includes(this.role); },
+  get needsLicense() { return this.role === ROLES.FISHERMAN; },
   get isAuctioneer() { return this.role === ROLES.AUCTIONEER; },
   computeAge() {
     if (!this.birthdate) { this.ageDisplay = ''; return; }

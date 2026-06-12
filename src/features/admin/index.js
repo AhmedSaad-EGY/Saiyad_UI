@@ -16,6 +16,10 @@ export async function resolveReport(reportId) {
   return api.put(`/reports/${reportId}/resolve`, { status: 'Resolved' });
 }
 
+export async function fetchAdminOrders(page, pageSize) {
+  return api.get('/orders/admin', { page, pageSize });
+}
+
 export async function fetchAdminProducts(page, pageSize) {
   return api.get('/products', { page, pageSize });
 }
