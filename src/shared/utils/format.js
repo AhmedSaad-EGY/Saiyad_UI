@@ -31,7 +31,7 @@ export function formatPrice(n) {
       currency: getCurrency(),
     }).format(n || 0);
   } catch {
-    return `$${Number(n || 0).toFixed(2)}`;
+    return `${Number(n || 0).toFixed(2)} EGP`;
   }
 }
 
