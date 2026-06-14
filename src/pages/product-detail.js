@@ -111,7 +111,7 @@ export default async function renderProductDetail(container, route, params) {
           <div class="form-group"><label class="form-label">${t("auction.end")} *</label><input type="datetime-local" class="form-input form-control" id="auctionEndTime" min="${minEnd}" required></div>
           <div class="form-group"><label class="form-label">${t("auction.startingPrice")} *</label><input type="number" class="form-input form-control" id="auctionStartPrice" min="0.01" step="0.01" required></div>
           <div class="form-group"><label class="form-label">${t("auction.reservePrice")}</label><input type="number" class="form-input form-control" id="auctionReservePrice" min="0" step="0.01" value="0"></div>
-          <div class="form-group"><label class="form-label">${t("auction.minIncrement")} *</label><input type="number" class="form-input form-control" id="auctionMinIncrement" min="0.01" step="0.01" value="1" required></div>
+          <div class="form-group"><label class="form-label">${t("auction.bidIncrement")} *</label><input type="number" class="form-input form-control" id="auctionBidIncrement" min="0.01" step="0.01" value="1" required></div>
           <div class="modal-actions">
             <button type="button" class="btn btn-ghost" id="auctionModalCancel">${t("common.cancel")}</button>
             <button type="submit" class="btn btn-primary" id="auctionModalSubmit"><i class="fas fa-gavel" aria-hidden="true"></i> ${t("auctions.title")}</button>
@@ -125,7 +125,7 @@ export default async function renderProductDetail(container, route, params) {
         const submit = document.getElementById("auctionModalSubmit"), alertDiv = document.getElementById("auctionModalAlert");
         alertDiv.innerHTML = ""; submit.disabled = true; submit.innerHTML = `<i class="fas fa-spinner spinner" aria-hidden="true"></i> ${t("auction.placingBid")}`;
         try {
-          await createAuction({ productId: p.id, endTime: new Date(document.getElementById("auctionEndTime").value).toISOString(), startingPrice: parseFloat(document.getElementById("auctionStartPrice").value), reservePrice: parseFloat(document.getElementById("auctionReservePrice").value) || 0, minimumIncrement: parseFloat(document.getElementById("auctionMinIncrement").value) || 1 });
+          await createAuction({ productId: p.id, endTime: new Date(document.getElementById("auctionEndTime").value).toISOString(), startingPrice: parseFloat(document.getElementById("auctionStartPrice").value), reservePrice: parseFloat(document.getElementById("auctionReservePrice").value) || 0, bidIncrement: parseFloat(document.getElementById("auctionMinIncrement").value) || 1 });
           showToast(`${t("auctions.title")} started!`, "success"); close(); router();
         } catch (err) { safeSetHTML(alertDiv, `<div class="alert alert-error">${escapeHtml(err.message)}</div>`); }
         finally { submit.disabled = false; submit.textContent = t("auctions.title"); }

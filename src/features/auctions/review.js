@@ -73,7 +73,7 @@ Alpine.data('auctionReviewPage', () => ({
     try {
       const body = { endTime: new Date(this.appEndTime).toISOString(), startingPrice: parseFloat(this.appStartingPrice) };
       if (this.appReservePrice) body.reservePrice = parseFloat(this.appReservePrice);
-      if (this.appMinIncrement) body.minimumIncrement = parseFloat(this.appMinIncrement);
+      if (this.appMinIncrement) body.bidIncrement = parseFloat(this.appMinIncrement);
       await approveAuctionRequest(this.approveItemId, body);
       showToast(t('auctionRequestsReview.approvedSuccess'), 'success');
       this.approveItemId = null;

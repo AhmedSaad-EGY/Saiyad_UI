@@ -1,9 +1,9 @@
 import { KEYS } from '../constants/storage-keys.js';
 
 export function getUser() {
-  try {
-    return JSON.parse(localStorage.getItem(KEYS.USER));
-  } catch { return null; }
+  const u = JSON.parse(localStorage.getItem(KEYS.USER) || 'null');
+  if (!u) return null;
+  return { ...u, role: getRoleFromToken() };
 }
 
 function _decodeToken() {

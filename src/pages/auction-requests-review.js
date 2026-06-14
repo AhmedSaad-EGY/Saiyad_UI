@@ -48,7 +48,7 @@ export default function renderAuctionRequestsReview(container) {
         <div class="form-group"><label class="form-label">${t("scheduling.endTime")} *</label><input type="datetime-local" class="form-input" x-model="appEndTime" required></div>
         <div class="form-group"><label class="form-label">${t("analytics.startingPrice")} *</label><input type="number" class="form-input" x-model="appStartingPrice" step="0.01" min="0" required placeholder="${t('common.amountPlaceholder')}"></div>
         <div class="form-group"><label class="form-label">${t("auction.reservePrice")}</label><input type="number" class="form-input" x-model="appReservePrice" step="0.01" min="0" placeholder="${t('common.amountPlaceholder')}"></div>
-        <div class="form-group"><label class="form-label">${t("auction.minimumIncrement")}</label><input type="number" class="form-input" x-model="appMinIncrement" step="0.01" min="0" placeholder="${t('common.amountPlaceholder')}"></div>
+        <div class="form-group"><label class="form-label">${t("auction.bidIncrement")}</label><input type="number" class="form-input" x-model="appMinIncrement" step="0.01" min="0" placeholder="${t('common.amountPlaceholder')}"></div>
         <div class="d-flex gap-2 mt-3">
           <button type="submit" class="btn btn-primary" :disabled="approving"><template x-if="!approving"><span><i class="fas fa-check" aria-hidden="true"></i> ${t("auctionRequestsReview.approve")}</span></template><template x-if="approving"><span><i class="fas fa-spinner spinner" aria-hidden="true"></i> ${t("auctionRequestsReview.approving")}</span></template></button>
           <button type="button" class="btn btn-ghost" @click="cancelApprove">${t("common.cancel")}</button>

@@ -1,0 +1,117 @@
+/* Order Timeline */
+.order-timeline {
+  display: flex;
+  gap: var(--space-4);
+  align-items: flex-start;
+  overflow-x: auto;
+  padding: var(--space-3) 0;
+  scrollbar-width: thin;
+}
+
+.order-timeline-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  flex-shrink: 0;
+  position: relative;
+  min-width: 72px;
+}
+
+.order-timeline-step + .order-timeline-step::before {
+  content: '';
+  position: absolute;
+  top: 18px;
+  inset-inline-start: -16px;
+  width: 32px;
+  height: 2px;
+  background: var(--border);
+}
+
+.order-timeline-step.completed + .order-timeline-step::before {
+  background: var(--primary);
+}
+
+.order-timeline-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--primary-ghost);
+  color: var(--text-muted);
+  font-size: 14px;
+  transition: all var(--transition);
+}
+
+.order-timeline-step.completed .order-timeline-icon {
+  background: var(--primary);
+  color: #fff;
+}
+
+.order-timeline-step.active .order-timeline-icon {
+  background: var(--primary);
+  color: #fff;
+  box-shadow: 0 0 0 4px var(--primary-ghost);
+}
+
+.order-timeline-label {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  text-align: center;
+  white-space: nowrap;
+}
+
+.order-timeline-step.completed .order-timeline-label {
+  color: var(--primary);
+  font-weight: var(--weight-semibold);
+}
+
+.order-timeline-step.active .order-timeline-label {
+  color: var(--text);
+  font-weight: var(--weight-semibold);
+}
+
+/* Checkout Sidebar */
+.checkout-sidebar {
+  position: sticky;
+  top: var(--space-20);
+}
+
+/* Order detail responsive */
+@media (max-width: 767px) {
+  .order-timeline {
+    gap: var(--space-3);
+  }
+
+  .order-timeline-step {
+    min-width: 60px;
+  }
+
+  .order-timeline-icon {
+    width: 32px;
+    height: 32px;
+    font-size: 12px;
+  }
+
+  .checkout-sidebar {
+    position: static;
+  }
+}
+
+@media (max-width: 480px) {
+  .order-timeline {
+    gap: var(--space-2);
+  }
+
+  .order-timeline-step {
+    min-width: 52px;
+  }
+
+  .order-timeline-step + .order-timeline-step::before {
+    top: 14px;
+    inset-inline-start: -10px;
+    width: 20px;
+  }
+}

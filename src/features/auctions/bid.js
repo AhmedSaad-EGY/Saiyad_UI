@@ -63,7 +63,7 @@ Alpine.data('auctionDetailPage', () => ({
 
       if (this.isActive) {
         const minBidVal = a.currentHighestBid
-          ? a.currentHighestBid + a.minimumIncrement
+          ? a.currentHighestBid + a.bidIncrement
           : a.startingPrice;
         const maxBidVal = minBidVal * 1000;
         this.minBid = minBidVal;
@@ -262,7 +262,7 @@ Alpine.data('auctionDetailPage', () => ({
   },
 
   quickBidAdd() {
-    this.bidAmount = (this.minBid + this.auction.minimumIncrement).toFixed(2);
+    this.bidAmount = (this.minBid + this.auction.bidIncrement).toFixed(2);
   },
 
   quickBidPct(pct) {

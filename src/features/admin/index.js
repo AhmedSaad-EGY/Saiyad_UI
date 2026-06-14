@@ -8,12 +8,12 @@ export async function toggleUserStatus(userId) {
   return api.patch(`/users/${userId}/toggle-status`);
 }
 
-export async function fetchReports() {
-  return api.get('/reports');
+export async function fetchReports(page = 1, pageSize = 20) {
+  return api.get('/reports', { page, pageSize });
 }
 
-export async function resolveReport(reportId) {
-  return api.put(`/reports/${reportId}/resolve`, { status: 'Resolved' });
+export async function resolveReport(reportId, body) {
+  return api.patch(`/reports/${reportId}/resolve`, body || { newStatus: 'Resolved' });
 }
 
 export async function fetchAdminOrders(page, pageSize) {
@@ -90,6 +90,10 @@ export async function fetchProductReviews(productId) {
 
 export async function adminDeleteReview(reviewId, reason) {
   return api.delete(`/reviews/${reviewId}/admin`, { reason: reason || null });
+}
+
+export async function fetchDashboardStats() {
+  return api.get('/admin/dashboard');
 }
 
 export function computeFeeTotals(txns) {

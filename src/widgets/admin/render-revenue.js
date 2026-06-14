@@ -2,7 +2,7 @@ import { t } from '../../shared/utils/i18n.js';
 import { escapeHtml } from '../../shared/utils/dom.js';
 import { formatPrice, formatDate } from '../../shared/utils/format.js';
 
-export function renderRevenue(container, { wallet, feeTxns, totalFees }) {
+export function renderRevenue(container, { wallet, feeTxns, totalFees, pendingFreezes, pendingReports }) {
   container.innerHTML = `
     <div class="row g-3 mb-4">
       <div class="col-md-3">
@@ -24,9 +24,23 @@ export function renderRevenue(container, { wallet, feeTxns, totalFees }) {
         </div>
       </div>
       <div class="col-md-3">
-        <div class="card card-sm text-center" class="border-start border-3 border-primary">
+        <div class="card card-sm text-center">
           <small class="text-muted">${t("admin.totalFees")}</small>
           <div class="fs-4 fw-bold text-primary">${formatPrice(totalFees)}</div>
+        </div>
+      </div>
+    </div>
+    <div class="row g-3 mb-4">
+      <div class="col-md-6">
+        <div class="card card-sm text-center p-3 border-start border-3 border-warning">
+          <small class="text-muted"><i class="fas fa-snowflake" aria-hidden="true"></i> ${t("admin.pendingFreezes")}</small>
+          <div class="fs-3 fw-bold">${pendingFreezes ?? 0}</div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="card card-sm text-center p-3 border-start border-3 border-danger">
+          <small class="text-muted"><i class="fas fa-flag" aria-hidden="true"></i> ${t("admin.pendingReports")}</small>
+          <div class="fs-3 fw-bold">${pendingReports ?? 0}</div>
         </div>
       </div>
     </div>

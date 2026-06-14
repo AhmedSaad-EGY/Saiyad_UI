@@ -214,4 +214,26 @@ tr:last-child td {
   .table-wrapper td:nth-child(6)[data-label]::before {
     display: none;
   }
+
+  /* Reports table: stacked card layout for many columns */
+  .table-wrapper.table-reports tbody tr {
+    grid-template-columns: 1fr;
+    gap: var(--space-1) 0;
+  }
+
+  .table-wrapper.table-reports tbody tr td {
+    grid-column: 1 !important;
+    grid-row: auto !important;
+    justify-self: start !important;
+    align-self: start !important;
+  }
+
+  .table-wrapper.table-reports tbody tr td[data-label]::before {
+    display: inline-block;
+    min-width: 80px;
+  }
+
+  .table-wrapper.table-reports tbody tr td:last-child {
+    margin-top: var(--space-2);
+  }
 }

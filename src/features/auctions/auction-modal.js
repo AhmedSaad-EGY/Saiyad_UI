@@ -45,7 +45,7 @@ export function showAuctionModal(productId, productTitle, opts = {}) {
           <input type="number" class="form-input form-control" id="auctionReservePrice" min="0" step="0.01" value="0">
         </div>
         <div class="form-group">
-          <label class="form-label">${t("auction.minIncrement")} *</label>
+          <label class="form-label">${t("auction.bidIncrement")} *</label>
           <input type="number" class="form-input form-control" id="auctionMinIncrement" min="0.01" step="0.01" value="1" required>
         </div>
         <div class="modal-actions">
@@ -118,7 +118,7 @@ export function showAuctionModal(productId, productTitle, opts = {}) {
         endTime: new Date(document.getElementById("auctionEndTime").value).toISOString(),
         startingPrice: parseFloat(document.getElementById("auctionStartPrice").value),
         reservePrice: parseFloat(document.getElementById("auctionReservePrice").value) || 0,
-        minimumIncrement: parseFloat(document.getElementById("auctionMinIncrement").value) || 1,
+        bidIncrement: parseFloat(document.getElementById("auctionMinIncrement").value) || 1,
       });
       showToast(`${t("auctions.title")} started!`, "success");
       close();

@@ -79,8 +79,8 @@ export function renderDetailMain() {
               <span x-text="auction.reservePrice ? formatPrice(auction.reservePrice) : t('common.N/A')"></span>
             </div>
             <div class="detail-meta-item">
-              <strong x-text="$t('auction.minIncrement') + ':'"></strong>
-              <span x-text="formatPrice(auction.minimumIncrement)"></span>
+              <strong x-text="$t('auction.bidIncrement') + ':'"></strong>
+              <span x-text="formatPrice(auction.bidIncrement)"></span>
             </div>
             <div class="detail-meta-item">
               <strong x-text="$t('auction.totalBids') + ':'"></strong>
@@ -141,7 +141,7 @@ export function renderDetailMain() {
 
                   <div class="d-flex gap-2 mt-2">
                     <button class="btn btn-outline btn-sm" @click="quickBidAdd()">
-                      +<span x-text="formatPrice(auction.minimumIncrement)"></span>
+                      +<span x-text="formatPrice(auction.bidIncrement)"></span>
                     </button>
                     <button class="btn btn-outline btn-sm" @click="quickBidPct(5)">+5%</button>
                     <button class="btn btn-outline btn-sm" @click="quickBidPct(10)">+10%</button>

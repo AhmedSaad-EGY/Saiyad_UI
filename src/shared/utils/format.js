@@ -53,6 +53,8 @@ export function statusClass(status) {
     Paid: "paid",
     Shipped: "shipped",
     Delivered: "available",
+    ReturnRequested: "pendingreview",
+    Returned: "draft",
     Approved: "active",
     Valid: "active",
     Winning: "available",

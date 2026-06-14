@@ -2,6 +2,7 @@ import { t } from '../shared/utils/i18n.js';
 import { getUser } from '../features/auth/login.js';
 import { ROLES } from '../shared/constants/roles.js';
 import { setPageMeta } from '../shared/utils/seo.js';
+import { formatPrice } from '../shared/utils/format.js';
 import {
   renderUsers as renderUsersWidget,
   renderReports as renderReportsWidget,
@@ -20,7 +21,7 @@ import {
   fetchCategories, createCategory, deleteCategory,
   fetchWallet, fetchWalletTransactions,
   fetchSubscriptionPlans, updateSubscriptionPlan, deleteSubscriptionPlan,   createSubscriptionPlan,
-  computeFeeTotals,
+  fetchDashboardStats, computeFeeTotals,
 } from '../features/admin/index.js';
 
 export default async function renderAdmin(container) {
@@ -40,26 +41,37 @@ export default async function renderAdmin(container) {
   ];
 
   let activeTab = "users";
+  let dashboardStats = null;
+
+  try {
+    dashboardStats = await fetchDashboardStats();
+  } catch { /* fallback to placeholder */ }
+
+  const sysWallet = dashboardStats?.systemWallet || {};
+  const balance = sysWallet.balance ?? 0;
+  const heldBalance = sysWallet.heldBalance ?? 0;
+  const pendingFreezes = dashboardStats?.pendingFreezeCount ?? 0;
+  const pendingReports = dashboardStats?.pendingReportCount ?? 0;
 
   container.innerHTML = `
     <div class="section-header animate__animated animate__fadeInUp"><h2><i class="fas fa-shield-alt" aria-hidden="true"></i> ${t("admin.title")}</h2></div>
     <div class="row g-3 mb-4 animate-on-scroll">
       <div class="col-sm-4">
         <div class="card card-sm text-center p-3">
-          <div class="text-muted"><i class="fas fa-users text-primary" aria-hidden="true"></i> ${t("admin.totalUsers")}</div>
-          <div class="fs-2 fw-bold mt-2">1,245</div>
+          <div class="text-muted"><i class="fas fa-coins text-primary" aria-hidden="true"></i> ${t("admin.platformBalance")}</div>
+          <div class="fs-2 fw-bold mt-2">${formatPrice(balance + heldBalance)}</div>
         </div>
       </div>
       <div class="col-sm-4">
         <div class="card card-sm text-center p-3">
-          <div class="text-muted"><i class="fas fa-chart-line text-success" aria-hidden="true"></i> ${t("admin.totalRevenue")}</div>
-          <div class="fs-2 fw-bold mt-2">$45,230</div>
+          <div class="text-muted"><i class="fas fa-snowflake text-warning" aria-hidden="true"></i> ${t("admin.pendingFreezes")}</div>
+          <div class="fs-2 fw-bold mt-2">${pendingFreezes}</div>
         </div>
       </div>
       <div class="col-sm-4">
         <div class="card card-sm text-center p-3">
-          <div class="text-muted"><i class="fas fa-gavel text-warning" aria-hidden="true"></i> ${t("admin.activeAuctions")}</div>
-          <div class="fs-2 fw-bold mt-2">112</div>
+          <div class="text-muted"><i class="fas fa-flag text-danger" aria-hidden="true"></i> ${t("admin.pendingReports")}</div>
+          <div class="fs-2 fw-bold mt-2">${pendingReports}</div>
         </div>
       </div>
     </div>
@@ -87,7 +99,7 @@ export default async function renderAdmin(container) {
     } else if (activeTab === "reports") {
       renderReportsWidget(content, {
         fetchData: fetchReports,
-        onResolve: async (id) => { await resolveReport(id); loadTab(); }
+        onResolve: async (id, body) => { await resolveReport(id, body); loadTab(); }
       });
     } else if (activeTab === "products") {
       content.innerHTML = '';
@@ -122,9 +134,10 @@ export default async function renderAdmin(container) {
     } else if (activeTab === "revenue") {
       (async () => {
         try {
-          const [wallet, txns] = await Promise.all([fetchWallet(), fetchWalletTransactions(1, 100)]);
+          const [dash, txns] = await Promise.all([fetchDashboardStats(), fetchWalletTransactions(1, 100)]);
+          const wallet = dash.systemWallet || {};
           const { feeTxns, totalFees } = computeFeeTotals(txns);
-          renderRevenueWidget(content, { wallet, feeTxns, totalFees });
+          renderRevenueWidget(content, { wallet, feeTxns, totalFees, pendingFreezes: dash.pendingFreezeCount, pendingReports: dash.pendingReportCount });
         } catch (err) {
           content.innerHTML = `<div class="alert alert-error">${err.message}</div>`;
         }

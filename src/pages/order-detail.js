@@ -1,6 +1,6 @@
 import { t } from '../shared/utils/i18n.js';
 import { requireAuth } from '../features/auth/login.js';
-import { fetchOrder, cancelOrder, calculateSubtotal } from '../features/orders/index.js';
+import { fetchOrder, cancelOrder, requestReturn, calculateSubtotal } from '../features/orders/index.js';
 import { navigate, registerRouteCleanup } from '../app/router.js';
 import { showLoading, observeAnimations, escapeHtml } from '../shared/utils/dom.js';
 import { showToast } from '../widgets/ui/toast.js'; import { showConfirm } from '../widgets/ui/modal.js';
@@ -38,6 +38,10 @@ export default async function renderOrderDetail(container) {
       </div>
 
       ${renderOrderTimeline(order.status)}
+
+      ${order.returnRequested && order.status === 'ReturnRequested'
+        ? `<div class="alert alert-warning mb-4"><i class="fas fa-undo" aria-hidden="true"></i> ${t('order.returnPending')}</div>`
+        : ''}
 
       <div class="row g-4">
         <div class="col-lg-8">
@@ -77,6 +81,30 @@ export default async function renderOrderDetail(container) {
           document.getElementById("cancelOrderResult").innerHTML = `<div class="alert alert-error">${escapeHtml(err.message) || t("order.cancelError")}</div>`;
           cancelBtn.disabled = false;
           cancelBtn.innerHTML = `<i class="fas fa-times" aria-hidden="true"></i> ${t("order.cancel")}`;
+        }
+      });
+    }
+
+    const returnBtn = document.getElementById("requestReturnBtn");
+    if (returnBtn) {
+      returnBtn.addEventListener("click", async () => {
+        const ok = await showConfirm(
+          t("order.requestReturn"),
+          t("order.returnConfirm"),
+          { type: "warning", confirmText: t("order.requestReturn") }
+        );
+        if (!ok) return;
+        returnBtn.disabled = true;
+        returnBtn.innerHTML = `<i class="fas fa-spinner spinner" aria-hidden="true"></i> ${t("common.loading")}`;
+        try {
+          await requestReturn(orderId);
+          showToast(t("order.returnRequested"), "success");
+          const timer = setTimeout(() => navigate(`order-detail?id=${orderId}`), 1500);
+          registerRouteCleanup(() => clearTimeout(timer));
+        } catch (err) {
+          document.getElementById("cancelOrderResult").innerHTML = `<div class="alert alert-error">${escapeHtml(err.message) || t("order.returnError")}</div>`;
+          returnBtn.disabled = false;
+          returnBtn.innerHTML = `<i class="fas fa-undo" aria-hidden="true"></i> ${t("order.requestReturn")}`;
         }
       });
     }

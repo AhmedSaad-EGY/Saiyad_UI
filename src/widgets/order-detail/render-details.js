@@ -57,7 +57,9 @@ export function renderPaymentInfo(order) {
       <div class="card-body">
         <p class="mb-1"><strong>${t('order.method')}:</strong> ${escapeHtml(order.paymentMethod ?? '')}</p>
         <p class="mb-1"><strong>${t('order.date')}:</strong> ${formatDate(order.createdAt)}</p>
-        <p class="mb-0"><strong>${t('order.status')}:</strong> <span class="status ${statusClass(order.status)}">${tStatus(order.status)}</span></p>
+        <p class="mb-1"><strong>${t('order.status')}:</strong> <span class="status ${statusClass(order.status)}">${tStatus(order.status)}</span></p>
+        ${order.deliveredAt ? `<p class="mb-0"><strong>${t('order.deliveredAt')}:</strong> ${formatDate(order.deliveredAt)}</p>` : ''}
+        ${order.returnRequested && order.returnReason ? `<p class="mb-0"><strong>${t('order.returnReason')}:</strong> ${escapeHtml(order.returnReason)}</p>` : ''}
       </div>
     </div>`;
 }
@@ -89,11 +91,17 @@ export function renderOrderSummary(order, subtotal) {
 }
 
 export function renderQuickActions(order) {
-  const cancelBtn = order.status === 'Pending' || order.status === 'Confirmed'
+  const cancelBtn = (order.status === 'Pending' || order.status === 'Confirmed')
     ? `<button class="btn btn-outline-danger w-100" id="cancelOrderBtn"><i class="fas fa-times" aria-hidden="true"></i> ${t('order.cancel')}</button>`
     : '';
+
+  const returnBtn = (order.status === 'Delivered' && !order.returnRequested)
+    ? `<button class="btn btn-outline-warning w-100" id="requestReturnBtn"><i class="fas fa-undo" aria-hidden="true"></i> ${t('order.requestReturn')}</button>`
+    : '';
+
   return `
     <div class="d-flex flex-column gap-2 animate-on-scroll stagger-3">
+      ${returnBtn}
       ${cancelBtn}
       <a href="#/products" class="btn btn-primary w-100"><i class="fas fa-redo" aria-hidden="true"></i> ${t('order.reorder')}</a>
     </div>

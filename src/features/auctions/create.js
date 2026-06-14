@@ -19,6 +19,6 @@ export async function createAuction(data) {
     endTime: data.endTime,
     startingPrice: data.startingPrice,
     reservePrice: data.reservePrice || 0,
-    minimumIncrement: data.minimumIncrement || 1,
+    bidIncrement: data.bidIncrement || 1,
   });
 }
