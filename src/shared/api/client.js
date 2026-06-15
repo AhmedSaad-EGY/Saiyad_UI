@@ -190,7 +190,11 @@ async function refreshAccessToken() {
 
 async function _doRefresh() {
   try {
-    const data = await request('/auth/refresh', { method: "POST", _retry: true });
+    const data = await request('/auth/refresh', {
+      method: "POST",
+      _retry: true,
+      headers: { "X-Requested-With": "XMLHttpRequest" },
+    });
     setAccessToken(data.token);
     return true;
   } catch {

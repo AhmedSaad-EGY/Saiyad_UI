@@ -20,6 +20,7 @@ Alpine.data('auctionReviewPage', () => ({
   appStartingPrice: '',
   appReservePrice: '',
   appMinIncrement: '',
+  appCategoryId: '',
   approving: false,
   rejectReason: '',
   rejecting: false,
@@ -61,6 +62,7 @@ Alpine.data('auctionReviewPage', () => ({
     this.appStartingPrice = '';
     this.appReservePrice = '';
     this.appMinIncrement = '';
+    this.appCategoryId = '';
     this.approveItemId = id;
   },
 
@@ -76,7 +78,13 @@ Alpine.data('auctionReviewPage', () => ({
         startingPrice: parseFloat(this.appStartingPrice),
         reservePrice: parseFloat(this.appReservePrice) || 0,
         bidIncrement: parseFloat(this.appMinIncrement) || 1,
+        categoryId: parseInt(this.appCategoryId, 10),
       };
+      if (!Number.isInteger(body.categoryId) || body.categoryId <= 0) {
+        showToast(t('common.category'), 'error');
+        this.approving = false;
+        return;
+      }
       await approveAuctionRequest(this.approveItemId, body);
       showToast(t('auctionRequestsReview.approvedSuccess'), 'success');
       this.approveItemId = null;
