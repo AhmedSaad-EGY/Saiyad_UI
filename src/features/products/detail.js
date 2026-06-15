@@ -51,7 +51,7 @@ export async function loadProductDetailData(id) {
   const isWishlisted = Array.isArray(wishlistItems) && wishlistItems.some(w => w.productId === p.id || w.id === p.id);
   const avgRating = ratingData?.averageRating;
   const reviews = reviewsData?.items || reviewsData?.data || reviewsData || [];
-  const allImages = [p.primaryImageUrl, ...(p.images || p.additionalImages || []).map((img) => (typeof img === "string" ? img : img.url || img))].filter(Boolean);
+  const allImages = [p.primaryImageUrl, ...(p.images || p.additionalImages || []).map((img) => (typeof img === "string" ? img : img.imageUrl || img.url || img))].filter(Boolean);
   const stockQty = p.stockQuantity ?? 0;
   const stockLevel = stockQty > 50 ? 'high' : stockQty > 10 ? 'medium' : 'low';
   const isSellerOwner = !p.isAuctioned && getUser()?.id === p.sellerId && hasAnyRole(...(SELLER_ROLES));

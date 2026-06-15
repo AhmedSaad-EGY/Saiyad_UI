@@ -31,6 +31,7 @@ Alpine.data('auctionDetailPage', () => ({
   bidAlert: '',
   bidAlertType: '',
   placingBid: false,
+  reserveActionLoading: false,
   winnerName: '',
   _auctionId: null,
   _bus: null,
@@ -57,6 +58,7 @@ Alpine.data('auctionDetailPage', () => ({
       this.bids = (detail.bids || []).sort((x, y) => new Date(y.createdAt || y.created_at) - new Date(x.createdAt || x.created_at));
       this.endTime = new Date(a.endTime);
       this.isActive = a.status === 'Active';
+      this.ended = a.status === 'Finished' || a.status === 'Cancelled' || a.status === 'ConfirmationExpired';
       this.currentBidValue = a.currentHighestBid || a.startingPrice;
       this.bidCount = this.bids.length;
       this.loading = false;
@@ -195,7 +197,8 @@ Alpine.data('auctionDetailPage', () => ({
   },
 
   onAuctionEnded(endedAuction) {
-    this.ended = true;
+    this.auction = { ...(this.auction || {}), ...endedAuction };
+    this.ended = endedAuction.status !== 'PendingSellerConfirmation';
     this.isActive = false;
     this.winnerName = endedAuction.winnerName || '';
 
@@ -248,16 +251,51 @@ Alpine.data('auctionDetailPage', () => ({
     }
   },
 
+  async confirmReserveBid(accept) {
+    if (this.reserveActionLoading) return;
+    const confirmed = await showConfirm(
+      accept ? t('auction.acceptReserveTitle') : t('auction.rejectReserveTitle'),
+      accept ? t('auction.acceptReserveConfirm') : t('auction.rejectReserveConfirm'),
+      {
+        type: accept ? 'success' : 'danger',
+        confirmText: accept ? t('auction.acceptBid') : t('auction.rejectBid'),
+      }
+    );
+    if (!confirmed) return;
+
+    this.reserveActionLoading = true;
+    this.bidAlert = '';
+    this.bidAlertType = '';
+    try {
+      await api.patch(`/auctions/${this._auctionId}/confirm-reserve`, { accept });
+      this.bidAlert = accept ? t('auction.reserveAccepted') : t('auction.reserveRejected');
+      this.bidAlertType = 'success';
+      await this.refreshAuction();
+    } catch (e) {
+      this.bidAlert = e.message;
+      this.bidAlertType = 'error';
+    } finally {
+      this.reserveActionLoading = false;
+    }
+  },
+
   async refreshAuction() {
     try {
       const detail = await api.get(`/auctions/${this._auctionId}`);
       const a = detail.auction || detail;
       this.auction = a;
       this.bids = (detail.bids || []).sort((x, y) => new Date(y.createdAt || y.created_at) - new Date(x.createdAt || x.created_at));
+      this.endTime = new Date(a.endTime);
+      this.isActive = a.status === 'Active';
+      this.ended = a.status === 'Finished' || a.status === 'Cancelled' || a.status === 'ConfirmationExpired';
       this.currentBidValue = a.currentHighestBid || a.startingPrice;
       this.bidCount = this.bids.length;
-      this.bidAlert = '';
-      this.bidAlertType = '';
+      if (this.isActive) {
+        this.minBid = a.currentHighestBid
+          ? a.currentHighestBid + a.bidIncrement
+          : a.startingPrice;
+        this.maxBid = this.minBid * 1000;
+      }
     } catch { /* previous bid state preserved */ }
   },
 
@@ -294,6 +332,13 @@ Alpine.data('auctionDetailPage', () => ({
   t(key) { return t(key); },
   getCurrentLang() { return getCurrentLang(); },
   isCustomer() { return hasRole(ROLES.CUSTOMER); },
+  isPendingSellerConfirmation() { return this.auction?.status === 'PendingSellerConfirmation'; },
+  isReserveConfirmationSeller() {
+    const userId = this._user?.id ?? this._user?.userId;
+    return this.isPendingSellerConfirmation()
+      && hasRole(ROLES.FISHERMAN)
+      && Number(userId) === Number(this.auction?.sellerId);
+  },
   isLoggedIn() { return !!this._user; },
   retry() { navigate(''); },
 

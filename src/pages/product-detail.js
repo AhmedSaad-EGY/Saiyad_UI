@@ -125,7 +125,7 @@ export default async function renderProductDetail(container, route, params) {
         const submit = document.getElementById("auctionModalSubmit"), alertDiv = document.getElementById("auctionModalAlert");
         alertDiv.innerHTML = ""; submit.disabled = true; submit.innerHTML = `<i class="fas fa-spinner spinner" aria-hidden="true"></i> ${t("auction.placingBid")}`;
         try {
-          await createAuction({ productId: p.id, endTime: new Date(document.getElementById("auctionEndTime").value).toISOString(), startingPrice: parseFloat(document.getElementById("auctionStartPrice").value), reservePrice: parseFloat(document.getElementById("auctionReservePrice").value) || 0, bidIncrement: parseFloat(document.getElementById("auctionMinIncrement").value) || 1 });
+          await createAuction({ productId: p.id, endTime: new Date(document.getElementById("auctionEndTime").value).toISOString(), startingPrice: parseFloat(document.getElementById("auctionStartPrice").value), reservePrice: parseFloat(document.getElementById("auctionReservePrice").value) || 0, bidIncrement: parseFloat(document.getElementById("auctionBidIncrement").value) || 1 });
           showToast(`${t("auctions.title")} started!`, "success"); close(); router();
         } catch (err) { safeSetHTML(alertDiv, `<div class="alert alert-error">${escapeHtml(err.message)}</div>`); }
         finally { submit.disabled = false; submit.textContent = t("auctions.title"); }

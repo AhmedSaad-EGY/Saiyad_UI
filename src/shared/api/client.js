@@ -37,7 +37,6 @@ async function parseResponse(res) {
 
 async function request(endpoint, options = {}) {
   const token = getAccessToken();
-  const method = options.method || 'GET';
   const headers = { 'Content-Type': 'application/json', ...options.headers };
   if (token) headers['Authorization'] = `Bearer ${token}`;
   const { signal, ...fetchOptions } = options;
@@ -172,7 +171,11 @@ export const api = {
     requestWithDedup(url, { method: "PUT", body: JSON.stringify(body) }),
   patch: (url, body) =>
     requestWithDedup(url, { method: "PATCH", body: JSON.stringify(body) }),
-  delete: (url) => requestWithDedup(url, { method: "DELETE" }),
+  delete: (url, body) =>
+    requestWithDedup(url, {
+      method: "DELETE",
+      ...(body !== undefined ? { body: JSON.stringify(body) } : {}),
+    }),
   abort: () => new AbortController(),
   upload: (url, formData) => doUpload(url, formData),
 };

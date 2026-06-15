@@ -21,7 +21,7 @@ export async function fetchAdminOrders(page, pageSize) {
 }
 
 export async function fetchAdminProducts(page, pageSize) {
-  return api.get('/products', { page, pageSize });
+  return api.get('/products/admin', { page, pageSize });
 }
 
 export async function updateProductStatus(productId, status) {
@@ -60,8 +60,12 @@ export async function fetchWalletTransactions(page, pageSize) {
   return api.get('/wallet/transactions', { page, pageSize });
 }
 
+export async function fetchSystemWalletTransactions(page, pageSize) {
+  return api.get('/admin/system-wallet/transactions', { page, pageSize });
+}
+
 export async function fetchSubscriptionPlans() {
-  return api.get('/subscriptionplans');
+  return api.get('/subscriptionplans/admin');
 }
 
 export async function updateSubscriptionPlan(planId, body) {
@@ -97,9 +101,16 @@ export async function fetchDashboardStats() {
 }
 
 export function computeFeeTotals(txns) {
-  const feeTxns = (txns?.items || txns?.data || []).filter(
-    txn => txn.type === "PlatformFee" || txn.type === "SubscriptionPayment"
-  );
-  const totalFees = feeTxns.reduce((sum, txn) => sum + Math.abs(txn.amount), 0);
+  const items = Array.isArray(txns) ? txns : (txns?.items || txns?.data || []);
+  const feeTypes = new Set([
+    "PlatformFee",
+    "PlatformFeeCredit",
+    "PlatformFeeRefunded",
+    "SubscriptionPayment",
+    "SubscriptionRevenueCredit",
+    "AuctioneerFeeCredit",
+  ]);
+  const feeTxns = items.filter((txn) => feeTypes.has(txn.type));
+  const totalFees = feeTxns.reduce((sum, txn) => sum + Number(txn.amount || 0), 0);
   return { feeTxns, totalFees };
 }

@@ -6,7 +6,7 @@ import { showToast } from '../ui/toast.js';
 
 let _page = 1;
 const PAGE_SIZE = 20;
-const MODERATION_STATUSES = ["Available", "Draft", "Sold", "Rejected", "Suspended"];
+const MODERATION_STATUSES = ["PendingReview", "Available", "Draft", "Sold", "Rejected", "Suspended"];
 
 export async function renderAdminProducts(container, { fetchProducts, onUpdateProductStatus } = {}) {
   container.innerHTML = `<div id="productsPanel">

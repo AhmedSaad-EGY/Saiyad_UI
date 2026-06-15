@@ -62,7 +62,31 @@ export function renderDetailMain() {
               </template>
             </div>
 
-            <div x-show="ended || (!isActive && !ended)" class="mt-2">
+            <div x-show="isPendingSellerConfirmation()" class="alert alert-warning mt-2">
+              <i class="fas fa-hourglass-half"></i>
+              <span x-text="$t('auction.reserveConfirmationPending')"></span>
+              <template x-if="auction.confirmationDeadline">
+                <small class="d-block mt-1" x-text="$t('auction.confirmBefore') + ' ' + formatDate(auction.confirmationDeadline)"></small>
+              </template>
+              <template x-if="isReserveConfirmationSeller()">
+                <div class="d-flex gap-2 flex-wrap mt-3">
+                  <button class="btn btn-success btn-sm" @click="confirmReserveBid(true)" :disabled="reserveActionLoading">
+                    <i class="fas" :class="reserveActionLoading ? 'fa-spinner spinner' : 'fa-check'"></i>
+                    <span x-text="$t('auction.acceptBid')"></span>
+                  </button>
+                  <button class="btn btn-danger btn-sm" @click="confirmReserveBid(false)" :disabled="reserveActionLoading">
+                    <i class="fas" :class="reserveActionLoading ? 'fa-spinner spinner' : 'fa-times'"></i>
+                    <span x-text="$t('auction.rejectBid')"></span>
+                  </button>
+                </div>
+              </template>
+            </div>
+
+            <div x-show="bidAlert && !isActive" class="mt-2">
+              <div :class="'alert alert-' + bidAlertType" x-text="bidAlert"></div>
+            </div>
+
+            <div x-show="(ended || (!isActive && !ended)) && !isPendingSellerConfirmation()" class="mt-2">
               <span class="text-danger fw-semibold">
                 <i class="fas fa-times-circle"></i> ${t('auction.ended')}
               </span>

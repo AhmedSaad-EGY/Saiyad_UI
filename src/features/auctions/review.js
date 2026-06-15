@@ -71,9 +71,12 @@ Alpine.data('auctionReviewPage', () => ({
     if (!this.appEndTime) { showToast(t('scheduling.startTimeRequired'), 'error'); return; }
     this.approving = true;
     try {
-      const body = { endTime: new Date(this.appEndTime).toISOString(), startingPrice: parseFloat(this.appStartingPrice) };
-      if (this.appReservePrice) body.reservePrice = parseFloat(this.appReservePrice);
-      if (this.appMinIncrement) body.bidIncrement = parseFloat(this.appMinIncrement);
+      const body = {
+        endTime: new Date(this.appEndTime).toISOString(),
+        startingPrice: parseFloat(this.appStartingPrice),
+        reservePrice: parseFloat(this.appReservePrice) || 0,
+        bidIncrement: parseFloat(this.appMinIncrement) || 1,
+      };
       await approveAuctionRequest(this.approveItemId, body);
       showToast(t('auctionRequestsReview.approvedSuccess'), 'success');
       this.approveItemId = null;

@@ -19,8 +19,8 @@ import {
   fetchAdminOrders, fetchAdminProducts, updateProductStatus,
   fetchPendingReviews, approveProduct, rejectProduct,
   fetchCategories, createCategory, deleteCategory,
-  fetchWallet, fetchWalletTransactions,
-  fetchSubscriptionPlans, updateSubscriptionPlan, deleteSubscriptionPlan,   createSubscriptionPlan,
+  fetchSystemWalletTransactions,
+  fetchSubscriptionPlans, updateSubscriptionPlan, deleteSubscriptionPlan, createSubscriptionPlan,
   fetchDashboardStats, computeFeeTotals,
 } from '../features/admin/index.js';
 
@@ -134,7 +134,7 @@ export default async function renderAdmin(container) {
     } else if (activeTab === "revenue") {
       (async () => {
         try {
-          const [dash, txns] = await Promise.all([fetchDashboardStats(), fetchWalletTransactions(1, 100)]);
+          const [dash, txns] = await Promise.all([fetchDashboardStats(), fetchSystemWalletTransactions(1, 100)]);
           const wallet = dash.systemWallet || {};
           const { feeTxns, totalFees } = computeFeeTotals(txns);
           renderRevenueWidget(content, { wallet, feeTxns, totalFees, pendingFreezes: dash.pendingFreezeCount, pendingReports: dash.pendingReportCount });

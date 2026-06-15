@@ -98,7 +98,7 @@ async function renderPage(container, { fetchData, onResolve }) {
 
     container.querySelectorAll(".view-report").forEach((btn) => {
       btn.addEventListener("click", () => {
-        const report = reports.find(r => r.id == btn.dataset.id);
+        const report = reports.find(r => String(r.id) === String(btn.dataset.id));
         if (!report) return;
         const safeId = escapeHtml(String(report.id));
         const safeTargetId = report.targetId ? escapeHtml(String(report.targetId)) : '';

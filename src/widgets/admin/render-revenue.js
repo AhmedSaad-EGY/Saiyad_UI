@@ -57,16 +57,21 @@ export function renderRevenue(container, { wallet, feeTxns, totalFees, pendingFr
           <th scope="col">${t("dash.date")}</th>
         </tr></thead>
         <tbody>
-          ${feeTxns.length ? feeTxns.map(txn => `
+          ${feeTxns.length ? feeTxns.map(txn => {
+            const isCredit = Number(txn.amount || 0) >= 0;
+            const reference = txn.referenceType && txn.referenceId
+              ? `${txn.referenceType} #${txn.referenceId}`
+              : (txn.referenceType || "-");
+            return `
             <tr>
               <td>${txn.id}</td>
-              <td><span class="status ${txn.type === "PlatformFee" ? "status-available" : "status-pending"}">${txn.type}</span></td>
+              <td><span class="status ${isCredit ? "status-available" : "status-draft"}">${escapeHtml(txn.type || "-")}</span></td>
               <td class="fw-semibold">${formatPrice(txn.amount)}</td>
-              <td>-</td>
+              <td>${escapeHtml(reference)}</td>
               <td>${escapeHtml(txn.description || "-")}</td>
               <td>${formatDate(txn.createdAt)}</td>
-            </tr>
-          `).join("") : `<tr><td colspan="6" class="text-center p-4 text-muted">
+            </tr>`;
+          }).join("") : `<tr><td colspan="6" class="text-center p-4 text-muted">
             <div class="empty-state-inline">
               <i class="fas fa-chart-line mb-2 opacity-50" style="font-size:2rem" aria-hidden="true"></i>
               <p class="mb-0">${t("admin.noFees")}</p>
