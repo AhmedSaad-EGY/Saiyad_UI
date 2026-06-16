@@ -4,13 +4,11 @@
 
 /* ============================================================
    MAIN CONTENT
-   Sits below the fixed navbar via margin-top: var(--navbar-height).
-   Responsive overrides adjust padding only — do NOT change
-   margin-top here; it must always equal the navbar height.
+   Sits below the fixed navbar via the shared app-shell offset.
    ============================================================ */
 .main-content {
   flex: 1;
-  margin-top: var(--navbar-height);
+  margin-top: var(--app-header-offset);
   margin-inline: var(--space-6);
   margin-bottom: var(--space-10);
   padding: var(--space-10);

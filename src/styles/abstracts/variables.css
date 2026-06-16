@@ -27,6 +27,7 @@
 
   /* ── Sizing constants ─────────────────────────────────────── */
   --navbar-height: 60px;
+  --app-header-offset: calc(var(--navbar-height) + var(--space-4));
 
   /* ── Typography scale ─────────────────────────────────────── */
   --text-xs: 0.72rem;

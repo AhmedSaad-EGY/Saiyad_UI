@@ -1337,6 +1337,10 @@ body.nav-open .bottom-nav {
   .navbar {
     height: calc(var(--navbar-height) + env(safe-area-inset-top, 0px));
   }
+
+  :root {
+    --app-header-offset: calc(var(--navbar-height) + env(safe-area-inset-top, 0px) + var(--space-3));
+  }
 }
 
 @media (width <= 360px) {

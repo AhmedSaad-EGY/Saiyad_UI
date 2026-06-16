@@ -14,7 +14,7 @@ export default async function renderCart(container) {
   document.body.classList.add('has-floating-bar');
 
   container.innerHTML = `
-    <div x-data="cartPage">
+    <div x-data="cartPage" :aria-busy="loading ? 'true' : null">
       <template x-if="loading">
         <div><i class="fas fa-spinner spinner" aria-hidden="true"></i> ${t('common.loading')}</div>
       </template>
@@ -41,13 +41,13 @@ export default async function renderCart(container) {
       </div>
       <div x-show="showCartContent" x-transition:enter="transition-fade" x-transition:enter-start="op-0" x-transition:enter-end="op-100">
         <div>
-          <div class="section-header animate__animated animate__fadeInUp">
+          <div class="section-header cart-page-header animate__animated animate__fadeInUp">
             <h2><i class="fas fa-shopping-cart" aria-hidden="true"></i> ${t('cart.title')}</h2>
-            <button class="btn btn-danger btn-sm" @click="clearCart()"><i class="fas fa-trash-alt" aria-hidden="true"></i> ${t('cart.clear')}</button>
+            <button type="button" class="btn btn-danger btn-sm" @click="clearCart()"><i class="fas fa-trash-alt" aria-hidden="true"></i> ${t('cart.clear')}</button>
           </div>
           <div class="cart-table-wrapper">
             <table class="cart-table table">
-              <caption class="text-muted caption-meta" style="margin-top:8px">${t('cart.title')}</caption>
+              <caption class="text-muted caption-meta">${t('cart.title')}</caption>
               <thead>
                 <tr>
                   <th scope="col">${t('cart.product')}</th>
@@ -62,42 +62,42 @@ export default async function renderCart(container) {
                   <tr>
                     <td class="cart-product-cell">
                       <a :href="'#/product-detail?id=' + item.productId"
-                         class="d-flex align-items-center gap-2 text-decoration-none" style="color:var(--text)">
+                         class="cart-product-link">
                         <template x-if="item.imageUrl">
                           <img :src="item.imageUrl"
                                :alt="item.productTitle || ''"
-                               class="flex-shrink-0 rounded-2" style="width:48px;height:48px;object-fit:cover;border:1px solid var(--border)"
+                               class="cart-product-thumb"
                                loading="lazy">
                         </template>
                         <template x-if="!item.imageUrl">
-                          <div class="d-flex align-items-center justify-content-center flex-shrink-0 rounded-2" style="width:48px;height:48px;background:var(--body-bg);border:1px solid var(--border)">
+                          <div class="cart-product-thumb cart-product-thumb--placeholder">
                             <i class="fas fa-image text-muted fs-6" aria-hidden="true"></i>
                           </div>
                         </template>
-                        <span x-text="itemDisplayTitle(item)"></span>
+                        <span class="cart-product-title" x-text="itemDisplayTitle(item)"></span>
                       </a>
                     </td>
                     <td class="cart-price-cell" data-label="${t('cart.price')}" x-text="formatPrice(itemUnitPrice(item))"></td>
                     <td class="cart-qty-cell" data-label="${t('cart.quantity')}">
-                      <div class="qty-btn-group">
+                      <div class="qty-btn-group" :aria-busy="isQtyUpdating(item) ? 'true' : null">
                         <button type="button" class="qty-btn"
                                 aria-label="${t('product.decreaseQty')}"
                                 @click="decrementQty(item)"
-                                :disabled="isMinQty(item)">−</button>
+                                :disabled="isMinQty(item) || isQtyUpdating(item)">−</button>
                         <input type="text" class="cart-qty-input"
                                :value="itemQuantity(item)" readonly
                                aria-label="${t('cart.quantity')}">
                         <button type="button" class="qty-btn"
                                 aria-label="${t('product.increaseQty')}"
                                 @click="incrementQty(item)"
-                                :disabled="isMaxStock(item)">+</button>
+                                :disabled="isMaxStock(item) || isQtyUpdating(item)">+</button>
                       </div>
                       <span x-show="isMaxStock(item)"
                             class="cart-max-label">${t('cart.maxReached')}</span>
                     </td>
                     <td class="cart-subtotal-cell" data-label="${t('cart.subtotal')}" x-text="formatPrice(itemSubtotal(item))"></td>
                     <td class="cart-remove-cell" data-label="${t('common.remove')}">
-                      <button class="btn btn-ghost btn-icon remove-item text-danger" @click="removeItem(item.productId)" :aria-label="$t('common.remove')">
+                      <button type="button" class="btn btn-ghost btn-icon remove-item text-danger" @click="removeItem(item.productId)" :aria-label="$t('cart.removeItemTitle') + ' ' + itemDisplayTitle(item)">
                         <i class="fas fa-times" aria-hidden="true"></i>
                       </button>
                     </td>
@@ -110,9 +110,9 @@ export default async function renderCart(container) {
             <div class="cart-total">${t('cart.total')}: <span class="cart-total-amount" id="cartTotalDisplay" x-text="formatPrice(total)"></span></div>
             <a href="#/checkout" class="btn btn-primary btn-lg"><i class="fas fa-credit-card" aria-hidden="true"></i> ${t('cart.checkout')}</a>
           </div>
-          <div class="cart-floating-bar" id="cartFloatingBar" :aria-hidden="showCartContent ? 'false' : 'true'" :inert="!showCartContent">
+          <div class="cart-floating-bar" id="cartFloatingBar" x-effect="if (showCartContent) { $el.removeAttribute('aria-hidden'); $el.removeAttribute('inert'); } else { $el.setAttribute('aria-hidden', 'true'); $el.setAttribute('inert', ''); }">
             <div class="cart-total">${t('cart.total')}: <span class="cart-total-amount" id="cartTotalFloating" x-text="formatPrice(total)"></span></div>
-            <a href="#/checkout" class="btn btn-primary" :tabindex="showCartContent ? null : -1"><i class="fas fa-credit-card" aria-hidden="true"></i> ${t('cart.checkout')}</a>
+            <a href="#/checkout" class="btn btn-primary cart-floating-cta" x-effect="if (showCartContent) { $el.removeAttribute('tabindex'); } else { $el.setAttribute('tabindex', '-1'); }"><i class="fas fa-credit-card" aria-hidden="true"></i> ${t('cart.checkout')}</a>
           </div>
         </div>
       </div>

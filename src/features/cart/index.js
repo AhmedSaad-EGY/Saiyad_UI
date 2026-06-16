@@ -37,6 +37,7 @@ Alpine.data('cartPage', () => ({
   loading: true,
   empty: false,
   error: '',
+  qtyUpdatingId: null,
 
   formatPrice,
 
@@ -44,12 +45,13 @@ Alpine.data('cartPage', () => ({
   get showErrorCart() { return !this.loading && this.error; },
   get showCartContent() { return !this.loading && !this.empty && !this.error; },
 
-  itemDisplayTitle(item) { return item.productTitle || `Product #${item.productId}`; },
+  itemDisplayTitle(item) { return item.productTitle || `${t('common.product')} #${item.productId}`; },
   itemUnitPrice(item) { return item.unitPrice || item.price || 0; },
   itemQuantity(item) { return item.quantity || 1; },
   itemSubtotal(item) { return this.itemUnitPrice(item) * this.itemQuantity(item); },
   isMinQty(item) { return this.itemQuantity(item) <= 1; },
   isMaxStock(item) { return item.stockQuantity != null && this.itemQuantity(item) >= item.stockQuantity; },
+  isQtyUpdating(item) { return this.qtyUpdatingId === item.productId; },
   decrementQty(item) { this.updateQty(item.productId, this.itemQuantity(item) - 1); },
   incrementQty(item) { this.updateQty(item.productId, this.itemQuantity(item) + 1); },
 
@@ -98,20 +100,33 @@ Alpine.data('cartPage', () => ({
   },
 
   async updateQty(productId, qty) {
-    const prevTotal = this.total;
     const item = this.items.find(i => i.productId === productId);
     if (!item) return;
-    item.quantity = parseInt(qty) || 1;
+    const nextQty = Math.max(1, parseInt(qty, 10) || 1);
+    const prevQty = item.quantity || 1;
+    const prevTotal = this.total;
+    if (this.qtyUpdatingId === productId || nextQty === prevQty) return;
+    this.qtyUpdatingId = productId;
+    item.quantity = nextQty;
     this.computeTotal();
     animateCartTotal(prevTotal, this.total);
     syncCartBadgeCount(getCartItemCount(this.items));
     try {
-      await api.put(`/cart/items/${productId}`, { quantity: parseInt(qty) || 1 });
+      await api.put(`/cart/items/${productId}`, { quantity: nextQty });
       await this.refresh();
     } catch (e) {
+      const optimisticTotal = this.total;
+      item.quantity = prevQty;
+      this.computeTotal();
+      animateCartTotal(optimisticTotal, this.total);
+      syncCartBadgeCount(getCartItemCount(this.items));
       await this.refresh();
-      const msg = e.status === 400 ? t('cart.insufficientStock', { stock: item.stockQuantity || 0 }) : e.message;
+      const msg = e.status === 400
+        ? t('cart.insufficientStock', { stock: item.stockQuantity || 0 })
+        : e.message || t('cart.quantityUpdateFailed');
       showToast(msg, 'error');
+    } finally {
+      this.qtyUpdatingId = null;
     }
   },
 

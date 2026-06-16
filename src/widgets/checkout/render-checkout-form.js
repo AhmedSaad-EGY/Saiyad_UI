@@ -22,12 +22,12 @@ export function renderCheckoutForm() {
             </div>
             <div class="card-body">
             <template x-for="item in items" :key="item.productId">
-                <div class="d-flex justify-content-between py-2 border-divider-bottom">
-                <span><span x-text="item.productTitle || ('Product #' + item.productId)"></span> <small class="text-muted" x-text="' x' + (item.quantity || 1)"></small></span>
+                <div class="checkout-line-item border-divider-bottom">
+                <span class="checkout-line-item__meta"><span x-text="item.productTitle || ($t('common.product') + ' #' + item.productId)"></span> <small class="text-muted" x-text="'x' + (item.quantity || 1)"></small></span>
                 <span class="fw-semibold" x-text="formatPrice((item.product?.price || item.unitPrice || item.price || 0) * (item.quantity || 1))"></span>
               </div>
             </template>
-            <div class="d-flex justify-content-between py-3 fw-bold" style="font-size:1.1rem">
+            <div class="checkout-order-total-row">
               <span>${t('cart.total')}</span>
               <span class="text-primary" x-text="formatPrice(total)"></span>
             </div>
@@ -40,7 +40,14 @@ export function renderCheckoutForm() {
                 <div class="row g-3">
                   <template x-for="(a, i) in addresses" :key="a.id">
                     <div class="col-sm-6">
-                      <div class="address-card" :class="selectedAddressId === a.id ? 'selected' : ''" @click="selectAddress(a.id)">
+                      <div class="address-card"
+                           :class="selectedAddressId === a.id ? 'selected' : ''"
+                           role="button"
+                           :tabindex="placing ? '-1' : '0'"
+                           :aria-pressed="selectedAddressId === a.id ? 'true' : 'false'"
+                           @click="selectAddress(a.id)"
+                           @keydown.enter.prevent="selectAddress(a.id)"
+                           @keydown.space.prevent="selectAddress(a.id)">
                         <div class="d-flex justify-content-between align-items-start mb-2">
                           <strong x-text="a.fullName || a.name || ''"></strong>
                           <div class="address-card-check"><i class="fas fa-check" x-show="selectedAddressId === a.id"></i></div>
@@ -54,7 +61,14 @@ export function renderCheckoutForm() {
                     </div>
                   </template>
                   <div class="col-sm-6">
-                    <div class="address-card d-flex flex-column align-items-center justify-content-center h-100 text-center" :class="useNewAddress ? 'selected' : ''" @click="selectAddress('new')" style="border-style:dashed;min-height:120px">
+                    <div class="address-card address-card--new d-flex flex-column align-items-center justify-content-center h-100 text-center"
+                         :class="useNewAddress ? 'selected' : ''"
+                         role="button"
+                         :tabindex="placing ? '-1' : '0'"
+                         :aria-pressed="useNewAddress ? 'true' : 'false'"
+                         @click="selectAddress('new')"
+                         @keydown.enter.prevent="selectAddress('new')"
+                         @keydown.space.prevent="selectAddress('new')">
                       <i class="fas fa-plus mb-2 fs-4" :class="useNewAddress ? 'text-primary' : 'text-muted'"></i>
                       <strong :class="useNewAddress ? 'text-primary' : 'text-muted'">${t('shipping.addNew')}</strong>
                     </div>
@@ -106,7 +120,7 @@ export function renderCheckoutForm() {
               <h3 class="mb-0">${t('cart.paymentMethod')}</h3>
             </div>
             <div class="card-body">
-              <div class="mb-3 d-flex align-items-center gap-3 p-3 rounded-3" style="border:1px solid var(--border)">
+              <div class="checkout-wallet-panel mb-3">
                 <i class="fas fa-wallet fs-5 text-primary"></i>
                 <div>
                   <small class="text-muted">${t('wallet.available')}</small>
@@ -129,35 +143,35 @@ export function renderCheckoutForm() {
                 <h3 class="mb-0"><i class="fas fa-receipt"></i> ${t('order.summary')}</h3>
               </div>
               <div class="card-body">
-                <div style="max-height: 250px; overflow-y: auto; padding-right: 10px; margin-bottom: 20px" class="terms-content">
+                <div class="terms-content checkout-summary-items">
                   <template x-for="item in items" :key="item.productId">
-                    <div class="d-flex justify-content-between mb-3">
-                      <div class="d-flex gap-2">
-                        <div style="width:40px;height:40px;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border)">
-                          <div style="position:relative;width:100%;height:100%">
-                            <img :src="item.imageUrl || ''" style="width:100%;height:100%;object-fit:cover" @error="imgError">
-                            <i class="fas fa-image" style="display:none;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:1.2rem;color:var(--text-muted)"></i>
+                    <div class="checkout-summary-item">
+                      <div class="checkout-summary-item__content">
+                        <div class="checkout-summary-thumb">
+                          <div class="checkout-summary-thumb__frame">
+                            <img :src="item.imageUrl || ''" class="checkout-summary-thumb__img" @error="imgError">
+                            <i class="fas fa-image checkout-summary-thumb__fallback"></i>
                           </div>
                         </div>
-                        <div>
-                          <div style="font-size:0.85rem;line-height:1.2;margin-bottom:4px" x-text="item.productTitle || ($t('common.product') + ' #' + item.productId)"></div>
+                        <div class="checkout-summary-meta">
+                          <div class="checkout-summary-title" x-text="item.productTitle || ($t('common.product') + ' #' + item.productId)"></div>
                           <small class="text-muted" x-text="$t('common.qty') + ': ' + (item.quantity || 1)"></small>
                         </div>
                       </div>
-                      <span class="fw-semibold ms-2" x-text="formatPrice((item.product?.price || item.unitPrice || item.price || 0) * (item.quantity || 1))"></span>
+                      <span class="checkout-summary-price" x-text="formatPrice((item.product?.price || item.unitPrice || item.price || 0) * (item.quantity || 1))"></span>
                     </div>
                   </template>
                 </div>
                 <hr>
-                <div class="d-flex justify-content-between py-2">
+                <div class="checkout-total-row">
                   <span class="text-muted">${t('cart.subtotal')}</span>
                   <span x-text="formatPrice(total)"></span>
                 </div>
-                <div class="d-flex justify-content-between py-2">
+                <div class="checkout-total-row">
                   <span class="text-muted">${t('order.shipping')}</span>
                   <span class="text-success">${t('common.free')}</span>
                 </div>
-                <div class="d-flex justify-content-between py-3 mt-2 fw-bold" style="border-top:2px dashed var(--border);font-size:1.2rem">
+                <div class="checkout-total-row checkout-total-row--grand">
                   <span>${t('cart.total')}</span>
                   <span class="text-primary" x-text="formatPrice(total)"></span>
                 </div>
@@ -173,7 +187,7 @@ export function renderCheckoutForm() {
                     </template>
                   </div>
                 </div>
-                <button class="btn btn-primary w-100 btn-lg mt-3" @click="placeOrder()" :disabled="placing">
+                <button type="button" class="btn btn-primary w-100 btn-lg mt-3 checkout-submit-btn" @click="placeOrder()" :disabled="placing" :aria-busy="placing ? 'true' : null" :aria-disabled="placing ? 'true' : null">
                   <i class="fas fa-lock" x-show="!placing"></i>
                   <i class="fas fa-spinner spinner" x-show="placing" x-cloak></i>
                   <span x-text="placing ? $t('cart.placingOrder') : $t('cart.placeOrder')"></span>
@@ -184,7 +198,7 @@ export function renderCheckoutForm() {
                   <div class="trust-badge"><i class="fas fa-undo"></i> ${t('common.easyReturns')}</div>
                 </div>
 
-                <a href="#/cart" class="btn btn-outline w-100 mt-2 border-0"><i class="fas fa-arrow-left"></i> ${t('cart.backToCart')}</a>
+                <a href="#/cart" class="btn btn-outline w-100 mt-2 border-0 checkout-back-link"><i class="fas fa-arrow-left"></i> ${t('cart.backToCart')}</a>
               </div>
             </div>
           </div>

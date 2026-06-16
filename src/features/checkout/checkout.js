@@ -97,6 +97,14 @@ Alpine.data('checkoutPage', () => ({
       addr_id = this.selectedAddressId;
     } else {
       const formEl = this.$el.querySelector('#addressForm');
+      if (!formEl) {
+        console.warn('Checkout address form was not found in the DOM.');
+        this.alertMessage = t('common.errorOccurred');
+        this.alertType = 'error';
+        this.showDepositLink = false;
+        this.placing = false;
+        return;
+      }
       if (formEl) clearAllFieldErrors(formEl);
       const fields = [
         { id: 'addrFullName', el: this.$el.querySelector('#addrFullName') },
@@ -104,6 +112,15 @@ Alpine.data('checkoutPage', () => ({
         { id: 'addrAddressLine', el: this.$el.querySelector('#addrAddressLine') },
         { id: 'addrCity', el: this.$el.querySelector('#addrCity') },
       ];
+      const missingField = fields.find((f) => !f.el);
+      if (missingField) {
+        console.warn(`Checkout field "${missingField.id}" was not found in the DOM.`);
+        this.alertMessage = t('common.errorOccurred');
+        this.alertType = 'error';
+        this.showDepositLink = false;
+        this.placing = false;
+        return;
+      }
       let valid = true;
       for (const f of fields) {
         if (!f.el.value.trim()) {

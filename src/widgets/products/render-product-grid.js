@@ -29,7 +29,7 @@ export function renderProductGrid() {
           <a :href="'#/product-detail?id='+p.id" class="product-card card" :class="'animate-on-scroll stagger-' + (i + 1 > 8 ? 8 : i + 1)" :aria-label="escapeHtml(p.title || $t('common.product')) + ' — ' + formatPrice(p.price)">
             <div class="product-card-img">
               <img :src="p.primaryImageUrl || p.imageUrl || ''" :alt="escapeHtml(p.title || $t('common.product'))" loading="lazy">
-              <span x-show="p.status != null" class="product-card-badge" :class="'status-' + (p.status === 0 || p.status === 'Available' ? 'available' : 'draft')" x-text="p.status === 0 || p.status === 'Available' ? '${t('product.statusAvailable')}' : '${t('product.statusSold')}'"></span>
+              <span x-show="p.status != null" class="product-card-badge" :class="productStatusClass(p.status)" x-text="productStatusText(p.status)"></span>
             </div>
             <div class="product-card-body">
               <div class="product-card-title" x-text="p.title || $t('common.product')"></div>

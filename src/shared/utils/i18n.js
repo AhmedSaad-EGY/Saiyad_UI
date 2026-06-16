@@ -313,6 +313,7 @@ export const translations = {
     "cart.clearConfirm": "Are you sure you want to clear your entire cart?",
     "cart.orderError": "Failed to place order",
     "cart.insufficientStock": "Only {stock} available",
+    "cart.quantityUpdateFailed": "Could not update quantity. Please try again.",
     "cart.maxReached": "MAX",
 
     // Dashboard
@@ -1843,6 +1844,7 @@ export const translations = {
 
     // Cart
     "cart.continueShopping": "مواصلة التسوق",
+    "cart.quantityUpdateFailed": "تعذر تحديث الكمية. يرجى المحاولة مرة أخرى.",
 
     // Common
     "common.edit": "تعديل",
