@@ -8,6 +8,11 @@ import { showFormModal } from './render-plans.js';
 let _page = 1;
 const PAGE_SIZE = 20;
 
+function setButtonDisabled(btn, disabled) {
+  if (!btn?.isConnected) return;
+  btn.disabled = disabled;
+}
+
 export async function renderUsers(container, { fetchUsers, onToggleUser } = {}) {
   container.innerHTML = `<div id="usersPanel">
     <div class="p-4 text-center"><i class="fas fa-spinner spinner" aria-hidden="true"></i> ${t("common.loading")}</div>
@@ -62,7 +67,7 @@ export async function renderUsers(container, { fetchUsers, onToggleUser } = {}) 
       return;
     }
 
-    panel.innerHTML = pendingHtml + `
+    panel.innerHTML = `${pendingHtml}
       <div class="table-wrapper">
         <table class="table">
           <caption class="text-muted mt-2 caption-meta">${t("admin.users")}</caption>
@@ -107,7 +112,7 @@ export async function renderUsers(container, { fetchUsers, onToggleUser } = {}) 
           renderUsers(container, { fetchUsers, onToggleUser });
         } catch (e) {
           showToast(e.message, "error");
-          btn.disabled = false;
+          setButtonDisabled(btn, false);
         }
       });
     });
@@ -121,7 +126,7 @@ export async function renderUsers(container, { fetchUsers, onToggleUser } = {}) 
           renderUsers(container, { fetchUsers, onToggleUser });
         } catch (e) {
           showToast(e.message, "error");
-          btn.disabled = false;
+          setButtonDisabled(btn, false);
         }
       });
     });
@@ -142,7 +147,7 @@ export async function renderUsers(container, { fetchUsers, onToggleUser } = {}) 
             renderUsers(container, { fetchUsers, onToggleUser });
           } catch (err) {
             showToast(err.message, "error");
-            btn.disabled = false;
+            setButtonDisabled(btn, false);
           }
         }, { confirmText: t("admin.reject"), confirmClass: "btn-danger" });
       });

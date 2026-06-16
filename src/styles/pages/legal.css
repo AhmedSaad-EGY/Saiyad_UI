@@ -150,13 +150,13 @@
   border-top: 1px solid var(--border);
 }
 
-@media (max-width: 767px) {
+@media (width <= 767px) {
   .legal-page {
     padding: var(--space-6) var(--space-4) var(--space-12);
   }
 }
 
-@media (max-width: 480px) {
+@media (width <= 480px) {
   .legal-page {
     padding: var(--space-4) var(--space-4) var(--space-12);
   }

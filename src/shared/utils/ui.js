@@ -371,13 +371,46 @@ export function getCartItemCount(items) {
   return items.reduce((s, i) => s + (i.quantity || 0), 0);
 }
 
+function animateBadge(badge) {
+  badge.classList.remove('badge-pop');
+  void badge.offsetWidth;
+  badge.classList.add('badge-pop');
+}
+
+function syncCountBadge(badges, count, { max = 99 } = {}) {
+  const elements = Array.isArray(badges) ? badges : [badges];
+  const visible = count > 0;
+  const display = visible ? (count > max ? `${max}+` : `${count}`) : '';
+
+  elements.filter(Boolean).forEach((badge) => {
+    const previous = badge.textContent?.trim() || '';
+    const wasHidden = badge.classList.contains('hidden') || badge.classList.contains('d-none');
+
+    if (!visible) {
+      badge.textContent = '';
+      badge.dataset.count = '0';
+      badge.classList.add('hidden', 'd-none');
+      badge.classList.remove('badge-pop');
+      return;
+    }
+
+    badge.textContent = display;
+    badge.dataset.count = display;
+    badge.classList.remove('hidden', 'd-none');
+
+    if (previous !== display || wasHidden) {
+      animateBadge(badge);
+    }
+  });
+}
+
 export function syncCartBadgeCount(count) {
-  const badge = document.getElementById("cartBadge");
-  if (!badge) return;
-  if (count > 0) {
-    badge.textContent = count > 99 ? '99+' : count;
-    badge.classList.remove("hidden");
-  } else {
-    badge.classList.add("hidden");
-  }
+  syncCountBadge([
+    document.getElementById('cartBadge'),
+    document.getElementById('bnCartBadge'),
+  ], count);
+}
+
+export function syncNotifBadgeCount(count) {
+  syncCountBadge(document.getElementById('notifBadge'), count);
 }

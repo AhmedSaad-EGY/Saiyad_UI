@@ -201,20 +201,20 @@
 }
 
 /* ── Responsive ──────────────────────────────────────────────── */
-@media (max-width: 767px) {
+@media (width <= 767px) {
   .footer {
     margin-top: var(--space-10);
     padding: var(--space-8) 0 var(--space-5);
   }
 }
 
-@media (max-width: 480px) {
+@media (width <= 480px) {
   .not-found-page {
     padding: var(--space-10) var(--space-4);
   }
 }
 
-@media (max-width: 480px) {
+@media (width <= 480px) {
   .footer-tagline {
     max-width: 100%;
   }

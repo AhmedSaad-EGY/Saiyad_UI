@@ -5,6 +5,18 @@ import { manualPaginationHtml, wirePagination } from '../ui/pagination.js';
 import { showToast } from '../ui/toast.js';
 import { showConfirm } from '../ui/modal.js';
 
+function restoreCancelButton(btn) {
+  if (!btn?.isConnected) return;
+  btn.disabled = false;
+  btn.textContent = t("order.cancel");
+}
+
+function setCancelButtonLoading(btn) {
+  if (!btn?.isConnected) return;
+  btn.disabled = true;
+  btn.innerHTML = `<i class="fas fa-spinner spinner" aria-hidden="true"></i> ${t("order.cancelling")}`;
+}
+
 export function renderOrders(content, { orders, page, totalPages, onCancel, onPageChange, error }) {
   content.innerHTML = `<div class="card"><div class="card-header"><h3><i class="fas fa-box" aria-hidden="true"></i> ${t("dash.orders")}</h3></div><div class="card-body"><div id="ordersList"></div></div></div>`;
 
@@ -64,15 +76,13 @@ export function renderOrders(content, { orders, page, totalPages, onCancel, onPa
         { type: "danger", confirmText: t("order.cancel") }
       );
       if (!ok) return;
-      btn.disabled = true;
-      btn.innerHTML = `<i class="fas fa-spinner spinner" aria-hidden="true"></i> ${t("order.cancelling")}`;
+      setCancelButtonLoading(btn);
       try {
         await onCancel(orderId);
         showToast(t("order.cancelled"), "success");
       } catch (err) {
         showToast(err.message || t("order.cancelError"), "error");
-        btn.disabled = false;
-        btn.textContent = t("order.cancel");
+        restoreCancelButton(btn);
       }
     });
   });

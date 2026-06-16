@@ -39,7 +39,7 @@ export default function renderLogin(container) {
               <label for="loginPassword">${t('auth.password')}</label>
               <div class="password-wrapper">
                 <input :type="showPassword ? 'text' : 'password'" id="loginPassword" class="form-input" x-model="password" placeholder="${t('auth.passwordPlaceholder')}" required autocomplete="current-password" :disabled="loading">
-                <button type="button" class="toggle-pw" @click="togglePw" :aria-label="pwToggleLabel()" tabindex="-1"><i :class="pwToggleIcon()"></i></button>
+                <button type="button" class="toggle-pw" @click="togglePw" :aria-label="pwToggleLabel()"><i :class="pwToggleIcon()"></i></button>
               </div>
             </div>
 

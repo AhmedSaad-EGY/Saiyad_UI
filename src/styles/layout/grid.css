@@ -18,14 +18,13 @@
   z-index: 1;
   background: var(--glass-bg);
   backdrop-filter: var(--glass-blur-light);
-  -webkit-backdrop-filter: var(--glass-blur-light);
   border: 1px solid var(--glass-border);
   border-top: none;
   border-radius: 0 0 var(--radius-xl) var(--radius-xl);
   box-shadow: var(--glass-shadow);
 }
 
-@media (min-width: 768px) {
+@media (width >= 768px) {
   .main-content {
     margin-inline: auto;
     width: calc(100% - var(--space-12));
@@ -41,7 +40,7 @@
   width: 100%;
 }
 
-@media (max-width: 767px) {
+@media (width <= 767px) {
   .container {
     padding: 0 var(--space-4);
   }
@@ -53,7 +52,7 @@
   }
 }
 
-@media (max-width: 480px) {
+@media (width <= 480px) {
   .container {
     padding: 0 var(--space-4);
   }
@@ -63,7 +62,7 @@
   }
 }
 
-@media (max-width: 360px) {
+@media (width <= 360px) {
   .container {
     padding: 0 var(--space-3);
   }

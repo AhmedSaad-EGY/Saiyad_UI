@@ -33,6 +33,17 @@
   border-right-color: var(--primary);
 }
 
+/* ── Navbar: mirror badge and drawer submenu offsets ────────── */
+[dir="rtl"] .nav-drawer .dropdown-menu {
+  padding-inline-start: 0;
+  padding-inline-end: var(--space-4);
+}
+
+[dir="rtl"] .bottom-nav-badge {
+  inset-inline-end: auto;
+  inset-inline-start: 18%;
+}
+
 /* ── Detail & card metas: flip row direction ────────────────── */
 [dir="rtl"] .detail-meta      { flex-direction: row-reverse; }
 [dir="rtl"] .product-card-meta { flex-direction: row-reverse; }
@@ -44,13 +55,18 @@
 
 /* ── Form labels ────────────────────────────────────────────── */
 [dir="rtl"] .form-group label,
-[dir="rtl"] .form-label { text-align: right; }
+[dir="rtl"] .form-label {
+  text-align: right;
+}
 
 /* ── Modal header ───────────────────────────────────────────── */
 [dir="rtl"] .modal-header { flex-direction: row-reverse; }
 
 /* ── Toast ──────────────────────────────────────────────────── */
-[dir="rtl"] .toast { left: var(--space-4); right: auto; }
+[dir="rtl"] .toast {
+  left: var(--space-4);
+  right: auto;
+}
 
 /* ── Back button arrow ──────────────────────────────────────── */
 [dir="rtl"] .back-btn i { transform: scaleX(-1); }

@@ -77,24 +77,26 @@ export default async function renderCart(container) {
                         <span x-text="itemDisplayTitle(item)"></span>
                       </a>
                     </td>
-                    <td class="cart-price-cell" x-text="formatPrice(itemUnitPrice(item))"></td>
-                    <td class="cart-qty-cell">
+                    <td class="cart-price-cell" data-label="${t('cart.price')}" x-text="formatPrice(itemUnitPrice(item))"></td>
+                    <td class="cart-qty-cell" data-label="${t('cart.quantity')}">
                       <div class="qty-btn-group">
                         <button type="button" class="qty-btn"
+                                aria-label="${t('product.decreaseQty')}"
                                 @click="decrementQty(item)"
                                 :disabled="isMinQty(item)">−</button>
                         <input type="text" class="cart-qty-input"
                                :value="itemQuantity(item)" readonly
                                aria-label="${t('cart.quantity')}">
                         <button type="button" class="qty-btn"
+                                aria-label="${t('product.increaseQty')}"
                                 @click="incrementQty(item)"
                                 :disabled="isMaxStock(item)">+</button>
                       </div>
                       <span x-show="isMaxStock(item)"
                             class="cart-max-label">${t('cart.maxReached')}</span>
                     </td>
-                    <td class="cart-subtotal-cell" x-text="formatPrice(itemSubtotal(item))"></td>
-                    <td class="cart-remove-cell">
+                    <td class="cart-subtotal-cell" data-label="${t('cart.subtotal')}" x-text="formatPrice(itemSubtotal(item))"></td>
+                    <td class="cart-remove-cell" data-label="${t('common.remove')}">
                       <button class="btn btn-ghost btn-icon remove-item text-danger" @click="removeItem(item.productId)" :aria-label="$t('common.remove')">
                         <i class="fas fa-times" aria-hidden="true"></i>
                       </button>
@@ -108,9 +110,9 @@ export default async function renderCart(container) {
             <div class="cart-total">${t('cart.total')}: <span class="cart-total-amount" id="cartTotalDisplay" x-text="formatPrice(total)"></span></div>
             <a href="#/checkout" class="btn btn-primary btn-lg"><i class="fas fa-credit-card" aria-hidden="true"></i> ${t('cart.checkout')}</a>
           </div>
-          <div class="cart-floating-bar" id="cartFloatingBar" aria-hidden="true">
+          <div class="cart-floating-bar" id="cartFloatingBar" :aria-hidden="showCartContent ? 'false' : 'true'" :inert="!showCartContent">
             <div class="cart-total">${t('cart.total')}: <span class="cart-total-amount" id="cartTotalFloating" x-text="formatPrice(total)"></span></div>
-            <a href="#/checkout" class="btn btn-primary"><i class="fas fa-credit-card" aria-hidden="true"></i> ${t('cart.checkout')}</a>
+            <a href="#/checkout" class="btn btn-primary" :tabindex="showCartContent ? null : -1"><i class="fas fa-credit-card" aria-hidden="true"></i> ${t('cart.checkout')}</a>
           </div>
         </div>
       </div>

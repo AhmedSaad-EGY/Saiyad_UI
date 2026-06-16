@@ -17,6 +17,10 @@ import { submitReview, sortReviews, initStarRating } from '../features/reviews/i
 import { clampQuantity } from '../features/cart/quantity.js';
 import { renderBreadcrumb, renderGallery, renderDetailPanel, renderReviewCards } from '../widgets/product-detail/index.js';
 
+function setHTML(el, html) {
+  el.innerHTML = html;
+}
+
 export default async function renderProductDetail(container, route, params) {
   setPageMeta(t('productDetail.title'));
   const id = params.id;
@@ -27,12 +31,14 @@ export default async function renderProductDetail(container, route, params) {
     const { p, isAvailable, isWishlisted: initWishlisted, avgRating, reviews, allImages, stockQty, stockLevel, isSellerOwner } = await loadProductDetailData(id);
     let isWishlisted = initWishlisted;
 
-    container.innerHTML = `
+    setHTML(container, `
       ${renderBreadcrumb(p)}
       <div class="row g-5">
         ${renderGallery(p)}
         ${renderDetailPanel(p, isAvailable, isWishlisted, stockLevel, Math.min(100, Math.max(0, stockQty)), avgRating, isAuthenticated(), isSellerOwner)}
-      </div>`;
+      </div>`);
+    document.body.classList.toggle('has-product-sticky-bar', Boolean(document.getElementById('mobileStickyCart')));
+    registerRouteCleanup(() => document.body.classList.remove('has-product-sticky-bar'));
     fadeInContent(container);
 
     // Reviews
@@ -154,8 +160,13 @@ export default async function renderProductDetail(container, route, params) {
         document.getElementById("reviewFormContainer").classList.add("d-none");
         document.getElementById("reviewComment").value = "";
         ratingVal.value = "0";
-        const stars = document.querySelectorAll("#starRating .fa-star");
-        stars.forEach((s) => { s.style.color = "var(--text-muted)"; s.style.transform = "scale(1)"; });
+        const stars = document.querySelectorAll("#starRating [data-star]");
+        stars.forEach((s, index) => {
+          s.setAttribute("aria-checked", "false");
+          s.tabIndex = index === 0 ? 0 : -1;
+          s.style.color = "var(--text-muted)";
+          s.style.transform = "scale(1)";
+        });
         const user = getUser();
         if (reviewsList) {
           const noReviewsMsg = reviewsList.querySelector("p");

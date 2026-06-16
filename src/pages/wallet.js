@@ -43,12 +43,15 @@ async function loadWalletBalance() {
 }
 
 async function loadWalletTransactions() {
-  const container = document.getElementById('walletTransactionsContainer');
   try {
     const res = await fetchWalletTransactions(1, 20);
+    const container = document.getElementById('walletTransactionsContainer');
+    if (!container) return;
     container.setAttribute('aria-busy', 'false');
     container.innerHTML = renderTransactions(extractTransactions(res));
   } catch {
+    const container = document.getElementById('walletTransactionsContainer');
+    if (!container) return;
     container.innerHTML = renderTransactionsError();
     document.getElementById("txnRetryBtn")?.addEventListener("click", loadWalletTransactions);
   }
@@ -56,9 +59,13 @@ async function loadWalletTransactions() {
 
 let _toppingUp = false;
 
+function setTopUpInProgress(value) {
+  _toppingUp = value;
+}
+
 async function handleTopUp() {
   if (_toppingUp) return;
-  _toppingUp = true;
+  setTopUpInProgress(true);
 
   const input  = document.getElementById('topUpAmount');
   const errEl  = document.getElementById('topUpAmountError');
@@ -73,7 +80,7 @@ async function handleTopUp() {
     errEl.textContent = validation.message;
     errEl.classList.remove('hidden');
     input.focus();
-    _toppingUp = false;
+    setTopUpInProgress(false);
     return;
   }
 
@@ -91,7 +98,7 @@ async function handleTopUp() {
     btn.disabled = false;
     btn.innerHTML = t('wallet.confirmTopUp');
   } finally {
-    _toppingUp = false;
+    setTopUpInProgress(false);
   }
 }
 

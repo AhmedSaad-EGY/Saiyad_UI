@@ -16,11 +16,14 @@ import {
 import {
   renderPublicProfile,
   renderSellerNotFound,
-  renderNoProfile,
   renderProductsSection,
   renderProfileForm,
   renderSavingButton,
 } from '../widgets/seller-profile/index.js';
+
+function setHTML(el, html) {
+  el.innerHTML = html;
+}
 
 export default async function renderSellerProfile(container) {
   setPageMeta(t('seller.title'));
@@ -31,7 +34,7 @@ export default async function renderSellerProfile(container) {
     showLoading(container);
     try {
       const profile = await fetchSellerProfile(sellerId);
-      container.innerHTML = renderPublicProfile(profile);
+      setHTML(container, renderPublicProfile(profile));
 
       try {
         const sellerProducts = await fetchSellerProducts(sellerId);
@@ -46,7 +49,7 @@ export default async function renderSellerProfile(container) {
         }
       } catch { /* inner products render failed */ }
     } catch {
-      container.innerHTML = renderSellerNotFound();
+      setHTML(container, renderSellerNotFound());
     }
     return;
   }

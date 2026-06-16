@@ -70,8 +70,17 @@
   justify-content: center;
   gap: 8px;
 }
-.offline-banner { background: var(--danger); color: var(--text-inverse); font-weight: 500; }
-.online-banner { background: var(--success); color: var(--text-inverse); font-weight: 600; }
+.offline-banner {
+  background: var(--danger);
+  color: var(--text-inverse);
+  font-weight: 500;
+}
+
+.online-banner {
+  background: var(--success);
+  color: var(--text-inverse);
+  font-weight: 600;
+}
 .sw-update-banner {
   position: fixed;
   bottom: 16px;
@@ -92,6 +101,8 @@
   font-size: 14px;
 }
 .toast-base {
+  position: relative;
+  overflow: hidden;
   padding: var(--space-4) var(--space-6);
   border-radius: var(--radius-md);
   color: var(--text-inverse);
@@ -104,7 +115,8 @@
   min-width: 280px;
   pointer-events: auto;
   backdrop-filter: blur(12px);
-  border: 1px solid var(--glass-border, rgba(255,255,255,0.1));
+  border: 1px solid var(--glass-border, rgb(255 255 255 / 0.1));
+  animation: toast-slide-in-right 0.35s var(--ease-out) forwards;
 }
 .toast-base i {
   font-size: 1.1rem;
@@ -170,14 +182,14 @@
   bottom: 0;
   inset-inline: 0;
   height: 3px;
-  background: oklch(1 0 0 / 0.30);
+  background: oklch(100% 0 0deg / 0.30);
   border-radius: 0 0 var(--radius-md) var(--radius-md);
   overflow: hidden;
 }
 
 .toast-timer-bar {
   height: 100%;
-  background: oklch(1 0 0 / 0.60);
+  background: oklch(100% 0 0deg / 0.60);
   width: 100%;
   animation: toast-timer 3.5s linear forwards;
   transform-origin: left;
@@ -185,13 +197,6 @@
 
 [dir="rtl"] .toast-timer-bar {
   transform-origin: right;
-}
-
-/* ── Toast entrance/exit ────────────────────────────────────── */
-.toast-base {
-  position: relative;
-  overflow: hidden;
-  animation: toast-slide-in-right 0.35s var(--ease-out) forwards;
 }
 
 .toast-base.toast-exit {

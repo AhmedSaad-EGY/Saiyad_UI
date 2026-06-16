@@ -8,6 +8,10 @@ import { manualPaginationHtml, wirePagination } from '../ui/pagination.js';
 let _page = 1;
 const PAGE_SIZE = 20;
 
+function setHTML(el, html) {
+  el.innerHTML = html;
+}
+
 export async function renderReports(container, { fetchData, onResolve } = {}) {
   _page = 1;
   await renderPage(container, { fetchData, onResolve });
@@ -26,7 +30,7 @@ async function renderPage(container, { fetchData, onResolve }) {
       return;
     }
 
-    container.innerHTML = `
+    setHTML(container, `
       <div class="table-wrapper table-reports"><table class="table">
         <caption class="text-muted mt-2 caption-meta">${t("admin.reports")}</caption>
         <thead><tr>
@@ -61,7 +65,7 @@ async function renderPage(container, { fetchData, onResolve }) {
         }).join('')}
         </tbody>
       </table></div>
-      ${manualPaginationHtml({ page: _page, totalPages: pages, prefix: 'reports' })}`;
+      ${manualPaginationHtml({ page: _page, totalPages: pages, prefix: 'reports' })}`);
 
     wirePagination({
       container, prefix: 'reports',
@@ -71,7 +75,7 @@ async function renderPage(container, { fetchData, onResolve }) {
 
     container.querySelectorAll(".resolve-report").forEach((btn) => {
       btn.addEventListener("click", async () => {
-        const adminNote = prompt(t("admin.reportAdminNote") + ':');
+        const adminNote = prompt(`${t("admin.reportAdminNote")}:`);
         try {
           await onResolve(btn.dataset.id, { newStatus: 'Resolved', adminNote: adminNote || null });
           showToast(t("admin.reportResolved"), "success");
@@ -118,6 +122,6 @@ async function renderPage(container, { fetchData, onResolve }) {
       });
     });
   } catch (err) {
-    container.innerHTML = `<div class="alert alert-error">${escapeHtml(err.message)}</div>`;
+    setHTML(container, `<div class="alert alert-error">${escapeHtml(err.message)}</div>`);
   }
 }

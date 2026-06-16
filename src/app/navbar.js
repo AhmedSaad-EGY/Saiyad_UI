@@ -1,7 +1,7 @@
 import { t } from '../shared/utils/i18n.js';
 import { getUser, isAuthenticated, getRoleFromToken } from '../shared/utils/auth-state.js';
 import { ROLES, SELLER_ROLES } from '../shared/constants/roles.js';
-import { openDrawer, closeDrawer } from '../widgets/layout/navbar.js';
+import { openDrawer, closeDrawer, syncDrawerA11y } from '../widgets/layout/navbar.js';
 import { showConfirm } from '../widgets/ui/modal.js';
 import { logout } from '../features/auth/login.js';
 
@@ -120,14 +120,17 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
-document.querySelectorAll('.nav-link').forEach((link) => {
-  link.addEventListener('click', closeDrawer);
+document.getElementById('navDrawer')?.addEventListener('click', (e) => {
+  if (!document.getElementById('navDrawer')?.classList.contains('open')) return;
+  const actionLink = e.target.closest('a[href]');
+  if (!actionLink) return;
+  closeDrawer({ restoreTriggerFocus: false });
 });
 
 let prevWidth = window.innerWidth;
 window.addEventListener('resize', () => {
   const width = window.innerWidth;
-  if (prevWidth <= 768 && width > 768) {
+  if (prevWidth < 992 && width >= 992) {
     const drawer = document.getElementById('navDrawer');
     if (drawer) {
       drawer.style.transition = 'none';
@@ -137,6 +140,9 @@ window.addEventListener('resize', () => {
         drawer.style.transition = '';
       });
     }
+  }
+  if (prevWidth >= 992 && width < 992) {
+    syncDrawerA11y();
   }
   prevWidth = width;
 }, { passive: true });

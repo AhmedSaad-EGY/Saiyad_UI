@@ -8,22 +8,22 @@
 .dropdown-toggle {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: calc(var(--space-6) / 4);
   cursor: pointer;
 }
 
 .dropdown-menu {
   display: none;
   position: absolute;
-  top: calc(100% + 8px);
+  top: calc(100% + var(--space-2));
   inset-inline-end: 0;
   background: var(--card-bg);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-lg);
-  min-width: 210px;
-  z-index: 1001;
-  padding: 6px 0;
+  min-width: calc(var(--space-20) * 2 + var(--space-10) + var(--space-2) + (var(--space-1) / 2));
+  z-index: calc(var(--z-navbar) + 1);
+  padding: calc(var(--space-6) / 4) 0;
   transition:
     background-color var(--theme-ease),
     border-color var(--theme-ease);
@@ -42,7 +42,7 @@
   text-decoration: none;
   color: var(--text-secondary);
   font-size: var(--text-sm);
-  border-inline-start: 3px solid transparent;
+  border-inline-start: calc(var(--space-3) / 4) solid transparent;
   transition:
     background var(--transition),
     color var(--transition),
@@ -56,9 +56,9 @@
 }
 
 .dropdown-divider {
-  height: 1px;
+  height: calc(var(--space-1) / 4);
   background: var(--border);
-  margin: 5px 0;
+  margin: calc(var(--space-5) / 4) 0;
 }
 
 /* ============================================================
@@ -68,7 +68,9 @@
   display: flex;
   align-items: center;
   width: 100%;
-  max-width: 280px;
+  min-height: calc(var(--space-10) + var(--space-1));
+  min-width: 0;
+  max-width: calc(var(--space-20) * 3 + var(--space-10));
   background: var(--input-bg);
   border: 1px solid var(--border);
   border-radius: var(--radius-full);
@@ -94,11 +96,13 @@
 .nav-search__input::placeholder { color: var(--text-muted); }
 .nav-search:has(.nav-search__input[aria-invalid="true"]) {
   border-color: var(--danger);
-  box-shadow: 0 0 0 1.5px var(--danger);
+  box-shadow: 0 0 0 calc(var(--space-3) / 8) var(--danger);
 }
 .nav-search__btn {
   background: transparent;
   border: none;
+  min-width: calc(var(--space-10) + var(--space-1));
+  min-height: calc(var(--space-10) + var(--space-1));
   padding: var(--space-2) var(--space-3);
   cursor: pointer;
   color: var(--text-muted);
@@ -107,11 +111,52 @@
 }
 .nav-search__btn:hover { color: var(--primary); }
 
-@media (min-width: 768px) {
-  .nav-search { margin: 0 var(--space-4); flex: 1; max-width: 400px; }
+@media (width >= 992px) {
+  .nav-search {
+    margin: 0;
+    flex: 1 1 240px;
+    min-width: 220px;
+    max-width: 320px;
+  }
 }
-@media (max-width: 767px) {
-  .nav-search { max-width: 100%; margin: var(--space-2) var(--space-4); }
+
+@media (width >= 1200px) {
+  .nav-search {
+    flex: 1 1 calc(var(--space-20) * 2 + var(--space-16) + var(--space-4));
+    min-width: 280px;
+    max-width: calc(var(--space-20) * 2 + var(--space-16) + var(--space-4));
+  }
+}
+
+@media (width >= 992px) and (width <= 1199px) {
+  .nav-search__input {
+    padding-inline: var(--space-2);
+    font-size: var(--text-xs);
+  }
+
+  .nav-search__btn {
+    min-width: var(--space-10);
+    padding-inline: var(--space-2);
+  }
+}
+
+@media (width < 992px) {
+  .nav-search {
+    max-width: 100%;
+    min-height: 44px;
+    margin: 0;
+  }
+
+  .nav-search__input {
+    font-size: var(--text-base);
+    padding: var(--space-2) var(--space-4);
+  }
+
+  .nav-search__btn {
+    min-width: 44px;
+    min-height: 44px;
+    padding-inline: var(--space-3);
+  }
 }
 
 /* ============================================================
@@ -122,8 +167,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
+  width: calc(var(--space-10) + var(--space-1));
+  height: calc(var(--space-10) + var(--space-1));
   border-radius: var(--radius-full);
   color: var(--text-secondary);
   text-decoration: none;
@@ -138,10 +183,10 @@
 
 .notif-bell .badge {
   position: absolute;
-  top: -2px;
-  inset-inline-end: -4px;
-  min-width: 16px;
-  height: 16px;
-  font-size: 0.55rem;
-  padding: 0 4px;
+  top: calc(var(--space-1) / -2);
+  inset-inline-end: calc(var(--space-1) * -1);
+  min-width: calc(var(--space-4) + (var(--space-1) / 2));
+  height: calc(var(--space-4) + (var(--space-1) / 2));
+  font-size: var(--text-xs);
+  padding: 0 var(--space-1);
 }

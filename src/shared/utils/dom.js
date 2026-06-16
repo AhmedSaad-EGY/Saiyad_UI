@@ -327,6 +327,11 @@ export function initPullToRefresh({ onRefresh, threshold = 80, indicatorId = 'pt
 
   let startY = 0, pulling = false, moved = false;
 
+  function resetPullState() {
+    pulling = false;
+    moved = false;
+  }
+
   function onTouchStart(e) {
     if (window.scrollY > 0) return;
     startY = e.touches[0].clientY;
@@ -346,7 +351,7 @@ export function initPullToRefresh({ onRefresh, threshold = 80, indicatorId = 'pt
   }
 
   async function onTouchEnd() {
-    if (!pulling || !moved) { pulling = false; return; }
+    if (!pulling || !moved) { resetPullState(); return; }
     const ready = indicator.classList.contains('ptr-ready');
     const _dy = parseFloat(indicator.style.transform?.replace('translateY(', '') || '0');
     indicator.style.transform = ready ? `translateY(${threshold}px)` : '';
@@ -359,8 +364,7 @@ export function initPullToRefresh({ onRefresh, threshold = 80, indicatorId = 'pt
       indicator.querySelector('.ptr-text').textContent = t('common.pullToRefresh');
     }
     indicator.style.transform = '';
-    pulling = false;
-    moved = false;
+    resetPullState();
   }
 
   document.addEventListener('touchstart', onTouchStart, { passive: true });

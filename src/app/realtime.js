@@ -8,9 +8,14 @@ import { KEYS } from '../shared/constants/storage-keys.js';
 
 let _connection = null;
 let _connectionPromise = null;
+let _manualStop = false;
 const _joinedGroups = new Set();
 
 const { HubConnectionState } = signalR;
+
+function hasAccessToken() {
+  return !!sessionStorage.getItem(KEYS.ACCESS_TOKEN);
+}
 
 function getConnection() {
   if (_connection) return _connection;
@@ -39,7 +44,9 @@ function getConnection() {
     showToast(t("auction.ended"), "success");
   });
 
-  _connection.onreconnecting(() => showSignalRBanner());
+  _connection.onreconnecting(() => {
+    if (hasAccessToken()) showSignalRBanner();
+  });
   _connection.onreconnected(async () => {
     hideSignalRBanner();
     for (const id of _joinedGroups) {
@@ -48,13 +55,16 @@ function getConnection() {
       } catch { /* group may have been removed */ }
     }
   });
-  _connection.onclose(() => showSignalRBanner());
+  _connection.onclose(() => {
+    if (!_manualStop && hasAccessToken()) showSignalRBanner();
+    else hideSignalRBanner();
+  });
 
   return _connection;
 }
 
 export function startIfNeeded() {
-  if (!sessionStorage.getItem(KEYS.ACCESS_TOKEN)) return Promise.resolve();
+  if (!hasAccessToken()) return Promise.resolve();
   if (_connectionPromise) return _connectionPromise;
   const conn = getConnection();
   if (!conn) return Promise.resolve();
@@ -94,15 +104,25 @@ export function isSignalRConnected() {
 }
 
 export function stopSignalR() {
-  if (_connection) {
-    _connection.stop().catch(() => { /* connection already closed */ });
-    _connection = null;
-    _connectionPromise = null;
-    _joinedGroups.clear();
+  const conn = _connection;
+  _connection = null;
+  _connectionPromise = null;
+  _joinedGroups.clear();
+  if (!conn) {
+    hideSignalRBanner();
+    return;
   }
+  _manualStop = true;
+  conn.stop()
+    .catch(() => { /* connection already closed */ })
+    .finally(() => {
+      _manualStop = false;
+      hideSignalRBanner();
+    });
 }
 
 on('auth:logged-out', stopSignalR);
+on('auth:session-expired', stopSignalR);
 
 // ── Reconnection Banner ────────────────────────────────────────────────────
 

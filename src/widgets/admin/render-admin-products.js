@@ -8,6 +8,12 @@ let _page = 1;
 const PAGE_SIZE = 20;
 const MODERATION_STATUSES = ["PendingReview", "Available", "Draft", "Sold", "Rejected", "Suspended"];
 
+function restoreButton(btn, text) {
+  if (!btn?.isConnected) return;
+  btn.disabled = false;
+  btn.textContent = text;
+}
+
 export async function renderAdminProducts(container, { fetchProducts, onUpdateProductStatus } = {}) {
   container.innerHTML = `<div id="productsPanel">
     <div class="p-4 text-center"><i class="fas fa-spinner spinner" aria-hidden="true"></i> ${t("common.loading")}</div>
@@ -76,8 +82,7 @@ export async function renderAdminProducts(container, { fetchProducts, onUpdatePr
           renderAdminProducts(container, { fetchProducts, onUpdateProductStatus });
         } catch (err) {
           showToast(err.message, "error");
-          btn.disabled = false;
-          btn.textContent = oldText;
+          restoreButton(btn, oldText);
         }
       });
     });

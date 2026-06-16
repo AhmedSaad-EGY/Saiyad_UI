@@ -71,7 +71,7 @@ export default function renderRegister(container) {
               <label for="regPassword">${t('auth.password')}</label>
               <div class="password-wrapper">
                 <input :type="showPassword ? 'text' : 'password'" id="regPassword" class="form-input" x-ref="password" x-model="password" @input="computeStrength" placeholder="${t('auth.passwordPlaceholder')}" required autocomplete="new-password" minlength="8" :disabled="loading">
-                <button type="button" class="toggle-pw" @click="togglePw" tabindex="-1"><i :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i></button>
+                <button type="button" class="toggle-pw" @click="togglePw" :aria-label="pwToggleLabel()"><i :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i></button>
               </div>
               <div class="pw-strength" x-show="password.length >= 3" x-cloak>
                 <div class="pw-strength-bar" :class="strengthCls"></div>

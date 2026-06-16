@@ -2,8 +2,7 @@ import { api } from '../../shared/api/client.js';
 import { getPasswordStrengthResult, calculateAge, validateForm, clearAllFieldErrors } from '../../shared/utils/validation.js';
 import { showToast } from '../../shared/utils/ui.js';
 import { t } from '../../shared/utils/i18n.js';
-import { ROLES, SELLER_ROLES } from '../../shared/constants/roles.js';
-import { KEYS } from '../../shared/constants/storage-keys.js';
+import { ROLES } from '../../shared/constants/roles.js';
 import Alpine from 'alpinejs';
 
 Alpine.data('registerForm', () => ({
@@ -26,6 +25,7 @@ Alpine.data('registerForm', () => ({
   },
   submitLabel() { return this.loading ? t('common.loading') : t('auth.createAccount'); },
   pwToggleIcon() { return this.showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'; },
+  pwToggleLabel() { return this.showPassword ? t('common.hidePassword') : t('common.showPassword'); },
   togglePw() { this.showPassword = !this.showPassword; },
   async submit() {
     if (this.loading) return;
@@ -59,9 +59,7 @@ Alpine.data('registerForm', () => ({
         this.pendingRole = data.pendingRoleUpgrade;
         return;
       }
-      // F-007: Always redirect to login after registration — do NOT store access token
-      // (prevents auto-login for unverified accounts per HIGH-04)
-      if (data.user) { const { role, ...safeUser } = data.user; localStorage.setItem(KEYS.USER, JSON.stringify(safeUser)); }
+      // Registration may still require verification, so do not cache a user until login creates a valid session.
       window.location.hash = '#/login?registered=1';
     } catch (err) { showToast(err.message || t('auth.registerError'), 'error'); }
     finally { this.loading = false; }

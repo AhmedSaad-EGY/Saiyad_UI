@@ -73,8 +73,8 @@ export function renderDetailPanel(p, isAvailable, isWishlisted, stockLevel, stoc
             <div id="reviewAlert"></div>
             <div class="form-group">
               <label class="form-label">${t("review.rating")}</label>
-              <div id="starRating" role="radiogroup" aria-label="${t("review.rating")}" class="d-flex gap-2 fs-4 text-muted" style="cursor:pointer">
-                ${[1, 2, 3, 4, 5].map((i) => `<i class="fas fa-star" data-star="${i}" role="radio" aria-checked="false" aria-label="${i} ${t("review.stars")}" style="transition:color 0.15s,transform 0.15s"></i>`).join("")}
+              <div id="starRating" role="radiogroup" aria-label="${t("review.rating")}" class="d-flex gap-2 fs-4 text-muted">
+                ${[1, 2, 3, 4, 5].map((i) => `<button type="button" class="star-rating-button" data-star="${i}" role="radio" aria-checked="false" aria-label="${i} ${t("review.stars")}" tabindex="${i === 1 ? "0" : "-1"}"><i class="fas fa-star" aria-hidden="true"></i></button>`).join("")}
               </div>
               <input type="hidden" id="ratingVal" value="0">
             </div>
@@ -93,7 +93,7 @@ export function renderDetailPanel(p, isAvailable, isWishlisted, stockLevel, stoc
       </div>
     </div>
 
-    <div class="mobile-sticky-bar" id="mobileStickyCart">
+    <div class="mobile-sticky-bar mobile-sticky-cart" id="mobileStickyCart">
       <div class="current-bid-mini">
         <small>${t("cart.price")}</small>
         <span>${formatPrice(p.price)}</span>

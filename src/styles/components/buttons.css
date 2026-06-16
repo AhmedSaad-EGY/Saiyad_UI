@@ -200,12 +200,12 @@
   outline-offset: 2px;
 }
 
-#themeToggle i {
+[id="themeToggle"] i {
   transition: transform 0.4s var(--ease-bounce);
   display: inline-block;
 }
 
-@media (max-width: 360px) {
+@media (width <= 360px) {
   .btn-lg {
     padding: var(--space-3) var(--space-5);
     font-size: var(--text-sm);

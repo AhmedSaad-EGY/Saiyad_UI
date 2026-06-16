@@ -19,6 +19,7 @@ export async function logout() {
   try { await api.post('/auth/logout'); } catch { /* silent */ }
   clearTokens();
   emit('notifications:stop-polling');
+  emit('auth:logged-out');
   emit('auth:changed');
   document.documentElement.removeAttribute('data-user-role');
   document.documentElement.removeAttribute('data-vip');
@@ -57,8 +58,9 @@ Alpine.data('loginForm', () => ({
     this.loading = true; this.error = '';
     try {
       const data = await api.post('/auth/login', { email: this.email, password: this.password });
+      if (!data?.token) throw new Error(t('auth.loginError'));
       setAccessToken(data.token);
-      if (data.user) { const { role, ...safeUser } = data.user; localStorage.setItem(KEYS.USER, JSON.stringify(safeUser)); }
+      if (data.user) { const { role: _role, ...safeUser } = data.user; localStorage.setItem(KEYS.USER, JSON.stringify(safeUser)); }
       emit('auth:changed');
       syncVipAttribute().catch(() => {});
       const redirect = new URLSearchParams(window.location.hash.split('?')[1] || '').get('redirect') || '';

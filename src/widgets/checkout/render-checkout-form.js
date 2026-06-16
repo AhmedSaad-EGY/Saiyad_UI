@@ -2,7 +2,7 @@ import { t } from '../../shared/utils/i18n.js';
 
 export function renderCheckoutForm() {
   return `
-    <div>
+    <div class="checkout-layout">
       <div class="section-header text-center d-block border-0 pb-0">
         <h2 class="mb-4"><i class="fas fa-lock text-muted fs-4"></i> ${t('cart.checkout')}</h2>
         <div class="checkout-progress">

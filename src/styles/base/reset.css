@@ -15,7 +15,6 @@
 html {
   scroll-behavior: smooth;
   text-size-adjust: 100%;
-  -webkit-text-size-adjust: 100%;
   scrollbar-width: thin;
   scrollbar-color: color-mix(in oklch, var(--primary) 45%, transparent) transparent;
 }
@@ -33,7 +32,7 @@ body {
   flex-direction: column;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
+  text-rendering: optimizelegibility;
   transition:
     background-color var(--theme-ease),
     color var(--theme-ease);

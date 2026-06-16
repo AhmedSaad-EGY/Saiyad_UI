@@ -3,6 +3,10 @@ import { showLoading, showError, escapeHtml } from '../../shared/utils/dom.js';
 import { showToast } from '../ui/toast.js';
 import { showConfirm } from '../ui/modal.js';
 
+function setHTML(el, html) {
+  el.innerHTML = html;
+}
+
 export async function renderCategories(container, { fetchData, onAdd, onDelete } = {}) {
   showLoading(container);
   try {
@@ -10,7 +14,7 @@ export async function renderCategories(container, { fetchData, onAdd, onDelete }
     const cats = data.items || data.data || data || [];
 
     if (!cats.length) {
-      container.innerHTML = `
+      setHTML(container, `
         <div class="mb-3"><button class="btn btn-primary btn-sm" id="showAddCat"><i class="fas fa-plus" aria-hidden="true"></i> ${t("admin.addCategory")}</button></div>
         <div id="addCatForm" class="d-none card card-sm mb-3 mw-xs">
           <form id="catForm" novalidate>
@@ -23,12 +27,12 @@ export async function renderCategories(container, { fetchData, onAdd, onDelete }
           <div class="empty-state-visual"><i class="fas fa-tags text-muted" style="font-size:2rem" aria-hidden="true"></i></div>
           <h3>${t("admin.noCategories")}</h3>
           <p class="text-muted">${t("admin.createFirstCategory")}</p>
-        </div>`;
+        </div>`);
       setupCategoryForm(container, { fetchData, onAdd, onDelete });
       return;
     }
 
-    container.innerHTML = `
+    setHTML(container, `
       <div class="mb-3"><button class="btn btn-primary btn-sm" id="showAddCat"><i class="fas fa-plus" aria-hidden="true"></i> ${t("admin.addCategory")}</button></div>
       <div id="addCatForm" class="d-none card card-sm mb-3 mw-xs">
         <form id="catForm" novalidate>
@@ -48,7 +52,7 @@ export async function renderCategories(container, { fetchData, onAdd, onDelete }
           )
           .join("")}
         </tbody>
-      </table></div>`;
+      </table></div>`);
 
     setupCategoryForm(container, { fetchData, onAdd, onDelete });
 

@@ -55,33 +55,76 @@
 }
 
 @keyframes border-flash {
-  0%   { border-color: var(--danger); box-shadow: 0 0 0 3px var(--danger-bg); }
-  50%  { border-color: var(--danger-dark); box-shadow: 0 0 0 5px color-mix(in oklch, var(--danger) 20%, transparent); }
-  100% { border-color: var(--danger); box-shadow: 0 0 0 3px var(--danger-bg); }
-  200% { border-color: var(--danger); box-shadow: 0 0 0 3px var(--danger-bg); }
+  0% {
+    border-color: var(--danger);
+    box-shadow: 0 0 0 3px var(--danger-bg);
+  }
+
+  50% {
+    border-color: var(--danger-dark);
+    box-shadow: 0 0 0 5px color-mix(in oklch, var(--danger) 20%, transparent);
+  }
+
+  100% {
+    border-color: var(--danger);
+    box-shadow: 0 0 0 3px var(--danger-bg);
+  }
+
+  200% {
+    border-color: var(--danger);
+    box-shadow: 0 0 0 3px var(--danger-bg);
+  }
 }
 
 /* ============================================================
    TOAST ANIMATIONS
    ============================================================ */
 @keyframes toast-slide-in-right {
-  0%   { opacity: 0; transform: translateX(40px); }
-  100% { opacity: 1; transform: translateX(0); }
+  0% {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 @keyframes toast-slide-out-right {
-  0%   { opacity: 1; transform: translateX(0); }
-  100% { opacity: 0; transform: translateX(40px); }
+  0% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateX(40px);
+  }
 }
 
 @keyframes toast-slide-in-left {
-  0%   { opacity: 0; transform: translateX(-40px); }
-  100% { opacity: 1; transform: translateX(0); }
+  0% {
+    opacity: 0;
+    transform: translateX(-40px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 @keyframes toast-slide-out-left {
-  0%   { opacity: 1; transform: translateX(0); }
-  100% { opacity: 0; transform: translateX(-40px); }
+  0% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateX(-40px);
+  }
 }
 
 @keyframes toast-timer {

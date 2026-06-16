@@ -7,6 +7,7 @@ Alpine.data('dashboardPage', () => ({
   activeTab: 'overview',
   tourStep: 0,
   showTour: false,
+  tourLastFocus: null,
 
   init() {
     setPageMeta(t('dash.title'), undefined, true);
@@ -22,10 +23,54 @@ Alpine.data('dashboardPage', () => ({
   checkFirstVisitTour() {
     if (!localStorage.getItem('sayiad_tour_completed')) {
       setTimeout(() => {
-        this.showTour = true;
-        this.tourStep = 0;
-        this.highlightTourStep();
+        this.startTour();
       }, 1500);
+    }
+  },
+
+  startTour() {
+    this.tourLastFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    this.showTour = true;
+    this.tourStep = 0;
+    this.$nextTick(() => {
+      this.focusTourDialog();
+      this.highlightTourStep();
+    });
+  },
+
+  focusTourDialog() {
+    const dialog = this.$refs.tourDialog;
+    const firstControl = this.$refs.tourClose || dialog?.querySelector('button:not([disabled]), [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+    (firstControl || dialog)?.focus();
+  },
+
+  getTourFocusable() {
+    const dialog = this.$refs.tourDialog;
+    if (!dialog) return [];
+    return [...dialog.querySelectorAll('button:not([disabled]), [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')]
+      .filter(el => el.offsetParent !== null);
+  },
+
+  handleTourKeydown(event) {
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      this.endTour();
+      return;
+    }
+    if (event.key !== 'Tab') return;
+    const focusable = this.getTourFocusable();
+    if (!focusable.length) {
+      event.preventDefault();
+      return;
+    }
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
     }
   },
 
@@ -68,10 +113,15 @@ Alpine.data('dashboardPage', () => ({
   },
 
   endTour() {
+    const focusTarget = this.tourLastFocus;
     this.showTour = false;
+    this.tourLastFocus = null;
     document.querySelectorAll('.tour-highlight').forEach(el => el.classList.remove('tour-highlight'));
     localStorage.setItem('sayiad_tour_completed', 'true');
     showToast(t('tour.welcomeToSayiad'), 'success');
+    this.$nextTick(() => {
+      if (focusTarget?.isConnected) focusTarget.focus();
+    });
   },
 
   switchTab(tabId) {

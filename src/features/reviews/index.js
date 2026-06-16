@@ -25,35 +25,67 @@ export function sortReviews(reviews, sortBy) {
 }
 
 export function initStarRating(containerId) {
-  const stars = document.querySelectorAll(`#${containerId} .fa-star`);
+  const container = document.getElementById(containerId);
+  const stars = [...(container?.querySelectorAll("[data-star]") || [])];
   const ratingVal = document.getElementById("ratingVal");
   if (!stars.length || !ratingVal) return;
+
+  const clampRating = (value) => {
+    if (value < 1) return stars.length;
+    if (value > stars.length) return 1;
+    return value;
+  };
+
+  const getStarValue = (star) => parseInt(star.dataset.star, 10) || 0;
+
+  const paintStars = (value) => {
+    stars.forEach((s) => {
+      const active = getStarValue(s) <= value;
+      s.style.color = active ? "var(--warning)" : "var(--text-muted)";
+      s.style.transform = active && value ? "scale(1.2)" : "scale(1)";
+    });
+  };
+
+  const setSelectedRating = (value, shouldFocus = false) => {
+    const selectedValue = clampRating(value);
+    ratingVal.value = String(selectedValue);
+    stars.forEach((s) => {
+      const selected = getStarValue(s) === selectedValue;
+      s.setAttribute("aria-checked", String(selected));
+      s.tabIndex = selected ? 0 : -1;
+    });
+    paintStars(selectedValue);
+    if (shouldFocus) stars[selectedValue - 1]?.focus();
+  };
+
   stars.forEach((star) => {
-    star.setAttribute("tabindex", "0");
     star.addEventListener("mouseenter", () => {
-      const v = parseInt(star.dataset.star);
-      stars.forEach((s) => {
-        s.style.color = parseInt(s.dataset.star) <= v ? "var(--warning)" : "var(--text-muted)";
-        s.style.transform = parseInt(s.dataset.star) <= v ? "scale(1.2)" : "scale(1)";
-      });
+      paintStars(getStarValue(star));
     });
     star.addEventListener("mouseleave", () => {
-      const selected = parseInt(ratingVal.value);
-      stars.forEach((s) => {
-        s.style.color = parseInt(s.dataset.star) <= selected ? "var(--warning)" : "var(--text-muted)";
-        s.style.transform = "scale(1)";
-      });
+      paintStars(parseInt(ratingVal.value, 10) || 0);
     });
     star.addEventListener("click", () => {
-      ratingVal.value = star.dataset.star;
-      stars.forEach((s) => {
-        s.setAttribute("aria-checked", String(parseInt(s.dataset.star) === parseInt(star.dataset.star)));
-        s.style.color = parseInt(s.dataset.star) <= parseInt(star.dataset.star) ? "var(--warning)" : "var(--text-muted)";
-        s.style.transform = "scale(1)";
-      });
+      setSelectedRating(getStarValue(star));
     });
     star.addEventListener("keydown", (e) => {
-      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); star.click(); }
+      const current = getStarValue(star);
+      const isRtl = document.documentElement.dir === "rtl";
+      let next;
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        setSelectedRating(current);
+        return;
+      }
+      if (e.key === "ArrowRight") next = current + (isRtl ? -1 : 1);
+      else if (e.key === "ArrowLeft") next = current + (isRtl ? 1 : -1);
+      else if (e.key === "ArrowUp") next = current + 1;
+      else if (e.key === "ArrowDown") next = current - 1;
+      else if (e.key === "Home") next = 1;
+      else if (e.key === "End") next = stars.length;
+      else return;
+      e.preventDefault();
+      setSelectedRating(clampRating(next), true);
     });
   });
 }

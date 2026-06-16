@@ -28,6 +28,10 @@ export async function renderMyProducts(content, opts) {
 
   let editingProductId = null;
 
+  function setEditingProductId(value) {
+    editingProductId = value;
+  }
+
   content.innerHTML = `
     <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
       <h3><i class="fas fa-tag" aria-hidden="true"></i> ${t("dash.products")}</h3>
@@ -157,7 +161,7 @@ export async function renderMyProducts(content, opts) {
         }
 
         showToast(t("product.saved"), "success");
-        editingProductId = null;
+        setEditingProductId(null);
         if (clearDraft) clearDraft();
         document.getElementById("myProductForm").reset();
         document.getElementById("productFormContainer").classList.add("d-none");

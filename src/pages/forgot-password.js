@@ -51,7 +51,7 @@ export default function renderForgotPassword(container) {
                       <label for="fpNewPw">${t('auth.newPassword')}</label>
                       <div class="password-wrapper">
                         <input :type="showPassword ? 'text' : 'password'" id="fpNewPw" class="form-input" x-model="newPassword" placeholder="${t('auth.passwordPlaceholder')}" required minlength="8" :disabled="loading">
-                        <button type="button" class="toggle-pw" @click="togglePw" tabindex="-1"><i :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i></button>
+                        <button type="button" class="toggle-pw" @click="togglePw" :aria-label="pwToggleLabel()"><i :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i></button>
                       </div>
                     </div>
                     <div class="form-group">

@@ -20,32 +20,36 @@ export function renderProductCards(container, products) {
     const title = p.title || p.productTitle || t('common.product');
     const img = p.primaryImageUrl || p.imageUrl || '';
     const statusText = tStatus(p.status, "product");
+    const productId = p.id ?? p.productId;
+    const productHref = `#/product-detail?id=${encodeURIComponent(productId)}`;
     return `
-      <a href="#/product-detail?id=${p.id}"
-         class="product-card card animate-on-scroll stagger-${Math.min(i + 1, 8)}"
-         aria-label="${escapeHtml(title)} — ${formatPrice(p.price)}">
-        <div class="product-card-img">
-          ${img
-            ? `<img src="${escapeHtml(img)}" alt="${escapeHtml(title)}" loading="lazy">`
-            : `<div class="img-placeholder"><i class="fas fa-image"></i></div>`}
-          ${p.status != null
-            ? `<span class="product-card-badge ${statusClass(p.status)}">${escapeHtml(statusText)}</span>`
-            : ''}
-          <button class="quick-add-btn" data-quick-add="${p.id}" aria-label="${t('product.addToCart')}" title="${t('product.addToCart')}"><i class="fas fa-cart-plus"></i></button>
-        </div>
-        <div class="product-card-body">
-          <div class="product-card-title">${escapeHtml(title)}</div>
-          <div class="product-card-price">${formatPrice(p.price)}</div>
-          <div class="product-card-meta">
-            ${p.categoryName
-              ? `<span class="product-card-category"><i class="fas fa-tag"></i>${escapeHtml(p.categoryName)}</span>`
-              : ''}
-            ${p.stockQuantity != null
-              ? `<span class="product-card-stock">${p.stockQuantity} ${t('products.inStock')}</span>`
+      <div class="product-card-shell animate-on-scroll stagger-${Math.min(i + 1, 8)}">
+        <a href="${escapeHtml(productHref)}"
+           class="product-card card"
+           aria-label="${escapeHtml(title)} — ${formatPrice(p.price)}">
+          <div class="product-card-img">
+            ${img
+              ? `<img src="${escapeHtml(img)}" alt="${escapeHtml(title)}" loading="lazy">`
+              : `<div class="img-placeholder"><i class="fas fa-image"></i></div>`}
+            ${p.status != null
+              ? `<span class="product-card-badge ${statusClass(p.status)}">${escapeHtml(statusText)}</span>`
               : ''}
           </div>
-        </div>
-      </a>`;
+          <div class="product-card-body">
+            <div class="product-card-title">${escapeHtml(title)}</div>
+            <div class="product-card-price">${formatPrice(p.price)}</div>
+            <div class="product-card-meta">
+              ${p.categoryName
+                ? `<span class="product-card-category"><i class="fas fa-tag"></i>${escapeHtml(p.categoryName)}</span>`
+                : ''}
+              ${p.stockQuantity != null
+                ? `<span class="product-card-stock">${p.stockQuantity} ${t('products.inStock')}</span>`
+                : ''}
+            </div>
+          </div>
+        </a>
+        <button class="quick-add-btn" data-quick-add="${escapeHtml(String(productId))}" aria-label="${t('product.addToCart')}" title="${t('product.addToCart')}"><i class="fas fa-cart-plus"></i></button>
+      </div>`;
   }).join('');
   observeAnimations();
 }
@@ -95,17 +99,22 @@ export function renderRecentlyViewed(container) {
       <h2><i class="fas fa-history"></i> ${t("common.recentlyViewed")}</h2>
     </div>
     <div class="recently-viewed-strip">
-      ${viewed.map((v) => `
-        <a href="${getRecentLink(v)}" class="recently-viewed-item" title="${escapeHtml(v.title)}">
-          ${v.image ? `<img src="${v.image}" alt="${escapeHtml(v.title)}" loading="lazy">` : '<div class="d-flex align-items-center justify-content-center text-muted" style="width:60px;height:60px;background:var(--body-bg);border-radius:var(--radius-sm)"><i class="fas fa-image"></i></div>'}
+      ${viewed.map((v) => {
+        const title = v.title || t("common.product");
+        const image = v.image ? escapeHtml(v.image) : "";
+        return `
+        <a href="${escapeHtml(getRecentLink(v))}" class="recently-viewed-item" title="${escapeHtml(title)}">
+          ${image ? `<img src="${image}" alt="${escapeHtml(title)}" loading="lazy">` : '<div class="d-flex align-items-center justify-content-center text-muted" style="width:60px;height:60px;background:var(--body-bg);border-radius:var(--radius-sm)"><i class="fas fa-image"></i></div>'}
           <div class="recently-viewed-info">
-            <span class="recently-viewed-title">${escapeHtml(v.title)}</span>
+            <span class="recently-viewed-title">${escapeHtml(title)}</span>
             ${v.price != null ? `<span class="recently-viewed-price">${formatPrice(v.price)}</span>` : ""}
             <span class="recently-viewed-type text-uppercase text-muted" style="font-size:0.7rem;letter-spacing:0.05em">
               <i class="fas ${v.type === "auction" ? "fa-gavel" : "fa-tag"}" aria-hidden="true"></i>
               ${v.type === "auction" ? t("nav.auctions") : t("nav.products")}
             </span>
-        </a>`).join("")}
+          </div>
+        </a>`;
+      }).join("")}
     </div>`;
   observeAnimations();
 }

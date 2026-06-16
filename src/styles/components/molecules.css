@@ -20,7 +20,6 @@
   max-width: 680px;
   background: var(--glass-bg);
   backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-xl);
   padding: var(--space-12) var(--space-10);
@@ -81,13 +80,13 @@
   border-color: var(--text-muted);
 }
 
-@media (max-width: 1024px) {
+@media (width <= 1024px) {
   .hero-content {
     padding: var(--space-10) var(--space-8);
   }
 }
 
-@media (max-width: 767px) {
+@media (width <= 767px) {
   .hero {
     padding: var(--space-12) var(--space-5);
     margin-bottom: var(--space-8);
@@ -102,7 +101,7 @@
   }
 }
 
-@media (max-width: 480px) {
+@media (width <= 480px) {
   .hero h1 {
     font-size: 1.6rem;
   }
@@ -160,7 +159,7 @@
   margin-top: var(--space-12);
 }
 
-@media (max-width: 767px) {
+@media (width <= 767px) {
   .section-header-offset {
     margin-top: var(--space-8);
   }
@@ -170,7 +169,7 @@
   }
 }
 
-@media (max-width: 480px) {
+@media (width <= 480px) {
   .section-header-offset {
     margin-top: var(--space-6);
   }
@@ -282,7 +281,7 @@
   filter: drop-shadow(0 15px 30px color-mix(in oklch, var(--primary) 30%, transparent));
 }
 
-@media (max-width: 480px) {
+@media (width <= 480px) {
   .empty-state {
     padding: var(--space-8) var(--space-4);
   }
@@ -317,21 +316,21 @@
   max-width: 100%;
 }
 
-@media (min-width: 576px) {
+@media (width >= 576px) {
   .feature-grid>.feature-card {
     flex: 0 0 calc(50% - 12px);
     max-width: calc(50% - 12px);
   }
 }
 
-@media (min-width: 768px) {
+@media (width >= 768px) {
   .feature-grid>.feature-card {
     flex: 0 0 calc(33.333% - 16px);
     max-width: calc(33.333% - 16px);
   }
 }
 
-@media (min-width: 992px) {
+@media (width >= 992px) {
   .feature-grid>.feature-card {
     flex: 0 0 calc(25% - 18px);
     max-width: calc(25% - 18px);
@@ -491,7 +490,6 @@
 }
 
 .bid-slider {
-  -webkit-appearance: none;
   appearance: none;
   width: 100%;
   height: 6px;
@@ -502,7 +500,6 @@
 }
 
 .bid-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
   appearance: none;
   width: 20px;
   height: 20px;
@@ -646,7 +643,6 @@
 .auth-page .card {
   background: var(--card-bg-glass);
   backdrop-filter: blur(16px) saturate(1.8);
-  -webkit-backdrop-filter: blur(16px) saturate(1.8);
   border: 1px solid var(--border-glass);
   box-shadow: var(--shadow-glass);
   will-change: background, border-color, box-shadow;
@@ -698,13 +694,13 @@
   background: var(--primary);
 }
 
-@media (max-width: 767px) {
+@media (width <= 767px) {
   .auth-page {
     margin: 28px auto;
   }
 }
 
-@media (max-width: 480px) {
+@media (width <= 480px) {
   .auth-page {
     margin: 16px auto var(--space-8);
   }
@@ -730,7 +726,6 @@
   position: relative;
   background: var(--glass-bg-strong);
   backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--glass-border);
   box-shadow: var(--glass-shadow);
 }
@@ -761,7 +756,6 @@
   border-radius: var(--radius-xl);
   background: var(--glass-bg);
   backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--glass-border);
   box-shadow: var(--glass-shadow), var(--glass-inner-glow);
 }
@@ -802,7 +796,43 @@
   margin-bottom: var(--space-6);
 }
 
-@media (max-width: 480px) {
+.mobile-sticky-cart {
+  display: none;
+}
+
+@media (width <= 767px) {
+  .mobile-sticky-cart {
+    position: fixed;
+    inset-inline: 0;
+    bottom: calc(var(--bottom-nav-height, 0px) + env(safe-area-inset-bottom, 0px));
+    z-index: var(--z-cart-bar);
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    background: var(--card-bg);
+    border-top: 1px solid var(--border);
+    box-shadow: var(--shadow-floating-bar);
+    backdrop-filter: blur(12px);
+  }
+
+  .mobile-sticky-cart .current-bid-mini {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .mobile-sticky-cart .btn {
+    flex-shrink: 0;
+    min-height: 44px;
+  }
+
+  body.has-product-sticky-bar #app,
+  body.has-product-sticky-bar .footer {
+    padding-bottom: calc(var(--bottom-nav-height, 0px) + 88px + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+@media (width <= 480px) {
   .detail-image {
     min-height: 220px;
   }

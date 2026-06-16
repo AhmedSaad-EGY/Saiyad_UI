@@ -5,6 +5,23 @@ import { showToast } from '../ui/toast.js';
 import { showConfirm } from '../ui/modal.js';
 import { updateCartBadge } from '../layout/navbar.js';
 
+function setWishlistButtonLoading(btn) {
+  if (!btn?.isConnected) return;
+  btn.disabled = true;
+  btn.innerHTML = `<i class="fas fa-spinner spinner" aria-hidden="true"></i>`;
+}
+
+function setWishlistButtonSuccess(btn) {
+  if (!btn?.isConnected) return;
+  btn.innerHTML = `<i class="fas fa-check" aria-hidden="true"></i>`;
+}
+
+function restoreWishlistButton(btn) {
+  if (!btn?.isConnected) return;
+  btn.disabled = false;
+  btn.innerHTML = `<i class="fas fa-cart-plus" aria-hidden="true"></i>`;
+}
+
 export function renderWishlist(content, { items, onRemove, onAddToCart, error }) {
   content.innerHTML = `<div class="card"><div class="card-header"><h3><i class="fas fa-heart" aria-hidden="true"></i> ${t("dash.wishlist")}</h3></div><div class="card-body"><div id="wishlistItems"></div></div></div>`;
 
@@ -81,21 +98,18 @@ export function renderWishlist(content, { items, onRemove, onAddToCart, error })
   content.querySelectorAll(".add-wishlist-to-cart").forEach((btn) => {
     btn.addEventListener("click", async () => {
       if (!onAddToCart) return;
-      btn.disabled = true;
-      btn.innerHTML = `<i class="fas fa-spinner spinner" aria-hidden="true"></i>`;
+      setWishlistButtonLoading(btn);
       try {
         await onAddToCart(parseInt(btn.dataset.productId));
         showToast(t("product.addedToCart"), "success");
         updateCartBadge();
-        btn.innerHTML = `<i class="fas fa-check" aria-hidden="true"></i>`;
+        setWishlistButtonSuccess(btn);
         setTimeout(() => {
-          btn.disabled = false;
-          btn.innerHTML = `<i class="fas fa-cart-plus" aria-hidden="true"></i>`;
+          restoreWishlistButton(btn);
         }, 1500);
       } catch (e) {
         showToast(e.message, "error");
-        btn.disabled = false;
-        btn.innerHTML = `<i class="fas fa-cart-plus" aria-hidden="true"></i>`;
+        restoreWishlistButton(btn);
       }
     });
   });

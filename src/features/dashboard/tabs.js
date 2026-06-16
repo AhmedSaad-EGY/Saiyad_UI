@@ -4,7 +4,7 @@ import { ROLES, SELLER_ROLES, ECOMMERCE_ROLES, MODERATOR_ROLES } from '../../sha
 
 let _passwordSubmitting = false;
 import { showLoading } from '../../shared/utils/dom.js';
-import { showToast } from '../../shared/utils/ui.js';
+import { showToast, syncNotifBadgeCount } from '../../shared/utils/ui.js';
 import { emit } from '../../shared/utils/events.js';
 import { fetchMySellerProfile } from '../seller-profile/index.js';
 import { fetchOrders, cancelOrder } from '../orders/index.js';
@@ -218,14 +218,6 @@ async function loadNotifications(content) {
     });
   } catch (e) {
     renderNotifications(content, { notifications: [], onMarkRead: null, onMarkAllRead: null, error: e.message });
-  }
-}
-
-function syncNotifBadgeCount(count) {
-  const badge = document.getElementById('notifBadge');
-  if (badge) {
-    badge.textContent = count > 9 ? '9+' : count;
-    badge.classList.toggle('d-none', count === 0);
   }
 }
 

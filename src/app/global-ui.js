@@ -19,7 +19,7 @@ document.getElementById('navSearchForm')?.addEventListener('submit', (e) => {
     return;
   }
   input.removeAttribute('aria-invalid');
-  closeDrawer();
+  closeDrawer({ restoreTriggerFocus: false });
   const app = document.getElementById('app');
   if (app) app.focus({ preventScroll: true });
   window.location.hash = `#/products?search=${encodeURIComponent(query)}`;

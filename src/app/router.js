@@ -219,14 +219,17 @@ export async function router(force = false) {
     const href = link.getAttribute("href");
     const isMatch =
       href === `#/${cleanPath}` || (cleanPath === "" && href === "#/");
-    link.setAttribute("aria-current", isMatch ? "page" : "false");
+    if (isMatch) link.setAttribute("aria-current", "page");
+    else link.removeAttribute("aria-current");
+    link.classList.toggle("active", isMatch);
   });
   // Sync bottom nav
   document.querySelectorAll(".bottom-nav-item").forEach((link) => {
     const href = link.getAttribute("href");
     const isMatch =
       href === `#/${cleanPath}` || (cleanPath === "" && href === "#/");
-    link.setAttribute("aria-current", isMatch ? "page" : "false");
+    if (isMatch) link.setAttribute("aria-current", "page");
+    else link.removeAttribute("aria-current");
     link.classList.toggle("active", isMatch);
   });
   if (_navTimer) clearTimeout(_navTimer);

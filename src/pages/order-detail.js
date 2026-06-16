@@ -16,6 +16,10 @@ import {
   renderOrderNotFound,
 } from '../widgets/order-detail/index.js';
 
+function setHTML(el, html) {
+  el.innerHTML = html;
+}
+
 export default async function renderOrderDetail(container) {
   if (!await requireAuth()) return;
 
@@ -31,7 +35,7 @@ export default async function renderOrderDetail(container) {
     const items = order.items || [];
     const subtotal = calculateSubtotal(items);
 
-    container.innerHTML = `
+    setHTML(container, `
       <div class="section-header">
         <h2><i class="fas fa-file-invoice" aria-hidden="true"></i> ${t('order.title')} #${order.id}</h2>
         <a href="#/dashboard?tab=orders" class="btn btn-ghost btn-sm"><i class="fas fa-arrow-left" aria-hidden="true"></i> ${t('order.backToOrders')}</a>
@@ -57,7 +61,7 @@ export default async function renderOrderDetail(container) {
             ${renderQuickActions(order)}
           </div>
         </div>
-      </div>`;
+      </div>`);
 
     observeAnimations();
 
@@ -109,6 +113,6 @@ export default async function renderOrderDetail(container) {
       });
     }
   } catch {
-    container.innerHTML = renderOrderNotFound();
+    setHTML(container, renderOrderNotFound());
   }
 }

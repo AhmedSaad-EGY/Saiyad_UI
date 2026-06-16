@@ -1,7 +1,20 @@
 import { KEYS } from '../constants/storage-keys.js';
 
+function readStoredUser() {
+  const raw = localStorage.getItem(KEYS.USER);
+  if (!raw) return null;
+  try {
+    const user = JSON.parse(raw);
+    if (!user || typeof user !== 'object' || Array.isArray(user)) return null;
+    return user;
+  } catch {
+    localStorage.removeItem(KEYS.USER);
+    return null;
+  }
+}
+
 export function getUser() {
-  const u = JSON.parse(localStorage.getItem(KEYS.USER) || 'null');
+  const u = readStoredUser();
   if (!u) return null;
   return { ...u, role: getRoleFromToken() };
 }

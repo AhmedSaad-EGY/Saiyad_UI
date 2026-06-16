@@ -1,6 +1,6 @@
 import { emit } from '../../shared/utils/events.js';
 import { createSwipeGesture } from '../../shared/utils/swipe.js';
-import { syncCartBadgeCount } from '../../shared/utils/ui.js';
+import { syncCartBadgeCount, syncNotifBadgeCount } from '../../shared/utils/ui.js';
 import { getUser } from '../../shared/utils/auth-state.js';
 import { ROLES } from '../../shared/constants/roles.js';
 
@@ -8,6 +8,27 @@ let _drawerSwipe = null;
 let _fetchCartCount = async () => 0;
 let _fetchUnreadCount = async () => 0;
 const _focusableSel = 'a, button, input, select, textarea, [tabindex]:not([tabindex="-1"])';
+const _mobileDrawerBreakpoint = 992;
+
+function _isMobileDrawerViewport() {
+  return window.innerWidth < _mobileDrawerBreakpoint;
+}
+
+function _syncDrawerA11y(drawer, isOpen = drawer?.classList.contains("open")) {
+  if (!drawer) return;
+  if (_isMobileDrawerViewport()) {
+    drawer.setAttribute("aria-hidden", isOpen ? "false" : "true");
+    if (isOpen) drawer.removeAttribute("inert");
+    else drawer.setAttribute("inert", "");
+    return;
+  }
+  drawer.setAttribute("aria-hidden", "false");
+  drawer.removeAttribute("inert");
+}
+
+export function syncDrawerA11y() {
+  _syncDrawerA11y(document.getElementById("navDrawer"));
+}
 
 export function setNavbarDeps(deps) {
   if (deps.fetchCartCount) _fetchCartCount = deps.fetchCartCount;
@@ -37,17 +58,17 @@ function _initDrawerSwipe() {
     onSwipeMove({ distance }) {
       if (!drawer.classList.contains("open")) return;
       const isRtl = document.dir === "rtl";
-      const closing = isRtl ? distance < 0 : distance > 0;
+      const closing = isRtl ? distance > 0 : distance < 0;
       if (!closing) return;
       const clamped = Math.min(Math.abs(distance), drawer.offsetWidth * 0.5);
       drawer.style.transition = "none";
-      drawer.style.transform = `translateX(${clamped}px)`;
+      drawer.style.transform = `translateX(${isRtl ? clamped : -clamped}px)`;
     },
     onSwipeEnd({ distance }) {
       if (!drawer.classList.contains("open")) return;
       drawer.style.transition = "";
       const isRtl = document.dir === "rtl";
-      if (!(isRtl ? distance < 0 : distance > 0)) { drawer.style.transform = ""; return; }
+      if (!(isRtl ? distance > 0 : distance < 0)) { drawer.style.transform = ""; return; }
       drawer.style.transform = "";
       if (Math.abs(distance) >= 80) closeDrawer();
     },
@@ -57,34 +78,46 @@ function _initDrawerSwipe() {
 export function openDrawer() {
   const drawer = document.getElementById("navDrawer");
   const navOverlay = document.getElementById("navOverlay");
+  const drawerBody = document.querySelector(".nav-drawer__body");
   if (!drawer) return;
   drawer.offsetHeight;
   drawer.classList.add("open");
-  drawer.setAttribute("aria-hidden", "false");
-  if (navOverlay) { navOverlay.classList.add("open"); navOverlay.removeAttribute("inert"); }
+  _syncDrawerA11y(drawer, true);
+  drawerBody?.scrollTo({ top: 0 });
+  if (navOverlay) {
+    navOverlay.classList.add("open");
+    navOverlay.removeAttribute("inert");
+    navOverlay.setAttribute("aria-hidden", "false");
+  }
   document.body.classList.add("nav-open");
   const btn = document.getElementById("hamburger");
   if (btn) btn.setAttribute("aria-expanded", "true");
-  const firstFocusable = drawer.querySelector(_focusableSel);
-  firstFocusable?.focus();
+  const initialFocus = drawer.querySelector("#drawerCloseBtn") || drawer.querySelector(_focusableSel);
+  initialFocus?.focus();
   document.addEventListener("keydown", _trapFocus);
   _initDrawerSwipe();
 }
 
-export function closeDrawer() {
+export function closeDrawer(options = {}) {
+  const { restoreTriggerFocus = true } = options;
   const drawer = document.getElementById("navDrawer");
   const navOverlay = document.getElementById("navOverlay");
   if (drawer) {
     drawer.style.transition = ""; drawer.style.transform = "";
-    drawer.classList.remove("open"); drawer.setAttribute("aria-hidden", "true");
+    drawer.classList.remove("open");
+    _syncDrawerA11y(drawer, false);
   }
-  if (navOverlay) { navOverlay.classList.remove("open"); navOverlay.setAttribute("inert", ""); }
+  if (navOverlay) {
+    navOverlay.classList.remove("open");
+    navOverlay.setAttribute("inert", "");
+    navOverlay.setAttribute("aria-hidden", "true");
+  }
   document.body.classList.remove("nav-open");
   document.removeEventListener("keydown", _trapFocus);
   if (_drawerSwipe) { _drawerSwipe.destroy(); _drawerSwipe = null; }
   const btn = document.getElementById("hamburger");
   if (btn) btn.setAttribute("aria-expanded", "false");
-  btn?.focus();
+  if (restoreTriggerFocus && _isMobileDrawerViewport()) btn?.focus();
 }
 
 const _navIconMap = {
@@ -99,18 +132,21 @@ const _navIconMap = {
   'auction-requests-review': 'fa-clipboard-check', 'auctioneer-analytics': 'fa-chart-line',
 };
 
-let _cartCount = 0;
+const _cartCache = { count: 0 };
 
-export function invalidateCartCache() { _cartCount = 0; }
-export function setCachedCartCount(n) { _cartCount = n; }
+export function invalidateCartCache() { _cartCache.count = 0; }
+export function setCachedCartCount(n) { _cartCache.count = n; }
 export async function updateCartBadge(forceRefresh) {
   const badge = document.getElementById("cartBadge");
   if (!badge) return;
   const user = getUser();
-  if (user?.role === ROLES.ADMIN) { badge.classList.add("hidden"); _cartCount = 0; return; }
-  if (!forceRefresh && _cartCount > 0) { syncCartBadgeCount(_cartCount); return; }
+  const userId = user?.id ?? null;
+  if (user?.role === ROLES.ADMIN) { syncCartBadgeCount(0); _cartCache.count = 0; return; }
+  if (!forceRefresh && _cartCache.count > 0) { syncCartBadgeCount(_cartCache.count); return; }
   const count = await _fetchCartCount();
-  _cartCount = count;
+  const latestUser = getUser();
+  if ((latestUser?.id ?? null) !== userId || latestUser?.role === ROLES.ADMIN) return;
+  setCachedCartCount(count);
   syncCartBadgeCount(count);
 }
 
@@ -118,17 +154,6 @@ export async function updateNotifBadge() {
   const count = await _fetchUnreadCount();
   syncNotifBadgeCount(count);
   emit('notifications:updated', { count });
-}
-
-export function syncNotifBadgeCount(count) {
-  const badge = document.getElementById("notifBadge");
-  if (!badge) return;
-  if (count > 0) {
-    badge.textContent = count > 99 ? '99+' : count;
-    badge.classList.remove("hidden");
-  } else {
-    badge.classList.add("hidden");
-  }
 }
 
 let notifPollInterval = null;
@@ -143,3 +168,5 @@ export function stopNotifPolling() {
   if (notifPollInterval) { clearInterval(notifPollInterval); notifPollInterval = null; }
   syncNotifBadgeCount(0);
 }
+
+syncDrawerA11y();

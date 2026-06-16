@@ -10,6 +10,11 @@ import { fetchProductReviews, adminDeleteReview } from '../../features/admin/ind
 let _page = 1;
 const PAGE_SIZE = 20;
 
+function setButtonDisabled(btn, disabled) {
+  if (!btn?.isConnected) return;
+  btn.disabled = disabled;
+}
+
 export async function renderReviews(container, { fetchData, onApprove, onReject } = {}) {
   container.innerHTML = `<div id="reviewPanel">
     <div class="p-4 text-center"><i class="fas fa-spinner spinner" aria-hidden="true"></i> ${t("common.loading")}</div>
@@ -64,14 +69,14 @@ export async function renderReviews(container, { fetchData, onApprove, onReject 
         btn.addEventListener("click", async () => {
           btn.disabled = true;
           const ok = await showConfirm(t("admin.confirmApprove"), t("admin.confirmApproveDesc"), { type: "success", confirmText: t("admin.approve") });
-          if (!ok) { btn.disabled = false; return; }
+          if (!ok) { setButtonDisabled(btn, false); return; }
           try {
             await onApprove(btn.dataset.productId);
             showToast(t("admin.productApproved"), "success");
             renderReviews(container, { fetchData, onApprove, onReject });
           } catch (err) {
             showToast(err.message, "error");
-            btn.disabled = false;
+            setButtonDisabled(btn, false);
           }
         });
       });
@@ -93,7 +98,7 @@ export async function renderReviews(container, { fetchData, onApprove, onReject 
               renderReviews(container, { fetchData, onApprove, onReject });
             } catch (err) {
               showToast(err.message, "error");
-              btn.disabled = false;
+              setButtonDisabled(btn, false);
             }
           }, { confirmText: t("admin.reject"), confirmClass: "btn-danger" });
         });
@@ -197,7 +202,7 @@ async function loadUserReviews() {
             loadUserReviews();
           } catch (err) {
             showToast(err.message, "error");
-            btn.disabled = false;
+            setButtonDisabled(btn, false);
           }
         }, { confirmText: t("admin.remove"), confirmClass: "btn-danger" });
       });

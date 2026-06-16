@@ -48,6 +48,7 @@ Alpine.data('forgotPwPage', () => ({
     } catch (err) { this.error = err.message || t('auth.error'); }
     finally { this.loading = false; }
   },
+  pwToggleLabel() { return this.showPassword ? t('common.hidePassword') : t('common.showPassword'); },
   togglePw() { this.showPassword = !this.showPassword; },
 }));
 
@@ -59,6 +60,8 @@ Alpine.data('resetPwForm', () => ({
     const r = getPasswordStrengthResult(this.password);
     this.strengthCls = r.cls; this.strengthLabel = r.label;
   },
+  pwToggleLabel() { return this.showPassword ? t('common.hidePassword') : t('common.showPassword'); },
+  confirmPwToggleLabel() { return this.showConfirmPw ? t('common.hidePassword') : t('common.showPassword'); },
   togglePw() { this.showPassword = !this.showPassword; },
   toggleConfirmPw() { this.showConfirmPw = !this.showConfirmPw; },
   async submit() {

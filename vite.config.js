@@ -1,22 +1,56 @@
 import { defineConfig } from 'vite';
-import { readFileSync, writeFileSync, existsSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { createHash } from 'node:crypto';
+import { readFileSync, writeFileSync, existsSync, readdirSync, statSync } from 'node:fs';
+import { join, relative, resolve } from 'node:path';
 
 /**
- * Injects a build timestamp into `__SW_VERSION__` placeholder in dist/sw.js.
+ * Injects a deterministic content hash into `__SW_VERSION__` placeholder in dist/sw.js.
  * Runs at closeBundle — after Vite copies public/ files to dist/.
  */
+function collectBuildFiles(dir) {
+  if (!existsSync(dir)) return [];
+  return readdirSync(dir)
+    .flatMap((name) => {
+      const file = join(dir, name);
+      const stat = statSync(file);
+      return stat.isDirectory() ? collectBuildFiles(file) : [file];
+    });
+}
+
+function computeBuildHash(distDir, swPath) {
+  const hash = createHash('sha256');
+  collectBuildFiles(distDir)
+    .filter((file) => file !== swPath)
+    .map((file) => ({
+      file,
+      key: relative(distDir, file).replace(/\\/g, '/'),
+    }))
+    .sort((a, b) => a.key.localeCompare(b.key))
+    .forEach(({ file, key }) => {
+      hash.update(key);
+      hash.update('\0');
+      hash.update(readFileSync(file));
+      hash.update('\0');
+    });
+  return hash.digest('hex').slice(0, 12);
+}
+
 function swVersionPlugin() {
   return {
     name: 'sw-version',
     closeBundle() {
-      const swPath = resolve('dist', 'sw.js');
+      const distDir = resolve('dist');
+      const swPath = resolve(distDir, 'sw.js');
       if (!existsSync(swPath)) return;
-      const hash = Date.now().toString(36);
+      const hash = computeBuildHash(distDir, swPath);
+      const version = `v${hash}`;
       let content = readFileSync(swPath, 'utf-8');
-      content = content.replace(/__SW_VERSION__/g, `v${hash}`);
+      content = content.replace(/__SW_VERSION__/g, version);
+      if (content.includes('__SW_VERSION__')) {
+        throw new Error('Service worker version placeholder was not fully replaced.');
+      }
       writeFileSync(swPath, content, 'utf-8');
-      console.log(`  \uD83D\uDD11 SW version injected: v${hash}`);
+      console.warn(`SW version injected: ${version}`);
     },
   };
 }

@@ -103,7 +103,7 @@
   --bs-btn-font-weight: var(--weight-medium);
   --bs-btn-border-radius: var(--radius);
   --bs-btn-focus-box-shadow: var(--shadow-glow);
-  --bs-btn-active-box-shadow: var(--btn-active-shadow, inset 0 3px 5px oklch(0 0 0 / 0.125));
+  --bs-btn-active-box-shadow: var(--btn-active-shadow, inset 0 3px 5px oklch(0% 0 0deg / 0.125));
 
 }
 
@@ -117,7 +117,6 @@
   --bs-info-rgb: var(--info-rgb, 90, 160, 220);
   --bs-light-rgb: var(--light-rgb, 30, 33, 45);
   --bs-dark-rgb: var(--dark-rgb, 240, 242, 248);
-
   --bs-body-bg: var(--body-bg);
   --bs-body-color: var(--text);
   --bs-secondary-color: var(--text-muted);

@@ -34,7 +34,7 @@ export default function renderResetPassword(container) {
                   <label for="rpPassword">${t('auth.newPassword')}</label>
                   <div class="password-wrapper">
                     <input :type="showPassword ? 'text' : 'password'" id="rpPassword" class="form-input" x-model="password" @input="computeStrength" placeholder="${t('auth.passwordPlaceholder')}" required autocomplete="new-password" minlength="8" :disabled="loading">
-                    <button type="button" class="toggle-pw" @click="togglePw" tabindex="-1"><i :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i></button>
+                    <button type="button" class="toggle-pw" @click="togglePw" :aria-label="pwToggleLabel()"><i :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i></button>
                   </div>
                   <div class="pw-strength" x-show="password.length >= 3" x-cloak>
                     <div class="pw-strength-bar" :class="strengthCls"></div>
@@ -46,7 +46,7 @@ export default function renderResetPassword(container) {
                   <label for="rpConfirm">${t('auth.confirmPassword')}</label>
                   <div class="password-wrapper">
                     <input :type="showConfirmPw ? 'text' : 'password'" id="rpConfirm" class="form-input" x-model="confirmPassword" placeholder="${t('auth.confirmPasswordPlaceholder')}" required autocomplete="new-password" :disabled="loading">
-                    <button type="button" class="toggle-pw" @click="toggleConfirmPw" tabindex="-1"><i :class="showConfirmPw ? 'fas fa-eye-slash' : 'fas fa-eye'"></i></button>
+                    <button type="button" class="toggle-pw" @click="toggleConfirmPw" :aria-label="confirmPwToggleLabel()"><i :class="showConfirmPw ? 'fas fa-eye-slash' : 'fas fa-eye'"></i></button>
                   </div>
                 </div>
 

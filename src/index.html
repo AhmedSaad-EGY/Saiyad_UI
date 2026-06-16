@@ -92,58 +92,60 @@
           </button>
         </div>
 
-        <!-- Primary nav links -->
-        <ul class="navbar-nav" id="navLinks" role="list">
-          <li role="listitem">
-            <a href="#/" class="nav-link" data-i18n="nav.home">
-              <i class="fas fa-home nav-icon" aria-hidden="true"></i>
-              Home
-            </a>
-          </li>
-          <li role="listitem">
-            <a href="#/products" class="nav-link" data-i18n="nav.products">
-              <i class="fas fa-store nav-icon" aria-hidden="true"></i>
-              Products
-            </a>
-          </li>
-          <li role="listitem">
-            <a href="#/auctions" class="nav-link" data-i18n="nav.auctions">
-              <i class="fas fa-gavel nav-icon" aria-hidden="true"></i>
-              Auctions
-            </a>
-          </li>
-          <li role="listitem">
-            <a href="#/cart" class="nav-link cart-nav-link">
-              <i class="fas fa-shopping-cart nav-icon" aria-hidden="true"></i>
-              <span data-i18n="nav.cart">Cart</span>
-              <span id="cartBadge" class="badge d-none" aria-label="Cart items count"></span>
-            </a>
-          </li>
-        </ul>
+        <div class="nav-drawer__body">
+          <!-- Primary nav links -->
+          <ul class="navbar-nav" id="navLinks" role="list">
+            <li role="listitem">
+              <a href="#/" class="nav-link" data-i18n="nav.home">
+                <i class="fas fa-home nav-icon" aria-hidden="true"></i>
+                Home
+              </a>
+            </li>
+            <li role="listitem">
+              <a href="#/products" class="nav-link" data-i18n="nav.products">
+                <i class="fas fa-store nav-icon" aria-hidden="true"></i>
+                Products
+              </a>
+            </li>
+            <li role="listitem">
+              <a href="#/auctions" class="nav-link" data-i18n="nav.auctions">
+                <i class="fas fa-gavel nav-icon" aria-hidden="true"></i>
+                Auctions
+              </a>
+            </li>
+            <li role="listitem">
+              <a href="#/cart" class="nav-link cart-nav-link">
+                <i class="fas fa-shopping-cart nav-icon" aria-hidden="true"></i>
+                <span data-i18n="nav.cart">Cart</span>
+                <span id="cartBadge" class="badge d-none" aria-label="Cart items count"></span>
+              </a>
+            </li>
+          </ul>
 
-        <!-- Nav search (inline on desktop, full-width in drawer on mobile) -->
-        <form class="nav-search" id="navSearchForm" role="search" aria-label="Search Sayiad">
-          <input
-            type="search"
-            id="navSearchInput"
-            class="nav-search__input"
-            placeholder="Search fish, gear, auctions…"
-            data-i18n-placeholder="nav.searchPlaceholder"
-            aria-label="Search fish, gear, auctions"
-            autocomplete="off"
-            maxlength="100"
-          >
-          <button type="submit" class="nav-search__btn" aria-label="Submit search">
-            <i class="fas fa-search" aria-hidden="true"></i>
-          </button>
-        </form>
+          <!-- Nav search (inline on desktop, full-width in drawer on mobile) -->
+          <form class="nav-search" id="navSearchForm" role="search" aria-label="Search Sayiad">
+            <input
+              type="search"
+              id="navSearchInput"
+              class="nav-search__input"
+              placeholder="Search fish, gear, auctions…"
+              data-i18n-placeholder="nav.searchPlaceholder"
+              aria-label="Search fish, gear, auctions"
+              autocomplete="off"
+              maxlength="100"
+            >
+            <button type="submit" class="nav-search__btn" aria-label="Submit search">
+              <i class="fas fa-search" aria-hidden="true"></i>
+            </button>
+          </form>
 
-        <!-- Theme & language toggles -->
-        <div class="nav-toggles">
-          <button class="toggle-btn" id="themeToggle" aria-label="Toggle dark mode" aria-pressed="false">
-            <i class="fas fa-moon" aria-hidden="true"></i>
-          </button>
-          <button class="toggle-btn" id="langToggle" aria-label="Switch to Arabic" aria-pressed="false">EN</button>
+          <!-- Theme & language toggles -->
+          <div class="nav-toggles">
+            <button class="toggle-btn" id="themeToggle" aria-label="Toggle dark mode" aria-pressed="false">
+              <i class="fas fa-moon" aria-hidden="true"></i>
+            </button>
+            <button class="toggle-btn" id="langToggle" aria-label="Switch to Arabic" aria-pressed="false">EN</button>
+          </div>
         </div>
 
         <!-- Auth actions / user menu -->
@@ -291,7 +293,7 @@
        MOBILE BOTTOM NAV BAR
        Hidden on desktop via CSS (min-width: 769px)
        ════════════════════════════════════════════════════ -->
-  <nav class="bottom-nav" id="bottomNav" aria-label="Mobile navigation">
+  <nav class="bottom-nav bottom-nav-shell" id="bottomNav" aria-label="Mobile navigation">
     <a href="#/"         class="bottom-nav-item" id="bnHome">
       <i class="fas fa-home" aria-hidden="true"></i>
       <span data-i18n="nav.home">Home</span>

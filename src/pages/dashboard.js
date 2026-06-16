@@ -107,20 +107,20 @@ export default async function renderDashboard(container, _route, _params) {
       </div>
 
       <!-- Onboarding Tour Overlay -->
-      <div x-show="showTour" class="tour-backdrop" x-cloak x-transition>
-        <div class="tour-modal animate-on-scroll">
+      <div x-show="showTour" class="tour-backdrop" x-cloak x-transition @keydown="handleTourKeydown($event)">
+        <div class="tour-modal animate-on-scroll" role="dialog" aria-modal="true" aria-labelledby="tourTitle" aria-describedby="tourDesc" tabindex="-1" x-ref="tourDialog">
           <div class="d-flex justify-content-between align-items-center mb-3">
-            <h4 class="m-0 text-primary" style="display:flex;align-items:center;gap:8px">
+            <h4 id="tourTitle" class="m-0 text-primary" style="display:flex;align-items:center;gap:8px">
               <i class="fas fa-compass" aria-hidden="true"></i>
               <span x-text="getTourSteps()[tourStep].title"></span>
             </h4>
-            <button class="btn btn-close" style="font-size:1.5rem;background:transparent;border:none;color:var(--text-muted);cursor:pointer" @click="endTour()">&times;</button>
+            <button class="btn btn-close" style="font-size:1.5rem;background:transparent;border:none;color:var(--text-muted);cursor:pointer" @click="endTour()" x-ref="tourClose" aria-label="${t('common.close')}"><span aria-hidden="true">&times;</span></button>
           </div>
           <div class="tour-body">
-            <p class="text-muted" style="line-height:1.6" x-text="getTourSteps()[tourStep].desc"></p>
+            <p id="tourDesc" class="text-muted" style="line-height:1.6" x-text="getTourSteps()[tourStep].desc"></p>
             <div class="d-flex justify-content-between align-items-center mt-4">
               <span class="text-muted" style="font-size:0.85rem">
-                ${t('common.step')} <span x-text="tourStep + 1"></span> of <span x-text="getTourSteps().length"></span>
+                ${t('common.step')} <span x-text="tourStep + 1"></span> ${t('common.of')} <span x-text="getTourSteps().length"></span>
               </span>
               <div class="d-flex gap-2">
                 <button class="btn btn-outline btn-sm" @click="prevTourStep()" :disabled="tourStep === 0">${t('common.back')}</button>
@@ -133,7 +133,14 @@ export default async function renderDashboard(container, _route, _params) {
     </div>
   `;
 
+  const syncDashboardMobileNav = () => {
+    document.body.classList.toggle('has-bottom-bar', window.innerWidth < 768);
+  };
+  syncDashboardMobileNav();
+  window.addEventListener('resize', syncDashboardMobileNav, { passive: true });
+
   registerRouteCleanup(() => {
+    window.removeEventListener('resize', syncDashboardMobileNav);
     document.body.classList.remove('has-bottom-bar');
     document.body.classList.remove('has-floating-bar');
   });

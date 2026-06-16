@@ -121,7 +121,7 @@ tr:last-child td {
 }
 
 /* Mobile: card layout for product table */
-@media (max-width: 767px) {
+@media (width <= 767px) {
 
   .table-wrapper table,
   .table-wrapper thead,
