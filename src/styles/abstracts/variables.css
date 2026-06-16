@@ -66,6 +66,24 @@
   --transition: var(--duration-normal) var(--ease-out);
   --transition-slow: var(--duration-slow) var(--ease-out);
 
+  /* ── Shared component sizing ─────────────────────────────── */
+  --control-height-sm: 36px;
+  --control-height: 44px;
+  --control-height-lg: 52px;
+  --control-border-width: 1px;
+  --focus-ring-width: 2px;
+  --focus-ring-offset: 2px;
+  --btn-padding-y: var(--space-3);
+  --btn-padding-x: var(--space-5);
+  --btn-padding-y-sm: var(--space-2);
+  --btn-padding-x-sm: var(--space-4);
+  --btn-padding-y-lg: var(--space-4);
+  --btn-padding-x-lg: var(--space-8);
+  --card-padding: var(--space-6);
+  --card-padding-sm: var(--space-4);
+  --card-hover-translate: -3px;
+  --interactive-hover-translate: -2px;
+
   /*
    * --theme-ease: the duration+easing half of a theme transition.
    *   Use as:  transition: background-color var(--theme-ease), color var(--theme-ease);
@@ -144,6 +162,8 @@
   --primary-shadow-light: 0 2px 8px oklch(42% 0.22 240deg / 0.15);
   --danger-shadow: 0 4px 14px oklch(55% 0.22 30deg / 0.25);
   --success-shadow: 0 4px 14px oklch(58% 0.18 145deg / 0.25);
+  --warning-shadow: 0 4px 14px oklch(65% 0.18 75deg / 0.22);
+  --info-shadow: 0 4px 14px oklch(55% 0.12 230deg / 0.22);
 
   /* ── Border radii ─────────────────────────────────────────── */
   --radius: 8px;

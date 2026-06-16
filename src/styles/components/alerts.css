@@ -7,9 +7,14 @@
   gap: var(--space-3);
   padding: var(--space-3) var(--space-4);
   border-radius: var(--radius);
-  border: 1px solid transparent;
+  border: var(--control-border-width) solid transparent;
   font-size: var(--text-sm);
-  line-height: 1.5;
+  line-height: var(--leading-normal);
+}
+
+.alert i {
+  flex-shrink: 0;
+  margin-top: calc(var(--space-1) / 2);
 }
 
 .alert-error {
@@ -36,6 +41,38 @@
   border-color: var(--warning-border);
 }
 
+.feedback-state,
+.success-state,
+.warning-state,
+.error-state,
+.info-state {
+  border: var(--control-border-width) solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  background: var(--card-bg);
+  color: var(--text-secondary);
+}
+
+.success-state {
+  border-color: var(--success-border);
+  background: var(--success-bg);
+}
+
+.warning-state {
+  border-color: var(--warning-border);
+  background: var(--warning-bg);
+}
+
+.error-state {
+  border-color: var(--danger-border);
+  background: var(--danger-bg);
+}
+
+.info-state {
+  border-color: var(--info-border);
+  background: var(--info-bg);
+}
+
 [data-theme="dark"] .alert-error {
   color: var(--danger);
 }
@@ -59,46 +96,45 @@
 .online-banner {
   position: fixed;
   top: 0;
-  left: 0;
-  right: 0;
+  inset-inline: 0;
   z-index: 100000;
   text-align: center;
-  padding: 10px 16px;
-  font-size: 0.875rem;
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--text-sm);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: var(--space-2);
 }
 .offline-banner {
   background: var(--danger);
   color: var(--text-inverse);
-  font-weight: 500;
+  font-weight: var(--weight-medium);
 }
 
 .online-banner {
   background: var(--success);
   color: var(--text-inverse);
-  font-weight: 600;
+  font-weight: var(--weight-semibold);
 }
 .sw-update-banner {
   position: fixed;
-  bottom: 16px;
+  bottom: var(--space-4);
   left: 50%;
   transform: translateX(-50%);
   z-index: 99999;
   background: var(--card-bg);
   color: var(--text);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg, 12px);
-  padding: 12px 20px;
+  border: var(--control-border-width) solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-3) var(--space-5);
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: var(--space-4);
   box-shadow: var(--shadow-lg);
   max-width: 420px;
-  width: calc(100vw - 32px);
-  font-size: 14px;
+  width: calc(100vw - var(--space-8));
+  font-size: var(--text-sm);
 }
 .toast-base {
   position: relative;
@@ -111,11 +147,11 @@
   box-shadow: var(--shadow-lg);
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--space-3);
   min-width: 280px;
   pointer-events: auto;
-  backdrop-filter: blur(12px);
-  border: 1px solid var(--glass-border, rgb(255 255 255 / 0.1));
+  backdrop-filter: var(--glass-blur-light);
+  border: var(--control-border-width) solid var(--glass-border);
   animation: toast-slide-in-right 0.35s var(--ease-out) forwards;
 }
 .toast-base i {
@@ -128,7 +164,7 @@
   color: inherit;
   font-size: 1.3rem;
   cursor: pointer;
-  padding: 0 0 0 8px;
+  padding: 0 0 0 var(--space-2);
   line-height: 1;
   opacity: 0.8;
   flex-shrink: 0;
@@ -151,28 +187,28 @@
   color: var(--text-inverse);
   font-size: 1.2rem;
   cursor: pointer;
-  padding: 0 4px;
+  padding: 0 var(--space-1);
   line-height: 1;
   opacity: 0.8;
   margin-left: auto;
 }
 .toast-container {
   position: fixed;
-  bottom: 20px;
+  bottom: var(--space-5);
   z-index: 9999;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: var(--space-3);
   pointer-events: none;
 }
 
 [dir="rtl"] .toast-container {
-  left: 20px !important;
+  left: var(--space-5) !important;
   right: auto !important;
 }
 
 [dir="ltr"] .toast-container {
-  right: 20px !important;
+  right: var(--space-5) !important;
   left: auto !important;
 }
 
@@ -225,8 +261,8 @@
   color: var(--text-inverse);
   padding: 0.5rem 1.25rem;
   border-radius: 2rem;
-  font-size: 0.875rem;
-  font-weight: 500;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
   z-index: 9999;
   display: flex;
   align-items: center;

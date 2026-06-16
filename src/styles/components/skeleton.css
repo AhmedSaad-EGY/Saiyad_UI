@@ -24,7 +24,7 @@
 
 /* ── Skeleton building blocks ─────────────────────────────── */
 .skeleton-text {
-  height: 12px;
+  height: var(--space-3);
   background: var(--skeleton-bg);
   border-radius: var(--radius-sm);
   margin-bottom: var(--space-2);
@@ -40,13 +40,13 @@
 }
 
 .skeleton-title {
-  height: 18px;
+  height: calc(var(--space-4) + (var(--space-1) / 2));
   margin-bottom: var(--space-3);
   width: 60%;
 }
 
 .skeleton-image {
-  height: 200px;
+  min-height: calc(var(--space-20) * 2 + var(--space-10));
   margin-bottom: var(--space-3);
   border-radius: var(--radius);
 }
@@ -54,19 +54,19 @@
 /* ── Skeleton layouts ─────────────────────────────────────── */
 .skeleton-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 250px), 1fr));
   gap: var(--space-6);
 }
 
 .skeleton-card {
   background: var(--card-bg);
-  border: 1px solid var(--border);
+  border: var(--control-border-width) solid var(--border);
   border-radius: var(--radius-lg);
   overflow: hidden;
 }
 
 .skeleton-card-body {
-  padding: 16px 18px;
+  padding: var(--space-4) calc(var(--space-4) + (var(--space-1) / 2));
 }
 
 .skeleton-detail {
@@ -76,25 +76,25 @@
 }
 
 .skeleton-detail .skeleton-image {
-  height: 380px;
+  min-height: calc(var(--space-20) * 4 + var(--space-12) + var(--space-3));
 }
 
 .skeleton-row {
-  height: 48px;
-  margin-bottom: 4px;
+  height: var(--control-height-lg);
+  margin-bottom: var(--space-1);
 }
 
 .skeleton-row-header {
-  height: 40px;
+  height: var(--space-10);
   margin-bottom: 8px;
 }
 
 .skeleton-form .skeleton-text {
-  margin-bottom: 6px;
+  margin-bottom: calc(var(--space-3) / 2);
 }
 
 .skeleton-form .skeleton-input {
-  height: 42px;
+  height: var(--control-height);
   margin-bottom: var(--space-4);
 }
 
@@ -102,12 +102,12 @@
    GLOBAL SKELETON
    ============================================================ */
 .global-skeleton {
-  padding: 2rem 1.5rem;
+  padding: var(--space-8) var(--space-6);
   max-width: 1200px;
   margin: 0 auto;
 }
 .gsk-bar {
-  height: 16px;
+  height: var(--space-4);
   border-radius: var(--radius);
   margin-bottom: var(--space-3);
   background: linear-gradient(90deg,
@@ -122,11 +122,11 @@
 .gsk-cards {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 1rem;
-  margin-top: 1.5rem;
+  gap: var(--space-4);
+  margin-top: var(--space-6);
 }
 .gsk-card {
-  height: 200px;
+  min-height: calc(var(--space-20) * 2 + var(--space-10));
   border-radius: var(--radius-md);
   background: linear-gradient(90deg,
     var(--border) 25%,

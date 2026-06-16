@@ -201,8 +201,8 @@
    ============================================================ */
 .tabs {
   display: flex;
-  gap: 2px;
-  border-bottom: 2px solid var(--border);
+  gap: calc(var(--space-1) / 2);
+  border-bottom: var(--focus-ring-width) solid var(--border);
   margin-bottom: var(--space-6);
   overflow-x: auto;
 }
@@ -215,8 +215,8 @@
   font-weight: var(--weight-medium);
   color: var(--text-muted);
   font-size: var(--text-sm);
-  border-bottom: 2px solid transparent;
-  margin-bottom: -2px;
+  border-bottom: var(--focus-ring-width) solid transparent;
+  margin-bottom: calc(-1 * var(--focus-ring-width));
   white-space: nowrap;
   transition: color var(--transition), border-color var(--transition);
 }
@@ -231,6 +231,13 @@
   font-weight: var(--weight-semibold);
 }
 
+.tab:focus-visible {
+  outline: var(--focus-ring-width) solid var(--border-focus);
+  outline-offset: var(--focus-ring-offset);
+  border-radius: var(--radius);
+  background: var(--primary-ghost);
+}
+
 /* ============================================================
    EMPTY STATE
    ============================================================ */
@@ -238,17 +245,18 @@
   text-align: center;
   padding: var(--space-16) var(--space-5);
   color: var(--text-muted);
+  border-radius: var(--radius-lg);
 }
 
 .empty-state i {
   font-size: 3rem;
-  margin-bottom: 18px;
+  margin-bottom: calc(var(--space-4) + (var(--space-1) / 2));
   opacity: 0.4;
   display: inline-block;
 }
 
 .empty-state h3 {
-  margin-bottom: 8px;
+  margin-bottom: var(--space-2);
   color: var(--text-secondary);
   font-weight: var(--weight-semibold);
   font-size: var(--text-lg);
@@ -261,7 +269,7 @@
 .empty-state-visual {
   display: inline-block;
   will-change: transform;
-  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: transform var(--duration-slow) var(--ease-bounce);
 }
 
 .empty-state:hover .empty-state-visual {
@@ -843,11 +851,12 @@
   text-align: center;
   padding: var(--space-16) var(--space-5);
   color: var(--text-muted);
+  border-radius: var(--radius-lg);
 }
 
 .loading i {
   font-size: 2rem;
-  margin-bottom: 14px;
+  margin-bottom: var(--space-4);
   display: inline-block;
 }
 
