@@ -580,6 +580,9 @@ export const translations = {
     "review.delete": "Delete",
     "review.rateProduct": "Rate this product",
     "review.stars": "stars",
+    "review.sort": "Sort reviews",
+    "review.highestRated": "Highest Rated",
+    "review.lowestRated": "Lowest Rated",
 
     // Notifications
     "notif.title": "Notifications",
@@ -1564,6 +1567,9 @@ export const translations = {
     "review.delete": "حذف",
     "review.rateProduct": "قيم هذا المنتج",
     "review.stars": "نجوم",
+    "review.sort": "ترتيب التقييمات",
+    "review.highestRated": "الأعلى تقييماً",
+    "review.lowestRated": "الأقل تقييماً",
 
     // Notifications
     "notif.title": "الإشعارات",

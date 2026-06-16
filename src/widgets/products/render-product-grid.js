@@ -2,9 +2,9 @@ import { t } from '../../shared/utils/i18n.js';
 
 export function renderProductGrid() {
   return `
-    <div x-show="loading" class="row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-3 skeleton-shimmer">
+    <div x-show="loading" class="product-card-grid skeleton-shimmer" aria-live="polite">
       <template x-for="i in 6" :key="i">
-        <div class="col">
+        <div class="product-card-shell">
           <div class="product-card card pe-none">
             <div class="product-card-img skeleton-image-shim"></div>
             <div class="product-card-body p-3">
@@ -16,16 +16,16 @@ export function renderProductGrid() {
       </template>
     </div>
 
-    <div x-show="!loading && error" class="empty-state">
+    <div x-show="!loading && error" class="empty-state" role="alert">
       <div class="empty-state-visual"><i class="fas fa-exclamation-triangle text-muted fs-hero"></i></div>
       <h3>${t('products.loadError')}</h3>
       <p x-text="error"></p>
       <button class="btn btn-primary mt-3" @click="reload()">${t('common.retry')}</button>
     </div>
 
-    <div x-show="!loading && !error && products.length" :class="isListView ? 'product-list-view d-flex flex-column gap-3' : 'row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-3'" id="productGrid">
+    <div x-show="!loading && !error && products.length" :class="isListView ? 'product-list-view d-flex flex-column gap-3' : 'product-card-grid'" id="productGrid">
       <template x-for="(p, i) in products" :key="p.id">
-        <div :class="isListView ? 'w-100' : 'col'">
+        <div :class="isListView ? 'w-100 product-card-shell' : 'product-card-shell'">
           <a :href="'#/product-detail?id='+p.id" class="product-card card" :class="'animate-on-scroll stagger-' + (i + 1 > 8 ? 8 : i + 1)" :aria-label="escapeHtml(p.title || $t('common.product')) + ' — ' + formatPrice(p.price)">
             <div class="product-card-img">
               <img :src="p.primaryImageUrl || p.imageUrl || ''" :alt="escapeHtml(p.title || $t('common.product'))" loading="lazy">
@@ -44,7 +44,7 @@ export function renderProductGrid() {
       </template>
     </div>
 
-    <div x-show="!loading && !error && !products.length" class="empty-state">
+    <div x-show="!loading && !error && !products.length" class="empty-state" role="status">
       <div class="empty-state-visual"><i class="fas fa-box-open text-muted fs-hero"></i></div>
       <h3>${t('products.noProducts')}</h3>
       <p>${t('common.clearFilters')}</p>

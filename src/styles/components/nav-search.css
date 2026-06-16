@@ -75,14 +75,19 @@
   border: 1px solid var(--border);
   border-radius: var(--radius-full);
   overflow: hidden;
-  transition: border-color var(--duration-normal) var(--ease-out),
-              box-shadow var(--duration-normal) var(--ease-out);
+  box-shadow: var(--shadow-xs);
+  transition:
+    border-color var(--duration-normal) var(--ease-out),
+    box-shadow var(--duration-normal) var(--ease-out),
+    background-color var(--theme-ease);
   margin: var(--space-2) var(--space-4);
 }
+
 .nav-search:focus-within {
   border-color: var(--primary);
   box-shadow: var(--shadow-glow);
 }
+
 .nav-search__input {
   background: transparent;
   border: none;
@@ -93,11 +98,16 @@
   width: 100%;
   min-width: 0;
 }
-.nav-search__input::placeholder { color: var(--text-muted); }
+
+.nav-search__input::placeholder {
+  color: var(--text-muted);
+}
+
 .nav-search:has(.nav-search__input[aria-invalid="true"]) {
   border-color: var(--danger);
   box-shadow: 0 0 0 calc(var(--space-3) / 8) var(--danger);
 }
+
 .nav-search__btn {
   background: transparent;
   border: none;
@@ -107,16 +117,29 @@
   cursor: pointer;
   color: var(--text-muted);
   flex-shrink: 0;
-  transition: color var(--duration-fast) var(--ease-out);
+  border-radius: var(--radius-full);
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
 }
-.nav-search__btn:hover { color: var(--primary); }
+
+.nav-search__btn:hover,
+.nav-search__btn:focus-visible {
+  color: var(--primary);
+  background: var(--primary-ghost);
+}
+
+.nav-search__btn:focus-visible {
+  outline: var(--focus-ring-width) solid var(--border-focus);
+  outline-offset: calc(-1 * var(--focus-ring-width));
+}
 
 @media (width >= 992px) {
   .nav-search {
     margin: 0;
-    flex: 1 1 240px;
-    min-width: 220px;
-    max-width: 320px;
+    flex: 1 1 calc(var(--space-20) * 3 + var(--space-4));
+    min-width: calc(var(--space-20) * 2 + var(--space-12));
+    max-width: calc(var(--space-20) * 4);
   }
 }
 
@@ -129,6 +152,12 @@
 }
 
 @media (width >= 992px) and (width <= 1199px) {
+  .nav-search {
+    flex-basis: calc(var(--space-20) * 2 + var(--space-10));
+    min-width: calc(var(--space-20) * 2 + var(--space-5));
+    max-width: calc(var(--space-20) * 3 + var(--space-2));
+  }
+
   .nav-search__input {
     padding-inline: var(--space-2);
     font-size: var(--text-xs);
@@ -145,6 +174,8 @@
     max-width: 100%;
     min-height: 44px;
     margin: 0;
+    background: var(--card-bg);
+    border-color: color-mix(in oklch, var(--border) 80%, var(--primary));
   }
 
   .nav-search__input {
