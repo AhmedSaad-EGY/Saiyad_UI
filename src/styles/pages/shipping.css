@@ -1,0 +1,52 @@
+.shipping-form-card {
+  margin-top: var(--space-4);
+}
+
+.shipping-location-preview {
+  margin-top: var(--space-4);
+}
+
+.shipping-location-frame {
+  block-size: 180px;
+  inline-size: 100%;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.shipping-location-iframe {
+  border: 0;
+}
+
+.shipping-form-actions {
+  margin-top: var(--space-5);
+}
+
+.shipping-address-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-direction: row;
+}
+
+.shipping-address-copy {
+  min-inline-size: 0;
+}
+
+.shipping-address-phone {
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+}
+
+@media (width <= 640px) {
+  .shipping-address-card {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .shipping-address-card > .d-flex {
+    inline-size: 100%;
+    flex-wrap: wrap;
+  }
+}
