@@ -1,0 +1,65 @@
+.subscription-hero {
+  background: var(--primary-gradient, linear-gradient(135deg, var(--primary), var(--primary-light)));
+  color: var(--text-inverse);
+}
+
+.subscription-card {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.subscription-card-popular {
+  border: 2px solid var(--primary);
+}
+
+.subscription-popular-badge {
+  inset-block-start: -10px;
+  inset-inline-end: 16px;
+  background: var(--primary);
+  color: var(--text-inverse);
+  padding: 2px 12px;
+  border-radius: var(--radius-xl);
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.subscription-card-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+.subscription-card-icon {
+  font-size: 2rem;
+}
+
+.subscription-price {
+  line-height: var(--leading-tight);
+}
+
+.subscription-meta-date,
+.subscription-muted {
+  font-size: 0.88rem;
+}
+
+.subscription-muted {
+  opacity: 0.75;
+}
+
+.subscriptions-grid {
+  align-items: stretch;
+}
+
+.subscription-feature-list {
+  flex: 1;
+}
+
+.subscription-feature-icon {
+  inline-size: 16px;
+}
+
+.subscription-empty-icon {
+  font-size: 3rem;
+  color: var(--text-muted);
+}
