@@ -63,8 +63,8 @@ export async function renderPlans(container, { fetchData, onUpdate, onDelete, on
             <td>${p.maxAuctionRequestsPerMonth}</td>
             <td>${p.isActive ? '<span class="badge badge-success">Active</span>' : '<span class="badge badge-danger">Inactive</span>'}</td>
             <td>
-              <button class="btn btn-sm btn-outline edit-plan-btn" aria-label="${t("common.edit")}" data-id="${p.id}" data-plan='${encodeURIComponent(JSON.stringify(p))}'><i class="fas fa-edit" aria-hidden="true"></i></button>
-              <button class="btn btn-sm btn-danger delete-plan-btn" aria-label="${t("common.delete")}" data-id="${p.id}" data-name="${escapeHtml(p.name)}"><i class="fas fa-trash" aria-hidden="true"></i></button>
+              <button class="btn btn-sm btn-outline edit-plan-btn" aria-label="${t("common.edit")}" data-id="${escapeHtml(p.id)}" data-plan='${encodeURIComponent(JSON.stringify(p))}'><i class="fas fa-edit" aria-hidden="true"></i></button>
+              <button class="btn btn-sm btn-danger delete-plan-btn" aria-label="${t("common.delete")}" data-id="${escapeHtml(p.id)}" data-name="${escapeHtml(p.name)}"><i class="fas fa-trash" aria-hidden="true"></i></button>
             </td>
           </tr>`).join("")}
         </tbody>

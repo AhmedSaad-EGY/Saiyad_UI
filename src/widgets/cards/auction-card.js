@@ -13,7 +13,7 @@ export function renderAuctionCards(container, auctions, nowTime) {
     const statusText = tStatus(a.status, "auction");
     const timeLeft = a.endTime ? timeLeftStr(a.endTime, nowTime) : '';
     return `
-      <a href="#/auction-detail?id=${a.id}"
+      <a href="#/auction-detail?id=${encodeURIComponent(a.id)}"
          class="auction-card card animate-on-scroll stagger-${Math.min(i + 1, 8)}"
          aria-label="${escapeHtml(title)} — ${formatPrice(a.currentHighestBid || a.startingPrice)}">
         <div class="auction-card-img">

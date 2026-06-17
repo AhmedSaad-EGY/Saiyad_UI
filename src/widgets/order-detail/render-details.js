@@ -18,13 +18,13 @@ export function renderOrderItems(order, items) {
                   <td>
                     <div class="d-flex align-items-center gap-3">
                       ${item.imageUrl
-                        ? `<img src="${item.imageUrl}" alt="${escapeHtml(item.productTitle || '')}" style="width:48px;height:48px;object-fit:cover;border-radius:var(--radius);border:1px solid var(--border)" loading="lazy">`
+                        ? `<img src="${escapeHtml(item.imageUrl)}" alt="${escapeHtml(item.productTitle || '')}" style="width:48px;height:48px;object-fit:cover;border-radius:var(--radius);border:1px solid var(--border)" loading="lazy">`
                         : `<div style="width:48px;height:48px;display:flex;align-items:center;justify-content:center;background:var(--body-bg);border-radius:var(--radius);color:var(--text-muted)"><i class="fas fa-image" aria-hidden="true"></i></div>`
                       }
                       <a href="#/product-detail?id=${item.productId}" class="text-reset text-decoration-none fw-medium">${escapeHtml(item.productTitle || t('common.product'))}</a>
                     </div>
                   </td>
-                  <td>${item.sellerName ? `<a href="#/seller-profile?sellerId=${item.sellerId}" class="text-primary">${escapeHtml(item.sellerName)}</a>` : '-'}</td>
+                  <td>${item.sellerName ? `<a href="#/seller-profile?sellerId=${encodeURIComponent(item.sellerId)}" class="text-primary">${escapeHtml(item.sellerName)}</a>` : '-'}</td>
                   <td>${item.quantity}</td>
                   <td>${formatPrice(item.unitPrice)}</td>
                   <td class="fw-semibold">${formatPrice(item.subtotal)}</td>

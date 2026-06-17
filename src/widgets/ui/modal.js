@@ -70,4 +70,4 @@ export function createModal(htmlContent, { ariaLabel, onClose, closeOnOverlayCli
   return { close, overlay };
 }
 
-export { showConfirm, openLightbox } from '../../shared/utils/ui.js';
+export { showConfirm, showTextPrompt, openLightbox } from '../../shared/utils/ui.js';

@@ -48,7 +48,7 @@ export async function renderCategories(container, { fetchData, onAdd, onDelete }
           .map(
             (c) => `
           <tr><td>${c.id}</td><td>${escapeHtml(c.name)}</td><td>${escapeHtml(c.description || "-")}</td>
-          <td><button class="btn btn-sm btn-danger delete-cat" data-id="${c.id}" aria-label="${t("admin.categoryDeleted")}"><i class="fas fa-trash" aria-hidden="true"></i></button></td></tr>`,
+          <td><button class="btn btn-sm btn-danger delete-cat" data-id="${escapeHtml(c.id)}" aria-label="${t("admin.categoryDeleted")}"><i class="fas fa-trash" aria-hidden="true"></i></button></td></tr>`,
           )
           .join("")}
         </tbody>

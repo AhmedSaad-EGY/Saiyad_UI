@@ -62,7 +62,7 @@ export default function renderRegister(container) {
 
             <template x-if="isAuctioneer">
               <div class="form-hint auctioneer-notice" style="background:var(--bg-secondary);padding:12px;border-radius:8px;margin-bottom:16px;font-size:0.9rem">
-                <i class="fas fa-info-circle" style="margin-right:6px"></i>
+                <i class="fas fa-info-circle" style="margin-inline-end:6px"></i>
                 <span>${t('register.auctioneerNotice')}</span>
               </div>
             </template>

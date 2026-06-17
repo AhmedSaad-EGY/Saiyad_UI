@@ -197,7 +197,7 @@ export async function renderMyProducts(content, opts) {
         .map(
           (p) => `
           <tr data-status="${p.status}">
-            <td class="product-thumb-cell">${p.primaryImageUrl ? `<img src="${p.primaryImageUrl}" alt="" class="product-thumb" loading="lazy">` : `<div class="product-thumb-placeholder"><i class="fas fa-image" aria-hidden="true"></i></div>`}</td>
+            <td class="product-thumb-cell">${p.primaryImageUrl ? `<img src="${escapeHtml(p.primaryImageUrl)}" alt="" class="product-thumb" loading="lazy">` : `<div class="product-thumb-placeholder"><i class="fas fa-image" aria-hidden="true"></i></div>`}</td>
             <td><a href="#/product-detail?id=${p.id}" class="text-decoration-none text-reset fw-medium">${escapeHtml(p.title)}</a><span class="text-muted small d-block">${escapeHtml(p.categoryName)}${p.condition != null ? ` · ${tCondition(p.condition)}` : ""}</span></td>
             <td class="fw-semibold" data-label="${t("cart.price")}">${formatPrice(p.price)}</td>
             <td data-label="${t("product.status")}"><span class="status ${statusClass(p.status)}">${tStatus(p.status, "product")}</span></td>

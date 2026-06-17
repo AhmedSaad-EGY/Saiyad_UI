@@ -86,7 +86,7 @@ h4[id],
 h5[id],
 h6[id],
 section[id] {
-  scroll-margin-top: calc(var(--app-header-offset) + var(--space-4));
+  scroll-margin-top: 88px;
 }
 
 /* ── Keyboard navigation focus ring ──────────────────────── */

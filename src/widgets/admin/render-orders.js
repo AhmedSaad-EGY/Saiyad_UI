@@ -2,11 +2,17 @@ import { t } from '../../shared/utils/i18n.js';
 import { escapeHtml, renderEmptyState } from '../../shared/utils/dom.js';
 import { manualPaginationHtml, wirePagination } from '../ui/pagination.js';
 import { showToast } from '../ui/toast.js';
-import { showConfirm } from '../ui/modal.js';
+import { showConfirm, showTextPrompt } from '../ui/modal.js';
 import { approveReturn, rejectReturn } from '../../features/orders/index.js';
 
 let _page = 1;
 const PAGE_SIZE = 20;
+
+function setActionBusy(button, isBusy) {
+  if (!button) return;
+  button.disabled = isBusy;
+  button.setAttribute('aria-disabled', isBusy ? 'true' : 'false');
+}
 
 export async function renderOrders(container, { fetchOrders } = {}) {
   container.innerHTML = `<div id="ordersPanel">
@@ -83,16 +89,32 @@ export async function renderOrders(container, { fetchOrders } = {}) {
     panel.querySelectorAll('.reject-return').forEach(btn => {
       btn.addEventListener('click', async () => {
         const orderId = btn.dataset.id;
-        const reason = prompt(t("order.rejectReturnReason"));
-        if (!reason) return;
+        setActionBusy(btn, true);
+        const reason = await showTextPrompt(t("order.rejectReturn"), {
+          label: t("order.rejectReturnReason"),
+          placeholder: t("order.rejectReturnReason"),
+          confirmText: t("order.rejectReturn"),
+          cancelText: t("common.cancel"),
+          required: true,
+          multiline: true,
+        });
+        if (!reason) {
+          setActionBusy(btn, false);
+          return;
+        }
         const ok = await showConfirm(t("order.rejectReturn"), t("order.rejectReturnConfirm"), { type: "danger" });
-        if (!ok) return;
+        if (!ok) {
+          setActionBusy(btn, false);
+          return;
+        }
         try {
           await rejectReturn(orderId, reason);
           showToast(t("order.returnRejected"), "success");
           renderOrders(container, { fetchOrders });
         } catch (err) {
           showToast(err.message || t("order.returnError"), "error");
+        } finally {
+          setActionBusy(btn, false);
         }
       });
     });

@@ -1,4 +1,5 @@
 import { t } from '../../shared/utils/i18n.js';
+import { escapeHtml } from '../../shared/utils/dom.js';
 
 const skeletons = {
   page: `<div class="skeleton-page"><div class="skeleton skeleton-title"></div><div class="skeleton skeleton-text"></div><div class="skeleton skeleton-text"></div><div class="skeleton skeleton-text short"></div></div>`,
@@ -15,7 +16,7 @@ export function showLoading(container, type = 'page') {
 }
 
 export function showError(container, msg) {
-  container.innerHTML = `<div class="global-error" role="alert"><i class="fas fa-exclamation-circle"></i><p>${msg}</p></div>`;
+  container.innerHTML = `<div class="global-error" role="alert"><i class="fas fa-exclamation-circle"></i><p>${escapeHtml(msg)}</p></div>`;
 }
 
 export function showErrorFallback(container, message) {

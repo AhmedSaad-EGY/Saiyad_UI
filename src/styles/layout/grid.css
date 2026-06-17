@@ -1,14 +1,6 @@
-/* ============================================================
-   LAYOUT — Main Content, Container
-   ============================================================ */
-
-/* ============================================================
-   MAIN CONTENT
-   Sits below the fixed navbar via the shared app-shell offset.
-   ============================================================ */
 .main-content {
   flex: 1;
-  margin-top: var(--app-header-offset);
+  margin-top: var(--space-6);
   margin-inline: var(--space-6);
   margin-bottom: var(--space-10);
   padding: var(--space-10);
@@ -22,7 +14,7 @@
   box-shadow: var(--glass-shadow);
 }
 
-@media (width >= 768px) {
+@media (width >=768px) {
   .main-content {
     margin-inline: auto;
     width: calc(100% - var(--space-12));
@@ -38,7 +30,7 @@
   width: 100%;
 }
 
-@media (width <= 767px) {
+@media (width <=767px) {
   .container {
     padding: 0 var(--space-4);
   }
@@ -50,7 +42,7 @@
   }
 }
 
-@media (width <= 480px) {
+@media (width <=480px) {
   .container {
     padding: 0 var(--space-4);
   }
@@ -60,7 +52,7 @@
   }
 }
 
-@media (width <= 360px) {
+@media (width <=360px) {
   .container {
     padding: 0 var(--space-3);
   }

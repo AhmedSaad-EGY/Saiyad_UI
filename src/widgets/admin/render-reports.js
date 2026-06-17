@@ -1,7 +1,7 @@
 import { t } from '../../shared/utils/i18n.js';
 import { showLoading, renderEmptyState, escapeHtml } from '../../shared/utils/dom.js';
 import { showToast } from '../ui/toast.js';
-import { showConfirm } from '../ui/modal.js';
+import { showConfirm, showTextPrompt } from '../ui/modal.js';
 import { formatDate } from '../../shared/utils/format.js';
 import { manualPaginationHtml, wirePagination } from '../ui/pagination.js';
 
@@ -10,6 +10,12 @@ const PAGE_SIZE = 20;
 
 function setHTML(el, html) {
   el.innerHTML = html;
+}
+
+function setActionBusy(button, isBusy) {
+  if (!button) return;
+  button.disabled = isBusy;
+  button.setAttribute('aria-disabled', isBusy ? 'true' : 'false');
 }
 
 export async function renderReports(container, { fetchData, onResolve } = {}) {
@@ -75,13 +81,26 @@ async function renderPage(container, { fetchData, onResolve }) {
 
     container.querySelectorAll(".resolve-report").forEach((btn) => {
       btn.addEventListener("click", async () => {
-        const adminNote = prompt(`${t("admin.reportAdminNote")}:`);
+        setActionBusy(btn, true);
+        const adminNote = await showTextPrompt(t("admin.resolve"), {
+          label: t("admin.reportAdminNote"),
+          placeholder: t("admin.reportAdminNote"),
+          confirmText: t("admin.resolve"),
+          cancelText: t("common.cancel"),
+          required: false,
+          multiline: true,
+        });
+        setActionBusy(btn, false);
+        if (adminNote === null) return;
         try {
-          await onResolve(btn.dataset.id, { newStatus: 'Resolved', adminNote: adminNote || null });
+          setActionBusy(btn, true);
+          await onResolve(btn.dataset.id, { newStatus: 'Resolved', adminNote });
           showToast(t("admin.reportResolved"), "success");
           renderPage(container, { fetchData, onResolve });
         } catch (err) {
           showToast(err.message, "error");
+        } finally {
+          setActionBusy(btn, false);
         }
       });
     });

@@ -44,7 +44,7 @@ export async function renderReviews(container, { fetchData, onApprove, onReject 
             <tbody>
               ${products.map((p) => `
                 <tr>
-                  <td class="product-thumb-cell">${p.primaryImageUrl ? `<img src="${p.primaryImageUrl}" alt="" class="product-thumb" loading="lazy">` : `<div class="product-thumb-placeholder"><i class="fas fa-image" aria-hidden="true"></i></div>`}</td>
+                  <td class="product-thumb-cell">${p.primaryImageUrl ? `<img src="${escapeHtml(p.primaryImageUrl)}" alt="" class="product-thumb" loading="lazy">` : `<div class="product-thumb-placeholder"><i class="fas fa-image" aria-hidden="true"></i></div>`}</td>
                   <td><a href="#/product-detail?id=${p.id}" class="text-decoration-none text-reset fw-medium">${escapeHtml(p.title)}</a></td>
                   <td>${escapeHtml(p.sellerName || `#${p.sellerId || "-"}`)}</td>
                   <td class="fw-semibold">${formatPrice(p.price || 0)}</td>
@@ -173,7 +173,7 @@ async function loadUserReviews() {
                 <td>${formatDate(r.createdAt)}</td>
                 <td>
                   <button class="btn btn-sm btn-danger remove-user-review-btn"
-                    data-review-id="${r.id}"
+                    data-review-id="${escapeHtml(r.id)}"
                     data-user-name="${escapeHtml(r.userName || r.userFullName || "")}">
                     <i class="fas fa-trash" aria-hidden="true"></i> ${t("admin.remove")}
                   </button>

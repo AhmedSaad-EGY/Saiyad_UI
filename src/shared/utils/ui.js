@@ -210,39 +210,69 @@ export function showConfirm(title, message, options = {}) {
   } = options;
 
   return new Promise((resolve) => {
+    const prevFocus = document.activeElement;
     const overlay = document.createElement("div");
+    const modalId = `confirmModal-${Date.now()}`;
     overlay.className = "modal-overlay show";
     document.body.classList.add("modal-open");
     overlay.setAttribute("role", "dialog");
     overlay.setAttribute("aria-modal", "true");
+    overlay.setAttribute("aria-labelledby", `${modalId}-title`);
     overlay.innerHTML = `
       <div class="modal modal-confirm" onclick="event.stopPropagation()">
         <div class="confirm-icon ${type}">
           <i class="fas ${icon}"></i>
         </div>
-        <h3>${escapeHtml(title)}</h3>
+        <h3 id="${modalId}-title">${escapeHtml(title)}</h3>
         <p>${escapeHtml(message)}</p>
         <div class="modal-actions">
-          <button class="btn btn-ghost" id="confirmCancel">${escapeHtml(cancelText)}</button>
-          <button class="btn btn-${type}" id="confirmProceed">${escapeHtml(confirmText)}</button>
+          <button class="btn btn-ghost" id="${modalId}-cancel">${escapeHtml(cancelText)}</button>
+          <button class="btn btn-${type}" id="${modalId}-confirm">${escapeHtml(confirmText)}</button>
         </div>
       </div>`;
 
     let closed = false;
+    const cancelBtn = overlay.querySelector(`#${modalId}-cancel`);
+    const confirmBtn = overlay.querySelector(`#${modalId}-confirm`);
+
+    function getFocusable() {
+      return [...overlay.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')]
+        .filter((el) => !el.disabled && el.offsetParent !== null);
+    }
+
     function close() {
       if (closed) return;
       closed = true;
       document.body.classList.remove("modal-open");
-      overlay.remove();
       document.removeEventListener("keydown", onKey);
+      overlay.remove();
+      if (prevFocus && typeof prevFocus.focus === 'function') prevFocus.focus();
     }
 
     function onKey(e) {
-      if (e.key === "Escape") { close(); resolve(false); }
+      if (e.key === "Escape") {
+        e.preventDefault();
+        close();
+        resolve(false);
+        return;
+      }
+      if (e.key === "Tab") {
+        const focusable = getFocusable();
+        if (!focusable.length) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
     }
 
-    overlay.querySelector("#confirmProceed").addEventListener("click", () => { close(); resolve(true); });
-    overlay.querySelector("#confirmCancel").addEventListener("click", () => { close(); resolve(false); });
+    confirmBtn.addEventListener("click", () => { close(); resolve(true); });
+    cancelBtn.addEventListener("click", () => { close(); resolve(false); });
     overlay.addEventListener("click", (e) => {
       if (e.target === overlay) {
         const m = overlay.querySelector(".modal-confirm");
@@ -253,9 +283,128 @@ export function showConfirm(title, message, options = {}) {
     document.body.appendChild(overlay);
     animate(overlay, 'fadeIn', { duration: '0.2s' });
     setTimeout(() => {
-      const proceedBtn = overlay.querySelector("#confirmProceed");
-      if (proceedBtn) proceedBtn.focus();
+      if (confirmBtn) confirmBtn.focus();
     }, 50);
+  });
+}
+
+export function showTextPrompt(title, options = {}) {
+  const {
+    message = '',
+    label = '',
+    placeholder = '',
+    confirmText = t('common.confirm'),
+    cancelText = t('common.cancel'),
+    initialValue = '',
+    required = false,
+    multiline = true,
+    optionalHint = required ? '' : t('common.optional'),
+  } = options;
+
+  return new Promise((resolve) => {
+    const prevFocus = document.activeElement;
+    const overlay = document.createElement("div");
+    const fieldId = `promptField-${Date.now()}`;
+    overlay.className = "modal-overlay show";
+    document.body.classList.add("modal-open");
+    overlay.setAttribute("role", "dialog");
+    overlay.setAttribute("aria-modal", "true");
+    overlay.setAttribute("aria-labelledby", `${fieldId}-title`);
+    overlay.innerHTML = `
+      <div class="modal modal-confirm" onclick="event.stopPropagation()">
+        <h3 id="${fieldId}-title">${escapeHtml(title)}</h3>
+        ${message ? `<p>${escapeHtml(message)}</p>` : ''}
+        <div class="form-group text-start mt-3">
+          ${label ? `<label class="form-label" for="${fieldId}">${escapeHtml(label)}${optionalHint ? ` <span class="text-muted">(${escapeHtml(optionalHint)})</span>` : ''}</label>` : ''}
+          ${multiline
+            ? `<textarea id="${fieldId}" class="form-input form-control" rows="4" placeholder="${escapeHtml(placeholder)}">${escapeHtml(initialValue)}</textarea>`
+            : `<input id="${fieldId}" class="form-input form-control" type="text" value="${escapeHtml(initialValue)}" placeholder="${escapeHtml(placeholder)}">`}
+        </div>
+        <div class="modal-actions">
+          <button class="btn btn-ghost" id="${fieldId}-cancel">${escapeHtml(cancelText)}</button>
+          <button class="btn btn-primary" id="${fieldId}-confirm">${escapeHtml(confirmText)}</button>
+        </div>
+      </div>`;
+
+    let closed = false;
+    const modal = overlay.querySelector('.modal-confirm');
+    const field = overlay.querySelector(`#${fieldId}`);
+    const confirmBtn = overlay.querySelector(`#${fieldId}-confirm`);
+    const cancelBtn = overlay.querySelector(`#${fieldId}-cancel`);
+
+    function close(result = null) {
+      if (closed) return;
+      closed = true;
+      document.body.classList.remove("modal-open");
+      document.removeEventListener("keydown", onKey);
+      overlay.remove();
+      if (prevFocus && typeof prevFocus.focus === 'function') prevFocus.focus();
+      resolve(result);
+    }
+
+    function getFocusable() {
+      return [...overlay.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')]
+        .filter((el) => !el.disabled && el.offsetParent !== null);
+    }
+
+    function updateSubmitState() {
+      if (!required) return;
+      confirmBtn.disabled = !field.value.trim();
+      confirmBtn.setAttribute('aria-disabled', confirmBtn.disabled ? 'true' : 'false');
+    }
+
+    function onKey(e) {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        close(null);
+        return;
+      }
+      if (e.key === "Tab") {
+        const focusable = getFocusable();
+        if (!focusable.length) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+      if ((e.key === "Enter" && !multiline) || (e.key === "Enter" && e.ctrlKey)) {
+        if (confirmBtn.disabled) return;
+        e.preventDefault();
+        confirmBtn.click();
+      }
+    }
+
+    cancelBtn.addEventListener("click", () => close(null));
+    confirmBtn.addEventListener("click", () => {
+      const value = field.value.trim();
+      if (required && !value) {
+        field.focus();
+        return;
+      }
+      confirmBtn.disabled = true;
+      confirmBtn.setAttribute('aria-disabled', 'true');
+      cancelBtn.disabled = true;
+      cancelBtn.setAttribute('aria-disabled', 'true');
+      close(required ? value : (value || null));
+    });
+    field.addEventListener('input', updateSubmitState);
+    overlay.addEventListener("click", (e) => {
+      if (e.target === overlay) close(null);
+    });
+    document.addEventListener("keydown", onKey);
+    document.body.appendChild(overlay);
+    animate(overlay, 'fadeIn', { duration: '0.2s' });
+    updateSubmitState();
+    setTimeout(() => {
+      field?.focus();
+      field?.setSelectionRange?.(field.value.length, field.value.length);
+    }, 50);
+    if (modal) modal.scrollTop = 0;
   });
 }
 
