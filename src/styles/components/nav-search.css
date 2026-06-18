@@ -134,7 +134,7 @@
   outline-offset: calc(-1 * var(--focus-ring-width));
 }
 
-@media (width >= 992px) {
+@media (width >= 1200px) {
   .nav-search {
     margin: 0;
     flex: 1 1 calc(var(--space-20) * 3 + var(--space-4));
@@ -151,25 +151,7 @@
   }
 }
 
-@media (width >= 992px) and (width <= 1199px) {
-  .nav-search {
-    flex-basis: calc(var(--space-20) * 2 + var(--space-10));
-    min-width: calc(var(--space-20) * 2 + var(--space-5));
-    max-width: calc(var(--space-20) * 3 + var(--space-2));
-  }
-
-  .nav-search__input {
-    padding-inline: var(--space-2);
-    font-size: var(--text-xs);
-  }
-
-  .nav-search__btn {
-    min-width: var(--space-10);
-    padding-inline: var(--space-2);
-  }
-}
-
-@media (width < 992px) {
+@media (width < 1200px) {
   .nav-search {
     max-width: 100%;
     min-height: 44px;

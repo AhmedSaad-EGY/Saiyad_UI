@@ -8,7 +8,7 @@ let _drawerSwipe = null;
 let _fetchCartCount = async () => 0;
 let _fetchUnreadCount = async () => 0;
 const _focusableSel = 'a, button, input, select, textarea, [tabindex]:not([tabindex="-1"])';
-const _mobileDrawerBreakpoint = 992;
+const _mobileDrawerBreakpoint = 1200;
 
 function _isMobileDrawerViewport() {
   return window.innerWidth < _mobileDrawerBreakpoint;

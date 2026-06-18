@@ -130,7 +130,7 @@ document.getElementById('navDrawer')?.addEventListener('click', (e) => {
 let prevWidth = window.innerWidth;
 window.addEventListener('resize', () => {
   const width = window.innerWidth;
-  if (prevWidth < 992 && width >= 992) {
+  if (prevWidth < 1200 && width >= 1200) {
     const drawer = document.getElementById('navDrawer');
     if (drawer) {
       drawer.style.transition = 'none';
@@ -141,7 +141,7 @@ window.addEventListener('resize', () => {
       });
     }
   }
-  if (prevWidth >= 992 && width < 992) {
+  if (prevWidth >= 1200 && width < 1200) {
     syncDrawerA11y();
   }
   prevWidth = width;

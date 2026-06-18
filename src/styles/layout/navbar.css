@@ -1,6 +1,6 @@
 /* ============================================================
    LAYOUT — Navbar, Drawer, Bottom Nav
-   Mobile-first: base styles for constrained screens, inline desktop at ≥992px.
+   Mobile-first: base styles for constrained screens, inline desktop at ≥1200px.
    ============================================================ */
 
 /* ============================================================
@@ -657,10 +657,10 @@ body.nav-open .bottom-nav {
 }
 
 /* ============================================================
-   DESKTOP NAVBAR OVERRIDE (≥ 992px)
+   DESKTOP NAVBAR OVERRIDE (≥ 1200px)
    Converts the mobile side-panel into an inline horizontal bar.
    ============================================================ */
-@media (width >= 992px) {
+@media (width >= 1200px) {
   .navbar .container {
     flex-wrap: nowrap;
     gap: var(--space-3);
@@ -886,62 +886,6 @@ body.nav-open .bottom-nav {
   display: none;
 }
 
-@media (width >= 992px) and (width <= 1199px) {
-  .navbar-brand {
-    gap: var(--space-1);
-  }
-
-  .navbar-brand-img {
-    height: calc(var(--space-6) + var(--space-1));
-  }
-
-  .navbar-brand-text {
-    font-size: var(--text-base);
-  }
-
-  .navbar .container {
-    gap: var(--space-2);
-  }
-
-  .nav-drawer {
-    gap: var(--space-2);
-  }
-
-  .nav-drawer__body {
-    gap: var(--space-2);
-  }
-
-  .navbar-nav {
-    gap: 0;
-  }
-
-  .nav-link {
-    padding: var(--space-2) var(--space-3);
-  }
-
-  .nav-toggles {
-    gap: var(--space-1);
-    margin-inline-start: var(--space-1);
-  }
-
-  .nav-actions {
-    gap: var(--space-1);
-    padding-inline-start: var(--space-3);
-    margin-inline-start: var(--space-1);
-  }
-
-  [dir="rtl"] .nav-actions {
-    padding-inline-start: 0;
-    padding-inline-end: var(--space-3);
-    margin-inline-end: var(--space-1);
-  }
-
-  .nav-actions .btn,
-  .nav-drawer .dropdown-toggle {
-    padding-inline: var(--space-3);
-  }
-}
-
 @media (width <= 767px) {
   body {
     --bottom-nav-height: calc(var(--space-12) + var(--space-2));
@@ -1052,7 +996,7 @@ body.nav-open .bottom-nav {
   }
 }
 
-@media (width >= 768px) and (width < 992px) {
+@media (width >= 768px) and (width < 1200px) {
   .bottom-nav {
     display: none !important;
   }
@@ -1067,8 +1011,8 @@ body.nav-open .bottom-nav {
   }
 }
 
-/* ── Drawer / compact navbar (≤991px) ───────────────────────── */
-@media (width < 992px) {
+/* ── Drawer / compact navbar (<1200px) ───────────────────────── */
+@media (width < 1200px) {
 
   /* Show hamburger */
   .navbar-toggler {

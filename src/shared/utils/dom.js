@@ -322,7 +322,15 @@ export function initPullToRefresh({ onRefresh, threshold = 80, indicatorId = 'pt
   const indicator = document.createElement('div');
   indicator.id = indicatorId;
   indicator.className = 'ptr-indicator';
-  indicator.innerHTML = '<div class="ptr-spinner"><i class="fas fa-spinner"></i></div><div class="ptr-text">Pull to refresh</div>';
+  indicator.setAttribute('aria-hidden', 'true');
+  indicator.setAttribute('aria-live', 'polite');
+  const spinner = document.createElement('div');
+  spinner.className = 'ptr-spinner';
+  spinner.innerHTML = '<i class="fas fa-spinner fa-spin" aria-hidden="true"></i>';
+  const text = document.createElement('div');
+  text.className = 'ptr-text';
+  text.textContent = t('common.pullToRefresh');
+  indicator.append(spinner, text);
   document.body.prepend(indicator);
 
   let startY = 0, pulling = false, moved = false;
@@ -330,6 +338,8 @@ export function initPullToRefresh({ onRefresh, threshold = 80, indicatorId = 'pt
   function resetPullState() {
     pulling = false;
     moved = false;
+    indicator.setAttribute('aria-hidden', 'true');
+    indicator.style.removeProperty('--ptr-offset');
   }
 
   function onTouchStart(e) {
@@ -342,28 +352,33 @@ export function initPullToRefresh({ onRefresh, threshold = 80, indicatorId = 'pt
   function onTouchMove(e) {
     if (!pulling) return;
     const dy = e.touches[0].clientY - startY;
-    if (dy <= 0) { indicator.classList.remove('ptr-active', 'ptr-ready'); indicator.style.transform = ''; return; }
+    if (dy <= 0) {
+      indicator.classList.remove('ptr-active', 'ptr-ready');
+      indicator.style.removeProperty('--ptr-offset');
+      indicator.setAttribute('aria-hidden', 'true');
+      return;
+    }
     moved = true;
     const pull = Math.min(dy * 0.5, threshold * 1.2);
-    indicator.style.transform = `translateY(${pull}px)`;
+    indicator.style.setProperty('--ptr-offset', `${pull}px`);
     indicator.classList.toggle('ptr-ready', dy >= threshold);
     indicator.classList.add('ptr-active');
+    indicator.setAttribute('aria-hidden', 'false');
   }
 
   async function onTouchEnd() {
     if (!pulling || !moved) { resetPullState(); return; }
     const ready = indicator.classList.contains('ptr-ready');
-    const _dy = parseFloat(indicator.style.transform?.replace('translateY(', '') || '0');
-    indicator.style.transform = ready ? `translateY(${threshold}px)` : '';
+    indicator.style.setProperty('--ptr-offset', ready ? `${threshold}px` : '0px');
     indicator.classList.remove('ptr-active', 'ptr-ready');
     if (ready) {
       indicator.classList.add('ptr-refreshing');
-      indicator.querySelector('.ptr-text').textContent = t('common.refreshing');
+      text.textContent = t('common.refreshing');
       try { await onRefresh(); } catch { /* refresh failed, UI already reset */ }
       indicator.classList.remove('ptr-refreshing');
-      indicator.querySelector('.ptr-text').textContent = t('common.pullToRefresh');
+      text.textContent = t('common.pullToRefresh');
     }
-    indicator.style.transform = '';
+    indicator.style.removeProperty('--ptr-offset');
     resetPullState();
   }
 
