@@ -43,6 +43,12 @@
   font-size: 0.88rem;
 }
 
+.subscription-meta-date {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25em;
+}
+
 .subscription-muted {
   opacity: 0.75;
 }

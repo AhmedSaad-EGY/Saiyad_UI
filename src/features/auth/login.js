@@ -72,7 +72,9 @@ Alpine.data('loginForm', () => ({
       if (err.message && err.message.includes('verify')) {
         this.unverifiedEmail = this.email;
       }
-      this.error = err.message || t('auth.loginError');
+      this.error = err.status === 401
+        ? t('auth.invalidCredentials')
+        : err.message || t('auth.loginError');
     } finally { this.loading = false; }
   },
   async resendVerification() {

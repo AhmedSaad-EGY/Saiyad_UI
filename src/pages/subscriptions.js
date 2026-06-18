@@ -3,7 +3,7 @@ import { requireAuth, getUser, syncVipAttribute } from '../features/auth/login.j
 import { observeAnimations } from '../shared/utils/dom.js';
 import { showToast } from '../widgets/ui/toast.js';
 import { setPageMeta } from '../shared/utils/seo.js';
-import { getRoleSubscriptionInfo, fetchSubscriptionsPageData, upgradeSubscription } from '../features/subscriptions/subscriptions.js';
+import { getRoleSubscriptionInfo, fetchSubscriptionsPageData, getSubscriptionUpgradeErrorMessage, upgradeSubscription } from '../features/subscriptions/subscriptions.js';
 import { createPaymentReference } from '../features/checkout/checkout.js';
 import { renderPlans } from '../widgets/subscriptions/render-plans.js';
 import { renderSkeleton, renderError } from '../widgets/subscriptions/render-states.js';
@@ -19,11 +19,16 @@ export default async function renderSubscriptions(container) {
     const data = await fetchSubscriptionsPageData();
     renderPlans(container, { ...data, info }, {
       onUpgrade: async (tier) => {
-        const ref = createPaymentReference(tier);
-        await upgradeSubscription(tier, ref);
-        await syncVipAttribute();
-        showToast(t('subscriptions.upgradeSuccess'), 'success');
-        window.location.reload();
+        try {
+          const ref = createPaymentReference(tier);
+          await upgradeSubscription(tier, ref);
+          await syncVipAttribute();
+          showToast(t('subscriptions.upgradeSuccess'), 'success');
+          window.location.reload();
+        } catch (err) {
+          showToast(getSubscriptionUpgradeErrorMessage(err), 'error');
+          throw err;
+        }
       },
     });
     observeAnimations();
