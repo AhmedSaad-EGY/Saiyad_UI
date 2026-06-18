@@ -871,7 +871,7 @@ body.nav-open .bottom-nav {
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
-    transform: translateY(calc(-1 * var(--space-2))) scale(0.98);
+    transform: translateY(calc(-1 * var(--space-3))) scale(0.98);
     transform-origin: top right;
     transition:
       opacity var(--duration-normal) var(--ease-out),
@@ -880,6 +880,14 @@ body.nav-open .bottom-nav {
       background-color var(--theme-ease),
       border-color var(--theme-ease),
       box-shadow var(--theme-ease);
+  }
+
+  .nav-drawer .dropdown-menu::before {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    top: calc(-1 * var(--space-3));
+    height: var(--space-3);
   }
 
   [data-theme="dark"] .nav-drawer .dropdown-menu {
