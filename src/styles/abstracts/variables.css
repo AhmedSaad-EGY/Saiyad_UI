@@ -27,6 +27,8 @@
 
   /* ── Sizing constants ─────────────────────────────────────── */
   --navbar-height: 60px;
+  --app-shell-top-gap: var(--space-6);
+  --app-scroll-offset: calc(var(--navbar-height) + env(safe-area-inset-top, 0px) + var(--space-4));
 
   /* ── Typography scale ─────────────────────────────────────── */
   --text-xs: 0.72rem;

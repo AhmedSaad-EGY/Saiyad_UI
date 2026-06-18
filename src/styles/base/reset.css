@@ -86,7 +86,7 @@ h4[id],
 h5[id],
 h6[id],
 section[id] {
-  scroll-margin-top: 88px;
+  scroll-margin-top: var(--app-scroll-offset);
 }
 
 /* ── Keyboard navigation focus ring ──────────────────────── */

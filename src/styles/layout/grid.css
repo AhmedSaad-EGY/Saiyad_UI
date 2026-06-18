@@ -1,6 +1,6 @@
 .main-content {
   flex: 1;
-  margin-top: var(--space-6);
+  margin-top: var(--app-shell-top-gap);
   margin-inline: var(--space-6);
   margin-bottom: var(--space-10);
   padding: var(--space-10);

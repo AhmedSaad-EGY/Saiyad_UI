@@ -48,7 +48,7 @@
   position: fixed;
   bottom: var(--space-6);
   inset-inline-end: calc(var(--space-6) + env(safe-area-inset-right, 0px));
-  z-index: 1001;
+  z-index: calc(var(--z-navbar) + 1);
   width: 44px;
   height: 44px;
   border-radius: var(--radius-full);
@@ -205,6 +205,10 @@
   .footer {
     margin-top: var(--space-10);
     padding: var(--space-8) 0 var(--space-5);
+  }
+
+  .back-to-top {
+    bottom: calc(var(--bottom-nav-height, 0px) + var(--space-4) + env(safe-area-inset-bottom, 0px));
   }
 }
 
