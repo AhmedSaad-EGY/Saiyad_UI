@@ -699,6 +699,7 @@ body.nav-open .bottom-nav {
   .navbar-nav {
     flex-direction: row;
     align-items: center;
+    flex-wrap: nowrap;
     gap: var(--space-1);
     padding: 0;
     overflow: visible;
@@ -713,6 +714,8 @@ body.nav-open .bottom-nav {
     min-height: calc(var(--space-10) + var(--space-1));
     font-size: var(--text-sm);
     font-weight: var(--weight-medium);
+    line-height: var(--leading-tight);
+    white-space: nowrap;
     color: var(--text-secondary);
     border-radius: var(--radius);
   }
@@ -721,7 +724,7 @@ body.nav-open .bottom-nav {
   .nav-link::after {
     content: '';
     position: absolute;
-    bottom: 0;
+    bottom: calc(var(--space-1) / 2);
     inset-inline-start: 50%;
     inset-inline-end: 50%;
     height: calc(var(--space-1) / 2);
