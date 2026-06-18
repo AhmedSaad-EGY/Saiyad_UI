@@ -27,8 +27,8 @@
 
   /* ── Sizing constants ─────────────────────────────────────── */
   --navbar-height: 60px;
-  --app-shell-top-gap: var(--space-6);
-  --app-scroll-offset: calc(var(--navbar-height) + env(safe-area-inset-top, 0px) + var(--space-4));
+  --app-shell-top-gap: var(--space-8);
+  --app-scroll-offset: calc(var(--navbar-height) + env(safe-area-inset-top, 0px) + var(--space-6));
 
   /* ── Typography scale ─────────────────────────────────────── */
   --text-xs: 0.72rem;
@@ -294,7 +294,7 @@
   --info-border: oklch(50% 0.10 230deg);
   --body-bg: oklch(12% 0.015 250deg);
   --card-bg: oklch(20% 0.022 245deg);
-  --nav-bg: oklch(13% 0.020 250deg / 0.92);
+  --nav-bg: oklch(17% 0.024 248deg / 0.96);
   --input-bg: oklch(24% 0.020 245deg);
   --overlay: oklch(0% 0 0deg / 0.65);
   --text: oklch(96% 0.005 245deg);
@@ -321,9 +321,9 @@
   --shadow-glass: 0 8px 32px oklch(72% 0.17 250deg / 0.12);
   --body-grad-1: radial-gradient(ellipse 650px 450px at 85% 8%, oklch(45% 0.15 280deg / 0.20), transparent 65%);
   --body-grad-2: radial-gradient(ellipse 550px 550px at 15% 90%, oklch(38% 0.10 210deg / 0.15), transparent 65%);
-  --nav-bg-gradient: linear-gradient(135deg, oklch(10.5% 0.022 250deg / 0.96), oklch(16% 0.028 238deg / 0.94));
-  --nav-scrolled-gradient: linear-gradient(135deg, oklch(10.5% 0.022 250deg / 0.82), oklch(16% 0.028 238deg / 0.78));
-  --nav-mobile-gradient: linear-gradient(135deg, oklch(9.5% 0.022 250deg / 0.98), oklch(15.5% 0.028 238deg / 0.96));
+  --nav-bg-gradient: linear-gradient(135deg, oklch(16% 0.026 248deg / 0.98), oklch(21% 0.032 238deg / 0.96));
+  --nav-scrolled-gradient: linear-gradient(135deg, oklch(15% 0.026 248deg / 0.96), oklch(20% 0.032 238deg / 0.94));
+  --nav-mobile-gradient: linear-gradient(135deg, oklch(16% 0.026 248deg / 0.98), oklch(20% 0.030 238deg / 0.96));
   --drawer-gradient: linear-gradient(180deg,
       oklch(13% 0.020 250deg / 0.99) 0%,
       oklch(16% 0.024 245deg / 0.98) 50%,

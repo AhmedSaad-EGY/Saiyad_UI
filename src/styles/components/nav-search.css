@@ -29,8 +29,7 @@
     border-color var(--theme-ease);
 }
 
-.dropdown-menu.show,
-.dropdown:focus-within .dropdown-menu {
+.dropdown-menu.show {
   display: block;
 }
 

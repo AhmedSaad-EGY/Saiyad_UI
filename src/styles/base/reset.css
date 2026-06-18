@@ -14,6 +14,7 @@
    ============================================================ */
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: var(--app-scroll-offset);
   text-size-adjust: 100%;
   scrollbar-width: thin;
   scrollbar-color: color-mix(in oklch, var(--primary) 45%, transparent) transparent;

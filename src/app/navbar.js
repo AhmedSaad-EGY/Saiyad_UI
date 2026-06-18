@@ -47,6 +47,16 @@ function applyDropdownRoleVisibility() {
   });
 }
 
+function setUserDropdownOpen(open, { restoreFocus = false } = {}) {
+  const dropdown = document.getElementById('dropdownMenu');
+  const trigger = document.getElementById('userDropdown');
+  if (!dropdown || !trigger) return;
+
+  dropdown.classList.toggle('show', open);
+  trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
+  if (!open && restoreFocus) trigger.focus();
+}
+
 let scrollTicking = false;
 window.addEventListener('scroll', () => {
   if (!scrollTicking) {
@@ -73,8 +83,7 @@ document.addEventListener('click', (e) => {
 
 document.addEventListener('click', (e) => {
   const dropdown = document.getElementById('dropdownMenu');
-  if (dropdown && !e.target.closest('.dropdown'))
-    dropdown.classList.remove('show');
+  if (dropdown && !e.target.closest('.dropdown')) setUserDropdownOpen(false);
 });
 
 document.addEventListener('keydown', (e) => {
@@ -85,9 +94,7 @@ document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
     if (drawer?.classList.contains('open')) closeDrawer();
     if (isDropdownOpen) {
-      dropdown.classList.remove('show');
-      document.getElementById('userDropdown')?.setAttribute('aria-expanded', 'false');
-      document.getElementById('userDropdown')?.focus();
+      setUserDropdownOpen(false, { restoreFocus: true });
     }
     return;
   }
@@ -110,8 +117,20 @@ document.addEventListener('keydown', (e) => {
 document.getElementById('userDropdown')?.addEventListener('click', (e) => {
   e.stopPropagation();
   const menu = document.getElementById('dropdownMenu');
-  const isOpen = menu?.classList.toggle('show');
-  e.currentTarget.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+  setUserDropdownOpen(!menu?.classList.contains('show'));
+});
+
+const userMenuEl = document.getElementById('userMenu');
+const canHoverDropdown = window.matchMedia('(width >= 1200px) and (hover: hover) and (pointer: fine)');
+userMenuEl?.addEventListener('mouseenter', () => {
+  if (canHoverDropdown.matches) setUserDropdownOpen(true);
+});
+userMenuEl?.addEventListener('mouseleave', () => {
+  if (canHoverDropdown.matches) setUserDropdownOpen(false);
+});
+
+document.getElementById('dropdownMenu')?.addEventListener('click', (e) => {
+  if (e.target.closest('a[href]')) setUserDropdownOpen(false);
 });
 
 document.getElementById('logoutBtn')?.addEventListener('click', async (e) => {

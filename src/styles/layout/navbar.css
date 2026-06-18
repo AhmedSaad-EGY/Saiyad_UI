@@ -16,10 +16,10 @@
   background:
     var(--nav-bg-gradient),
     radial-gradient(circle at 18% 0%, oklch(from var(--primary) l c h / 0.10), transparent 34%);
-  background-color: transparent;
+  background-color: var(--nav-bg);
   backdrop-filter: var(--glass-blur);
-  border-bottom: 1px solid transparent;
-  box-shadow: none;
+  border-bottom: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
   transition:
     background-color var(--duration-normal) var(--ease-out),
     backdrop-filter var(--duration-normal) var(--ease-out),
@@ -30,8 +30,10 @@
 [data-theme="dark"] .navbar {
   background:
     var(--nav-bg-gradient),
-    radial-gradient(circle at 18% 0%, oklch(from var(--primary) l c h / 0.18), transparent 36%);
-  background-color: transparent;
+    radial-gradient(circle at 18% 0%, oklch(from var(--primary) l c h / 0.12), transparent 36%);
+  background-color: var(--nav-bg);
+  border-bottom-color: color-mix(in oklch, var(--border) 72%, var(--primary));
+  box-shadow: 0 10px 28px oklch(0% 0 0deg / 0.28);
 }
 
 /* Scrolled overlay via pseudo-element (opacity is GPU-composited) */
@@ -74,6 +76,8 @@
   height: 100%;
   min-height: var(--navbar-height);
   gap: var(--space-3);
+  max-width: 1440px;
+  padding-inline: clamp(var(--space-4), 2vw, var(--space-8));
   padding-block: 0;
 }
 
@@ -403,6 +407,12 @@
   color: var(--text);
 }
 
+[data-theme="dark"] .nav-drawer .dropdown-toggle:hover,
+[data-theme="dark"] .nav-drawer .dropdown-toggle:focus-visible {
+  color: var(--text);
+  background: color-mix(in oklch, var(--primary) 18%, transparent);
+}
+
 .nav-drawer .dropdown-toggle:focus-visible {
   outline: var(--focus-ring-width) solid var(--border-focus);
   outline-offset: var(--focus-ring-offset);
@@ -439,11 +449,17 @@
   gap: var(--space-3);
   padding: calc(var(--space-5) / 2) var(--space-3);
   border-radius: var(--radius);
+  width: 100%;
   color: var(--text-secondary);
   font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  text-align: start;
   border-left: none;
+  border-block: 0;
+  background: transparent;
   text-decoration: none;
   outline: none;
+  cursor: pointer;
   transition:
     background-color var(--duration-fast) var(--ease-out),
     color var(--duration-fast) var(--ease-out),
@@ -663,7 +679,7 @@ body.nav-open .bottom-nav {
 @media (width >= 1200px) {
   .navbar .container {
     flex-wrap: nowrap;
-    gap: var(--space-3);
+    gap: var(--space-4);
   }
 
   .nav-drawer {
@@ -806,6 +822,7 @@ body.nav-open .bottom-nav {
     align-items: flex-end;
     justify-content: center;
     min-height: 100%;
+    position: relative;
   }
 
   [dir="rtl"] .nav-drawer .dropdown {
@@ -820,6 +837,19 @@ body.nav-open .bottom-nav {
     border: 1px solid var(--border);
     font-size: var(--text-sm);
     background: transparent;
+    max-inline-size: min(18rem, 24vw);
+  }
+
+  [data-theme="dark"] .nav-drawer .dropdown-toggle {
+    background: color-mix(in oklch, var(--input-bg) 62%, transparent);
+    border-color: color-mix(in oklch, var(--border) 78%, var(--primary));
+  }
+
+  [id="userName"] {
+    min-inline-size: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .nav-drawer .dropdown-toggle .fa-chevron-down {
@@ -827,6 +857,7 @@ body.nav-open .bottom-nav {
   }
 
   .nav-drawer .dropdown-menu {
+    display: block;
     position: absolute;
     top: calc(100% + var(--space-2));
     inset-inline-end: 0;
@@ -837,11 +868,44 @@ body.nav-open .bottom-nav {
     min-width: calc(var(--space-20) * 2 + var(--space-10) + var(--space-2) + (var(--space-1) / 2));
     z-index: calc(var(--z-navbar) + 1);
     padding: calc(var(--space-6) / 4) 0;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(calc(-1 * var(--space-2))) scale(0.98);
+    transform-origin: top right;
+    transition:
+      opacity var(--duration-normal) var(--ease-out),
+      transform var(--duration-normal) var(--ease-out),
+      visibility 0s linear var(--duration-normal),
+      background-color var(--theme-ease),
+      border-color var(--theme-ease),
+      box-shadow var(--theme-ease);
+  }
+
+  [data-theme="dark"] .nav-drawer .dropdown-menu {
+    background: color-mix(in oklch, var(--card-bg) 88%, black);
+    border-color: color-mix(in oklch, var(--border) 76%, var(--primary));
+    box-shadow: 0 18px 42px oklch(0% 0 0deg / 0.46);
+  }
+
+  .nav-drawer .dropdown-menu.show {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0) scale(1);
+    transition:
+      opacity var(--duration-normal) var(--ease-out),
+      transform var(--duration-normal) var(--ease-out),
+      visibility 0s linear 0s,
+      background-color var(--theme-ease),
+      border-color var(--theme-ease),
+      box-shadow var(--theme-ease);
   }
 
   [dir="rtl"] .nav-drawer .dropdown-menu {
     inset-inline-end: auto;
     inset-inline-start: 0;
+    transform-origin: top left;
   }
 
   .nav-drawer .dropdown-item {
