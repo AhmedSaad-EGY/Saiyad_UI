@@ -12,7 +12,7 @@ initOcean();
 
 setNavbarDeps({
   fetchCartCount,
-  fetchUnreadNotificationCount,
+  fetchUnreadCount: fetchUnreadNotificationCount,
 });
 
 on('auth:changed', () => {

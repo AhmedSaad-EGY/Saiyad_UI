@@ -16,20 +16,18 @@ export function updateNavbar() {
   }
   const userMenu = document.getElementById("userMenu");
   if (userMenu) userMenu.classList.toggle("d-none", !auth);
-  const userRole = document.getElementById("userRole");
-  if (userRole) userRole.textContent = user?.role || '';
-  const avatarImg = document.getElementById("userAvatar");
-  if (avatarImg) {
-    if (user?.profileImageUrl) { avatarImg.src = user.profileImageUrl; avatarImg.hidden = false; }
-    else avatarImg.hidden = true;
-  }
+  const bnAccount = document.getElementById('bnAccount');
+  const bnLogin = document.getElementById('bnLogin');
+  if (bnAccount) bnAccount.classList.toggle('d-none', !auth);
+  if (bnLogin) bnLogin.classList.toggle('d-none', auth);
   document.querySelectorAll(".nav-seller").forEach(el => el.classList.toggle("hidden", !user || !SELLER_ROLES.includes(user.role)));
   document.querySelectorAll(".nav-admin").forEach(el => el.classList.toggle("hidden", user?.role !== ROLES.ADMIN));
   document.querySelectorAll(".nav-auctioneer").forEach(el => el.classList.toggle("hidden", user?.role !== ROLES.AUCTIONEER));
 
-  const sellLink = document.getElementById("sellLink");
-  if (sellLink) {
-    sellLink.href = user && SELLER_ROLES.includes(user.role) ? '#/dashboard' : '#/register';
+  const footerSellLink = document.getElementById('footerSellLink');
+  if (footerSellLink) {
+    footerSellLink.href = user && SELLER_ROLES.includes(user.role)
+      ? '#/dashboard' : '#/register';
   }
 
   applyDropdownRoleVisibility();
@@ -79,6 +77,36 @@ document.addEventListener('click', (e) => {
     dropdown.classList.remove('show');
 });
 
+document.addEventListener('keydown', (e) => {
+  const drawer = document.getElementById('navDrawer');
+  const dropdown = document.getElementById('dropdownMenu');
+  const isDropdownOpen = dropdown?.classList.contains('show');
+
+  if (e.key === 'Escape') {
+    if (drawer?.classList.contains('open')) closeDrawer();
+    if (isDropdownOpen) {
+      dropdown.classList.remove('show');
+      document.getElementById('userDropdown')?.setAttribute('aria-expanded', 'false');
+      document.getElementById('userDropdown')?.focus();
+    }
+    return;
+  }
+
+  if (isDropdownOpen && (e.key === 'ArrowDown' || e.key === 'ArrowUp'
+      || e.key === 'Home' || e.key === 'End')) {
+    e.preventDefault();
+    const items = [...dropdown.querySelectorAll(
+      '.dropdown-item:not([hidden]):not(.hidden):not(.d-none)'
+    )];
+    if (!items.length) return;
+    const idx = items.indexOf(document.activeElement);
+    if (e.key === 'ArrowDown') items[(idx + 1) % items.length]?.focus();
+    else if (e.key === 'ArrowUp') items[(idx - 1 + items.length) % items.length]?.focus();
+    else if (e.key === 'Home') items[0]?.focus();
+    else if (e.key === 'End') items[items.length - 1]?.focus();
+  }
+});
+
 document.getElementById('userDropdown')?.addEventListener('click', (e) => {
   e.stopPropagation();
   const menu = document.getElementById('dropdownMenu');
@@ -113,12 +141,6 @@ _navOverlay?.addEventListener('click', closeDrawer);
 _navOverlay?.addEventListener('touchstart', (e) => {
   if (e.target === _navOverlay) closeDrawer();
 }, { passive: true });
-
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape' && document.getElementById('navDrawer')?.classList.contains('open')) {
-    closeDrawer();
-  }
-});
 
 document.getElementById('navDrawer')?.addEventListener('click', (e) => {
   if (!document.getElementById('navDrawer')?.classList.contains('open')) return;

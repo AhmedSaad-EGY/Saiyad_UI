@@ -151,12 +151,12 @@
         <!-- Auth actions / user menu -->
         <div class="nav-actions" id="navActions">
           <!-- Guest: login + register -->
-          <a href="#/login"    class="btn btn-outline btn-sm" id="loginBtn"    data-i18n="nav.login">Login</a>
-          <a href="#/register" class="btn btn-primary btn-sm" id="registerBtn" data-i18n="nav.register">Register</a>
+          <a href="#/login"    class="btn btn-outline btn-sm nav-guest" id="loginBtn"    data-i18n="nav.login">Login</a>
+          <a href="#/register" class="btn btn-primary btn-sm nav-guest" id="registerBtn" data-i18n="nav.register">Register</a>
 
           <!-- Authenticated: notification bell -->
           <a href="#/dashboard?tab=notifications"
-             class="notif-bell d-none"
+             class="notif-bell d-none nav-auth"
              id="notifBell"
              aria-label="Notifications">
             <i class="fas fa-bell" aria-hidden="true"></i>
@@ -187,8 +187,8 @@
                 <i class="fas fa-tachometer-alt" aria-hidden="true"></i>
                 <span data-i18n="nav.dashboard">Dashboard</span>
               </a>
-                <a href="#/dashboard?tab=orders" class="dropdown-item" role="menuitem"
-                   data-roles="Customer,Fisherman,BaitSeller,Auctioneer">
+              <a href="#/dashboard?tab=orders" class="dropdown-item" role="menuitem"
+                 data-roles="Customer,Fisherman,BaitSeller,Auctioneer">
                 <i class="fas fa-box" aria-hidden="true"></i>
                 <span data-i18n="nav.myOrders">My Orders</span>
               </a>
@@ -197,8 +197,8 @@
                 <i class="fas fa-tag" aria-hidden="true"></i>
                 <span data-i18n="nav.myProducts">My Products</span>
               </a>
-                <a href="#/dashboard?tab=wishlist" class="dropdown-item" role="menuitem"
-                   data-roles="Customer,Fisherman,BaitSeller,Auctioneer">
+              <a href="#/dashboard?tab=wishlist" class="dropdown-item" role="menuitem"
+                 data-roles="Customer,Fisherman,BaitSeller,Auctioneer">
                 <i class="fas fa-heart" aria-hidden="true"></i>
                 <span data-i18n="nav.wishlist">Wishlist</span>
               </a>
@@ -217,10 +217,10 @@
                 <span data-i18n="admin.title">Admin</span>
               </a>
               <div class="dropdown-divider" role="separator"></div>
-              <a href="#" id="logoutBtn" class="dropdown-item text-danger" role="menuitem">
+              <button type="button" id="logoutBtn" class="dropdown-item text-danger" role="menuitem">
                 <i class="fas fa-sign-out-alt" aria-hidden="true"></i>
                 <span data-i18n="nav.logout">Logout</span>
-              </a>
+              </button>
             </div>
           </div>
         </div>
@@ -312,12 +312,12 @@
       <span class="bottom-nav-badge d-none" id="bnCartBadge" aria-hidden="true"></span>
     </a>
     <!-- Shown when logged in -->
-    <a href="#/dashboard" class="bottom-nav-item bottom-nav-account d-none" id="bnAccount">
+    <a href="#/dashboard" class="bottom-nav-item bottom-nav-account d-none nav-auth" id="bnAccount">
       <i class="fas fa-user" aria-hidden="true"></i>
       <span data-i18n="nav.dashboard">Account</span>
     </a>
     <!-- Shown when guest -->
-    <a href="#/login" class="bottom-nav-item" id="bnLogin">
+    <a href="#/login" class="bottom-nav-item nav-guest" id="bnLogin">
       <i class="fas fa-sign-in-alt" aria-hidden="true"></i>
       <span data-i18n="nav.login">Login</span>
     </a>

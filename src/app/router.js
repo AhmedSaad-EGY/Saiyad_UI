@@ -22,6 +22,16 @@ let _initialLoad = true;
 
 let _navTimer = null;
 
+const _navParentRouteMap = {
+  'product-detail': 'products',
+  'auction-detail': 'auctions',
+  'auction-requests': 'auctions',
+  'auction-requests-review': 'auctions',
+  'auctioneer-analytics': 'auctions',
+  'order-detail': 'dashboard',
+  'checkout': 'cart',
+};
+
 export function navigate(path) {
   window.location.hash = `#/${path}`;
 }
@@ -217,8 +227,12 @@ export async function router(force = false) {
   const cleanPath = route.split("?")[0];
   document.querySelectorAll(".nav-link").forEach((link) => {
     const href = link.getAttribute("href");
+    const baseSegment = cleanPath.split('/')[0];
+    const resolvedRoute = _navParentRouteMap[baseSegment] ?? baseSegment;
     const isMatch =
-      href === `#/${cleanPath}` || (cleanPath === "" && href === "#/");
+      href === `#/${resolvedRoute}` ||
+      href === `#/${cleanPath}` ||
+      (cleanPath === "" && href === "#/");
     if (isMatch) link.setAttribute("aria-current", "page");
     else link.removeAttribute("aria-current");
     link.classList.toggle("active", isMatch);
@@ -226,8 +240,12 @@ export async function router(force = false) {
   // Sync bottom nav
   document.querySelectorAll(".bottom-nav-item").forEach((link) => {
     const href = link.getAttribute("href");
+    const baseSegment = cleanPath.split('/')[0];
+    const resolvedRoute = _navParentRouteMap[baseSegment] ?? baseSegment;
     const isMatch =
-      href === `#/${cleanPath}` || (cleanPath === "" && href === "#/");
+      href === `#/${resolvedRoute}` ||
+      href === `#/${cleanPath}` ||
+      (cleanPath === "" && href === "#/");
     if (isMatch) link.setAttribute("aria-current", "page");
     else link.removeAttribute("aria-current");
     link.classList.toggle("active", isMatch);

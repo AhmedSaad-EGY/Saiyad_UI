@@ -120,18 +120,6 @@ export function closeDrawer(options = {}) {
   if (restoreTriggerFocus && _isMobileDrawerViewport()) btn?.focus();
 }
 
-const _navIconMap = {
-  '': 'fa-home', dashboard: 'fa-chart-bar', products: 'fa-store',
-  'product-detail': 'fa-box-open', auctions: 'fa-gavel', 'auction-detail': 'fa-gavel',
-  cart: 'fa-shopping-cart', checkout: 'fa-credit-card', profile: 'fa-user',
-  'seller-profile': 'fa-store-alt', wallet: 'fa-wallet', subscriptions: 'fa-crown',
-  'order-detail': 'fa-receipt', shipping: 'fa-truck', admin: 'fa-shield-alt',
-  login: 'fa-sign-in-alt', register: 'fa-user-plus', 'forgot-password': 'fa-key',
-  'reset-password': 'fa-key', 'verify-email': 'fa-envelope', terms: 'fa-file-contract',
-  privacy: 'fa-shield-alt', 'auction-requests': 'fa-paper-plane',
-  'auction-requests-review': 'fa-clipboard-check', 'auctioneer-analytics': 'fa-chart-line',
-};
-
 const _cartCache = { count: 0 };
 
 export function invalidateCartCache() { _cartCache.count = 0; }
