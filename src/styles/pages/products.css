@@ -205,7 +205,10 @@
   }
 
   .products-page-alpine .search-toggle-btn {
+    display: inline-flex;
     flex: 1 1 auto;
+    align-items: center;
+    gap: var(--space-2);
     justify-content: flex-start;
     min-inline-size: 0;
     min-block-size: var(--control-height-lg);
@@ -243,6 +246,9 @@
   }
 
   .products-page-alpine .filter-toggle-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     flex: 0 0 var(--control-height-lg);
     min-inline-size: var(--control-height-lg);
     min-block-size: var(--control-height-lg);
