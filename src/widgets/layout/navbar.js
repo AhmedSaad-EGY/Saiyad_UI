@@ -77,17 +77,17 @@ function _initDrawerSwipe() {
     onSwipeMove({ distance }) {
       if (!drawer.classList.contains("open")) return;
       const isRtl = document.dir === "rtl";
-      const closing = isRtl ? distance > 0 : distance < 0;
+      const closing = isRtl ? distance < 0 : distance > 0;
       if (!closing) return;
       const clamped = Math.min(Math.abs(distance), drawer.offsetWidth * 0.5);
       drawer.style.transition = "none";
-      drawer.style.transform = `translateX(${isRtl ? clamped : -clamped}px)`;
+      drawer.style.transform = `translateX(${isRtl ? -clamped : clamped}px)`;
     },
     onSwipeEnd({ distance }) {
       if (!drawer.classList.contains("open")) return;
       drawer.style.transition = "";
       const isRtl = document.dir === "rtl";
-      if (!(isRtl ? distance > 0 : distance < 0)) { drawer.style.transform = ""; return; }
+      if (!(isRtl ? distance < 0 : distance > 0)) { drawer.style.transform = ""; return; }
       drawer.style.transform = "";
       if (Math.abs(distance) >= 80) closeDrawer();
     },

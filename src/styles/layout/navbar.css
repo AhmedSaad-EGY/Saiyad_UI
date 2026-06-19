@@ -160,7 +160,7 @@
 .nav-drawer {
   position: fixed;
   top: 0;
-  inset-inline-start: 0;
+  inset-inline-end: 0;
   z-index: var(--z-drawer);
   display: flex;
   flex-direction: column;
@@ -168,14 +168,14 @@
   max-width: 400px;
   height: 100dvh;
   overflow: hidden;
-  border-inline-end: 1px solid var(--border);
+  border-inline-start: 1px solid var(--border);
   background: var(--drawer-gradient);
   background-color: var(--drawer-bg-fallback);
-  box-shadow: var(--shadow-drawer-panel-rtl-1), var(--shadow-drawer-panel-rtl-2);
+  box-shadow: var(--shadow-drawer-panel-1), var(--shadow-drawer-panel-2);
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  transform: translateX(-102%);
+  transform: translateX(102%);
   transition:
     transform var(--duration-normal) var(--ease-out),
     opacity var(--duration-normal) var(--ease-out),
@@ -194,8 +194,8 @@
 }
 
 [dir="rtl"] .nav-drawer {
-  box-shadow: var(--shadow-drawer-panel-1), var(--shadow-drawer-panel-2);
-  transform: translateX(102%);
+  box-shadow: var(--shadow-drawer-panel-rtl-1), var(--shadow-drawer-panel-rtl-2);
+  transform: translateX(-102%);
 }
 
 [dir="rtl"] .nav-drawer.open {
