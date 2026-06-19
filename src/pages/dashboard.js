@@ -4,33 +4,66 @@ import { registerRouteCleanup } from '../app/router.js';
 import renderAuctionRequests from './auction-requests.js';
 import renderAuctionRequestsReview from './auction-requests-review.js';
 import renderAuctioneerAnalytics from './auctioneer-analytics.js';
-import { loadDashboardTab, getDashboardTabs } from '../features/dashboard/tabs.js';
+import { loadDashboardTab, getDashboardTabs, resolveDashboardTab } from '../features/dashboard/tabs.js';
 import '../features/dashboard/index.js';
 
-const loadedTabs = new Set();
+let dashboardSessionCounter = 0;
 
-function handleDashboardTabChange(e) {
-  const { tabId, firstLoad } = e.detail;
-  if (loadedTabs.has(tabId) && !firstLoad) return;
-  loadedTabs.add(tabId);
-  const content = document.getElementById(`dashTab_${tabId}`);
-  if (!content) return;
-  const params = new URLSearchParams(location.hash.split('?')[1] || '');
-  const route = { path: '/dashboard' };
-  switch (tabId) {
-    case 'auction-requests': if (typeof renderAuctionRequests === 'function') renderAuctionRequests(content, route, params); break;
-    case 'auction-requests-review': if (typeof renderAuctionRequestsReview === 'function') renderAuctionRequestsReview(content, route, params); break;
-    case 'auctioneer-analytics': if (typeof renderAuctioneerAnalytics === 'function') renderAuctioneerAnalytics(content, route, params); break;
-    default: loadDashboardTab(tabId, content); break;
-  }
+function replaceDashboardTabUrl(tabId) {
+  const qp = new URLSearchParams(location.hash.split('?')[1] || '');
+  if (tabId === 'overview') qp.delete('tab');
+  else qp.set('tab', tabId);
+  const qs = qp.toString();
+  history.replaceState(null, '', qs ? `#/dashboard?${qs}` : '#/dashboard');
 }
 
-window.addEventListener('dashboard-tab-changed', handleDashboardTabChange);
+function createDashboardTabChangeHandler(sessionId, loadedTabs) {
+  return (e) => {
+    const { tabId, firstLoad, sessionId: eventSessionId } = e.detail || {};
+    if (eventSessionId !== sessionId) return;
+
+    const safeTabId = resolveDashboardTab(tabId);
+    if (safeTabId !== tabId) replaceDashboardTabUrl(safeTabId);
+    if (loadedTabs.has(safeTabId) && !firstLoad) return;
+
+    const content = document.getElementById(`dashTab_${safeTabId}`);
+    if (!content?.isConnected) return;
+
+    loadedTabs.add(safeTabId);
+    const loadToken = `${sessionId}:${safeTabId}:${Date.now()}`;
+    content.dataset.dashboardLoadToken = loadToken;
+    const isActive = () => content.isConnected && content.dataset.dashboardLoadToken === loadToken;
+
+    const params = new URLSearchParams(location.hash.split('?')[1] || '');
+    const route = { path: '/dashboard' };
+    switch (safeTabId) {
+      case 'auction-requests': if (typeof renderAuctionRequests === 'function' && isActive()) renderAuctionRequests(content, route, params); break;
+      case 'auction-requests-review': if (typeof renderAuctionRequestsReview === 'function' && isActive()) renderAuctionRequestsReview(content, route, params); break;
+      case 'auctioneer-analytics': if (typeof renderAuctioneerAnalytics === 'function' && isActive()) renderAuctioneerAnalytics(content, route, params); break;
+      default: loadDashboardTab(safeTabId, content, { isActive }); break;
+    }
+  };
+}
+
+function getInitialDashboardTab(tabs) {
+  const params = new URLSearchParams(location.hash.split('?')[1] || '');
+  const requestedTab = params.get('tab');
+  const initialTab = resolveDashboardTab(requestedTab || 'overview', tabs);
+  if (requestedTab && requestedTab !== initialTab) {
+    replaceDashboardTabUrl(initialTab);
+  }
+  return initialTab;
+}
 
 export default async function renderDashboard(container, _route, _params) {
   if (!(await requireAuth())) return;
 
   const tabs = getDashboardTabs();
+  const initialTab = getInitialDashboardTab(tabs);
+  const sessionId = `dashboard-${++dashboardSessionCounter}`;
+  const loadedTabs = new Set();
+  const handleDashboardTabChange = createDashboardTabChangeHandler(sessionId, loadedTabs);
+  window.addEventListener('dashboard-tab-changed', handleDashboardTabChange);
 
   container.innerHTML = `
     <style>
@@ -67,7 +100,7 @@ export default async function renderDashboard(container, _route, _params) {
         background: var(--card-bg) !important;
       }
     </style>
-    <div x-data="dashboardPage" x-init="init()">
+    <div x-data="dashboardPage('${initialTab}', '${sessionId}')" x-init="init()">
       <div class="row g-3">
         <div class="col-md-3">
           <div class="dashboard-sidebar">
@@ -141,10 +174,11 @@ export default async function renderDashboard(container, _route, _params) {
 
   registerRouteCleanup(() => {
     window.removeEventListener('resize', syncDashboardMobileNav);
+    window.removeEventListener('dashboard-tab-changed', handleDashboardTabChange);
+    loadedTabs.clear();
     document.body.classList.remove('has-bottom-bar');
     document.body.classList.remove('has-floating-bar');
   });
-  registerRouteCleanup(() => window.removeEventListener('dashboard-tab-changed', handleDashboardTabChange));
 }
 
 

@@ -41,24 +41,40 @@ export function getDashboardTabs() {
   ];
 }
 
-export async function loadDashboardTab(tabId, content) {
+export function getDefaultDashboardTab(tabs = getDashboardTabs()) {
+  return tabs[0]?.id || 'overview';
+}
+
+export function resolveDashboardTab(tabId, tabs = getDashboardTabs()) {
+  const requested = String(tabId || '').trim();
+  const allowedIds = new Set(tabs.map(tab => tab.id));
+  return allowedIds.has(requested) ? requested : getDefaultDashboardTab(tabs);
+}
+
+export async function loadDashboardTab(tabId, content, options = {}) {
+  const isActive = typeof options.isActive === 'function'
+    ? options.isActive
+    : () => Boolean(content?.isConnected);
+  if (!isActive()) return;
+
   const user = getUser();
   const skeletonType = tabId === 'orders' ? 'table' : tabId === 'products' || tabId === 'profile' || tabId === 'password' ? 'form' : 'page';
   showLoading(content, skeletonType);
+  if (!isActive()) return;
 
   switch (tabId) {
-    case 'overview': return loadOverview(content, user);
-    case 'orders': return loadOrders(content);
-    case 'products': return loadProducts(content);
-    case 'auctions': return loadAuctions(content);
-    case 'wishlist': return loadWishlist(content);
-    case 'notifications': return loadNotifications(content);
-    case 'profile': renderProfile(content, user, { onSubmit: handleProfileUpdate.bind(null, content) }); break;
-    case 'password': renderChangePassword(content, { onSubmit: handlePasswordChange }); break;
+    case 'overview': return loadOverview(content, user, isActive);
+    case 'orders': return loadOrders(content, isActive);
+    case 'products': return loadProducts(content, isActive);
+    case 'auctions': if (isActive()) return loadAuctions(content); break;
+    case 'wishlist': return loadWishlist(content, isActive);
+    case 'notifications': return loadNotifications(content, isActive);
+    case 'profile': if (isActive()) renderProfile(content, user, { onSubmit: handleProfileUpdate.bind(null, content) }); break;
+    case 'password': if (isActive()) renderChangePassword(content, { onSubmit: handlePasswordChange }); break;
   }
 }
 
-async function loadOverview(content, user) {
+async function loadOverview(content, user, isActive) {
   const stats = {};
   try {
     stats.ordersCount = 0;
@@ -97,16 +113,19 @@ async function loadOverview(content, user) {
       } catch {}
     }
   } catch {}
+  if (!isActive()) return;
   renderOverview(content, user, stats);
 }
 
-async function loadOrders(content) {
+async function loadOrders(content, isActive) {
   let page = 1;
   const pageSize = 10;
   async function reload() {
+    if (!isActive()) return;
     showLoading(content, 'table');
     try {
       const data = await fetchOrders(page, pageSize);
+      if (!isActive()) return;
       const orders = data.items || data.data || [];
       const total = data.totalCount || data.total || orders.length;
       const totalPages = Math.ceil(total / pageSize);
@@ -121,15 +140,17 @@ async function loadOrders(content) {
         onPageChange: (newPage) => { page = newPage; reload(); },
       });
     } catch (e) {
+      if (!isActive()) return;
       renderOrders(content, { orders: [], page: 1, totalPages: 0, onCancel: null, onPageChange: null, error: e.message });
     }
   }
   await reload();
 }
 
-async function loadProducts(content) {
+async function loadProducts(content, isActive) {
   try {
     const data = await fetchMyProducts(50);
+    if (!isActive()) return;
     const products = data.items || data.data || data || [];
     renderMyProducts(content, {
       products,
@@ -169,6 +190,7 @@ async function loadProducts(content) {
       },
     });
   } catch (_e) {
+    if (!isActive()) return;
     renderMyProducts(content, { products: [], categories: [], sellerRoles: null, error: true });
   }
 }
@@ -184,9 +206,10 @@ async function loadAuctions(content) {
   });
 }
 
-async function loadWishlist(content) {
+async function loadWishlist(content, isActive) {
   try {
     const data = await fetchWishlist(50);
+    if (!isActive()) return;
     const items = data.items || data.data || data;
     renderWishlist(content, {
       items,
@@ -198,13 +221,15 @@ async function loadWishlist(content) {
       },
     });
   } catch (e) {
+    if (!isActive()) return;
     renderWishlist(content, { items: [], onRemove: null, onAddToCart: null, error: e.message });
   }
 }
 
-async function loadNotifications(content) {
+async function loadNotifications(content, isActive) {
   try {
     const data = await fetchNotifications(50);
+    if (!isActive()) return;
     const notifs = normalizeNotifications(data);
     syncNotifBadgeCount(countUnreadNotifications(notifs));
     renderNotifications(content, {
@@ -217,6 +242,7 @@ async function loadNotifications(content) {
       },
     });
   } catch (e) {
+    if (!isActive()) return;
     renderNotifications(content, { notifications: [], onMarkRead: null, onMarkAllRead: null, error: e.message });
   }
 }

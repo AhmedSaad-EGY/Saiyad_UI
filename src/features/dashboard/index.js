@@ -2,19 +2,38 @@ import Alpine from 'alpinejs';
 import { t } from '../../shared/utils/i18n.js';
 import { setPageMeta } from '../../shared/utils/seo.js';
 import { showToast } from '../../shared/utils/ui.js';
+import { getDashboardTabs, resolveDashboardTab } from './tabs.js';
 
-Alpine.data('dashboardPage', () => ({
+function replaceDashboardTabUrl(tabId) {
+  const qp = new URLSearchParams(location.hash.split('?')[1] || '');
+  if (tabId === 'overview') qp.delete('tab');
+  else qp.set('tab', tabId);
+  const qs = qp.toString();
+  history.replaceState(null, '', qs ? `#/dashboard?${qs}` : '#/dashboard');
+}
+
+Alpine.data('dashboardPage', (initialTab = 'overview', sessionId = '') => ({
   activeTab: 'overview',
+  sessionId,
   tourStep: 0,
   showTour: false,
   tourLastFocus: null,
+  tourTimer: null,
 
   init() {
     setPageMeta(t('dash.title'), undefined, true);
+    const tabs = getDashboardTabs();
     const params = new URLSearchParams(location.hash.split('?')[1] || '');
-    this.activeTab = params.get('tab') || 'overview';
+    const requestedTab = params.get('tab') || initialTab;
+    const resolvedTab = resolveDashboardTab(requestedTab, tabs);
+    this.activeTab = resolvedTab;
+    if (params.get('tab') && params.get('tab') !== resolvedTab) {
+      replaceDashboardTabUrl(resolvedTab);
+    }
     this.$nextTick(() => {
-      window.dispatchEvent(new CustomEvent('dashboard-tab-changed', { detail: { tabId: this.activeTab, firstLoad: true } }));
+      window.dispatchEvent(new CustomEvent('dashboard-tab-changed', {
+        detail: { tabId: this.activeTab, firstLoad: true, sessionId: this.sessionId },
+      }));
       this.checkFirstVisitTour();
     });
     if (window.innerWidth < 768) document.body.classList.add('has-bottom-bar');
@@ -22,8 +41,9 @@ Alpine.data('dashboardPage', () => ({
 
   checkFirstVisitTour() {
     if (!localStorage.getItem('sayiad_tour_completed')) {
-      setTimeout(() => {
+      this.tourTimer = setTimeout(() => {
         this.startTour();
+        this.tourTimer = null;
       }, 1500);
     }
   },
@@ -125,14 +145,21 @@ Alpine.data('dashboardPage', () => ({
   },
 
   switchTab(tabId) {
-    if (tabId === this.activeTab) return;
-    this.activeTab = tabId;
-    const qp = new URLSearchParams(location.hash.split('?')[1] || '');
-    if (tabId === 'overview') qp.delete('tab');
-    else qp.set('tab', tabId);
-    const qs = qp.toString();
-    history.replaceState(null, '', qs ? `#/dashboard?${qs}` : '#/dashboard');
-    window.dispatchEvent(new CustomEvent('dashboard-tab-changed', { detail: { tabId } }));
+    const resolvedTab = resolveDashboardTab(tabId, getDashboardTabs());
+    replaceDashboardTabUrl(resolvedTab);
+    if (resolvedTab === this.activeTab) return;
+    this.activeTab = resolvedTab;
+    window.dispatchEvent(new CustomEvent('dashboard-tab-changed', {
+      detail: { tabId: resolvedTab, sessionId: this.sessionId },
+    }));
+  },
+
+  destroy() {
+    if (this.tourTimer) {
+      clearTimeout(this.tourTimer);
+      this.tourTimer = null;
+    }
+    document.querySelectorAll('.tour-highlight').forEach(el => el.classList.remove('tour-highlight'));
   },
 }));
 
