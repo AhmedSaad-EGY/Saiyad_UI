@@ -204,8 +204,8 @@
     inline-size: 100%;
   }
 
-  .products-page-alpine .search-toggle-btn {
-    display: inline-flex;
+  .products-page-alpine .search-bar .search-toggle-btn.search-toggle-btn {
+    display: inline-flex !important;
     flex: 1 1 auto;
     align-items: center;
     gap: var(--space-2);
@@ -220,24 +220,24 @@
     box-shadow: var(--shadow-sm);
   }
 
-  .products-page-alpine .search-toggle-btn i {
+  .products-page-alpine .search-bar .search-toggle-btn.search-toggle-btn i {
     color: var(--text-secondary);
   }
 
-  .products-page-alpine .search-toggle-btn:hover,
-  .products-page-alpine .search-toggle-btn:focus-visible {
+  .products-page-alpine .search-bar .search-toggle-btn.search-toggle-btn:hover,
+  .products-page-alpine .search-bar .search-toggle-btn.search-toggle-btn:focus-visible {
     border-color: var(--border-focus);
     background: var(--card-bg);
     color: var(--text);
   }
 
-  .products-page-alpine .search-toggle-btn:hover i,
-  .products-page-alpine .search-toggle-btn:focus-visible i {
+  .products-page-alpine .search-bar .search-toggle-btn.search-toggle-btn:hover i,
+  .products-page-alpine .search-bar .search-toggle-btn.search-toggle-btn:focus-visible i {
     color: var(--primary);
   }
 
-  .products-mobile-search-label {
-    display: inline-block;
+  .products-page-alpine .search-bar .products-mobile-search-label {
+    display: inline-block !important;
     overflow: hidden;
     color: inherit;
     text-align: start;
@@ -245,8 +245,8 @@
     white-space: nowrap;
   }
 
-  .products-page-alpine .filter-toggle-btn {
-    display: inline-flex;
+  .products-page-alpine .search-bar .filter-toggle-btn.filter-toggle-btn {
+    display: inline-flex !important;
     align-items: center;
     justify-content: center;
     flex: 0 0 var(--control-height-lg);
@@ -258,8 +258,8 @@
     box-shadow: var(--shadow-sm);
   }
 
-  .products-page-alpine .filter-toggle-btn:hover,
-  .products-page-alpine .filter-toggle-btn:focus-visible {
+  .products-page-alpine .search-bar .filter-toggle-btn.filter-toggle-btn:hover,
+  .products-page-alpine .search-bar .filter-toggle-btn.filter-toggle-btn:focus-visible {
     border-color: var(--border-focus);
     background: var(--card-bg);
     color: var(--primary);
