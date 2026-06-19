@@ -32,7 +32,7 @@ export function renderSearchBar() {
         <a href="#/products" class="btn btn-ghost btn-sm" @click.prevent="resetFilters()">${t('common.clearFilters')}</a>
       </div>
       <div class="d-flex gap-2 align-items-center">
-        <button class="btn btn-outline btn-icon search-toggle-btn" @click="openSearchOverlay()" aria-label="${t('common.search')}"><i class="fas fa-search"></i></button>
+        <button class="btn btn-outline btn-icon search-toggle-btn" @click="openSearchOverlay()" aria-label="${t('common.search')}"><i class="fas fa-search"></i><span class="products-mobile-search-label">${t('products.search')}</span></button>
         <button class="btn btn-outline btn-icon filter-toggle-btn" @click="filterSheetOpen = true" aria-label="${t('products.filters')}"><i class="fas fa-sliders-h"></i></button>
         <div class="d-none d-md-flex btn-group rounded-pill overflow-hidden products-view-toggle">
           <button class="btn btn-sm px-3" :class="!isListView ? 'btn-primary' : 'btn-ghost'" @click="isListView = false" aria-label="${t('products.gridView')}" title="${t('products.gridView')}"><i class="fas fa-th-large"></i></button>

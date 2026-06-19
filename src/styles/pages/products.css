@@ -57,6 +57,10 @@
   flex: 0 0 auto;
 }
 
+.products-mobile-search-label {
+  display: none;
+}
+
 .products-page-alpine .filter-chips {
   margin-block: 0 var(--space-5);
 }
@@ -180,6 +184,9 @@
     grid-template-columns: 1fr;
     gap: var(--space-3);
     padding: var(--space-3);
+    background: transparent;
+    border-color: transparent;
+    box-shadow: none;
   }
 
   .products-page-alpine .search-bar > .form-input {
@@ -191,7 +198,65 @@
   }
 
   .products-page-alpine .search-bar > .d-flex {
+    display: flex;
     justify-content: space-between;
+    gap: var(--space-3);
+    inline-size: 100%;
+  }
+
+  .products-page-alpine .search-toggle-btn {
+    flex: 1 1 auto;
+    justify-content: flex-start;
+    min-inline-size: 0;
+    min-block-size: var(--control-height-lg);
+    border-color: var(--border);
+    border-radius: var(--radius-full);
+    background: var(--input-bg);
+    color: var(--text-secondary);
+    padding-inline: var(--space-4);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .products-page-alpine .search-toggle-btn i {
+    color: var(--text-secondary);
+  }
+
+  .products-page-alpine .search-toggle-btn:hover,
+  .products-page-alpine .search-toggle-btn:focus-visible {
+    border-color: var(--border-focus);
+    background: var(--card-bg);
+    color: var(--text);
+  }
+
+  .products-page-alpine .search-toggle-btn:hover i,
+  .products-page-alpine .search-toggle-btn:focus-visible i {
+    color: var(--primary);
+  }
+
+  .products-mobile-search-label {
+    display: inline-block;
+    overflow: hidden;
+    color: inherit;
+    text-align: start;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .products-page-alpine .filter-toggle-btn {
+    flex: 0 0 var(--control-height-lg);
+    min-inline-size: var(--control-height-lg);
+    min-block-size: var(--control-height-lg);
+    border-color: var(--border);
+    background: var(--input-bg);
+    color: var(--text-secondary);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .products-page-alpine .filter-toggle-btn:hover,
+  .products-page-alpine .filter-toggle-btn:focus-visible {
+    border-color: var(--border-focus);
+    background: var(--card-bg);
+    color: var(--primary);
   }
 
   .products-page-alpine .filter-chips {
