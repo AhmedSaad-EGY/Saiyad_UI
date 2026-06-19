@@ -4,6 +4,7 @@ import '../features/products/search.js';
 import { renderSearchBar } from '../widgets/products/render-search-bar.js';
 import { renderProductGrid } from '../widgets/products/render-product-grid.js';
 import { renderMobileOverlays } from '../widgets/products/render-mobile-overlays.js';
+import '../styles/pages/products.css';
 
 export default async function renderProducts(_container, _fullPath, _params) {
   setPageMeta(t('products.metaTitle'), t('products.metaDesc'));
