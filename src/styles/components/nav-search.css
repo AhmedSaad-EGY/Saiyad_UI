@@ -133,24 +133,32 @@
   outline-offset: calc(-1 * var(--focus-ring-width));
 }
 
-@media (width >= 1200px) {
+@media (width >= 992px) {
   .nav-search {
     margin: 0;
-    flex: 1 1 calc(var(--space-20) * 3 + var(--space-4));
-    min-width: calc(var(--space-20) * 2 + var(--space-12));
+    flex: 1 1 calc(var(--space-20) * 3);
+    min-width: calc(var(--space-20) * 2);
     max-width: calc(var(--space-20) * 4);
   }
 }
 
-@media (width >= 1200px) {
+@media (width >= 992px) and (width < 1200px) {
   .nav-search {
-    flex: 1 1 calc(var(--space-20) * 2 + var(--space-16) + var(--space-4));
-    min-width: 280px;
-    max-width: calc(var(--space-20) * 2 + var(--space-16) + var(--space-4));
+    flex-basis: calc(var(--space-20) * 2 + var(--space-4));
+    min-width: calc(var(--space-20) * 2);
+    max-width: calc(var(--space-20) * 3);
   }
 }
 
-@media (width < 1200px) {
+@media (width >= 1200px) {
+  .nav-search {
+    flex-basis: calc(var(--space-20) * 3 + var(--space-10));
+    min-width: calc(var(--space-20) * 3);
+    max-width: calc(var(--space-20) * 4);
+  }
+}
+
+@media (width < 992px) {
   .nav-search {
     max-width: 100%;
     min-height: 44px;

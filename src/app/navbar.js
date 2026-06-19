@@ -138,7 +138,7 @@ document.getElementById('userDropdown')?.addEventListener('click', (e) => {
 });
 
 const userMenuEl = document.getElementById('userMenu');
-const canHoverDropdown = window.matchMedia('(width >= 1200px) and (hover: hover) and (pointer: fine)');
+const canHoverDropdown = window.matchMedia('(width >= 992px) and (hover: hover) and (pointer: fine)');
 userMenuEl?.addEventListener('mouseenter', () => {
   if (!canHoverDropdown.matches) return;
   clearUserDropdownCloseTimer();
@@ -190,7 +190,7 @@ document.getElementById('navDrawer')?.addEventListener('click', (e) => {
 let prevWidth = window.innerWidth;
 window.addEventListener('resize', () => {
   const width = window.innerWidth;
-  if (prevWidth < 1200 && width >= 1200) {
+  if (prevWidth < 992 && width >= 992) {
     const drawer = document.getElementById('navDrawer');
     if (drawer) {
       drawer.style.transition = 'none';
@@ -201,7 +201,7 @@ window.addEventListener('resize', () => {
       });
     }
   }
-  if (prevWidth >= 1200 && width < 1200) {
+  if (prevWidth >= 992 && width < 992) {
     syncDrawerA11y();
   }
   prevWidth = width;
