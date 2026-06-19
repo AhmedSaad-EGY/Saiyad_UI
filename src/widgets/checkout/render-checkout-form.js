@@ -120,6 +120,10 @@ export function renderCheckoutForm() {
               <h3 class="mb-0">${t('cart.paymentMethod')}</h3>
             </div>
             <div class="card-body">
+              <div class="alert alert-info mb-3">
+                <i class="fas fa-info-circle" aria-hidden="true"></i>
+                <span>${t('cart.demoPaymentNotice')}</span>
+              </div>
               <div class="checkout-wallet-panel mb-3">
                 <i class="fas fa-wallet fs-5 text-primary"></i>
                 <div>

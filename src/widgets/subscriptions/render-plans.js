@@ -93,6 +93,10 @@ export function renderPlans(container, { plans, mySubscription, walletBalance, i
             </div></div>
           </div>` : ''}
       </div>
+      <div class="alert alert-info">
+        <i class="fas fa-info-circle" aria-hidden="true"></i>
+        <span>${t('subscriptions.demoPaymentNote')}</span>
+      </div>
 
       ${plans.length > 0 ? `
       <div class="subscriptions-grid" id="plansGrid">

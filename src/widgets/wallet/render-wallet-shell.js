@@ -48,6 +48,7 @@ export function renderWalletShell() {
         <div class="modal-body">
           <div class="form-group">
             <label for="topUpAmount" data-i18n="wallet.amountLabel">Amount (EGP)</label>
+            <p class="text-muted" data-i18n="wallet.topUpHelp">${t('wallet.topUpHelp')}</p>
             <input type="number" id="topUpAmount" min="10" max="50000"
                    placeholder="${t('wallet.minimumDeposit')}" class="form-control"
                    aria-describedby="topUpAmountError" />
