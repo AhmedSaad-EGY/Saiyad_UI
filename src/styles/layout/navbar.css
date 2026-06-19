@@ -9,7 +9,11 @@
   top: 0;
   inset-inline: 0;
   z-index: var(--z-navbar);
+  display: flex;
+  align-items: stretch;
+  flex-wrap: nowrap;
   height: var(--navbar-height);
+  padding: 0;
   background: var(--nav-bg-gradient);
   background-color: var(--nav-bg);
   border-bottom: 1px solid var(--border);
@@ -35,6 +39,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: nowrap;
   gap: var(--space-3);
   width: 100%;
   max-width: 1440px;
@@ -50,6 +55,8 @@
   gap: var(--space-2);
   min-height: var(--control-height);
   color: var(--primary);
+  margin: 0;
+  padding: 0;
   font-weight: var(--weight-bold);
   text-decoration: none;
   border-radius: var(--radius);
@@ -187,10 +194,6 @@
 }
 
 [dir="rtl"] .nav-drawer {
-  inset-inline-start: auto;
-  inset-inline-end: 0;
-  border-inline-start: 1px solid var(--border);
-  border-inline-end: 0;
   box-shadow: var(--shadow-drawer-panel-1), var(--shadow-drawer-panel-2);
   transform: translateX(102%);
 }
@@ -447,10 +450,14 @@ body.nav-open .bottom-nav {
 
   .navbar-desktop {
     display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
     align-items: center;
     justify-content: flex-end;
     gap: var(--space-3);
     min-width: 0;
+    height: 100%;
+    overflow: visible;
     flex: 1 1 auto;
   }
 
@@ -461,10 +468,19 @@ body.nav-open .bottom-nav {
 
   .navbar-nav--desktop {
     display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
     align-items: center;
     gap: var(--space-1);
     min-width: 0;
     flex: 0 1 auto;
+  }
+
+  .navbar-nav--desktop > li {
+    display: flex;
+    align-items: center;
+    flex: 0 0 auto;
+    height: 100%;
   }
 
   .navbar-nav--desktop .nav-link {
@@ -538,6 +554,8 @@ body.nav-open .bottom-nav {
 
   .nav-toggles {
     display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
     align-items: center;
     gap: var(--space-2);
     flex: 0 0 auto;
@@ -551,6 +569,8 @@ body.nav-open .bottom-nav {
 
   .nav-actions--desktop {
     display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
     align-items: center;
     gap: var(--space-2);
     min-width: 0;
