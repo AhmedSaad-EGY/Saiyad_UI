@@ -66,8 +66,9 @@ export function renderPlans(container, { plans, mySubscription, walletBalance, i
   const { text: subscriptionRemainingText } = getSubscriptionRemainingLabel(mySubscription);
 
   container.innerHTML = `
-    <div class="section-header"><h2><i class="fas fa-crown" aria-hidden="true"></i> ${t('subscriptions.title')}</h2></div>
-    <div>
+    <div class="subscription-page">
+    <div class="section-header subscription-section-header"><h2><i class="fas fa-crown" aria-hidden="true"></i> ${t('subscriptions.title')}</h2></div>
+    <div class="subscription-layout">
       <div class="card mb-4 border-0 subscription-hero">
         <div class="card-body">
           <h3 class="mb-1 mt-0">${escapeHtml(info.heading)}</h3>
@@ -75,17 +76,17 @@ export function renderPlans(container, { plans, mySubscription, walletBalance, i
         </div>
       </div>
 
-      <div class="d-flex gap-3 flex-wrap mb-4">
+      <div class="subscription-summary-grid">
         ${walletBalance !== null ? `
-          <div class="card card-sm d-flex align-items-center gap-3 p-3">
-            <i class="fas fa-wallet fs-6 text-primary" aria-hidden="true"></i>
-            <div><small class="text-muted">${t('wallet.available')}</small>
+          <div class="card card-sm subscription-summary-card">
+            <i class="fas fa-wallet subscription-summary-icon" aria-hidden="true"></i>
+            <div class="subscription-summary-copy"><small class="text-muted">${t('wallet.available')}</small>
             <div class="fw-bold">${formatPrice(walletBalance)}</div></div>
           </div>` : ''}
         ${mySubscription ? `
-          <div class="card card-sm d-flex align-items-center gap-3 p-3">
-            <i class="fas fa-crown fs-6 text-primary" aria-hidden="true"></i>
-            <div><small class="text-muted">${t('subscriptions.currentPlan')}</small>
+          <div class="card card-sm subscription-summary-card">
+            <i class="fas fa-crown subscription-summary-icon" aria-hidden="true"></i>
+            <div class="subscription-summary-copy"><small class="text-muted">${t('subscriptions.currentPlan')}</small>
             <div class="fw-bold">
               ${escapeHtml(translateSubscriptionText(mySubscription.tier || mySubscription.planName, 'subscriptions.noPlan'))}
               ${subscriptionRemainingText ? `<span class="text-muted fw-normal subscription-meta-date">· <span>${escapeHtml(subscriptionRemainingText)}</span></span>` : ''}
@@ -94,7 +95,7 @@ export function renderPlans(container, { plans, mySubscription, walletBalance, i
       </div>
 
       ${plans.length > 0 ? `
-      <div class="grid grid-3 subscriptions-grid" id="plansGrid">
+      <div class="subscriptions-grid" id="plansGrid">
         ${plans.map((p) => {
           const { isCurrent, insufficient, isPop } = computePlanStatus(p, mySubscription, walletBalance);
           const backendTier = resolveBackendSubscriptionTier(p.tier || p.name);
@@ -104,21 +105,21 @@ export function renderPlans(container, { plans, mySubscription, walletBalance, i
           <div class="card subscription-card${isPop ? ' subscription-card-popular' : ''}">
             ${isPop ? `<span class="position-absolute subscription-popular-badge">${t('subscriptions.popular')}</span>` : ''}
             <div class="card-body subscription-card-body">
-            <div class="text-center mb-3">
-              <i class="fas ${getPlanIcon(p.tier)} text-primary mb-2 subscription-card-icon" aria-hidden="true"></i>
+            <div class="subscription-card-header">
+              <i class="fas ${getPlanIcon(p.tier)} subscription-card-icon" aria-hidden="true"></i>
               <h3>${escapeHtml(displayName)}</h3>
-              ${displayDescription ? `<p class="text-muted subscription-muted">${escapeHtml(displayDescription)}</p>` : ''}
+              ${displayDescription ? `<p class="subscription-muted">${escapeHtml(displayDescription)}</p>` : ''}
             </div>
-            <div class="text-center mb-3 subscription-price">
+            <div class="subscription-price">
               ${p.price > 0
-                ? `<span class="fs-1 fw-bold">${formatPrice(p.price)}</span>`
-                : `<span class="fs-1 fw-bold">${t('subscriptions.free')}</span>`
+                ? `<span class="subscription-price-value">${formatPrice(p.price)}</span>`
+                : `<span class="subscription-price-value">${t('subscriptions.free')}</span>`
               }
-              <span class="text-muted">${p.billingCycle === 'Yearly' ? ` ${t('subscriptions.perYear')}` : p.billingCycle === 'Monthly' ? ` ${t('subscriptions.perMonth')}` : ''}</span>
+              <span class="subscription-billing-cycle">${p.billingCycle === 'Yearly' ? ` ${t('subscriptions.perYear')}` : p.billingCycle === 'Monthly' ? ` ${t('subscriptions.perMonth')}` : ''}</span>
             </div>
-            <ul class="list-unstyled mb-3 subscription-feature-list">
+            <ul class="subscription-feature-list">
               ${(p.features || []).map(f => `
-                <li class="py-2 border-divider-bottom"><i class="fas fa-check text-success me-2 subscription-feature-icon" aria-hidden="true"></i>${escapeHtml(translateSubscriptionText(f))}</li>
+                <li class="subscription-feature-item"><i class="fas fa-check subscription-feature-icon" aria-hidden="true"></i><span>${escapeHtml(translateSubscriptionText(f))}</span></li>
               `).join('')}
             </ul>
             <button class="btn ${isCurrent ? 'btn-ghost' : insufficient ? 'btn-outline' : 'btn-primary'} sub-upgrade-btn"
@@ -135,6 +136,7 @@ export function renderPlans(container, { plans, mySubscription, walletBalance, i
         <h3>${t('subscriptions.noPlans')}</h3>
         <p class="text-muted">${t('subscriptions.noPlansDesc')}</p>
       </div>`}
+    </div>
     </div>`;
 
   const plansGrid = document.getElementById('plansGrid');
