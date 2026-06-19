@@ -30,7 +30,6 @@ const BACKEND_TIER_MAP = {
   basic: 'Basic',
   pro: 'Pro',
   enterprise: 'Enterprise',
-  premium: 'Enterprise',
 };
 
 export function resolveBackendSubscriptionTier(value) {

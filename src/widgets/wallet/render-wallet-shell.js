@@ -20,7 +20,7 @@ export function renderWalletShell() {
           </button>
           <p class="wallet-payment-note" style="font-size:0.75rem;opacity:0.55;margin-top:0.5rem">
             <i class="fas fa-info-circle" aria-hidden="true"></i>
-            <span data-i18n="wallet.paymentNote">Top-up requests are processed manually within 24 hours.</span>
+            <span data-i18n="wallet.paymentNote">Add demo balance instantly for testing. This does not represent real money.</span>
           </p>
         </div>
 
@@ -48,7 +48,7 @@ export function renderWalletShell() {
         <div class="modal-body">
           <div class="form-group">
             <label for="topUpAmount" data-i18n="wallet.amountLabel">Amount (EGP)</label>
-            <p class="text-muted" data-i18n="wallet.topUpHelp">${t('wallet.topUpHelp')}</p>
+            <p class="text-muted">${t('wallet.topUpHelp')}</p>
             <input type="number" id="topUpAmount" min="10" max="50000"
                    placeholder="${t('wallet.minimumDeposit')}" class="form-control"
                    aria-describedby="topUpAmountError" />
