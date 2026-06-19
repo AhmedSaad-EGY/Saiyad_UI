@@ -201,6 +201,16 @@ export function triggerConfetti() {
   }
 }
 
+function setModalBackgroundInert(activeOverlay) {
+  const inertSiblings = [];
+  [...document.body.children].forEach((child) => {
+    if (child === activeOverlay || child.hasAttribute("inert")) return;
+    child.setAttribute("inert", "");
+    inertSiblings.push(child);
+  });
+  return () => inertSiblings.forEach((child) => child.removeAttribute("inert"));
+}
+
 export function showConfirm(title, message, options = {}) {
   const {
     type = "primary",
@@ -213,6 +223,7 @@ export function showConfirm(title, message, options = {}) {
     const prevFocus = document.activeElement;
     const overlay = document.createElement("div");
     const modalId = `confirmModal-${Date.now()}`;
+    let restoreBackgroundInert = () => {};
     overlay.className = "modal-overlay show";
     document.body.classList.add("modal-open");
     overlay.setAttribute("role", "dialog");
@@ -245,6 +256,7 @@ export function showConfirm(title, message, options = {}) {
       closed = true;
       document.body.classList.remove("modal-open");
       document.removeEventListener("keydown", onKey);
+      restoreBackgroundInert();
       overlay.remove();
       if (prevFocus && typeof prevFocus.focus === 'function') prevFocus.focus();
     }
@@ -281,6 +293,7 @@ export function showConfirm(title, message, options = {}) {
     });
     document.addEventListener("keydown", onKey);
     document.body.appendChild(overlay);
+    restoreBackgroundInert = setModalBackgroundInert(overlay);
     animate(overlay, 'fadeIn', { duration: '0.2s' });
     setTimeout(() => {
       if (confirmBtn) confirmBtn.focus();
@@ -305,6 +318,7 @@ export function showTextPrompt(title, options = {}) {
     const prevFocus = document.activeElement;
     const overlay = document.createElement("div");
     const fieldId = `promptField-${Date.now()}`;
+    let restoreBackgroundInert = () => {};
     overlay.className = "modal-overlay show";
     document.body.classList.add("modal-open");
     overlay.setAttribute("role", "dialog");
@@ -337,6 +351,7 @@ export function showTextPrompt(title, options = {}) {
       closed = true;
       document.body.classList.remove("modal-open");
       document.removeEventListener("keydown", onKey);
+      restoreBackgroundInert();
       overlay.remove();
       if (prevFocus && typeof prevFocus.focus === 'function') prevFocus.focus();
       resolve(result);
@@ -398,6 +413,7 @@ export function showTextPrompt(title, options = {}) {
     });
     document.addEventListener("keydown", onKey);
     document.body.appendChild(overlay);
+    restoreBackgroundInert = setModalBackgroundInert(overlay);
     animate(overlay, 'fadeIn', { duration: '0.2s' });
     updateSubmitState();
     setTimeout(() => {

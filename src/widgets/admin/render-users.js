@@ -4,6 +4,7 @@ import { manualPaginationHtml, wirePagination } from '../ui/pagination.js';
 import { showToast } from '../ui/toast.js';
 import { approveRoleRequest, rejectRoleRequest } from '../../features/admin/index.js';
 import { showFormModal } from './render-plans.js';
+import { showConfirm } from '../ui/modal.js';
 
 let _page = 1;
 const PAGE_SIZE = 20;
@@ -11,6 +12,10 @@ const PAGE_SIZE = 20;
 function setButtonDisabled(btn, disabled) {
   if (!btn?.isConnected) return;
   btn.disabled = disabled;
+}
+
+function userLabel(user) {
+  return user?.fullName || user?.name || user?.email || `#${user?.id || ''}`;
 }
 
 export async function renderUsers(container, { fetchUsers, onToggleUser } = {}) {
@@ -90,7 +95,8 @@ export async function renderUsers(container, { fetchUsers, onToggleUser } = {}) 
                 <td>
                   <button class="btn btn-outline btn-sm toggle-user-btn"
                     data-user-id="${escapeHtml(String(u.id))}"
-                    data-active="${u.isActive !== false}">
+                    data-active="${u.isActive !== false}"
+                    data-user-label="${escapeHtml(userLabel(u))}">
                     ${u.isActive !== false ? t("admin.suspend") : t("admin.activate")}
                   </button>
                 </td>
@@ -105,7 +111,18 @@ export async function renderUsers(container, { fetchUsers, onToggleUser } = {}) 
 
     panel.querySelectorAll(".toggle-user-btn").forEach(btn => {
       btn.addEventListener("click", async () => {
-        btn.disabled = true;
+        const isActive = btn.dataset.active === "true";
+        const confirmTitle = isActive ? t("admin.confirmSuspendUser") : t("admin.confirmActivateUser");
+        const confirmMessage = isActive
+          ? t("admin.confirmSuspendUserDesc", { user: btn.dataset.userLabel || btn.dataset.userId })
+          : t("admin.confirmActivateUserDesc", { user: btn.dataset.userLabel || btn.dataset.userId });
+        const ok = await showConfirm(confirmTitle, confirmMessage, {
+          type: isActive ? "danger" : "success",
+          confirmText: isActive ? t("admin.suspend") : t("admin.activate"),
+        });
+        if (!ok) return;
+
+        setButtonDisabled(btn, true);
         try {
           await onToggleUser(btn.dataset.userId);
           showToast(t("admin.userToggled"), "success");
@@ -119,7 +136,19 @@ export async function renderUsers(container, { fetchUsers, onToggleUser } = {}) 
 
     panel.querySelectorAll(".approve-role-btn").forEach(btn => {
       btn.addEventListener("click", async () => {
-        btn.disabled = true;
+        const row = btn.closest("tr");
+        const target = row?.querySelector("td:nth-child(1)")?.textContent?.trim()
+          || row?.querySelector("td:nth-child(2)")?.textContent?.trim()
+          || btn.dataset.userId;
+        const requestedRole = row?.querySelector(".category-tag")?.textContent?.trim() || "-";
+        const ok = await showConfirm(
+          t("admin.confirmApproveRole"),
+          t("admin.confirmApproveRoleDesc", { user: target, role: requestedRole }),
+          { type: "success", confirmText: t("admin.approve") }
+        );
+        if (!ok) return;
+
+        setButtonDisabled(btn, true);
         try {
           await approveRoleRequest(btn.dataset.userId);
           showToast(t("admin.roleApproved"), "success");
@@ -132,7 +161,19 @@ export async function renderUsers(container, { fetchUsers, onToggleUser } = {}) 
     });
 
     panel.querySelectorAll(".reject-role-btn").forEach(btn => {
-      btn.addEventListener("click", () => {
+      btn.addEventListener("click", async () => {
+        const row = btn.closest("tr");
+        const target = row?.querySelector("td:nth-child(1)")?.textContent?.trim()
+          || row?.querySelector("td:nth-child(2)")?.textContent?.trim()
+          || btn.dataset.userId;
+        const requestedRole = row?.querySelector(".category-tag")?.textContent?.trim() || "-";
+        const ok = await showConfirm(
+          t("admin.confirmRejectRole"),
+          t("admin.confirmRejectRoleDesc", { user: target, role: requestedRole }),
+          { type: "danger", confirmText: t("admin.reject") }
+        );
+        if (!ok) return;
+
         showFormModal(t("admin.rejectRoleRequest"), `
           <div class="form-group">
             <label class="form-label">${t("admin.rejectionReason")} (${t("common.optional")})</label>
