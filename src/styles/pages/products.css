@@ -265,6 +265,23 @@
     color: var(--primary);
   }
 
+  .products-page-alpine .filter-sheet-overlay {
+    z-index: var(--z-overlay);
+    align-items: flex-end;
+    padding: var(--space-3);
+    padding-block-end: calc(var(--space-3) + env(safe-area-inset-bottom, 0px));
+  }
+
+  .products-page-alpine .filter-sheet {
+    display: flex;
+    inline-size: min(100%, 420px);
+    max-block-size: min(82dvh, 640px);
+    overflow: hidden;
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
   .products-page-alpine .filter-chips {
     gap: var(--space-2);
     margin-block-end: var(--space-4);
