@@ -2,7 +2,7 @@ import { t, getCurrentLang } from '../../shared/utils/i18n.js';
 import { escapeHtml } from '../../shared/utils/dom.js';
 import { formatPrice, statusClass, tStatus, tCondition, renderStars } from '../../shared/utils/format.js';
 
-export function renderDetailPanel(p, isAvailable, isWishlisted, stockLevel, stockPct, avgRating, isAuth, isSeller) {
+export function renderDetailPanel(p, isAvailable, isWishlisted, stockLevel, stockPct, avgRating, isAuth, isSeller, canUseEcommerceActions, canReview) {
   const dir = getCurrentLang() === "ar" ? "left" : "right";
   const sellerId = p.sellerId ? encodeURIComponent(p.sellerId) : "";
   const auctionId = p.auctionId ? encodeURIComponent(p.auctionId) : "";
@@ -28,7 +28,7 @@ export function renderDetailPanel(p, isAvailable, isWishlisted, stockLevel, stoc
         </div>
         ${p.brand ? `<p class="detail-brand"><strong>${t("product.brand")}:</strong> ${escapeHtml(p.brand)}</p>` : ""}
         <div class="detail-desc mt-3">${escapeHtml(p.description || t("product.noDescription"))}</div>
-        <div class="detail-cta-group">
+        ${canUseEcommerceActions ? `<div class="detail-cta-group">
           <div class="detail-quantity-row">
             <div class="qty-btn-group">
               <button type="button" class="qty-btn" id="qtyMinus" aria-label="${t('product.decreaseQty')}">−</button>
@@ -48,7 +48,10 @@ export function renderDetailPanel(p, isAvailable, isWishlisted, stockLevel, stoc
             ${p.isAuctioned && p.auctionId ? `<a href="#/auction-detail?id=${auctionId}" class="btn btn-success btn-lg"><i class="fas fa-gavel"></i> ${t("product.viewAuction")}</a>` : !p.isAuctioned && isSeller ? `<button class="btn btn-primary btn-lg" id="startAuctionBtn"><i class="fas fa-gavel"></i> ${t("auction.startAuction")}</button>` : ""}
             ${p.sellerId ? `<a href="#/seller-profile?sellerId=${sellerId}" class="btn btn-outline btn-lg"><i class="fas fa-envelope"></i> ${t("product.contactSeller")}</a>` : ""}
           </div>
-        </div>
+        </div>` : `<div class="detail-aux-actions detail-aux-actions-readonly">
+          ${p.isAuctioned && p.auctionId ? `<a href="#/auction-detail?id=${auctionId}" class="btn btn-success btn-lg"><i class="fas fa-gavel"></i> ${t("product.viewAuction")}</a>` : !p.isAuctioned && isSeller ? `<button class="btn btn-primary btn-lg" id="startAuctionBtn"><i class="fas fa-gavel"></i> ${t("auction.startAuction")}</button>` : ""}
+          ${p.sellerId ? `<a href="#/seller-profile?sellerId=${sellerId}" class="btn btn-outline btn-lg"><i class="fas fa-envelope"></i> ${t("product.contactSeller")}</a>` : ""}
+        </div>`}
 
         ${p.sellerId ? `
         <a href="#/seller-profile?sellerId=${sellerId}" class="seller-info-card mt-4">
@@ -69,10 +72,10 @@ export function renderDetailPanel(p, isAvailable, isWishlisted, stockLevel, stoc
                 <option value="highest">${t("review.highestRated")}</option>
                 <option value="lowest">${t("review.lowestRated")}</option>
               </select>
-              ${isAuth ? `<button class="btn btn-outline btn-sm" id="showReviewForm">${t("review.writeReview")}</button>` : ""}
+              ${canReview ? `<button class="btn btn-outline btn-sm" id="showReviewForm">${t("review.writeReview")}</button>` : ""}
             </div>
           </div>
-          ${isAuth ? `
+          ${canReview ? `
           <div id="reviewFormContainer" class="d-none card card-sm mb-3">
             <div id="reviewAlert"></div>
             <div class="form-group">
@@ -88,7 +91,7 @@ export function renderDetailPanel(p, isAvailable, isWishlisted, stockLevel, stoc
             </div>
             <button class="btn btn-primary btn-sm" id="reviewSubmit"><i class="fas fa-paper-plane"></i> ${t("review.submit")}</button>
           </div>
-          ` : `<p class="text-muted small"><a href="#/login" class="text-primary">${t("auth.login")}</a> ${t("review.title")}</p>`}
+          ` : !isAuth ? `<p class="text-muted small"><a href="#/login" class="text-primary">${t("auth.login")}</a> ${t("review.title")}</p>` : ""}
           <div id="reviewsList"></div>
           <div id="reviewPagination" class="text-center mt-3 d-none">
             <button class="btn btn-ghost btn-sm" id="loadMoreReviewsBtn">${t("common.loadMore")}</button>
@@ -97,7 +100,7 @@ export function renderDetailPanel(p, isAvailable, isWishlisted, stockLevel, stoc
       </div>
     </div>
 
-    <div class="mobile-sticky-bar mobile-sticky-cart" id="mobileStickyCart">
+    ${canUseEcommerceActions ? `<div class="mobile-sticky-bar mobile-sticky-cart" id="mobileStickyCart">
       <div class="current-bid-mini">
         <small>${t("cart.price")}</small>
         <span>${formatPrice(p.price)}</span>
@@ -105,5 +108,5 @@ export function renderDetailPanel(p, isAvailable, isWishlisted, stockLevel, stoc
       <button class="btn btn-primary" id="mobileAddToCartBtn" ${!isAvailable ? "disabled" : ""}>
         <i class="fas fa-shopping-cart"></i> ${t("product.addToCart")}
       </button>
-    </div>`;
+    </div>` : ""}`;
 }

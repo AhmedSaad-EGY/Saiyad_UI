@@ -56,7 +56,7 @@ export default function renderRegister(container) {
             <template x-if="needsLicense">
               <div class="form-group">
                 <label for="regLicense">${t('auth.licenseNumber')}</label>
-                <input type="text" id="regLicense" class="form-input" x-model="licenseNumber" placeholder="${t('auth.licensePlaceholder')}" :disabled="loading">
+                <input type="text" id="regLicense" class="form-input" x-ref="licenseNumber" x-model="licenseNumber" placeholder="${t('auth.licensePlaceholder')}" :disabled="loading">
               </div>
             </template>
 

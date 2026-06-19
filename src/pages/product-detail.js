@@ -16,6 +16,7 @@ import { createAuction } from '../features/auctions/create.js';
 import { submitReview, sortReviews, initStarRating } from '../features/reviews/index.js';
 import { clampQuantity } from '../features/cart/quantity.js';
 import { renderBreadcrumb, renderGallery, renderDetailPanel, renderReviewCards } from '../widgets/product-detail/index.js';
+import { ROLES } from '../shared/constants/roles.js';
 
 function setHTML(el, html) {
   el.innerHTML = html;
@@ -30,12 +31,27 @@ export default async function renderProductDetail(container, route, params) {
   try {
     const { p, isAvailable, isWishlisted: initWishlisted, avgRating, reviews, allImages, stockQty, stockLevel, isSellerOwner } = await loadProductDetailData(id);
     let isWishlisted = initWishlisted;
+    const user = getUser();
+    const isAdmin = user?.role === ROLES.ADMIN;
+    const canUseEcommerceActions = !isAdmin;
+    const canReview = isAuthenticated() && !isAdmin;
 
     setHTML(container, `
       ${renderBreadcrumb(p)}
       <div class="row g-5">
         ${renderGallery(p)}
-        ${renderDetailPanel(p, isAvailable, isWishlisted, stockLevel, Math.min(100, Math.max(0, stockQty)), avgRating, isAuthenticated(), isSellerOwner)}
+        ${renderDetailPanel(
+          p,
+          isAvailable,
+          isWishlisted,
+          stockLevel,
+          Math.min(100, Math.max(0, stockQty)),
+          avgRating,
+          isAuthenticated(),
+          isSellerOwner,
+          canUseEcommerceActions,
+          canReview
+        )}
       </div>`);
     document.body.classList.toggle('has-product-sticky-bar', Boolean(document.getElementById('mobileStickyCart')));
     registerRouteCleanup(() => document.body.classList.remove('has-product-sticky-bar'));
@@ -77,7 +93,7 @@ export default async function renderProductDetail(container, route, params) {
     trackRecentlyViewed(p.id, p.title, p.primaryImageUrl, p.price, "product");
 
     // Quantity + Add to Cart
-    if (isAvailable) {
+    if (isAvailable && canUseEcommerceActions) {
       const qtyInput = document.getElementById("productQty");
       document.getElementById("qtyMinus")?.addEventListener("click", () => { qtyInput.value = clampQuantity(parseInt(qtyInput.value) - 1, 1, parseInt(qtyInput.max) || 99); });
       document.getElementById("qtyPlus")?.addEventListener("click", () => { qtyInput.value = clampQuantity(parseInt(qtyInput.value) + 1, 1, parseInt(qtyInput.max) || 99); });
@@ -167,12 +183,11 @@ export default async function renderProductDetail(container, route, params) {
           s.style.color = "var(--text-muted)";
           s.style.transform = "scale(1)";
         });
-        const user = getUser();
-        if (reviewsList) {
-          const noReviewsMsg = reviewsList.querySelector("p");
-          if (noReviewsMsg) noReviewsMsg.remove();
-          const el = document.createElement("div");
-          el.className = "notif-item"; el.style.animation = ""; animate(el, 'fadeInUp', { duration: '0.3s' });
+      if (reviewsList) {
+        const noReviewsMsg = reviewsList.querySelector("p");
+        if (noReviewsMsg) noReviewsMsg.remove();
+        const el = document.createElement("div");
+        el.className = "notif-item"; el.style.animation = ""; animate(el, 'fadeInUp', { duration: '0.3s' });
           safeSetHTML(el, `<div class="flex-fill"><strong>${escapeHtml(user?.fullName || "You")}</strong><span class="text-warning">${renderStars(rating)}</span>${comment ? `<p class="mt-1" style="color:var(--text-secondary);font-size:0.9rem">${escapeHtml(comment)}</p>` : ""}<small class="text-muted">${formatDate(new Date().toISOString())}</small></div>`);
           reviewsList.insertAdjacentElement("afterbegin", el);
         }

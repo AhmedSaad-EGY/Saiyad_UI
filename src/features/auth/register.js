@@ -43,6 +43,13 @@ Alpine.data('registerForm', () => ({
       { element: this.$refs.password, required: true, minLength: 8, messages: { required: t('validation.required'), minLength: t('validation.minLength', { n: 8 }) } },
       { element: this.$refs.confirmPassword, required: true, matches: { element: this.$refs.password }, messages: { required: t('validation.required'), matches: t('validation.passwordsNotMatch') } },
     ];
+    if (this.needsLicense) {
+      rules.push({
+        element: this.$refs.licenseNumber,
+        required: true,
+        messages: { required: t('auth.licenseRequired') },
+      });
+    }
     const formEl = this.$el.querySelector('form') || this.$el;
     clearAllFieldErrors(formEl);
     const isValid = validateForm(formEl, rules);
@@ -52,7 +59,7 @@ Alpine.data('registerForm', () => ({
         fullName: this.fullName, email: this.email, phone: this.phone,
         birthdate: this.birthdate, password: this.password,
         confirmPassword: this.confirmPassword, role: this.role,
-        licenseNumber: this.needsLicense ? this.licenseNumber : undefined,
+        licenseNumber: this.needsLicense ? this.licenseNumber.trim() : undefined,
       });
       if (data.pendingRoleUpgrade) {
         this.pendingUpgrade = true;
