@@ -10,8 +10,8 @@ export function renderMobileOverlays() {
       <button class="btn btn-primary mt-3 align-self-center" @click="applyMobileSearch()"><i class="fas fa-search"></i> ${t('common.search')}</button>
     </div>
 
-    <div x-show="filterSheetOpen" x-transition:enter.duration.300ms.opacity class="filter-sheet-overlay show" @click.self="filterSheetOpen = false">
-      <div class="filter-sheet">
+    <div x-show="filterSheetOpen" x-transition:enter.duration.300ms.opacity class="filter-sheet-overlay show products-filter-sheet-overlay" @click.self="filterSheetOpen = false">
+      <div class="filter-sheet products-filter-sheet">
         <div class="filter-sheet-header">
           <h3>${t('products.filters')}</h3>
           <button class="btn btn-ghost btn-icon" @click="filterSheetOpen = false" aria-label="${t('common.close')}"><i class="fas fa-times"></i></button>

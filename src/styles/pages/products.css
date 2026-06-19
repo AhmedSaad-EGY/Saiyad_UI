@@ -265,21 +265,41 @@
     color: var(--primary);
   }
 
-  .products-page-alpine .filter-sheet-overlay {
+  .products-filter-sheet-overlay {
+    display: flex;
+    position: fixed;
+    inset: 0;
     z-index: var(--z-overlay);
     align-items: flex-end;
+    justify-content: center;
     padding: var(--space-3);
     padding-block-end: calc(var(--space-3) + env(safe-area-inset-bottom, 0px));
+    background: var(--overlay);
+    backdrop-filter: blur(6px);
   }
 
-  .products-page-alpine .filter-sheet {
+  .products-filter-sheet {
+    position: fixed;
+    inset-inline: var(--space-3);
+    inset-block-end: calc(var(--space-3) + env(safe-area-inset-bottom, 0px));
+    z-index: calc(var(--z-overlay) + 1);
     display: flex;
-    inline-size: min(100%, 420px);
+    inline-size: auto;
     max-block-size: min(82dvh, 640px);
+    max-inline-size: 420px;
+    margin-inline: auto;
     overflow: hidden;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-filter-sheet);
     opacity: 1;
     visibility: visible;
     transform: translateY(0);
+  }
+
+  .products-page-alpine .filter-sheet-body {
+    display: flex;
+    flex-direction: column;
   }
 
   .products-page-alpine .filter-chips {
