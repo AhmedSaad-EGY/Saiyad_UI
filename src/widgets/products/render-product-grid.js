@@ -17,7 +17,7 @@ export function renderProductGrid() {
     </div>
 
     <div x-show="!loading && error" class="empty-state" role="alert">
-      <div class="empty-state-visual"><i class="fas fa-exclamation-triangle text-muted fs-hero"></i></div>
+      <div class="empty-state-visual"><i class="fas fa-exclamation-triangle text-muted fs-hero" aria-hidden="true"></i></div>
       <h3>${t('products.loadError')}</h3>
       <p x-text="error"></p>
       <button class="btn btn-primary mt-3" @click="reload()">${t('common.retry')}</button>
@@ -35,7 +35,7 @@ export function renderProductGrid() {
               <div class="product-card-title" x-text="p.title || $t('common.product')"></div>
               <div class="product-card-price" x-text="formatPrice(p.price)"></div>
               <div class="product-card-meta">
-                <span x-show="p.categoryName" class="product-card-category"><i class="fas fa-tag"></i><span x-text="p.categoryName"></span></span>
+                <span x-show="p.categoryName" class="product-card-category"><i class="fas fa-tag" aria-hidden="true"></i><span x-text="p.categoryName"></span></span>
                 <span x-show="p.stockQuantity != null" class="product-card-stock" x-text="p.stockQuantity + ' ${t('products.inStock')}'"></span>
               </div>
             </div>
@@ -45,7 +45,7 @@ export function renderProductGrid() {
     </div>
 
     <div x-show="!loading && !error && !products.length" class="empty-state" role="status">
-      <div class="empty-state-visual"><i class="fas fa-box-open text-muted fs-hero"></i></div>
+      <div class="empty-state-visual"><i class="fas fa-box-open text-muted fs-hero" aria-hidden="true"></i></div>
       <h3>${t('products.noProducts')}</h3>
       <p>${t('common.clearFilters')}</p>
       <button class="btn btn-primary mt-3" @click="resetFilters()">${t('common.clearFilters')}</button>

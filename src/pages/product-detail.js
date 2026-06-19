@@ -17,6 +17,7 @@ import { submitReview, sortReviews, initStarRating } from '../features/reviews/i
 import { clampQuantity } from '../features/cart/quantity.js';
 import { renderBreadcrumb, renderGallery, renderDetailPanel, renderReviewCards } from '../widgets/product-detail/index.js';
 import { ROLES } from '../shared/constants/roles.js';
+import '../styles/pages/product-detail.css';
 
 function setHTML(el, html) {
   el.innerHTML = html;
@@ -101,12 +102,18 @@ export default async function renderProductDetail(container, route, params) {
         if (!(await requireAuth())) return;
         const btn = document.getElementById(btnId);
         if (!btn) return;
-        btn.disabled = true; btn.innerHTML = `<i class="fas fa-spinner spinner" aria-hidden="true"></i> ${t("common.loading")}`;
+        btn.disabled = true;
+        btn.setAttribute("aria-busy", "true");
+        btn.innerHTML = `<i class="fas fa-spinner spinner" aria-hidden="true"></i> ${t("common.loading")}`;
         try {
           await addToCart(p.id, parseInt(document.getElementById("productQty")?.value) || 1);
           showToast(t("product.addedToCart"), "success"); updateCartBadge();
         } catch (e) { showToast(e.status === 400 ? t('cart.insufficientStock', { stock: p.stockQuantity || 0 }) : e.message, "error"); }
-        finally { btn.disabled = false; btn.innerHTML = `<i class="fas fa-shopping-cart" aria-hidden="true"></i> ${t("product.addToCart")}`; }
+        finally {
+          btn.disabled = false;
+          btn.removeAttribute("aria-busy");
+          btn.innerHTML = `<i class="fas fa-shopping-cart" aria-hidden="true"></i> ${t("product.addToCart")}`;
+        }
       };
       document.getElementById("addToCartBtn")?.addEventListener("click", () => handleAddToCart("addToCartBtn"));
       document.getElementById("mobileAddToCartBtn")?.addEventListener("click", () => handleAddToCart("mobileAddToCartBtn"));
@@ -118,9 +125,9 @@ export default async function renderProductDetail(container, route, params) {
       const prev = isWishlisted;
       isWishlisted = !isWishlisted;
       const wBtn = document.getElementById("addToWishlistBtn");
-      if (wBtn) { wBtn.className = `btn ${isWishlisted ? 'btn-danger' : 'btn-outline'} btn-lg`; wBtn.setAttribute("aria-pressed", String(isWishlisted)); wBtn.title = isWishlisted ? t('product.removeFromWishlist') : t('product.wishlist'); wBtn.innerHTML = `<i class="${isWishlisted ? 'fas' : 'far'} fa-heart"></i> ${isWishlisted ? t('product.removeFromWishlist') : t("product.wishlist")}`; }
+      if (wBtn) { wBtn.className = `btn ${isWishlisted ? 'btn-danger' : 'btn-outline'} btn-lg`; wBtn.setAttribute("aria-pressed", String(isWishlisted)); wBtn.setAttribute("aria-label", isWishlisted ? t('product.removeFromWishlist') : t('product.wishlist')); wBtn.title = isWishlisted ? t('product.removeFromWishlist') : t('product.wishlist'); wBtn.innerHTML = `<i class="${isWishlisted ? 'fas' : 'far'} fa-heart" aria-hidden="true"></i> ${isWishlisted ? t('product.removeFromWishlist') : t("product.wishlist")}`; }
       try { await toggleWishlist(p.id); showToast(isWishlisted ? t("product.addedToWishlist") : t("product.removedFromWishlist"), "success"); }
-      catch (e) { isWishlisted = prev; if (wBtn) { wBtn.className = `btn ${prev ? 'btn-danger' : 'btn-outline'} btn-lg`; wBtn.setAttribute("aria-pressed", String(prev)); wBtn.title = prev ? t('product.removeFromWishlist') : t('product.wishlist'); wBtn.innerHTML = `<i class="${prev ? 'fas' : 'far'} fa-heart"></i> ${prev ? t('product.removeFromWishlist') : t("product.wishlist")}`; } showToast(e.message, "error"); }
+      catch (e) { isWishlisted = prev; if (wBtn) { wBtn.className = `btn ${prev ? 'btn-danger' : 'btn-outline'} btn-lg`; wBtn.setAttribute("aria-pressed", String(prev)); wBtn.setAttribute("aria-label", prev ? t('product.removeFromWishlist') : t('product.wishlist')); wBtn.title = prev ? t('product.removeFromWishlist') : t('product.wishlist'); wBtn.innerHTML = `<i class="${prev ? 'fas' : 'far'} fa-heart" aria-hidden="true"></i> ${prev ? t('product.removeFromWishlist') : t("product.wishlist")}`; } showToast(e.message, "error"); }
     });
 
     // Start Auction modal

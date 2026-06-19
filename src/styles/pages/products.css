@@ -57,6 +57,16 @@
   flex: 0 0 auto;
 }
 
+.products-page-alpine :is(.search-toggle-btn, .filter-toggle-btn, .filter-chip, .product-card.card, .quick-add-btn) {
+  touch-action: manipulation;
+}
+
+.products-page-alpine :is(.search-toggle-btn, .filter-toggle-btn, .filter-chip, .product-card.card, .quick-add-btn):focus-visible,
+.products-page-alpine :is(.filter-sheet button, .filter-sheet input, .filter-sheet select):focus-visible {
+  outline: var(--focus-ring-width) solid var(--border-focus);
+  outline-offset: var(--focus-ring-offset);
+}
+
 .products-mobile-search-label {
   display: none;
 }

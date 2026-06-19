@@ -1,9 +1,8 @@
-import { t, getCurrentLang } from '../../shared/utils/i18n.js';
+import { t } from '../../shared/utils/i18n.js';
 import { escapeHtml } from '../../shared/utils/dom.js';
 import { formatPrice, statusClass, tStatus, tCondition, renderStars } from '../../shared/utils/format.js';
 
 export function renderDetailPanel(p, isAvailable, isWishlisted, stockLevel, stockPct, avgRating, isAuth, isSeller, canUseEcommerceActions, canReview) {
-  const dir = getCurrentLang() === "ar" ? "left" : "right";
   const sellerId = p.sellerId ? encodeURIComponent(p.sellerId) : "";
   const auctionId = p.auctionId ? encodeURIComponent(p.auctionId) : "";
   return `
@@ -11,7 +10,7 @@ export function renderDetailPanel(p, isAvailable, isWishlisted, stockLevel, stoc
       <div class="detail-info">
         <div class="detail-title-row">
           <h1 class="detail-title">${escapeHtml(p.title)}</h1>
-          <button class="btn btn-ghost btn-icon btn-sm mt-1" id="shareBtn" aria-label="${t('common.share')}" title="${t('common.share')}"><i class="fas fa-share-alt"></i></button>
+          <button type="button" class="btn btn-ghost btn-icon btn-sm mt-1" id="shareBtn" aria-label="${t('common.share')}" title="${t('common.share')}"><i class="fas fa-share-alt" aria-hidden="true"></i></button>
         </div>
         <div class="detail-price">${formatPrice(p.price)}</div>
 
@@ -35,22 +34,22 @@ export function renderDetailPanel(p, isAvailable, isWishlisted, stockLevel, stoc
               <input type="number" id="productQty" value="1" min="1" max="${p.stockQuantity || 99}" aria-label="${t('product.quantity')}" class="cart-qty-input">
               <button type="button" class="qty-btn" id="qtyPlus" aria-label="${t('product.increaseQty')}">+</button>
             </div>
-            <button class="btn btn-primary btn-lg detail-add-cart-btn" id="addToCartBtn" ${!isAvailable ? "disabled" : ""}>
-              <i class="fas fa-shopping-cart"></i> ${t("product.addToCart")}
+            <button type="button" class="btn btn-primary btn-lg detail-add-cart-btn" id="addToCartBtn" ${!isAvailable ? "disabled" : ""}>
+              <i class="fas fa-shopping-cart" aria-hidden="true"></i> ${t("product.addToCart")}
             </button>
           </div>
           <div class="detail-aux-actions">
-            <button class="btn ${isWishlisted ? 'btn-danger' : 'btn-outline'} btn-lg" id="addToWishlistBtn" aria-pressed="${isWishlisted}"
+            <button type="button" class="btn ${isWishlisted ? 'btn-danger' : 'btn-outline'} btn-lg" id="addToWishlistBtn" aria-pressed="${isWishlisted}" aria-label="${isWishlisted ? t('product.removeFromWishlist') : t('product.wishlist')}"
               title="${isWishlisted ? t('product.removeFromWishlist') : t('product.wishlist')}">
-              <i class="${isWishlisted ? 'fas' : 'far'} fa-heart"></i>
+              <i class="${isWishlisted ? 'fas' : 'far'} fa-heart" aria-hidden="true"></i>
               ${isWishlisted ? t('product.removeFromWishlist') : t("product.wishlist")}
             </button>
-            ${p.isAuctioned && p.auctionId ? `<a href="#/auction-detail?id=${auctionId}" class="btn btn-success btn-lg"><i class="fas fa-gavel"></i> ${t("product.viewAuction")}</a>` : !p.isAuctioned && isSeller ? `<button class="btn btn-primary btn-lg" id="startAuctionBtn"><i class="fas fa-gavel"></i> ${t("auction.startAuction")}</button>` : ""}
-            ${p.sellerId ? `<a href="#/seller-profile?sellerId=${sellerId}" class="btn btn-outline btn-lg"><i class="fas fa-envelope"></i> ${t("product.contactSeller")}</a>` : ""}
+            ${p.isAuctioned && p.auctionId ? `<a href="#/auction-detail?id=${auctionId}" class="btn btn-success btn-lg"><i class="fas fa-gavel" aria-hidden="true"></i> ${t("product.viewAuction")}</a>` : !p.isAuctioned && isSeller ? `<button type="button" class="btn btn-primary btn-lg" id="startAuctionBtn"><i class="fas fa-gavel" aria-hidden="true"></i> ${t("auction.startAuction")}</button>` : ""}
+            ${p.sellerId ? `<a href="#/seller-profile?sellerId=${sellerId}" class="btn btn-outline btn-lg"><i class="fas fa-envelope" aria-hidden="true"></i> ${t("product.contactSeller")}</a>` : ""}
           </div>
         </div>` : `<div class="detail-aux-actions detail-aux-actions-readonly">
-          ${p.isAuctioned && p.auctionId ? `<a href="#/auction-detail?id=${auctionId}" class="btn btn-success btn-lg"><i class="fas fa-gavel"></i> ${t("product.viewAuction")}</a>` : !p.isAuctioned && isSeller ? `<button class="btn btn-primary btn-lg" id="startAuctionBtn"><i class="fas fa-gavel"></i> ${t("auction.startAuction")}</button>` : ""}
-          ${p.sellerId ? `<a href="#/seller-profile?sellerId=${sellerId}" class="btn btn-outline btn-lg"><i class="fas fa-envelope"></i> ${t("product.contactSeller")}</a>` : ""}
+          ${p.isAuctioned && p.auctionId ? `<a href="#/auction-detail?id=${auctionId}" class="btn btn-success btn-lg"><i class="fas fa-gavel" aria-hidden="true"></i> ${t("product.viewAuction")}</a>` : !p.isAuctioned && isSeller ? `<button type="button" class="btn btn-primary btn-lg" id="startAuctionBtn"><i class="fas fa-gavel" aria-hidden="true"></i> ${t("auction.startAuction")}</button>` : ""}
+          ${p.sellerId ? `<a href="#/seller-profile?sellerId=${sellerId}" class="btn btn-outline btn-lg"><i class="fas fa-envelope" aria-hidden="true"></i> ${t("product.contactSeller")}</a>` : ""}
         </div>`}
 
         ${p.sellerId ? `
@@ -58,14 +57,14 @@ export function renderDetailPanel(p, isAvailable, isWishlisted, stockLevel, stoc
           <div class="seller-avatar">${escapeHtml(p.sellerName || t('common.unknown')).charAt(0).toUpperCase()}</div>
           <div class="seller-info-details">
             <div class="seller-info-name">${escapeHtml(p.sellerName || t("common.N/A"))}</div>
-            <div class="seller-info-meta"><i class="fas fa-store"></i> ${t('common.viewProfile')}</div>
+            <div class="seller-info-meta"><i class="fas fa-store" aria-hidden="true"></i> ${t('common.viewProfile')}</div>
           </div>
-          <i class="fas fa-chevron-${dir} text-muted"></i>
+          <i class="fas fa-chevron-right text-muted seller-info-chevron" aria-hidden="true"></i>
         </a>` : ""}
 
         <div class="mt-4 pt-4 border-divider-top" id="reviewsSection">
           <div class="review-heading-row">
-            <h3><i class="fas fa-star text-warning"></i> ${t("review.title")} ${avgRating ? `(${renderStars(avgRating)} ${avgRating.toFixed(1)})` : ""}</h3>
+            <h3><i class="fas fa-star text-warning" aria-hidden="true"></i> ${t("review.title")} ${avgRating ? `(${renderStars(avgRating)} ${avgRating.toFixed(1)})` : ""}</h3>
             <div class="review-actions">
               <select id="reviewSort" class="form-select form-select-sm review-sort-select" aria-label="${t("review.sort")}">
                 <option value="newest">${t("products.newest")}</option>
@@ -89,7 +88,7 @@ export function renderDetailPanel(p, isAvailable, isWishlisted, stockLevel, stoc
               <label class="form-label">${t("review.comment")}</label>
               <textarea class="form-textarea form-control review-comment-input" id="reviewComment" rows="3" placeholder="${t("review.rateProduct")}"></textarea>
             </div>
-            <button class="btn btn-primary btn-sm" id="reviewSubmit"><i class="fas fa-paper-plane"></i> ${t("review.submit")}</button>
+            <button type="button" class="btn btn-primary btn-sm" id="reviewSubmit"><i class="fas fa-paper-plane" aria-hidden="true"></i> ${t("review.submit")}</button>
           </div>
           ` : !isAuth ? `<p class="text-muted small"><a href="#/login" class="text-primary">${t("auth.login")}</a> ${t("review.title")}</p>` : ""}
           <div id="reviewsList"></div>
@@ -105,8 +104,8 @@ export function renderDetailPanel(p, isAvailable, isWishlisted, stockLevel, stoc
         <small>${t("cart.price")}</small>
         <span>${formatPrice(p.price)}</span>
       </div>
-      <button class="btn btn-primary" id="mobileAddToCartBtn" ${!isAvailable ? "disabled" : ""}>
-        <i class="fas fa-shopping-cart"></i> ${t("product.addToCart")}
+      <button type="button" class="btn btn-primary" id="mobileAddToCartBtn" ${!isAvailable ? "disabled" : ""}>
+        <i class="fas fa-shopping-cart" aria-hidden="true"></i> ${t("product.addToCart")}
       </button>
     </div>` : ""}`;
 }

@@ -1,0 +1,23 @@
+.breadcrumb-chevron,
+.seller-info-chevron {
+  flex: 0 0 auto;
+  transition: transform var(--duration-fast) var(--ease-out);
+}
+
+[dir="rtl"] .breadcrumb-chevron,
+[dir="rtl"] .seller-info-chevron {
+  transform: scaleX(-1);
+}
+
+.detail-info :is(button, a, select, textarea, input):focus-visible,
+.detail-image :is(button, a):focus-visible,
+.mobile-sticky-cart :is(button, a):focus-visible {
+  outline: var(--focus-ring-width) solid var(--border-focus);
+  outline-offset: var(--focus-ring-offset);
+}
+
+.detail-info :is(button, a),
+.detail-image :is(button, a),
+.mobile-sticky-cart :is(button, a) {
+  touch-action: manipulation;
+}
