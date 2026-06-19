@@ -7,22 +7,29 @@ import { openQuickView } from '../widgets/cards/product-card.js';
 import { closeDrawer } from '../widgets/layout/navbar.js';
 import { showToast } from '../widgets/ui/toast.js';
 
-document.getElementById('navSearchForm')?.addEventListener('submit', (e) => {
-  e.preventDefault();
-  const input = document.getElementById('navSearchInput');
-  if (!input) return;
-  const query = input.value.trim();
-  if (!query) {
-    input.setAttribute('aria-invalid', 'true');
-    animate(input, 'shakeX', { duration: '0.4s' });
-    setTimeout(() => input.removeAttribute('aria-invalid'), 600);
-    return;
-  }
-  input.removeAttribute('aria-invalid');
-  closeDrawer({ restoreTriggerFocus: false });
-  const app = document.getElementById('app');
-  if (app) app.focus({ preventScroll: true });
-  window.location.hash = `#/products?search=${encodeURIComponent(query)}`;
+document.querySelectorAll('[data-nav-search-form]').forEach((form) => {
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const input = form.querySelector('[data-nav-search-input]');
+    if (!input) return;
+    const query = input.value.trim();
+    if (!query) {
+      input.setAttribute('aria-invalid', 'true');
+      animate(input, 'shakeX', { duration: '0.4s' });
+      setTimeout(() => input.removeAttribute('aria-invalid'), 600);
+      return;
+    }
+    input.removeAttribute('aria-invalid');
+    closeDrawer({ restoreTriggerFocus: false });
+    const popover = form.closest('[data-compact-search-popover]');
+    if (popover) {
+      popover.hidden = true;
+      document.querySelector('[data-compact-search-toggle]')?.setAttribute('aria-expanded', 'false');
+    }
+    const app = document.getElementById('app');
+    if (app) app.focus({ preventScroll: true });
+    window.location.hash = `#/products?search=${encodeURIComponent(query)}`;
+  });
 });
 
 document.addEventListener('click', async (e) => {

@@ -8,26 +8,45 @@ let _drawerSwipe = null;
 let _fetchCartCount = async () => 0;
 let _fetchUnreadCount = async () => 0;
 const _focusableSel = 'a, button, input, select, textarea, [tabindex]:not([tabindex="-1"])';
-const _mobileDrawerBreakpoint = 992;
+export const NAV_DRAWER_BREAKPOINT = 1024;
 
 function _isMobileDrawerViewport() {
-  return window.innerWidth < _mobileDrawerBreakpoint;
+  return window.innerWidth < NAV_DRAWER_BREAKPOINT;
 }
 
 function _syncDrawerA11y(drawer, isOpen = drawer?.classList.contains("open")) {
   if (!drawer) return;
-  if (_isMobileDrawerViewport()) {
-    drawer.setAttribute("aria-hidden", isOpen ? "false" : "true");
-    if (isOpen) drawer.removeAttribute("inert");
-    else drawer.setAttribute("inert", "");
-    return;
-  }
-  drawer.setAttribute("aria-hidden", "false");
-  drawer.removeAttribute("inert");
+  const accessible = _isMobileDrawerViewport() && isOpen;
+  drawer.setAttribute("aria-hidden", accessible ? "false" : "true");
+  if (accessible) drawer.removeAttribute("inert");
+  else drawer.setAttribute("inert", "");
+}
+
+function _setBackgroundInert(inert) {
+  document.querySelectorAll('[data-drawer-background]').forEach((element) => {
+    if (inert) {
+      if (!element.hasAttribute('inert')) {
+        element.setAttribute('inert', '');
+        element.dataset.drawerInerted = 'true';
+      }
+      return;
+    }
+    if (element.dataset.drawerInerted === 'true') {
+      element.removeAttribute('inert');
+      delete element.dataset.drawerInerted;
+    }
+  });
 }
 
 export function syncDrawerA11y() {
-  _syncDrawerA11y(document.getElementById("navDrawer"));
+  const drawer = document.getElementById("navDrawer");
+  if (!_isMobileDrawerViewport() && (
+    drawer?.classList.contains('open') || document.body.classList.contains('nav-open')
+  )) {
+    closeDrawer({ restoreTriggerFocus: false });
+    return;
+  }
+  _syncDrawerA11y(drawer);
 }
 
 export function setNavbarDeps(deps) {
@@ -76,6 +95,7 @@ function _initDrawerSwipe() {
 }
 
 export function openDrawer() {
+  if (!_isMobileDrawerViewport()) return;
   const drawer = document.getElementById("navDrawer");
   const navOverlay = document.getElementById("navOverlay");
   const drawerBody = document.querySelector(".nav-drawer__body");
@@ -90,6 +110,7 @@ export function openDrawer() {
     navOverlay.setAttribute("aria-hidden", "false");
   }
   document.body.classList.add("nav-open");
+  _setBackgroundInert(true);
   const btn = document.getElementById("hamburger");
   if (btn) btn.setAttribute("aria-expanded", "true");
   const initialFocus = drawer.querySelector("#drawerCloseBtn") || drawer.querySelector(_focusableSel);
@@ -102,6 +123,7 @@ export function closeDrawer(options = {}) {
   const { restoreTriggerFocus = true } = options;
   const drawer = document.getElementById("navDrawer");
   const navOverlay = document.getElementById("navOverlay");
+  const wasOpen = drawer?.classList.contains("open") ?? false;
   if (drawer) {
     drawer.style.transition = ""; drawer.style.transform = "";
     drawer.classList.remove("open");
@@ -113,11 +135,12 @@ export function closeDrawer(options = {}) {
     navOverlay.setAttribute("aria-hidden", "true");
   }
   document.body.classList.remove("nav-open");
+  _setBackgroundInert(false);
   document.removeEventListener("keydown", _trapFocus);
   if (_drawerSwipe) { _drawerSwipe.destroy(); _drawerSwipe = null; }
   const btn = document.getElementById("hamburger");
   if (btn) btn.setAttribute("aria-expanded", "false");
-  if (restoreTriggerFocus && _isMobileDrawerViewport()) btn?.focus();
+  if (wasOpen && restoreTriggerFocus && _isMobileDrawerViewport()) btn?.focus();
 }
 
 const _cartCache = { count: 0 };
@@ -125,8 +148,7 @@ const _cartCache = { count: 0 };
 export function invalidateCartCache() { _cartCache.count = 0; }
 export function setCachedCartCount(n) { _cartCache.count = n; }
 export async function updateCartBadge(forceRefresh) {
-  const badge = document.getElementById("cartBadge");
-  if (!badge) return;
+  if (!document.querySelector('[data-cart-badge]')) return;
   const user = getUser();
   const userId = user?.id ?? null;
   if (user?.role === ROLES.ADMIN) { syncCartBadgeCount(0); _cartCache.count = 0; return; }

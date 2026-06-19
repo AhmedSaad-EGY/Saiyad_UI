@@ -66,167 +66,147 @@
 
   <!-- ═══════════════════════════════════════════════════════
        NAVBAR
-       Structure: brand | nav-drawer (inline on desktop,
-       side panel on mobile) | hamburger
+       Inline navigation and mobile drawer use separate DOM.
        ════════════════════════════════════════════════════ -->
   <nav class="navbar" role="navigation" aria-label="Main navigation">
-    <div class="container">
-
-      <!-- Brand -->
+    <div class="container navbar__inner">
       <a href="#/" class="navbar-brand" aria-label="Sayiad — Go to Home">
         <img src="/logo.png" alt="Sayiad logo" class="navbar-brand-img" width="32" height="32">
         <span class="navbar-brand-text">Sayiad</span>
       </a>
 
-      <!-- Nav drawer: inline flex row on desktop, off-canvas on mobile -->
-      <div class="nav-drawer" id="navDrawer" aria-label="Site navigation" aria-hidden="true">
+      <div class="navbar-desktop" aria-label="Desktop navigation">
+        <ul class="navbar-nav navbar-nav--desktop" role="list">
+          <li><a href="#/" class="nav-link" data-nav-link data-nav-route="" data-i18n="nav.home">Home</a></li>
+          <li><a href="#/products" class="nav-link" data-nav-link data-nav-route="products" data-i18n="nav.products">Products</a></li>
+          <li><a href="#/auctions" class="nav-link" data-nav-link data-nav-route="auctions" data-i18n="nav.auctions">Auctions</a></li>
+          <li>
+            <a href="#/cart" class="nav-link cart-nav-link" data-nav-link data-nav-route="cart">
+              <span data-i18n="nav.cart">Cart</span>
+              <span class="badge d-none" data-cart-badge aria-label="Cart items count"></span>
+            </a>
+          </li>
+        </ul>
 
-        <!-- Drawer header: brand + close (mobile only) -->
-        <div class="drawer-header">
-          <a href="#/" class="drawer-brand" aria-label="Sayiad — Go to Home">
-            <img src="/logo.png" alt="Sayiad logo" class="drawer-brand-img" width="32" height="32">
-            <span class="drawer-brand-text">Sayiad</span>
-          </a>
-          <button type="button" class="drawer-close" id="drawerCloseBtn" aria-label="Close menu">
-            <i class="fas fa-times" aria-hidden="true"></i>
+        <form class="nav-search nav-search--desktop" data-nav-search-form role="search" aria-label="Search Sayiad">
+          <input
+            type="search"
+            class="nav-search__input"
+            data-nav-search-input
+            placeholder="Search fish, gear, auctions…"
+            data-i18n-placeholder="nav.searchPlaceholder"
+            aria-label="Search fish, gear, auctions"
+            autocomplete="off"
+            maxlength="100"
+          >
+          <button type="submit" class="nav-search__btn" aria-label="Submit search">
+            <i class="fas fa-search" aria-hidden="true"></i>
           </button>
-        </div>
+        </form>
 
-        <div class="nav-drawer__body">
-          <!-- Primary nav links -->
-          <ul class="navbar-nav" id="navLinks" role="list">
-            <li role="listitem">
-              <a href="#/" class="nav-link" data-i18n="nav.home">
-                <i class="fas fa-home nav-icon" aria-hidden="true"></i>
-                Home
-              </a>
-            </li>
-            <li role="listitem">
-              <a href="#/products" class="nav-link" data-i18n="nav.products">
-                <i class="fas fa-store nav-icon" aria-hidden="true"></i>
-                Products
-              </a>
-            </li>
-            <li role="listitem">
-              <a href="#/auctions" class="nav-link" data-i18n="nav.auctions">
-                <i class="fas fa-gavel nav-icon" aria-hidden="true"></i>
-                Auctions
-              </a>
-            </li>
-            <li role="listitem">
-              <a href="#/cart" class="nav-link cart-nav-link">
-                <i class="fas fa-shopping-cart nav-icon" aria-hidden="true"></i>
-                <span data-i18n="nav.cart">Cart</span>
-                <span id="cartBadge" class="badge d-none" aria-label="Cart items count"></span>
-              </a>
-            </li>
-          </ul>
-
-          <!-- Nav search (inline on desktop, full-width in drawer on mobile) -->
-          <form class="nav-search" id="navSearchForm" role="search" aria-label="Search Sayiad">
-            <input
-              type="search"
-              id="navSearchInput"
-              class="nav-search__input"
-              placeholder="Search fish, gear, auctions…"
-              data-i18n-placeholder="nav.searchPlaceholder"
-              aria-label="Search fish, gear, auctions"
-              autocomplete="off"
-              maxlength="100"
-            >
-            <button type="submit" class="nav-search__btn" aria-label="Submit search">
-              <i class="fas fa-search" aria-hidden="true"></i>
-            </button>
-          </form>
-
-          <!-- Theme & language toggles -->
-          <div class="nav-toggles">
-            <button class="toggle-btn" id="themeToggle" aria-label="Toggle dark mode" aria-pressed="false">
-              <i class="fas fa-moon" aria-hidden="true"></i>
-            </button>
-            <button class="toggle-btn" id="langToggle" aria-label="Switch to Arabic" aria-pressed="false">EN</button>
+        <div class="nav-search-compact">
+          <button
+            type="button"
+            class="nav-search-trigger"
+            id="compactSearchButton"
+            data-compact-search-toggle
+            aria-label="Search Sayiad"
+            aria-expanded="false"
+            aria-controls="compactSearchPopover"
+          >
+            <i class="fas fa-search" aria-hidden="true"></i>
+          </button>
+          <div class="nav-search-popover" id="compactSearchPopover" data-compact-search-popover hidden>
+            <form class="nav-search nav-search--compact" data-nav-search-form role="search" aria-label="Search Sayiad">
+              <input
+                type="search"
+                class="nav-search__input"
+                data-nav-search-input
+                placeholder="Search fish, gear, auctions…"
+                data-i18n-placeholder="nav.searchPlaceholder"
+                aria-label="Search fish, gear, auctions"
+                autocomplete="off"
+                maxlength="100"
+              >
+              <button type="submit" class="nav-search__btn" aria-label="Submit search">
+                <i class="fas fa-search" aria-hidden="true"></i>
+              </button>
+            </form>
           </div>
         </div>
 
-        <!-- Auth actions / user menu -->
-        <div class="nav-actions" id="navActions">
-          <!-- Guest: login + register -->
-          <a href="#/login"    class="btn btn-outline btn-sm nav-guest" id="loginBtn"    data-i18n="nav.login">Login</a>
-          <a href="#/register" class="btn btn-primary btn-sm nav-guest" id="registerBtn" data-i18n="nav.register">Register</a>
+        <div class="nav-toggles">
+          <button class="toggle-btn" type="button" data-theme-toggle aria-label="Toggle dark mode" aria-pressed="false">
+            <i class="fas fa-moon" aria-hidden="true"></i>
+          </button>
+          <button class="toggle-btn" type="button" data-lang-toggle aria-label="Switch to Arabic" aria-pressed="false">EN</button>
+        </div>
 
-          <!-- Authenticated: notification bell -->
-          <a href="#/dashboard?tab=notifications"
-             class="notif-bell d-none nav-auth"
-             id="notifBell"
-             aria-label="Notifications">
+        <div class="nav-actions nav-actions--desktop">
+          <a href="#/login" class="btn btn-outline btn-sm nav-guest" data-i18n="nav.login">Login</a>
+          <a href="#/register" class="btn btn-primary btn-sm nav-guest" data-i18n="nav.register">Register</a>
+
+          <a href="#/dashboard?tab=notifications" class="notif-bell d-none nav-auth" aria-label="Notifications">
             <i class="fas fa-bell" aria-hidden="true"></i>
-            <span id="notifBadge" class="badge d-none" aria-label="Unread notifications count"></span>
+            <span class="badge d-none" data-notif-badge aria-label="Unread notifications count"></span>
           </a>
 
-          <!-- Authenticated: user dropdown -->
-          <div class="dropdown d-none" id="userMenu">
+          <div class="dropdown d-none nav-auth" data-user-menu>
             <button
               class="btn btn-ghost btn-sm dropdown-toggle"
-              id="userDropdown"
+              id="desktopUserDropdown"
+              data-user-dropdown
               aria-haspopup="true"
               aria-expanded="false"
-              aria-controls="dropdownMenu"
+              aria-controls="desktopDropdownMenu"
               aria-label="User menu"
             >
               <i class="fas fa-user" aria-hidden="true"></i>
-              <span id="userName">User</span>
+              <span data-user-name>User</span>
               <i class="fas fa-chevron-down" aria-hidden="true"></i>
             </button>
 
-            <div class="dropdown-menu" id="dropdownMenu" role="menu" aria-labelledby="userDropdown">
-              <a href="#/profile"   class="dropdown-item" role="menuitem" data-roles="all">
-                <i class="fas fa-user" aria-hidden="true"></i>
-                <span data-i18n="dash.profile">Profile</span>
+            <div
+              class="dropdown-menu"
+              id="desktopDropdownMenu"
+              data-user-dropdown-menu
+              data-navbar-menu
+              role="menu"
+              aria-labelledby="desktopUserDropdown"
+            >
+              <a href="#/profile" class="dropdown-item" role="menuitem" data-roles="all">
+                <i class="fas fa-user" aria-hidden="true"></i><span data-i18n="dash.profile">Profile</span>
               </a>
               <a href="#/dashboard" class="dropdown-item" role="menuitem" data-roles="all">
-                <i class="fas fa-tachometer-alt" aria-hidden="true"></i>
-                <span data-i18n="nav.dashboard">Dashboard</span>
+                <i class="fas fa-tachometer-alt" aria-hidden="true"></i><span data-i18n="nav.dashboard">Dashboard</span>
               </a>
-              <a href="#/dashboard?tab=orders" class="dropdown-item" role="menuitem"
-                 data-roles="Customer,Fisherman,BaitSeller,Auctioneer">
-                <i class="fas fa-box" aria-hidden="true"></i>
-                <span data-i18n="nav.myOrders">My Orders</span>
+              <a href="#/dashboard?tab=orders" class="dropdown-item" role="menuitem" data-roles="Customer,Fisherman,BaitSeller,Auctioneer">
+                <i class="fas fa-box" aria-hidden="true"></i><span data-i18n="nav.myOrders">My Orders</span>
               </a>
-              <a href="#/dashboard?tab=products" class="dropdown-item" role="menuitem"
-                 data-roles="Fisherman,BaitSeller">
-                <i class="fas fa-tag" aria-hidden="true"></i>
-                <span data-i18n="nav.myProducts">My Products</span>
+              <a href="#/dashboard?tab=products" class="dropdown-item" role="menuitem" data-roles="Fisherman,BaitSeller">
+                <i class="fas fa-tag" aria-hidden="true"></i><span data-i18n="nav.myProducts">My Products</span>
               </a>
-              <a href="#/dashboard?tab=wishlist" class="dropdown-item" role="menuitem"
-                 data-roles="Customer,Fisherman,BaitSeller,Auctioneer">
-                <i class="fas fa-heart" aria-hidden="true"></i>
-                <span data-i18n="nav.wishlist">Wishlist</span>
+              <a href="#/dashboard?tab=wishlist" class="dropdown-item" role="menuitem" data-roles="Customer,Fisherman,BaitSeller,Auctioneer">
+                <i class="fas fa-heart" aria-hidden="true"></i><span data-i18n="nav.wishlist">Wishlist</span>
               </a>
-              <a href="#/wallet" class="dropdown-item" role="menuitem"
-                 data-roles="Admin,Customer,Fisherman,BaitSeller,Auctioneer">
-                <i class="fas fa-wallet" aria-hidden="true"></i>
-                <span data-i18n="nav.wallet">Wallet</span>
+              <a href="#/wallet" class="dropdown-item" role="menuitem" data-roles="Admin,Customer,Fisherman,BaitSeller,Auctioneer">
+                <i class="fas fa-wallet" aria-hidden="true"></i><span data-i18n="nav.wallet">Wallet</span>
               </a>
-              <a href="#/subscriptions" class="dropdown-item" role="menuitem"
-                 data-roles="Customer,Fisherman,BaitSeller,Auctioneer">
-                <i class="fas fa-crown" aria-hidden="true"></i>
-                <span data-i18n="subscriptions.title">Subscriptions</span>
+              <a href="#/subscriptions" class="dropdown-item" role="menuitem" data-roles="Customer,Fisherman,BaitSeller,Auctioneer">
+                <i class="fas fa-crown" aria-hidden="true"></i><span data-i18n="subscriptions.title">Subscriptions</span>
               </a>
               <a href="#/admin" class="dropdown-item" role="menuitem" data-roles="Admin">
-                <i class="fas fa-shield-alt" aria-hidden="true"></i>
-                <span data-i18n="admin.title">Admin</span>
+                <i class="fas fa-shield-alt" aria-hidden="true"></i><span data-i18n="admin.title">Admin</span>
               </a>
               <div class="dropdown-divider" role="separator"></div>
-              <button type="button" id="logoutBtn" class="dropdown-item text-danger" role="menuitem">
-                <i class="fas fa-sign-out-alt" aria-hidden="true"></i>
-                <span data-i18n="nav.logout">Logout</span>
+              <button type="button" class="dropdown-item text-danger" data-nav-logout role="menuitem">
+                <i class="fas fa-sign-out-alt" aria-hidden="true"></i><span data-i18n="nav.logout">Logout</span>
               </button>
             </div>
           </div>
         </div>
-      </div><!-- /nav-drawer -->
+      </div>
 
-      <!-- Hamburger — only visible on mobile (CSS: display:none on desktop) -->
       <button
         class="navbar-toggler"
         id="hamburger"
@@ -236,20 +216,97 @@
         aria-controls="navDrawer"
       >
         <i class="fas fa-bars" aria-hidden="true"></i>
+      </button>
+    </div>
+  </nav>
+
+  <aside class="nav-drawer" id="navDrawer" aria-label="Site navigation" aria-hidden="true" inert>
+    <div class="drawer-header">
+      <a href="#/" class="drawer-brand" aria-label="Sayiad — Go to Home">
+        <img src="/logo.png" alt="Sayiad logo" class="drawer-brand-img" width="28" height="28">
+        <span class="drawer-brand-text">Sayiad</span>
+      </a>
+      <button type="button" class="drawer-close" id="drawerCloseBtn" aria-label="Close menu">
         <i class="fas fa-times" aria-hidden="true"></i>
       </button>
+    </div>
 
-    </div><!-- /container -->
+    <div class="nav-drawer__body">
+      <form class="nav-search nav-search--drawer" data-nav-search-form role="search" aria-label="Search Sayiad">
+        <input
+          type="search"
+          class="nav-search__input"
+          data-nav-search-input
+          placeholder="Search fish, gear, auctions…"
+          data-i18n-placeholder="nav.searchPlaceholder"
+          aria-label="Search fish, gear, auctions"
+          autocomplete="off"
+          maxlength="100"
+        >
+        <button type="submit" class="nav-search__btn" aria-label="Submit search">
+          <i class="fas fa-search" aria-hidden="true"></i>
+        </button>
+      </form>
 
-    <!-- Mobile overlay — closes drawer on tap -->
-    <div class="nav-overlay" id="navOverlay" aria-hidden="true" inert></div>
-  </nav>
+      <ul class="navbar-nav navbar-nav--drawer" role="list">
+        <li><a href="#/" class="nav-link" data-nav-link data-nav-route=""><i class="fas fa-home nav-icon" aria-hidden="true"></i><span data-i18n="nav.home">Home</span></a></li>
+        <li><a href="#/products" class="nav-link" data-nav-link data-nav-route="products"><i class="fas fa-store nav-icon" aria-hidden="true"></i><span data-i18n="nav.products">Products</span></a></li>
+        <li><a href="#/auctions" class="nav-link" data-nav-link data-nav-route="auctions"><i class="fas fa-gavel nav-icon" aria-hidden="true"></i><span data-i18n="nav.auctions">Auctions</span></a></li>
+        <li>
+          <a href="#/cart" class="nav-link cart-nav-link" data-nav-link data-nav-route="cart">
+            <i class="fas fa-shopping-cart nav-icon" aria-hidden="true"></i>
+            <span data-i18n="nav.cart">Cart</span>
+            <span class="badge d-none" data-cart-badge aria-label="Cart items count"></span>
+          </a>
+        </li>
+      </ul>
+
+      <div class="nav-toggles nav-toggles--drawer">
+        <button class="toggle-btn" type="button" data-theme-toggle aria-label="Toggle dark mode" aria-pressed="false">
+          <i class="fas fa-moon" aria-hidden="true"></i>
+        </button>
+        <button class="toggle-btn" type="button" data-lang-toggle aria-label="Switch to Arabic" aria-pressed="false">EN</button>
+      </div>
+
+      <div class="nav-actions nav-actions--drawer">
+        <div class="drawer-guest-actions nav-guest">
+          <a href="#/login" class="btn btn-outline btn-sm" data-i18n="nav.login">Login</a>
+          <a href="#/register" class="btn btn-primary btn-sm" data-i18n="nav.register">Register</a>
+        </div>
+
+        <div class="drawer-account nav-auth d-none">
+          <div class="drawer-user-summary">
+            <i class="fas fa-user" aria-hidden="true"></i>
+            <span data-user-name>User</span>
+          </div>
+          <a href="#/dashboard?tab=notifications" class="drawer-account-link" aria-label="Notifications">
+            <i class="fas fa-bell" aria-hidden="true"></i>
+            <span data-i18n="dash.notifications">Notifications</span>
+            <span class="badge d-none" data-notif-badge aria-label="Unread notifications count"></span>
+          </a>
+          <a href="#/profile" class="drawer-account-link" data-roles="all"><i class="fas fa-user" aria-hidden="true"></i><span data-i18n="dash.profile">Profile</span></a>
+          <a href="#/dashboard" class="drawer-account-link" data-roles="all"><i class="fas fa-tachometer-alt" aria-hidden="true"></i><span data-i18n="nav.dashboard">Dashboard</span></a>
+          <a href="#/dashboard?tab=orders" class="drawer-account-link" data-roles="Customer,Fisherman,BaitSeller,Auctioneer"><i class="fas fa-box" aria-hidden="true"></i><span data-i18n="nav.myOrders">My Orders</span></a>
+          <a href="#/dashboard?tab=products" class="drawer-account-link" data-roles="Fisherman,BaitSeller"><i class="fas fa-tag" aria-hidden="true"></i><span data-i18n="nav.myProducts">My Products</span></a>
+          <a href="#/dashboard?tab=wishlist" class="drawer-account-link" data-roles="Customer,Fisherman,BaitSeller,Auctioneer"><i class="fas fa-heart" aria-hidden="true"></i><span data-i18n="nav.wishlist">Wishlist</span></a>
+          <a href="#/wallet" class="drawer-account-link" data-roles="Admin,Customer,Fisherman,BaitSeller,Auctioneer"><i class="fas fa-wallet" aria-hidden="true"></i><span data-i18n="nav.wallet">Wallet</span></a>
+          <a href="#/subscriptions" class="drawer-account-link" data-roles="Customer,Fisherman,BaitSeller,Auctioneer"><i class="fas fa-crown" aria-hidden="true"></i><span data-i18n="subscriptions.title">Subscriptions</span></a>
+          <a href="#/admin" class="drawer-account-link" data-roles="Admin"><i class="fas fa-shield-alt" aria-hidden="true"></i><span data-i18n="admin.title">Admin</span></a>
+          <button type="button" class="drawer-account-link text-danger" data-nav-logout>
+            <i class="fas fa-sign-out-alt" aria-hidden="true"></i><span data-i18n="nav.logout">Logout</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="nav-overlay" id="navOverlay" aria-hidden="true" inert></div>
   <!-- /NAVBAR -->
 
   <!-- ═══════════════════════════════════════════════════════
        MAIN CONTENT
        ════════════════════════════════════════════════════ -->
-  <main id="app" class="container main-content" tabindex="-1">
+  <main id="app" class="container main-content" data-drawer-background tabindex="-1">
     <!-- Global loading skeleton (shown until first route renders) -->
     <div
       id="globalSkeleton"
@@ -293,7 +350,7 @@
        MOBILE BOTTOM NAV BAR
        Hidden on desktop via CSS (min-width: 769px)
        ════════════════════════════════════════════════════ -->
-  <nav class="bottom-nav bottom-nav-shell" id="bottomNav" aria-label="Mobile navigation">
+  <nav class="bottom-nav bottom-nav-shell" id="bottomNav" data-drawer-background aria-label="Mobile navigation">
     <a href="#/"         class="bottom-nav-item" id="bnHome">
       <i class="fas fa-home" aria-hidden="true"></i>
       <span data-i18n="nav.home">Home</span>
@@ -309,7 +366,7 @@
     <a href="#/cart"     class="bottom-nav-item" id="bnCart">
       <i class="fas fa-shopping-cart" aria-hidden="true"></i>
       <span data-i18n="nav.cart">Cart</span>
-      <span class="bottom-nav-badge d-none" id="bnCartBadge" aria-hidden="true"></span>
+      <span class="bottom-nav-badge d-none" id="bnCartBadge" data-cart-badge aria-hidden="true"></span>
     </a>
     <!-- Shown when logged in -->
     <a href="#/dashboard" class="bottom-nav-item bottom-nav-account d-none nav-auth" id="bnAccount">
@@ -326,7 +383,7 @@
   <!-- ═══════════════════════════════════════════════════════
        FOOTER
        ════════════════════════════════════════════════════ -->
-  <footer class="footer" role="contentinfo">
+  <footer class="footer" data-drawer-background role="contentinfo">
     <div class="container">
       <div class="row g-4 mb-5">
 

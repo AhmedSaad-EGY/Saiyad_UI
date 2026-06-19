@@ -570,12 +570,9 @@ function syncCountBadge(badges, count, { max = 99 } = {}) {
 }
 
 export function syncCartBadgeCount(count) {
-  syncCountBadge([
-    document.getElementById('cartBadge'),
-    document.getElementById('bnCartBadge'),
-  ], count);
+  syncCountBadge([...document.querySelectorAll('[data-cart-badge]')], count);
 }
 
 export function syncNotifBadgeCount(count) {
-  syncCountBadge(document.getElementById('notifBadge'), count);
+  syncCountBadge([...document.querySelectorAll('[data-notif-badge]')], count);
 }

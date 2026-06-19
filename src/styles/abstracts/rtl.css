@@ -25,23 +25,12 @@
 }
 
 /* ── Dropdowns: flip position ───────────────────────────────── */
-[dir="rtl"] .dropdown-item {
+[dir="rtl"] .dropdown-menu:not([data-navbar-menu]) .dropdown-item {
   border-left: none;
   border-right: 3px solid transparent;
 }
-[dir="rtl"] .dropdown-item:hover {
+[dir="rtl"] .dropdown-menu:not([data-navbar-menu]) .dropdown-item:hover {
   border-right-color: var(--primary);
-}
-
-/* ── Navbar: mirror badge and drawer submenu offsets ────────── */
-[dir="rtl"] .nav-drawer .dropdown-menu {
-  padding-inline-start: 0;
-  padding-inline-end: var(--space-4);
-}
-
-[dir="rtl"] .bottom-nav-badge {
-  inset-inline-end: auto;
-  inset-inline-start: 18%;
 }
 
 /* ── Detail & card metas: flip row direction ────────────────── */

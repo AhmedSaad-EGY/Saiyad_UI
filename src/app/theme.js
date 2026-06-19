@@ -13,8 +13,7 @@ function applyTheme(theme) {
   document.documentElement.setAttribute('data-theme', theme);
   localStorage.setItem('sayiad_theme', theme);
   syncThemeColor();
-  const toggle = document.getElementById('themeToggle');
-  if (toggle) {
+  document.querySelectorAll('[data-theme-toggle]').forEach((toggle) => {
     toggle.textContent = "";
     const thIcon = document.createElement("i");
     thIcon.className = theme === "dark" ? "fas fa-sun" : "fas fa-moon";
@@ -25,22 +24,23 @@ function applyTheme(theme) {
       'aria-label',
       theme === 'dark' ? 'Switch to light mode' : 'Toggle dark mode',
     );
-  }
+  });
 }
 
 applyTheme(savedTheme);
 
-document.getElementById('themeToggle')?.addEventListener('click', () => {
-  const current = document.documentElement.getAttribute('data-theme');
-  const next = current === 'dark' ? 'light' : 'dark';
+document.querySelectorAll('[data-theme-toggle]').forEach((toggle) => {
+  toggle.addEventListener('click', () => {
+    const current = document.documentElement.getAttribute('data-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
 
-  document.documentElement.classList.add('theme-transitioning');
-  applyTheme(next);
+    document.documentElement.classList.add('theme-transitioning');
+    applyTheme(next);
+    animate(toggle, 'rotateIn', { duration: '0.4s' });
 
-  animate(document.getElementById('themeToggle'), 'rotateIn', { duration: '0.4s' });
-
-  setTimeout(
-    () => document.documentElement.classList.remove('theme-transitioning'),
-    450,
-  );
+    setTimeout(
+      () => document.documentElement.classList.remove('theme-transitioning'),
+      450,
+    );
+  });
 });

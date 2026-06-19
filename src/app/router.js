@@ -225,11 +225,13 @@ export async function router(force = false) {
 
   // Set aria-current="page" on nav links
   const cleanPath = route.split("?")[0];
-  document.querySelectorAll(".nav-link").forEach((link) => {
+  document.querySelectorAll('[data-nav-link]').forEach((link) => {
     const href = link.getAttribute("href");
+    const navRoute = link.dataset.navRoute ?? '';
     const baseSegment = cleanPath.split('/')[0];
     const resolvedRoute = _navParentRouteMap[baseSegment] ?? baseSegment;
     const isMatch =
+      navRoute === resolvedRoute ||
       href === `#/${resolvedRoute}` ||
       href === `#/${cleanPath}` ||
       (cleanPath === "" && href === "#/");

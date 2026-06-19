@@ -6,15 +6,14 @@ const initialLang = getCurrentLang();
 function applyLanguage(lang) {
   document.documentElement.lang = lang;
   document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
-  const toggle = document.getElementById('langToggle');
-  if (toggle) {
+  document.querySelectorAll('[data-lang-toggle]').forEach((toggle) => {
     toggle.textContent = lang === 'ar' ? 'AR' : 'EN';
     toggle.setAttribute('aria-pressed', lang === 'ar' ? 'true' : 'false');
     toggle.setAttribute(
       'aria-label',
       lang === 'ar' ? 'Switch to English' : 'Switch to Arabic',
     );
-  }
+  });
 }
 
 function handleLangChange(next) {
@@ -36,7 +35,9 @@ function handleLangChange(next) {
 
 applyLanguage(initialLang);
 
-document.getElementById('langToggle')?.addEventListener('click', () => {
-  const current = getCurrentLang();
-  handleLangChange(current === 'en' ? 'ar' : 'en');
+document.querySelectorAll('[data-lang-toggle]').forEach((toggle) => {
+  toggle.addEventListener('click', () => {
+    const current = getCurrentLang();
+    handleLangChange(current === 'en' ? 'ar' : 'en');
+  });
 });
