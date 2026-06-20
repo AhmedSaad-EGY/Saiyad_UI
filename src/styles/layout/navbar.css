@@ -766,12 +766,12 @@ body.nav-open .bottom-nav {
 
   .navbar-desktop {
     gap: var(--space-2);
-    justify-content: flex-start;
+    justify-content: flex-end;
   }
 
   .navbar-nav--desktop {
-    flex: 1 1 auto;
-    justify-content: center;
+    flex: 0 0 auto;
+    justify-content: flex-start;
     gap: 0;
   }
 
@@ -797,7 +797,7 @@ body.nav-open .bottom-nav {
   }
 
   [data-user-dropdown] {
-    max-inline-size: 10rem;
+    max-inline-size: clamp(7.5rem, 12vw, 9rem);
     padding-inline: var(--space-2);
   }
 }
