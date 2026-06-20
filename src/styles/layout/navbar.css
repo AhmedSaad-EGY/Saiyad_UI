@@ -766,9 +766,12 @@ body.nav-open .bottom-nav {
 
   .navbar-desktop {
     gap: var(--space-2);
+    justify-content: flex-start;
   }
 
   .navbar-nav--desktop {
+    flex: 1 1 auto;
+    justify-content: center;
     gap: 0;
   }
 
