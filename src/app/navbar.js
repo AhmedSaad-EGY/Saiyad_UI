@@ -103,12 +103,18 @@ function scheduleUserDropdownClose() {
 }
 
 let scrollTicking = false;
+function scrollToPageTop() {
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  window.scrollTo({ top: 0, behavior: prefersReducedMotion ? 'auto' : 'smooth' });
+}
+
 window.addEventListener('scroll', () => {
   if (scrollTicking) return;
   window.requestAnimationFrame(() => {
     document.querySelector('.navbar')?.classList.toggle('scrolled', window.scrollY > 20);
     const btt = document.getElementById('backToTop');
-    if (btt) btt.classList.toggle('visible', window.scrollY > 400);
+    const drawerOpen = document.body.classList.contains('nav-open');
+    if (btt) btt.classList.toggle('visible', window.scrollY > 400 && !drawerOpen);
     scrollTicking = false;
   });
   scrollTicking = true;
@@ -116,7 +122,7 @@ window.addEventListener('scroll', () => {
 
 document.addEventListener('click', (event) => {
   if (event.target.closest('#backToTop')) {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    scrollToPageTop();
   }
 
   if (!event.target.closest('[data-user-menu]')) setUserDropdownOpen(false);

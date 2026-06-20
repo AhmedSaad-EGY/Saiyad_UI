@@ -46,25 +46,33 @@
    ============================================================ */
 .back-to-top {
   position: fixed;
-  bottom: var(--space-6);
-  inset-inline-end: calc(var(--space-6) + env(safe-area-inset-right, 0px));
-  z-index: calc(var(--z-navbar) + 1);
-  width: 44px;
-  height: 44px;
+  inset-inline-end: calc(var(--space-6) + env(safe-area-inset-inline-end, 0px));
+  inset-block-end: calc(var(--space-6) + env(safe-area-inset-bottom, 0px));
+  z-index: calc(var(--z-navbar) - 1);
+  inline-size: 48px;
+  block-size: 48px;
+  min-inline-size: 48px;
+  min-block-size: 48px;
   border-radius: var(--radius-full);
   padding: 0;
-  display: flex;
+  border: 1px solid color-mix(in srgb, var(--primary) 22%, var(--border));
+  background: color-mix(in srgb, var(--card-bg) 74%, var(--primary) 26%);
+  color: var(--primary);
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   opacity: 0;
-  transform: translateY(16px) scale(0.9);
+  transform: translateY(12px) scale(0.92);
   pointer-events: none;
   transition:
-    opacity 0.25s var(--ease-out),
-    transform 0.25s var(--ease-out),
-    background 0.2s,
-    box-shadow 0.2s;
+    opacity var(--duration-normal) var(--ease-out),
+    transform var(--duration-normal) var(--ease-out),
+    background-color var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
   box-shadow: var(--shadow-lg);
+  backdrop-filter: blur(10px);
 }
 
 .back-to-top.visible {
@@ -74,8 +82,26 @@
 }
 
 .back-to-top:hover {
-  transform: translateY(-3px) scale(1.05);
+  transform: translateY(-2px) scale(1.02);
+  background: var(--primary);
+  border-color: var(--primary);
+  color: var(--text-inverse);
   box-shadow: var(--shadow-hover);
+}
+
+.back-to-top:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.back-to-top:focus-visible {
+  outline: var(--focus-ring-width) solid var(--border-focus);
+  outline-offset: 3px;
+}
+
+body.nav-open .back-to-top {
+  opacity: 0;
+  transform: translateY(12px) scale(0.92);
+  pointer-events: none;
 }
 
 /* ============================================================
@@ -208,7 +234,12 @@
   }
 
   .back-to-top {
-    bottom: calc(var(--bottom-nav-height, 0px) + var(--space-4) + env(safe-area-inset-bottom, 0px));
+    inset-inline-end: calc(var(--space-4) + env(safe-area-inset-inline-end, 0px));
+    inset-block-end: calc(var(--bottom-nav-height, 0px) + var(--space-4) + env(safe-area-inset-bottom, 0px));
+    inline-size: 46px;
+    block-size: 46px;
+    min-inline-size: 46px;
+    min-block-size: 46px;
   }
 }
 
