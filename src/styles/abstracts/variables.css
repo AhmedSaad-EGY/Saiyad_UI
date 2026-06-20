@@ -539,7 +539,4 @@ html {
     transform: none !important;
   }
 
-  .back-to-top {
-    transition: opacity 0.15s ease, transform 0.15s ease;
-  }
 }

@@ -214,9 +214,6 @@ export async function router(force = false) {
   currentParams = { ...params };
   pushRouteHistory(route);
 
-  const btt = document.getElementById("backToTop");
-  if (btt) btt.classList.remove("visible");
-
   app.style.opacity = "0";
   app.style.transform = "scale(0.97) translateY(10px)";
   app.style.transition = "opacity 0.25s ease, transform 0.25s ease";

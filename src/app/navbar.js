@@ -103,28 +103,16 @@ function scheduleUserDropdownClose() {
 }
 
 let scrollTicking = false;
-function scrollToPageTop() {
-  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  window.scrollTo({ top: 0, behavior: prefersReducedMotion ? 'auto' : 'smooth' });
-}
-
 window.addEventListener('scroll', () => {
   if (scrollTicking) return;
   window.requestAnimationFrame(() => {
     document.querySelector('.navbar')?.classList.toggle('scrolled', window.scrollY > 20);
-    const btt = document.getElementById('backToTop');
-    const drawerOpen = document.body.classList.contains('nav-open');
-    if (btt) btt.classList.toggle('visible', window.scrollY > 400 && !drawerOpen);
     scrollTicking = false;
   });
   scrollTicking = true;
 }, { passive: true });
 
 document.addEventListener('click', (event) => {
-  if (event.target.closest('#backToTop')) {
-    scrollToPageTop();
-  }
-
   if (!event.target.closest('[data-user-menu]')) setUserDropdownOpen(false);
   if (!event.target.closest('.nav-search-compact')) setCompactSearchOpen(false);
 });
