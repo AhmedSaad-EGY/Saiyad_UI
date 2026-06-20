@@ -11,7 +11,7 @@
   overflow: hidden;
   height: fit-content;
   position: sticky;
-  top: 88px;
+  top: var(--app-scroll-offset);
   transition:
     background-color var(--theme-ease),
     border-color var(--theme-ease);
@@ -72,12 +72,13 @@
   .dash-bottom-bar {
     display: flex;
     position: fixed;
-    bottom: 0;
+    inset-block-end: 0;
     inset-inline: 0;
     z-index: 999;
     background: var(--card-bg);
     border-top: 1px solid var(--border);
-    padding: 4px 0 env(safe-area-inset-bottom, 4px);
+    min-block-size: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom, 0));
+    padding: var(--space-1) 0 env(safe-area-inset-bottom, 0);
     justify-content: space-around;
     align-items: stretch;
     box-shadow: var(--shadow-floating-bar);
@@ -130,7 +131,15 @@
   }
 
   body.has-bottom-bar #app {
-    padding-bottom: calc(60px + env(safe-area-inset-bottom, 0px));
+    padding-block-end: calc(var(--bottom-nav-height) + var(--space-4) + env(safe-area-inset-bottom, 0));
+  }
+
+  .dashboard-content {
+    padding-block-end: var(--space-4);
+  }
+
+  .dashboard-content > div > :last-child {
+    margin-block-end: var(--space-4);
   }
 
   .dashboard-sidebar {

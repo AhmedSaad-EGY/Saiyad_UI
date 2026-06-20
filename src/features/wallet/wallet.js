@@ -15,6 +15,13 @@ export function validateDepositAmount(amount) {
   return { valid: true };
 }
 
+export function validateWithdrawAmount(amount) {
+  if (!Number.isFinite(amount) || amount <= 0) {
+    return { valid: false, message: t('wallet.withdrawAmountError') };
+  }
+  return { valid: true };
+}
+
 export function extractBalance(res) {
   const amount = res?.balance ?? res?.amount ?? res?.data?.balance ?? 0;
   return Number(amount).toLocaleString('en-US', { minimumFractionDigits: 2 });
@@ -31,18 +38,17 @@ export async function fetchWalletBalance() {
 }
 
 export async function fetchWalletTransactions(page = 1, pageSize = 20) {
-  try {
-    return await api.get('/wallet/transactions', { page, pageSize });
-  } catch { return []; }
+  return api.get('/wallet/transactions', { page, pageSize });
 }
 
 export async function topUpWallet(amount) {
-  try {
-    const data = await api.post('/wallet/deposit', { amount });
-    showToast(t('wallet.topUpSuccess'), 'success');
-    return data;
-  } catch (err) {
-    showToast(err.message || t('common.error'), 'error');
-    return null;
-  }
+  const data = await api.post('/wallet/deposit', { amount });
+  showToast(t('wallet.topUpSuccess'), 'success');
+  return data;
+}
+
+export async function withdrawWallet(amount) {
+  const data = await api.post('/wallet/withdraw', { amount });
+  showToast(t('wallet.withdrawSuccess'), 'success');
+  return data;
 }

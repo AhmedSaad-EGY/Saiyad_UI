@@ -328,11 +328,11 @@
   }
 
   .products-page-alpine .product-card-img {
-    aspect-ratio: 4 / 3;
+    aspect-ratio: 16 / 10;
   }
 
   .products-page-alpine .product-card-body {
-    min-block-size: 128px;
+    min-block-size: 148px;
   }
 
   .products-page-alpine .quick-add-btn {

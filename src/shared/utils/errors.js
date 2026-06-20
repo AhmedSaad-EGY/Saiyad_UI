@@ -4,7 +4,7 @@ import { t } from './i18n.js';
 import { escapeHtml } from './dom.js';
 
 export function normalizeApiError(err) {
-  if (!err) return { message: 'Unknown error', status: 0 };
+  if (!err) return { message: t('common.somethingWentWrong'), status: 0 };
 
   let message = err.message || '';
   const status = err.status || 0;
@@ -14,6 +14,7 @@ export function normalizeApiError(err) {
     if (details) message += `: ${  details}`;
   }
 
+  if (!message || message === 'Unknown error') message = t('common.somethingWentWrong');
   return { message, status, data: err.data };
 }
 

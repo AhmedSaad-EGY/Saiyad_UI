@@ -61,6 +61,24 @@
   background: var(--glass-wallet-btn-hover-bg);
   border-color: var(--glass-wallet-btn-hover-border);
 }
+.wallet-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-block-start: var(--space-2);
+}
+
+.wallet-actions .btn {
+  min-block-size: var(--control-height);
+  margin-block-start: 0;
+}
+
+.wallet-balance-card .wallet-withdraw-btn {
+  background: transparent;
+  border-color: var(--glass-wallet-btn-border);
+  color: var(--text-inverse);
+}
+
 .wallet-payment-note {
   font-size: var(--text-xs);
   opacity: 0.65;
@@ -90,6 +108,85 @@
   font-weight: var(--weight-semibold);
 }
 
+.wallet-action-modal {
+  display: flex;
+  flex-direction: column;
+  inline-size: min(92vw, 460px);
+  max-block-size: min(90dvh, 620px);
+  padding: 0;
+  overflow: hidden;
+  text-align: start;
+}
+
+.wallet-action-modal__header {
+  position: relative;
+  flex: 0 0 auto;
+  min-block-size: var(--control-height-lg);
+  padding: var(--space-5);
+  padding-inline-end: calc(var(--control-height) + var(--space-5));
+  border-block-end: 1px solid var(--border);
+}
+
+.wallet-action-modal__header h2 {
+  margin: 0;
+  font-size: var(--text-xl);
+}
+
+.wallet-action-modal__close {
+  position: absolute;
+  inset-block-start: var(--space-3);
+  inset-inline-end: var(--space-3);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: var(--control-height);
+  block-size: var(--control-height);
+  border: 0;
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.wallet-action-modal__close:hover,
+.wallet-action-modal__close:focus-visible {
+  background: var(--primary-ghost);
+  color: var(--primary);
+}
+
+.wallet-action-modal__close:focus-visible {
+  outline: var(--focus-ring-width) solid var(--border-focus);
+  outline-offset: var(--focus-ring-offset);
+}
+
+.wallet-action-modal__body {
+  flex: 1 1 auto;
+  min-block-size: 0;
+  padding: var(--space-5);
+  overflow-y: auto;
+}
+
+.wallet-action-modal__help {
+  margin-block: var(--space-2) var(--space-4);
+  color: var(--text-muted);
+  line-height: var(--leading-normal);
+}
+
+.wallet-action-modal__footer {
+  display: flex;
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  padding-block-end: calc(var(--space-4) + env(safe-area-inset-bottom, 0));
+  border-block-start: 1px solid var(--border);
+}
+
+.wallet-action-modal__footer .btn {
+  min-block-size: var(--control-height);
+}
+
 @media (width <= 767px) {
   .wallet-page {
     padding: var(--space-6) var(--space-4);
@@ -112,6 +209,31 @@
   .wallet-balance-card {
     padding: var(--space-5);
     border-radius: var(--radius-lg);
+  }
+
+  .wallet-actions,
+  .wallet-action-modal__footer {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .wallet-actions .btn,
+  .wallet-action-modal__footer .btn {
+    inline-size: 100%;
+  }
+
+  .wallet-action-modal__header,
+  .wallet-action-modal__body {
+    padding-inline-start: var(--space-4);
+  }
+
+  .wallet-action-modal__header {
+    padding-inline-end: calc(var(--control-height) + var(--space-4));
+  }
+
+  .wallet-action-modal__body,
+  .wallet-action-modal__footer {
+    padding-inline-end: var(--space-4);
   }
 }
 

@@ -167,7 +167,7 @@
 @media (width <= 767px) {
   .footer {
     margin-top: var(--space-10);
-    padding: var(--space-8) 0 var(--space-5);
+    padding: var(--space-8) 0 calc(var(--space-5) + var(--bottom-nav-height) + env(safe-area-inset-bottom, 0));
   }
 }
 

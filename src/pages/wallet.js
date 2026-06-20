@@ -2,15 +2,29 @@ import { requireAuth } from '../features/auth/login.js';
 import { setPageMeta } from '../shared/utils/seo.js';
 import { showToast } from '../widgets/ui/toast.js';
 import { t } from '../shared/utils/i18n.js';
+import { getUser } from '../shared/utils/auth-state.js';
+import { registerRouteCleanup } from '../app/router.js';
 
-import { fetchWalletBalance, fetchWalletTransactions, topUpWallet, extractBalance, extractTransactions, validateDepositAmount } from '../features/wallet/wallet.js';
+import {
+  fetchWalletBalance,
+  fetchWalletTransactions,
+  topUpWallet,
+  withdrawWallet,
+  extractBalance,
+  extractTransactions,
+  validateDepositAmount,
+  validateWithdrawAmount,
+} from '../features/wallet/wallet.js';
+import { getWalletCapabilities } from '../features/wallet/capabilities.js';
 
 import {
   renderWalletShell,
   renderTransactions,
   renderTransactionsError,
-  openTopUpModal,
-  closeTopUpModal,
+  openWalletActionModal,
+  closeWalletActionModal,
+  setWalletActionPending,
+  showWalletActionError,
 } from '../widgets/wallet/index.js';
 
 export default async function renderWallet(container) {
@@ -18,15 +32,19 @@ export default async function renderWallet(container) {
 
   setPageMeta(t('wallet.title'), t('wallet.metaDesc'), true);
 
-  container.innerHTML = renderWalletShell();
+  const capabilities = getWalletCapabilities(getUser());
+  container.innerHTML = renderWalletShell(capabilities);
 
-  document.getElementById('topUpBtn').addEventListener('click', openTopUpModal);
-  document.getElementById('topUpCloseBtn').addEventListener('click', closeTopUpModal);
-  document.getElementById('topUpCancelBtn').addEventListener('click', closeTopUpModal);
-  document.getElementById('topUpConfirmBtn').addEventListener('click', handleTopUp);
-  document.getElementById('topUpModalOverlay').addEventListener('click', (e) => {
-    if (e.target === document.getElementById('topUpModalOverlay')) closeTopUpModal();
+  document.querySelectorAll('[data-wallet-action]').forEach((button) => {
+    button.addEventListener('click', () => openWalletActionModal(button.dataset.walletAction, button));
   });
+  document.getElementById('walletActionCloseBtn')?.addEventListener('click', closeWalletActionModal);
+  document.getElementById('walletActionCancelBtn')?.addEventListener('click', closeWalletActionModal);
+  document.getElementById('walletActionConfirmBtn')?.addEventListener('click', handleWalletAction);
+  document.getElementById('walletActionModalOverlay')?.addEventListener('click', (event) => {
+    if (event.target === event.currentTarget) closeWalletActionModal();
+  });
+  registerRouteCleanup(closeWalletActionModal);
 
   loadWalletBalance();
   loadWalletTransactions();
@@ -57,48 +75,32 @@ async function loadWalletTransactions() {
   }
 }
 
-let _toppingUp = false;
-
-function setTopUpInProgress(value) {
-  _toppingUp = value;
-}
-
-async function handleTopUp() {
-  if (_toppingUp) return;
-  setTopUpInProgress(true);
-
-  const input  = document.getElementById('topUpAmount');
-  const errEl  = document.getElementById('topUpAmountError');
-  const btn    = document.getElementById('topUpConfirmBtn');
+async function handleWalletAction() {
+  const confirmButton = document.getElementById('walletActionConfirmBtn');
+  if (confirmButton?.disabled) return;
+  const overlay = document.getElementById('walletActionModalOverlay');
+  const input = document.getElementById('walletActionAmount');
+  if (!overlay || !input) return;
+  const mode = overlay.dataset.mode;
   const amount = parseFloat(input.value);
-
-  errEl.classList.add('hidden');
-  errEl.textContent = '';
-
-  const validation = validateDepositAmount(amount);
+  const validation = mode === 'withdraw'
+    ? validateWithdrawAmount(amount)
+    : validateDepositAmount(amount);
   if (!validation.valid) {
-    errEl.textContent = validation.message;
-    errEl.classList.remove('hidden');
-    input.focus();
-    setTopUpInProgress(false);
+    showWalletActionError(validation.message);
     return;
   }
-
-  btn.disabled = true;
-  btn.innerHTML = `<i class="fas fa-spinner fa-spin" aria-hidden="true"></i> ${t('common.processing')}`;
-
+  setWalletActionPending(true);
   try {
-    await topUpWallet(amount);
-    closeTopUpModal();
+    if (mode === 'withdraw') await withdrawWallet(amount);
+    else await topUpWallet(amount);
+    closeWalletActionModal();
     loadWalletBalance();
     loadWalletTransactions();
   } catch (err) {
-    errEl.textContent = err?.message ?? t('wallet.topUpFailed');
-    errEl.classList.remove('hidden');
-    btn.disabled = false;
-    btn.innerHTML = t('wallet.confirmTopUp');
+    showWalletActionError(err?.message || t('common.somethingWentWrong'));
   } finally {
-    setTopUpInProgress(false);
+    setWalletActionPending(false);
   }
 }
 

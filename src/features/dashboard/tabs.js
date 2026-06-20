@@ -84,6 +84,7 @@ async function loadOverview(content, user, isActive) {
     stats.sellerProfileExists = false;
 
     const isAdmin = user?.role === ROLES.ADMIN;
+    const isSeller = Boolean(user && SELLER_ROLES.includes(user.role));
     if (isAdmin) {
       try {
         const pending = await fetchPendingReviews(1, 1);
@@ -98,19 +99,21 @@ async function loadOverview(content, user, isActive) {
         const orders = await fetchOrders(1, 1);
         stats.ordersCount = orders.totalCount || orders.total || 0;
       } catch {}
-      try {
-        await fetchMySellerProfile();
-        stats.sellerProfileExists = true;
-      } catch (profileErr) {
-        const is404 = profileErr?.status === 404
-          || String(profileErr?.message || '').includes('404')
-          || String(profileErr?.message || '').toLowerCase().includes('not found');
-        stats.sellerProfile404 = is404;
+      if (isSeller) {
+        try {
+          await fetchMySellerProfile();
+          stats.sellerProfileExists = true;
+        } catch (profileErr) {
+          const is404 = profileErr?.status === 404
+            || String(profileErr?.message || '').includes('404')
+            || String(profileErr?.message || '').toLowerCase().includes('not found');
+          stats.sellerProfile404 = is404;
+        }
+        try {
+          const products = await fetchMyProducts(1);
+          stats.productsCount = products.totalCount || products.total || 0;
+        } catch {}
       }
-      try {
-        const products = await fetchMyProducts(1);
-        stats.productsCount = products.totalCount || products.total || 0;
-      } catch {}
     }
   } catch {}
   if (!isActive()) return;

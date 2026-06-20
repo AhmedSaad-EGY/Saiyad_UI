@@ -1,6 +1,8 @@
 import { t } from '../../shared/utils/i18n.js';
 
-export function renderWalletShell() {
+export function renderWalletShell({ canDeposit = false, canWithdraw = false } = {}) {
+  const defaultMode = canDeposit ? 'deposit' : 'withdraw';
+  const hasActions = canDeposit || canWithdraw;
   return `
     <section class="wallet-page" aria-label="${t('wallet.pageLabel')}">
       <div class="container">
@@ -15,13 +17,20 @@ export function renderWalletShell() {
             <span aria-busy="true" data-i18n="common.loading">Loading…</span>
           </div>
           <div class="wallet-balance-currency">EGP</div>
-          <button class="btn btn-primary" id="topUpBtn" data-i18n="wallet.deposit">
-            <i class="fas fa-plus-circle" aria-hidden="true"></i> Top Up
-          </button>
-          <p class="wallet-payment-note" style="font-size:0.75rem;opacity:0.55;margin-top:0.5rem">
+          ${hasActions ? `<div class="wallet-actions" aria-label="${t('wallet.actions')}">
+            ${canDeposit ? `<button type="button" class="btn btn-primary" data-wallet-action="deposit">
+              <i class="fas fa-plus-circle" aria-hidden="true"></i>
+              <span>${t('wallet.deposit')}</span>
+            </button>` : ''}
+            ${canWithdraw ? `<button type="button" class="btn btn-outline wallet-withdraw-btn" data-wallet-action="withdraw">
+              <i class="fas fa-arrow-up-from-bracket" aria-hidden="true"></i>
+              <span>${t('wallet.withdraw')}</span>
+            </button>` : ''}
+          </div>` : ''}
+          ${canDeposit ? `<p class="wallet-payment-note">
             <i class="fas fa-info-circle" aria-hidden="true"></i>
-            <span data-i18n="wallet.paymentNote">Add demo balance instantly for testing. This does not represent real money.</span>
-          </p>
+            <span>${t('wallet.paymentNote')}</span>
+          </p>` : ''}
         </div>
 
         <section class="wallet-transactions-section" aria-labelledby="txHeading">
@@ -36,31 +45,30 @@ export function renderWalletShell() {
       </div>
     </section>
 
-    <div class="modal-overlay" id="topUpModalOverlay"
-         role="dialog" aria-modal="true" aria-labelledby="topUpModalTitle">
-      <div class="modal modal-confirm">
-        <div class="modal-header">
-          <h2 id="topUpModalTitle" data-i18n="wallet.topUpTitle">Top Up Wallet</h2>
-          <button class="modal-close-btn" id="topUpCloseBtn" aria-label="${t('wallet.closeTopUp')}">
+    ${hasActions ? `<div class="modal-overlay wallet-action-overlay" id="walletActionModalOverlay"
+         role="dialog" aria-modal="true" aria-labelledby="walletActionModalTitle" data-mode="${defaultMode}">
+      <div class="modal wallet-action-modal">
+        <div class="wallet-action-modal__header">
+          <h2 id="walletActionModalTitle">${t(defaultMode === 'deposit' ? 'wallet.topUpTitle' : 'wallet.withdrawTitle')}</h2>
+          <button type="button" class="modal-close-btn wallet-action-modal__close" id="walletActionCloseBtn" aria-label="${t('wallet.closeAction')}">
             <i class="fas fa-times" aria-hidden="true"></i>
           </button>
         </div>
-        <div class="modal-body">
+        <div class="wallet-action-modal__body">
           <div class="form-group">
-            <label for="topUpAmount" data-i18n="wallet.amountLabel">Amount (EGP)</label>
-            <p class="text-muted">${t('wallet.topUpHelp')}</p>
-            <input type="number" id="topUpAmount" min="10" max="50000"
-                   placeholder="${t('wallet.minimumDeposit')}" class="form-control"
-                   aria-describedby="topUpAmountError" />
-            <span class="field-error hidden" id="topUpAmountError" role="alert"></span>
+            <label for="walletActionAmount">${t('wallet.amountLabel')}</label>
+            <p class="wallet-action-modal__help" id="walletActionHelp">${t(defaultMode === 'deposit' ? 'wallet.topUpHelp' : 'wallet.withdrawHelp')}</p>
+            <input type="number" id="walletActionAmount" inputmode="decimal" step="0.01"
+                   class="form-control" aria-describedby="walletActionHelp walletActionAmountError" />
+            <span class="field-error hidden" id="walletActionAmountError" role="alert"></span>
           </div>
         </div>
-        <div class="modal-footer">
-          <button class="btn btn-secondary" id="topUpCancelBtn" data-i18n="common.cancel">Cancel</button>
-          <button class="btn btn-primary"   id="topUpConfirmBtn" data-i18n="wallet.confirmTopUp">
-            Confirm Top Up
+        <div class="wallet-action-modal__footer">
+          <button type="button" class="btn btn-secondary" id="walletActionCancelBtn">${t('common.cancel')}</button>
+          <button type="button" class="btn btn-primary" id="walletActionConfirmBtn">
+            <span>${t(defaultMode === 'deposit' ? 'wallet.confirmTopUp' : 'wallet.confirmWithdraw')}</span>
           </button>
         </div>
       </div>
-    </div>`;
+    </div>` : ''}`;
 }

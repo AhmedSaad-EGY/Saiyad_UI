@@ -7,8 +7,8 @@ export function renderHomeHero() {
         <h1>${t("home.welcome")}</h1>
         <p>${t("home.subtitle")}</p>
         <div class="hero-actions">
-          <a href="#/products" class="btn btn-primary btn-lg"><i class="fas fa-store"></i> ${t("home.browseProducts")}</a>
-          <a href="#/auctions" class="btn btn-outline btn-lg"><i class="fas fa-gavel"></i> ${t("home.viewAuctions")}</a>
+          <a href="#/products" class="btn btn-primary btn-lg"><i class="fas fa-store" aria-hidden="true"></i><span>${t("home.browseProducts")}</span></a>
+          <a href="#/auctions" class="btn btn-outline btn-lg"><i class="fas fa-gavel" aria-hidden="true"></i><span>${t("home.viewAuctions")}</span></a>
         </div>
       </div>
     </section>

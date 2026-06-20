@@ -75,6 +75,14 @@
   backdrop-filter: blur(8px);
 }
 
+.hero-actions .btn > :is(i, span) {
+  color: inherit;
+}
+
+.hero-actions .btn > span {
+  display: inline-block;
+}
+
 .hero-actions .btn-outline:hover {
   background: var(--card-bg);
   border-color: var(--text-muted);
