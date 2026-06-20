@@ -6,7 +6,10 @@ import { showToast, showConfirm } from '../../shared/utils/ui.js';
 import { observeAnimations } from '../../shared/utils/dom.js';
 import { setPageMeta } from '../../shared/utils/seo.js';
 import { KEYS } from '../../shared/constants/storage-keys.js';
+import { resolveMediaUrl } from '../../shared/utils/media-url.js';
 import Alpine from 'alpinejs';
+
+const PROFILE_IMAGE_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
 
 export async function fetchProfileStats() {
   const s = {
@@ -56,7 +59,7 @@ Alpine.data('profilePage', () => {
 
   return {
     user,
-    avatarUrl: user?.profileImage ?? null,
+    avatarUrl: resolveMediaUrl(user?.profileImage) || null,
     avatarLoading: false,
     statsLoading: true,
     stats: { orders: 0, wishlist: 0, notifs: 0, auctions: 0, pendingRequests: 0, pendingReviews: 0, totalUsers: 0 },
@@ -108,6 +111,10 @@ Alpine.data('profilePage', () => {
         showToast(t('profile.imageTooLarge'), 'error');
         return;
       }
+      if (!PROFILE_IMAGE_TYPES.has(file.type)) {
+        showToast(t('profile.invalidImageType'), 'error');
+        return;
+      }
 
       this.avatarLoading = true;
       try {
@@ -125,11 +132,14 @@ Alpine.data('profilePage', () => {
           profileImage: imageUrl,
         });
 
-        this.avatarUrl = imageUrl;
+        this.avatarUrl = resolveMediaUrl(imageUrl);
         localStorage.setItem(KEYS.USER, JSON.stringify({ ...u, profileImage: imageUrl }));
         showToast(t('profile.photoUpdated'), 'success');
       } catch (err) {
-        showToast(err.message || t('common.error'), 'error');
+        const message = err?.status === 400
+          ? t('profile.invalidImageContent')
+          : err?.message || t('common.error');
+        showToast(message, 'error');
       } finally {
         this.avatarLoading = false;
       }

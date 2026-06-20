@@ -19,7 +19,7 @@ export function renderProfileHero(user) {
           </span>
           <template x-if="avatarUrl && !avatarLoading">
             <div>
-              <img :src="avatarUrl" alt="" loading="lazy" class="avatar-img">
+              <img :src="avatarUrl" alt="" loading="lazy" class="avatar-img" @error="avatarUrl = null">
               <button class="avatar-delete-btn" type="button"
                       @click.stop="deleteImage()"
                       :title="$t('profile.removePhoto')"

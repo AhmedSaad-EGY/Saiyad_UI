@@ -109,10 +109,15 @@
 }
 
 .wallet-action-modal {
+  position: relative;
+  inset: auto;
   display: flex;
   flex-direction: column;
   inline-size: min(92vw, 460px);
+  block-size: auto;
+  min-block-size: 0;
   max-block-size: min(90dvh, 620px);
+  margin: 0;
   padding: 0;
   overflow: hidden;
   text-align: start;
@@ -160,7 +165,7 @@
 }
 
 .wallet-action-modal__body {
-  flex: 1 1 auto;
+  flex: 0 1 auto;
   min-block-size: 0;
   padding: var(--space-5);
   overflow-y: auto;
