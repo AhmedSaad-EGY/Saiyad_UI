@@ -2,7 +2,7 @@ import { emit } from '../../shared/utils/events.js';
 import { createSwipeGesture } from '../../shared/utils/swipe.js';
 import { syncCartBadgeCount, syncNotifBadgeCount } from '../../shared/utils/ui.js';
 import { getUser } from '../../shared/utils/auth-state.js';
-import { ROLES } from '../../shared/constants/roles.js';
+import { canUseCart } from '../../shared/utils/capabilities.js';
 
 let _drawerSwipe = null;
 let _fetchCartCount = async () => 0;
@@ -151,11 +151,11 @@ export async function updateCartBadge(forceRefresh) {
   if (!document.querySelector('[data-cart-badge]')) return;
   const user = getUser();
   const userId = user?.id ?? null;
-  if (user?.role === ROLES.ADMIN) { syncCartBadgeCount(0); _cartCache.count = 0; return; }
+  if (!canUseCart(user)) { syncCartBadgeCount(0); _cartCache.count = 0; return; }
   if (!forceRefresh && _cartCache.count > 0) { syncCartBadgeCount(_cartCache.count); return; }
   const count = await _fetchCartCount();
   const latestUser = getUser();
-  if ((latestUser?.id ?? null) !== userId || latestUser?.role === ROLES.ADMIN) return;
+  if ((latestUser?.id ?? null) !== userId || !canUseCart(latestUser)) return;
   setCachedCartCount(count);
   syncCartBadgeCount(count);
 }

@@ -1,6 +1,15 @@
 import { t } from '../../shared/utils/i18n.js';
-import { getUser, hasAnyRole, hasRole } from '../../shared/utils/auth-state.js';
-import { ROLES, SELLER_ROLES, ECOMMERCE_ROLES, MODERATOR_ROLES } from '../../shared/constants/roles.js';
+import { getUser } from '../../shared/utils/auth-state.js';
+import {
+  canAccessAdmin,
+  canAccessAuctioneerAnalytics,
+  canAccessOrders,
+  canAccessSellerDashboard,
+  canCreateAuctionRequest,
+  canManageProducts,
+  canReviewAuctionRequests,
+  canUseCart,
+} from '../../shared/utils/capabilities.js';
 
 let _passwordSubmitting = false;
 import { showLoading } from '../../shared/utils/dom.js';
@@ -23,18 +32,17 @@ import {
 } from '../../widgets/dashboard/index.js';
 
 export function getDashboardTabs() {
-  const isECommerceRole = hasAnyRole(...(ECOMMERCE_ROLES));
-  const isSellerRole = hasAnyRole(...(SELLER_ROLES));
+  const user = getUser();
 
   return [
     { id: 'overview', icon: 'fa-tachometer-alt', label: t('dash.overview') },
-    ...(isECommerceRole ? [{ id: 'orders', icon: 'fa-box', label: t('dash.orders') }] : []),
-    ...(isSellerRole ? [{ id: 'products', icon: 'fa-tag', label: t('dash.products') }] : []),
-    ...(hasRole(ROLES.AUCTIONEER) ? [{ id: 'auctions', icon: 'fa-gavel', label: t('dash.auctions') }] : []),
-    ...(hasRole(ROLES.FISHERMAN) ? [{ id: 'auction-requests', icon: 'fa-file-export', label: t('auctionRequests.title') }] : []),
-    ...(hasAnyRole(...(MODERATOR_ROLES)) ? [{ id: 'auction-requests-review', icon: 'fa-clipboard-list', label: t('auctionRequestsReview.title') }] : []),
-    ...(hasAnyRole(...(MODERATOR_ROLES)) ? [{ id: 'auctioneer-analytics', icon: 'fa-chart-bar', label: t('analytics.title') }] : []),
-    ...(isECommerceRole ? [{ id: 'wishlist', icon: 'fa-heart', label: t('dash.wishlist') }] : []),
+    ...(canAccessOrders(user) ? [{ id: 'orders', icon: 'fa-box', label: t('dash.orders') }] : []),
+    ...(canManageProducts(user) ? [{ id: 'products', icon: 'fa-tag', label: t('dash.products') }] : []),
+    ...(canAccessAuctioneerAnalytics(user) && !canAccessAdmin(user) ? [{ id: 'auctions', icon: 'fa-gavel', label: t('dash.auctions') }] : []),
+    ...(canCreateAuctionRequest(user) ? [{ id: 'auction-requests', icon: 'fa-file-export', label: t('auctionRequests.title') }] : []),
+    ...(canReviewAuctionRequests(user) ? [{ id: 'auction-requests-review', icon: 'fa-clipboard-list', label: t('auctionRequestsReview.title') }] : []),
+    ...(canAccessAuctioneerAnalytics(user) ? [{ id: 'auctioneer-analytics', icon: 'fa-chart-bar', label: t('analytics.title') }] : []),
+    ...(canUseCart(user) ? [{ id: 'wishlist', icon: 'fa-heart', label: t('dash.wishlist') }] : []),
     { id: 'notifications', icon: 'fa-bell', label: t('dash.notifications') },
     { id: 'profile', icon: 'fa-user', label: t('dash.profile') },
     { id: 'password', icon: 'fa-key', label: t('dash.changePassword') },
@@ -83,8 +91,8 @@ async function loadOverview(content, user, isActive) {
     stats.usersCount = 0;
     stats.sellerProfileExists = false;
 
-    const isAdmin = user?.role === ROLES.ADMIN;
-    const isSeller = Boolean(user && SELLER_ROLES.includes(user.role));
+    const isAdmin = canAccessAdmin(user);
+    const isSeller = canAccessSellerDashboard(user);
     if (isAdmin) {
       try {
         const pending = await fetchPendingReviews(1, 1);

@@ -1,10 +1,10 @@
 import { t } from '../../shared/utils/i18n.js';
-import { ROLES, SELLER_ROLES } from '../../shared/constants/roles.js';
+import { canAccessAdmin, canAccessSellerDashboard } from '../../shared/utils/capabilities.js';
 import { escapeHtml, observeAnimations } from '../../shared/utils/dom.js';
 
 export function renderOverview(content, user, stats) {
-  const isAdmin = user?.role === ROLES.ADMIN;
-  const sellerRoles = user && SELLER_ROLES.includes(user.role);
+  const isAdmin = canAccessAdmin(user);
+  const sellerRoles = canAccessSellerDashboard(user);
 
   content.innerHTML = `
     <div class="card animate-on-scroll mb-4">

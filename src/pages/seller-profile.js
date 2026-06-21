@@ -1,7 +1,7 @@
 import { t } from '../shared/utils/i18n.js';
 import { getUser } from '../shared/utils/auth-state.js';
 import { requireAuth } from '../features/auth/login.js';
-import { SELLER_ROLES } from '../shared/constants/roles.js';
+import { canAccessSellerDashboard } from '../shared/utils/capabilities.js';
 import { showLoading, observeAnimations } from '../shared/utils/dom.js';
 import { showToast } from '../widgets/ui/toast.js';
 import { renderProductCards } from '../widgets/cards/product-card.js';
@@ -55,7 +55,7 @@ export default async function renderSellerProfile(container) {
   }
 
   const currentUser = getUser();
-  const isSeller = currentUser && SELLER_ROLES.includes(currentUser.role);
+  const isSeller = canAccessSellerDashboard(currentUser);
 
   if (!isSeller) {
     window.location.hash = '#/';

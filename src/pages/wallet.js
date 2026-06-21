@@ -15,7 +15,7 @@ import {
   validateDepositAmount,
   validateWithdrawAmount,
 } from '../features/wallet/wallet.js';
-import { getWalletCapabilities } from '../features/wallet/capabilities.js';
+import { getWalletCapabilities } from '../shared/utils/capabilities.js';
 
 import {
   renderWalletShell,

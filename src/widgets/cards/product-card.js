@@ -7,6 +7,8 @@ import { animate } from '../../shared/utils/dom.js';
 import { getRecentlyViewed } from '../../shared/utils/recently-viewed.js';
 import { getProductLink, getRecentLink } from '../../features/products/routing.js';
 import { resolveMediaUrl } from '../../shared/utils/media-url.js';
+import { getUser } from '../../shared/utils/auth-state.js';
+import { canUseCart } from '../../shared/utils/capabilities.js';
 
 export function renderProductCards(container, products) {
   if (!products || !products.length) {
@@ -49,7 +51,7 @@ export function renderProductCards(container, products) {
             </div>
           </div>
         </a>
-        <button class="quick-add-btn" data-quick-add="${escapeHtml(String(productId))}" aria-label="${t('product.addToCart')}" title="${t('product.addToCart')}"><i class="fas fa-cart-plus"></i></button>
+        ${canUseCart(getUser()) ? `<button class="quick-add-btn" data-quick-add="${escapeHtml(String(productId))}" aria-label="${t('product.addToCart')}" title="${t('product.addToCart')}"><i class="fas fa-cart-plus"></i></button>` : ''}
       </div>`;
   }).join('');
   observeAnimations();

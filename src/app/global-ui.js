@@ -1,7 +1,7 @@
 import { t } from '../shared/utils/i18n.js';
 import { animate } from '../shared/utils/dom.js';
 import { getUser, requireAuth } from '../features/auth/login.js';
-import { SELLER_ROLES } from '../shared/constants/roles.js';
+import { canManageProducts, canUseCart } from '../shared/utils/capabilities.js';
 import { addToCart } from '../features/cart/add.js';
 import { openQuickView } from '../widgets/cards/product-card.js';
 import { closeDrawer } from '../widgets/layout/navbar.js';
@@ -39,6 +39,7 @@ document.addEventListener('click', async (e) => {
   e.stopPropagation();
   try {
     if (!(await requireAuth())) return;
+    if (!canUseCart(getUser())) return;
     const productId = parseInt(btn.dataset.quickAdd);
     await addToCart(productId, 1);
     showToast(t('product.addedToCart'), 'success');
@@ -107,13 +108,7 @@ initHeroTilt();
 syncUserRoleAttribute();
 
 const _sellLink = document.getElementById('footerSellLink');
-if (_sellLink) {
-  const _seller = getUser();
-  if (_seller && SELLER_ROLES.includes(_seller.role)) {
-    _sellLink.href = '#/dashboard';
-    _sellLink.setAttribute('aria-label', 'Go to your seller dashboard');
-  }
-}
+if (_sellLink && canManageProducts(getUser())) _sellLink.href = '#/dashboard';
 
 const _cy = document.getElementById('copyrightYear');
 if (_cy) _cy.textContent = new Date().getFullYear();

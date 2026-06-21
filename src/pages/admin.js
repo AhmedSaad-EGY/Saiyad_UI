@@ -1,6 +1,6 @@
 import { t } from '../shared/utils/i18n.js';
 import { getUser } from '../features/auth/login.js';
-import { ROLES } from '../shared/constants/roles.js';
+import { canAccessAdmin } from '../shared/utils/capabilities.js';
 import { setPageMeta } from '../shared/utils/seo.js';
 import { formatPrice } from '../shared/utils/format.js';
 import { showError } from '../shared/utils/dom.js';
@@ -27,7 +27,7 @@ import {
 
 export default async function renderAdmin(container) {
   const _u = getUser();
-  if (!_u || _u.role !== ROLES.ADMIN) { window.location.hash = '#/'; return; }
+  if (!canAccessAdmin(_u)) { window.location.hash = '#/'; return; }
   setPageMeta(t('admin.title'), undefined, true);
 
   const tabs = [

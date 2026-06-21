@@ -16,7 +16,7 @@ import { createAuction } from '../features/auctions/create.js';
 import { submitReview, sortReviews, initStarRating } from '../features/reviews/index.js';
 import { clampQuantity } from '../features/cart/quantity.js';
 import { renderBreadcrumb, renderGallery, renderDetailPanel, renderReviewCards } from '../widgets/product-detail/index.js';
-import { ROLES } from '../shared/constants/roles.js';
+import { canAccessAdmin, canUseCart } from '../shared/utils/capabilities.js';
 import '../styles/pages/product-detail.css';
 
 function setHTML(el, html) {
@@ -33,8 +33,8 @@ export default async function renderProductDetail(container, route, params) {
     const { p, isAvailable, isWishlisted: initWishlisted, avgRating, reviews, allImages, stockQty, stockLevel, isSellerOwner } = await loadProductDetailData(id);
     let isWishlisted = initWishlisted;
     const user = getUser();
-    const isAdmin = user?.role === ROLES.ADMIN;
-    const canUseEcommerceActions = !isAdmin;
+    const isAdmin = canAccessAdmin(user);
+    const canUseEcommerceActions = canUseCart(user);
     const canReview = isAuthenticated() && !isAdmin;
 
     setHTML(container, `

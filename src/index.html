@@ -81,7 +81,7 @@
           <li><a href="#/products" class="nav-link" data-nav-link data-nav-route="products" data-i18n="nav.products">Products</a></li>
           <li><a href="#/auctions" class="nav-link" data-nav-link data-nav-route="auctions" data-i18n="nav.auctions">Auctions</a></li>
           <li>
-            <a href="#/cart" class="nav-link cart-nav-link" data-nav-link data-nav-route="cart">
+            <a href="#/cart" class="nav-link cart-nav-link" data-nav-link data-nav-route="cart" data-capability="cart">
               <span data-i18n="nav.cart">Cart</span>
               <span class="badge d-none" data-cart-badge aria-label="Cart items count"></span>
             </a>
@@ -146,7 +146,7 @@
           <a href="#/login" class="btn btn-outline btn-sm nav-guest" data-i18n="nav.login">Login</a>
           <a href="#/register" class="btn btn-primary btn-sm nav-guest" data-i18n="nav.register">Register</a>
 
-          <a href="#/dashboard?tab=notifications" class="notif-bell d-none nav-auth" aria-label="Notifications">
+          <a href="#/dashboard?tab=notifications" class="notif-bell d-none nav-auth" data-capability="dashboard" aria-label="Notifications">
             <i class="fas fa-bell" aria-hidden="true"></i>
             <span class="badge d-none" data-notif-badge aria-label="Unread notifications count"></span>
           </a>
@@ -174,28 +174,28 @@
               role="menu"
               aria-labelledby="desktopUserDropdown"
             >
-              <a href="#/profile" class="dropdown-item" role="menuitem" data-roles="all">
+              <a href="#/profile" class="dropdown-item" role="menuitem" data-capability="profile">
                 <i class="fas fa-user" aria-hidden="true"></i><span data-i18n="dash.profile">Profile</span>
               </a>
-              <a href="#/dashboard" class="dropdown-item" role="menuitem" data-roles="all">
+              <a href="#/dashboard" class="dropdown-item" role="menuitem" data-capability="dashboard">
                 <i class="fas fa-tachometer-alt" aria-hidden="true"></i><span data-i18n="nav.dashboard">Dashboard</span>
               </a>
-              <a href="#/dashboard?tab=orders" class="dropdown-item" role="menuitem" data-roles="Customer,Fisherman,BaitSeller,Auctioneer">
+              <a href="#/dashboard?tab=orders" class="dropdown-item" role="menuitem" data-capability="orders">
                 <i class="fas fa-box" aria-hidden="true"></i><span data-i18n="nav.myOrders">My Orders</span>
               </a>
-              <a href="#/dashboard?tab=products" class="dropdown-item" role="menuitem" data-roles="Fisherman,BaitSeller">
+              <a href="#/dashboard?tab=products" class="dropdown-item" role="menuitem" data-capability="manageProducts">
                 <i class="fas fa-tag" aria-hidden="true"></i><span data-i18n="nav.myProducts">My Products</span>
               </a>
-              <a href="#/dashboard?tab=wishlist" class="dropdown-item" role="menuitem" data-roles="Customer,Fisherman,BaitSeller,Auctioneer">
+              <a href="#/dashboard?tab=wishlist" class="dropdown-item" role="menuitem" data-capability="cart">
                 <i class="fas fa-heart" aria-hidden="true"></i><span data-i18n="nav.wishlist">Wishlist</span>
               </a>
-              <a href="#/wallet" class="dropdown-item" role="menuitem" data-roles="Admin,Customer,Fisherman,BaitSeller,Auctioneer">
+              <a href="#/wallet" class="dropdown-item" role="menuitem" data-capability="wallet">
                 <i class="fas fa-wallet" aria-hidden="true"></i><span data-i18n="nav.wallet">Wallet</span>
               </a>
-              <a href="#/subscriptions" class="dropdown-item" role="menuitem" data-roles="Customer,Fisherman,BaitSeller,Auctioneer">
+              <a href="#/subscriptions" class="dropdown-item" role="menuitem" data-capability="subscriptions">
                 <i class="fas fa-crown" aria-hidden="true"></i><span data-i18n="subscriptions.title">Subscriptions</span>
               </a>
-              <a href="#/admin" class="dropdown-item" role="menuitem" data-roles="Admin">
+              <a href="#/admin" class="dropdown-item" role="menuitem" data-capability="admin">
                 <i class="fas fa-shield-alt" aria-hidden="true"></i><span data-i18n="admin.title">Admin</span>
               </a>
               <div class="dropdown-divider" role="separator"></div>
@@ -253,7 +253,7 @@
         <li><a href="#/products" class="nav-link" data-nav-link data-nav-route="products"><i class="fas fa-store nav-icon" aria-hidden="true"></i><span data-i18n="nav.products">Products</span></a></li>
         <li><a href="#/auctions" class="nav-link" data-nav-link data-nav-route="auctions"><i class="fas fa-gavel nav-icon" aria-hidden="true"></i><span data-i18n="nav.auctions">Auctions</span></a></li>
         <li>
-          <a href="#/cart" class="nav-link cart-nav-link" data-nav-link data-nav-route="cart">
+          <a href="#/cart" class="nav-link cart-nav-link" data-nav-link data-nav-route="cart" data-capability="cart">
             <i class="fas fa-shopping-cart nav-icon" aria-hidden="true"></i>
             <span data-i18n="nav.cart">Cart</span>
             <span class="badge d-none" data-cart-badge aria-label="Cart items count"></span>
@@ -279,19 +279,19 @@
             <i class="fas fa-user" aria-hidden="true"></i>
             <span data-user-name>User</span>
           </div>
-          <a href="#/dashboard?tab=notifications" class="drawer-account-link" aria-label="Notifications">
+          <a href="#/dashboard?tab=notifications" class="drawer-account-link" data-capability="dashboard" aria-label="Notifications">
             <i class="fas fa-bell" aria-hidden="true"></i>
             <span data-i18n="dash.notifications">Notifications</span>
             <span class="badge d-none" data-notif-badge aria-label="Unread notifications count"></span>
           </a>
-          <a href="#/profile" class="drawer-account-link" data-roles="all"><i class="fas fa-user" aria-hidden="true"></i><span data-i18n="dash.profile">Profile</span></a>
-          <a href="#/dashboard" class="drawer-account-link" data-roles="all"><i class="fas fa-tachometer-alt" aria-hidden="true"></i><span data-i18n="nav.dashboard">Dashboard</span></a>
-          <a href="#/dashboard?tab=orders" class="drawer-account-link" data-roles="Customer,Fisherman,BaitSeller,Auctioneer"><i class="fas fa-box" aria-hidden="true"></i><span data-i18n="nav.myOrders">My Orders</span></a>
-          <a href="#/dashboard?tab=products" class="drawer-account-link" data-roles="Fisherman,BaitSeller"><i class="fas fa-tag" aria-hidden="true"></i><span data-i18n="nav.myProducts">My Products</span></a>
-          <a href="#/dashboard?tab=wishlist" class="drawer-account-link" data-roles="Customer,Fisherman,BaitSeller,Auctioneer"><i class="fas fa-heart" aria-hidden="true"></i><span data-i18n="nav.wishlist">Wishlist</span></a>
-          <a href="#/wallet" class="drawer-account-link" data-roles="Admin,Customer,Fisherman,BaitSeller,Auctioneer"><i class="fas fa-wallet" aria-hidden="true"></i><span data-i18n="nav.wallet">Wallet</span></a>
-          <a href="#/subscriptions" class="drawer-account-link" data-roles="Customer,Fisherman,BaitSeller,Auctioneer"><i class="fas fa-crown" aria-hidden="true"></i><span data-i18n="subscriptions.title">Subscriptions</span></a>
-          <a href="#/admin" class="drawer-account-link" data-roles="Admin"><i class="fas fa-shield-alt" aria-hidden="true"></i><span data-i18n="admin.title">Admin</span></a>
+          <a href="#/profile" class="drawer-account-link" data-capability="profile"><i class="fas fa-user" aria-hidden="true"></i><span data-i18n="dash.profile">Profile</span></a>
+          <a href="#/dashboard" class="drawer-account-link" data-capability="dashboard"><i class="fas fa-tachometer-alt" aria-hidden="true"></i><span data-i18n="nav.dashboard">Dashboard</span></a>
+          <a href="#/dashboard?tab=orders" class="drawer-account-link" data-capability="orders"><i class="fas fa-box" aria-hidden="true"></i><span data-i18n="nav.myOrders">My Orders</span></a>
+          <a href="#/dashboard?tab=products" class="drawer-account-link" data-capability="manageProducts"><i class="fas fa-tag" aria-hidden="true"></i><span data-i18n="nav.myProducts">My Products</span></a>
+          <a href="#/dashboard?tab=wishlist" class="drawer-account-link" data-capability="cart"><i class="fas fa-heart" aria-hidden="true"></i><span data-i18n="nav.wishlist">Wishlist</span></a>
+          <a href="#/wallet" class="drawer-account-link" data-capability="wallet"><i class="fas fa-wallet" aria-hidden="true"></i><span data-i18n="nav.wallet">Wallet</span></a>
+          <a href="#/subscriptions" class="drawer-account-link" data-capability="subscriptions"><i class="fas fa-crown" aria-hidden="true"></i><span data-i18n="subscriptions.title">Subscriptions</span></a>
+          <a href="#/admin" class="drawer-account-link" data-capability="admin"><i class="fas fa-shield-alt" aria-hidden="true"></i><span data-i18n="admin.title">Admin</span></a>
           <button type="button" class="drawer-account-link text-danger" data-nav-logout>
             <i class="fas fa-sign-out-alt" aria-hidden="true"></i><span data-i18n="nav.logout">Logout</span>
           </button>
@@ -354,13 +354,13 @@
       <i class="fas fa-gavel" aria-hidden="true"></i>
       <span data-i18n="nav.auctions">Auctions</span>
     </a>
-    <a href="#/cart"     class="bottom-nav-item" id="bnCart">
+    <a href="#/cart"     class="bottom-nav-item" id="bnCart" data-capability="cart">
       <i class="fas fa-shopping-cart" aria-hidden="true"></i>
       <span data-i18n="nav.cart">Cart</span>
       <span class="bottom-nav-badge d-none" id="bnCartBadge" data-cart-badge aria-hidden="true"></span>
     </a>
     <!-- Shown when logged in -->
-    <a href="#/dashboard" class="bottom-nav-item bottom-nav-account d-none nav-auth" id="bnAccount">
+    <a href="#/dashboard" class="bottom-nav-item bottom-nav-account d-none nav-auth" id="bnAccount" data-capability="dashboard">
       <i class="fas fa-user" aria-hidden="true"></i>
       <span data-i18n="nav.dashboard">Account</span>
     </a>
@@ -419,10 +419,10 @@
         <div class="col-6 col-md-3">
           <h4 class="footer-heading" data-i18n="footer.account">Account</h4>
           <nav class="footer-links" aria-label="Account links">
-            <a href="#/login"     class="footer-link" data-i18n="nav.login">Login</a>
-            <a href="#/register"  class="footer-link" data-i18n="nav.register">Register</a>
-            <a href="#/dashboard" class="footer-link" data-i18n="nav.dashboard">Dashboard</a>
-            <a href="#/shipping"  class="footer-link" data-i18n="shipping.title">My Addresses</a>
+            <a href="#/login"     class="footer-link nav-guest" data-i18n="nav.login">Login</a>
+            <a href="#/register"  class="footer-link nav-guest" data-i18n="nav.register">Register</a>
+            <a href="#/dashboard" class="footer-link" data-capability="dashboard" data-i18n="nav.dashboard">Dashboard</a>
+            <a href="#/shipping"  class="footer-link" data-capability="shipping" data-i18n="shipping.title">My Addresses</a>
           </nav>
         </div>
 

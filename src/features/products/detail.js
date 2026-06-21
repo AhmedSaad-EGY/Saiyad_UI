@@ -1,8 +1,8 @@
 import { api } from '../../shared/api/client.js';
 import { escapeHtml } from '../../shared/utils/dom.js';
 import { openLightbox } from '../../shared/utils/ui.js';
-import { isAuthenticated, getUser, hasAnyRole } from '../../shared/utils/auth-state.js';
-import { SELLER_ROLES } from '../../shared/constants/roles.js';
+import { isAuthenticated, getUser } from '../../shared/utils/auth-state.js';
+import { canManageProducts } from '../../shared/utils/capabilities.js';
 import { fetchWishlist } from '../wishlist/index.js';
 import { fetchProductRating, fetchProductReviews } from '../reviews/index.js';
 import { normalizeMediaUrls } from '../../shared/utils/media-url.js';
@@ -55,7 +55,8 @@ export async function loadProductDetailData(id) {
   const allImages = [p.primaryImageUrl, ...(p.images || p.additionalImages || []).map((img) => (typeof img === "string" ? img : img.imageUrl || img.url || img))].filter(Boolean);
   const stockQty = p.stockQuantity ?? 0;
   const stockLevel = stockQty > 50 ? 'high' : stockQty > 10 ? 'medium' : 'low';
-  const isSellerOwner = !p.isAuctioned && getUser()?.id === p.sellerId && hasAnyRole(...(SELLER_ROLES));
+  const user = getUser();
+  const isSellerOwner = !p.isAuctioned && user?.id === p.sellerId && canManageProducts(user);
   return { p, isAvailable, isWishlisted, avgRating, reviews, allImages, stockQty, stockLevel, isSellerOwner };
 }
 

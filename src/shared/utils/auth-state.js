@@ -1,4 +1,5 @@
 import { KEYS } from '../constants/storage-keys.js';
+import { normalizeRoles, hasRole as subjectHasRole, hasAnyRole as subjectHasAnyRole } from './capabilities.js';
 
 function readStoredUser() {
   const raw = localStorage.getItem(KEYS.USER);
@@ -16,7 +17,8 @@ function readStoredUser() {
 export function getUser() {
   const u = readStoredUser();
   if (!u) return null;
-  return { ...u, role: getRoleFromToken() };
+  const roles = getRolesFromToken();
+  return { ...u, role: roles[0] || null, roles };
 }
 
 function _decodeToken() {
@@ -37,17 +39,21 @@ export function isAuthenticated() {
 }
 
 export function getRoleFromToken() {
+  return getRolesFromToken()[0] || null;
+}
+
+export function getRolesFromToken() {
   const payload = _decodeToken();
-  if (!payload) return null;
+  if (!payload) return [];
   const role = payload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role']
     || payload.role || payload.roles;
-  return Array.isArray(role) ? role[0] : role;
+  return normalizeRoles(role);
 }
 
 export function hasRole(role) {
-  return getRoleFromToken() === role;
+  return subjectHasRole(getRolesFromToken(), role);
 }
 
 export function hasAnyRole(...roles) {
-  return roles.some(r => hasRole(r));
+  return subjectHasAnyRole(getRolesFromToken(), roles.flat());
 }

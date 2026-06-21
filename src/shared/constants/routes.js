@@ -1,22 +1,36 @@
 import { ROLES, SELLER_ROLES, ECOMMERCE_ROLES, MODERATOR_ROLES } from './roles.js';
-import { getRoleFromToken, isAuthenticated } from '../utils/auth-state.js';
+import { getRolesFromToken } from '../utils/auth-state.js';
+import {
+  canAccessAdmin,
+  canAccessAuctioneerAnalytics,
+  canAccessDashboard,
+  canAccessOrders,
+  canAccessProfile,
+  canAccessShipping,
+  canAccessSubscriptions,
+  canCheckout,
+  canCreateAuctionRequest,
+  canReviewAuctionRequests,
+  canUseCart,
+  canUseWallet,
+} from '../utils/capabilities.js';
 import { routes } from '../../app/route-map.js';
 
 export { ROLES, SELLER_ROLES, ECOMMERCE_ROLES, MODERATOR_ROLES };
 
 export const routeGuards = {
-  'admin': () => getRoleFromToken() === ROLES.ADMIN,
-  'cart': () => ECOMMERCE_ROLES.includes(getRoleFromToken()),
-  'checkout': () => ECOMMERCE_ROLES.includes(getRoleFromToken()),
-  'dashboard': () => isAuthenticated(),
-  'shipping': () => ECOMMERCE_ROLES.includes(getRoleFromToken()),
-  'order-detail': () => ECOMMERCE_ROLES.includes(getRoleFromToken()),
-  'profile': () => isAuthenticated(),
-  'auction-requests': () => getRoleFromToken() === ROLES.FISHERMAN,
-  'auction-requests-review': () => MODERATOR_ROLES.includes(getRoleFromToken()),
-  'auctioneer-analytics': () => MODERATOR_ROLES.includes(getRoleFromToken()),
-  'subscriptions': () => ECOMMERCE_ROLES.includes(getRoleFromToken()),
-  'wallet': () => isAuthenticated(),
+  'admin': () => canAccessAdmin(getRolesFromToken()),
+  'cart': () => canUseCart(getRolesFromToken()),
+  'checkout': () => canCheckout(getRolesFromToken()),
+  'dashboard': () => canAccessDashboard(getRolesFromToken()),
+  'shipping': () => canAccessShipping(getRolesFromToken()),
+  'order-detail': () => canAccessOrders(getRolesFromToken()),
+  'profile': () => canAccessProfile(getRolesFromToken()),
+  'auction-requests': () => canCreateAuctionRequest(getRolesFromToken()),
+  'auction-requests-review': () => canReviewAuctionRequests(getRolesFromToken()),
+  'auctioneer-analytics': () => canAccessAuctioneerAnalytics(getRolesFromToken()),
+  'subscriptions': () => canAccessSubscriptions(getRolesFromToken()),
+  'wallet': () => canUseWallet(getRolesFromToken()),
 };
 
 export const routeTitleKeys = {

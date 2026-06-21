@@ -1,6 +1,7 @@
 import { t } from '../shared/utils/i18n.js';
 import { isAuthenticated, getUser } from '../features/auth/login.js';
-import { ROLES, SELLER_ROLES, ECOMMERCE_ROLES } from '../shared/constants/roles.js';
+import { ROLES } from '../shared/constants/roles.js';
+import { canAccessAdmin, canManageProducts, canUseCart, hasRole } from '../shared/utils/capabilities.js';
 import { navigate } from '../app/router.js';
 import '../features/profile/index.js';
 import { renderProfileHero, buildStatsHtml, buildLinksHtml } from '../widgets/profile/index.js';
@@ -9,10 +10,10 @@ export default async function renderProfile(container) {
   if (!isAuthenticated()) { navigate("login"); return; }
 
   const user = getUser();
-  const isEcommerce = ECOMMERCE_ROLES.includes(user?.role);
-  const isSeller = SELLER_ROLES.includes(user?.role);
-  const isAuct = user?.role === ROLES.AUCTIONEER;
-  const isAdm = user?.role === ROLES.ADMIN;
+  const isEcommerce = canUseCart(user);
+  const isSeller = canManageProducts(user);
+  const isAuct = hasRole(user, ROLES.AUCTIONEER);
+  const isAdm = canAccessAdmin(user);
 
   container.innerHTML = `
     <div x-data="profilePage" class="profile-page">

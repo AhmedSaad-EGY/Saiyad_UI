@@ -1,7 +1,8 @@
 import { t } from '../../shared/utils/i18n.js';
 import { api } from '../../shared/api/client.js';
-import { getUser, hasAnyRole, hasRole } from '../auth/login.js';
-import { ROLES, ECOMMERCE_ROLES } from '../../shared/constants/roles.js';
+import { getUser } from '../auth/login.js';
+import { ROLES } from '../../shared/constants/roles.js';
+import { canAccessAdmin, canUseCart, hasRole } from '../../shared/utils/capabilities.js';
 import { showToast, showConfirm } from '../../shared/utils/ui.js';
 import { observeAnimations } from '../../shared/utils/dom.js';
 import { setPageMeta } from '../../shared/utils/seo.js';
@@ -12,23 +13,24 @@ import Alpine from 'alpinejs';
 const PROFILE_IMAGE_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
 
 export async function fetchProfileStats() {
+  const user = getUser();
   const s = {
     orders: 0, wishlist: 0, notifs: 0, auctions: 0,
     pendingRequests: 0, pendingReviews: 0, totalUsers: 0,
   };
 
   await Promise.allSettled([
-    ...(hasAnyRole(ECOMMERCE_ROLES)
+    ...(canUseCart(user)
       ? [
           api.get('/orders', { page: 1, pageSize: 1 }).then((r) => { s.orders = r?.totalCount ?? 0; }).catch(() => {}),
           api.get('/wishlist', { page: 1, pageSize: 1 }).then((r) => { s.wishlist = r?.totalCount ?? 0; }).catch(() => {}),
         ]
       : []),
     api.get('/notifications/unread-count').then((r) => { s.notifs = r?.count ?? r ?? 0; }).catch(() => {}),
-    ...(hasRole(ROLES.AUCTIONEER)
+    ...(hasRole(user, ROLES.AUCTIONEER)
       ? [api.get('/auctions/dashboard').then((r) => { s.auctions = r?.activeAuctions ?? 0; s.pendingRequests = r?.pendingRequests ?? 0; }).catch(() => {})]
       : []),
-    ...(hasRole(ROLES.ADMIN)
+    ...(canAccessAdmin(user)
       ? [
           api.get('/products/pending-review').then((r) => { s.pendingReviews = r?.totalCount ?? 0; }).catch(() => {}),
           api.get('/users', { page: 1, pageSize: 1 }).then((r) => { s.totalUsers = r?.totalCount ?? 0; }).catch(() => {}),

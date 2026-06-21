@@ -1,6 +1,11 @@
 import { t } from '../shared/utils/i18n.js';
-import { getUser, isAuthenticated, getRoleFromToken } from '../shared/utils/auth-state.js';
-import { ROLES, SELLER_ROLES } from '../shared/constants/roles.js';
+import { getUser, isAuthenticated } from '../shared/utils/auth-state.js';
+import {
+  canAccessAdmin,
+  canAccessAuctioneerAnalytics,
+  canManageProducts,
+  hasCapability,
+} from '../shared/utils/capabilities.js';
 import {
   NAV_DRAWER_BREAKPOINT,
   openDrawer,
@@ -30,35 +35,27 @@ export function updateNavbar() {
   if (bnLogin) bnLogin.classList.toggle('d-none', auth);
 
   document.querySelectorAll('.nav-seller').forEach((element) => {
-    element.classList.toggle('hidden', !user || !SELLER_ROLES.includes(user.role));
+    setNavVisibility(element, canManageProducts(user));
   });
   document.querySelectorAll('.nav-admin').forEach((element) => {
-    element.classList.toggle('hidden', user?.role !== ROLES.ADMIN);
+    setNavVisibility(element, canAccessAdmin(user));
   });
   document.querySelectorAll('.nav-auctioneer').forEach((element) => {
-    element.classList.toggle('hidden', user?.role !== ROLES.AUCTIONEER);
+    setNavVisibility(element, canAccessAuctioneerAnalytics(user));
   });
 
   const footerSellLink = document.getElementById('footerSellLink');
   if (footerSellLink) {
-    footerSellLink.href = user && SELLER_ROLES.includes(user.role)
+    footerSellLink.href = canManageProducts(user)
       ? '#/dashboard' : '#/register';
   }
 
-  applyDropdownRoleVisibility();
+  applyCapabilityVisibility(user);
 }
 
-function applyDropdownRoleVisibility() {
-  const role = getRoleFromToken();
-  const auth = isAuthenticated();
-  document.querySelectorAll('[data-roles]').forEach((element) => {
-    const roles = element.getAttribute('data-roles');
-    if (roles === 'all') {
-      element.classList.toggle('hidden', !auth);
-      return;
-    }
-    const list = roles.split(',').map((item) => item.trim());
-    element.classList.toggle('hidden', !role || !list.includes(role));
+function applyCapabilityVisibility(user) {
+  document.querySelectorAll('[data-capability]').forEach((element) => {
+    setNavVisibility(element, hasCapability(user, element.dataset.capability));
   });
 }
 
