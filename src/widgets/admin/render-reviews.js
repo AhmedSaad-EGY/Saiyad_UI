@@ -188,7 +188,7 @@ async function loadUserReviews() {
       btn.addEventListener("click", async () => {
         const userName = btn.dataset.userName;
         showFormModal(t("admin.removeReview"), `
-          <p>${t("admin.confirmRemoveReview", { userName })}</p>
+          <p>${escapeHtml(t("admin.confirmRemoveReview", { userName }))}</p>
           <div class="form-group mt-3">
             <label class="form-label">${t("admin.rejectionReason")} (${t("common.optional")})</label>
             <textarea class="form-textarea form-control" id="removeReviewReason" rows="3"></textarea>

@@ -61,7 +61,11 @@ export function showLoading(container, type = "page") {
 }
 
 export function showError(container, msg) {
-  container.innerHTML = `<div class="alert alert-error" role="alert">${escapeHtml(msg || t("common.error"))}</div>`;
+  const alert = document.createElement("div");
+  alert.className = "alert alert-error";
+  alert.setAttribute("role", "alert");
+  alert.textContent = msg || t("common.error");
+  container.replaceChildren(alert);
 }
 
 function emptyIllustration(type) {
