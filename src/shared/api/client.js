@@ -78,7 +78,7 @@ async function request(endpoint, options = {}) {
     const err = new Error(msg);
     err.status = res.status;
     err.data = data;
-    if (res.status !== 401) emit('api:error', { err });
+    if (res.status !== 401 && options.emitGlobalError !== false) emit('api:error', { err });
     throw err;
   }
   return data;
@@ -91,7 +91,7 @@ async function request(endpoint, options = {}) {
  */
 async function requestWithDedup(endpoint, options = {}) {
   const method = options.method || 'GET';
-  const dedupKey = `${method}:${endpoint}`;
+  const dedupKey = `${method}:${endpoint}:${options.emitGlobalError !== false}`;
 
   if (method === 'GET' && !options._retry) {
     if (_pendingRequests.has(dedupKey)) {
@@ -164,7 +164,7 @@ async function doUpload(url, formData, _retry = false) {
 }
 
 export const api = {
-  get: (url, params) => requestWithDedup(url + buildQuery(params || {})),
+  get: (url, params, options = {}) => requestWithDedup(url + buildQuery(params || {}), options),
   post: (url, body) =>
     requestWithDedup(url, { method: "POST", body: JSON.stringify(body) }),
   put: (url, body) =>

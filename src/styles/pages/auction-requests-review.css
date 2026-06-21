@@ -1,0 +1,200 @@
+.auction-review-page {
+  width: min(100%, 1440px);
+  margin-inline: auto;
+  padding-block-end: var(--space-8);
+}
+
+.auction-review-page .section-header {
+  margin-block-end: var(--space-5);
+}
+
+.auction-review-table {
+  box-shadow: var(--shadow-sm);
+}
+
+.auction-review-table td {
+  vertical-align: middle;
+}
+
+.auction-review-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  min-width: max-content;
+}
+
+.auction-review-actions .btn {
+  min-height: 40px;
+}
+
+.auction-review-modal {
+  padding: var(--space-4);
+  overflow-y: auto;
+}
+
+.auction-review-dialog {
+  width: min(100%, 680px);
+  max-height: min(88dvh, 760px);
+  overflow-y: auto;
+  padding: var(--space-6);
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  color: var(--text);
+}
+
+.auction-review-dialog--reject {
+  max-width: 520px;
+}
+
+.auction-review-dialog__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-block-end: var(--space-5);
+}
+
+.auction-review-dialog__header h3 {
+  margin: 0;
+  font-size: var(--text-xl);
+  text-align: start;
+}
+
+.auction-review-dialog__close {
+  flex: 0 0 44px;
+  width: 44px;
+  height: 44px;
+}
+
+.auction-review-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+
+.auction-review-form .form-group:first-child,
+.auction-review-form .auction-review-dialog__actions {
+  grid-column: 1 / -1;
+}
+
+.auction-review-form .form-group {
+  min-width: 0;
+  margin: 0;
+}
+
+.auction-review-dialog .form-input,
+.auction-review-dialog .form-textarea {
+  width: 100%;
+  min-height: 44px;
+  text-align: start;
+}
+
+.auction-review-dialog__actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-block-start: var(--space-5);
+  padding-block-start: var(--space-4);
+  border-block-start: 1px solid var(--border);
+}
+
+.auction-review-dialog__actions .btn {
+  min-height: 44px;
+}
+
+.auction-review-detail {
+  text-align: start;
+}
+
+.auction-review-detail .modal-header,
+.auction-review-detail .modal-footer {
+  flex-shrink: 0;
+}
+
+.auction-review-detail .modal-body {
+  overflow-y: auto;
+}
+
+.auction-review-detail .img-fluid {
+  max-height: 280px;
+  object-fit: contain;
+}
+
+@media (width <= 767px) {
+  .auction-review-page {
+    padding-block-end: calc(var(--space-8) + var(--bottom-nav-height, 0px) + env(safe-area-inset-bottom, 0px));
+  }
+
+  .auction-review-table tbody tr {
+    grid-template-columns: 1fr;
+    gap: var(--space-2);
+  }
+
+  .auction-review-table tbody tr td {
+    display: flex;
+    grid-column: 1 !important;
+    grid-row: auto !important;
+    align-items: baseline;
+    justify-content: space-between !important;
+    gap: var(--space-3);
+    min-width: 0;
+    text-align: end;
+  }
+
+  .auction-review-table tbody tr td::before {
+    display: inline-block !important;
+    flex: 0 0 42%;
+    min-width: 0;
+    margin-inline-end: 0;
+    text-align: start;
+  }
+
+  .auction-review-table .auction-review-actions {
+    align-items: stretch;
+    justify-content: stretch !important;
+    flex-wrap: wrap;
+    margin-block-start: var(--space-2);
+    padding-block-start: var(--space-3);
+    border-block-start: 1px solid var(--border);
+    text-align: start;
+  }
+
+  .auction-review-table .auction-review-actions::before {
+    flex-basis: 100%;
+  }
+
+  .auction-review-table .auction-review-actions .btn {
+    flex: 1 1 auto;
+  }
+
+  .auction-review-dialog {
+    max-height: calc(100dvh - (2 * var(--space-4)));
+    padding: var(--space-5) var(--space-4);
+  }
+
+  .auction-review-form {
+    grid-template-columns: 1fr;
+  }
+
+  .auction-review-form .form-group,
+  .auction-review-form .auction-review-dialog__actions {
+    grid-column: 1;
+  }
+
+  .auction-review-dialog__actions .btn {
+    flex: 1 1 140px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auction-review-modal,
+  .auction-review-dialog,
+  .auction-review-detail {
+    transition: none;
+  }
+}

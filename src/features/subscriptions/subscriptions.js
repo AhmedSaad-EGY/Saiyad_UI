@@ -2,6 +2,8 @@ import { api } from '../../shared/api/client.js';
 import { t } from '../../shared/utils/i18n.js';
 import { ROLES } from '../../shared/constants/roles.js';
 import { fetchWalletBalance } from '../wallet/wallet.js';
+import { getUser } from '../../shared/utils/auth-state.js';
+import { canAccessSubscriptions } from '../../shared/utils/capabilities.js';
 
 export { getPlanIcon, isPopularPlan } from '../../shared/utils/plans.js';
 
@@ -20,10 +22,9 @@ export async function fetchPlans() {
   } catch { return []; }
 }
 
-export async function fetchMySubscription() {
-  try {
-    return await api.get('/subscriptions/my').catch(() => null);
-  } catch { return null; }
+export async function fetchMySubscription({ optional = false } = {}) {
+  if (!canAccessSubscriptions(getUser())) return null;
+  return api.get('/subscriptions/my', undefined, { emitGlobalError: !optional });
 }
 
 const BACKEND_TIER_MAP = {

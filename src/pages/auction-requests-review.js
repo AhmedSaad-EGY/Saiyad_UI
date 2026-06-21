@@ -1,8 +1,9 @@
 import { t } from '../shared/utils/i18n.js';
 import '../features/auctions/review.js';
+import '../styles/pages/auction-requests-review.css';
 
 export default function renderAuctionRequestsReview(container) {
-  container.innerHTML = `<div x-data="auctionReviewPage">
+  container.innerHTML = `<div x-data="auctionReviewPage" class="auction-review-page">
   <div class="section-header"><h2><i class="fas fa-clipboard-list" aria-hidden="true"></i> ${t("auctionRequestsReview.title")}</h2></div>
 
   <template x-if="loading">
@@ -18,16 +19,16 @@ export default function renderAuctionRequestsReview(container) {
   </template>
 
   <div x-show="!loading && !error && items.length > 0">
-    <div class="table-wrapper"><table class="table"><thead><tr><th>${t("auctionRequests.productTitle")}</th><th>${t("auctionRequestsReview.fisherman")}</th><th>${t("auctionRequests.fishType")}</th><th>${t("auctionRequests.quantityKg")}</th><th>${t("auctionRequests.estimatedValue")}</th><th>${t("auctionRequests.status")}</th><th>${t("auctionRequests.createdAt")}</th><th>${t("auctionRequestsReview.actions")}</th></tr></thead>
+    <div class="table-wrapper auction-review-table"><table class="table"><thead><tr><th>${t("auctionRequests.productTitle")}</th><th>${t("auctionRequestsReview.fisherman")}</th><th>${t("auctionRequests.fishType")}</th><th>${t("auctionRequests.quantityKg")}</th><th>${t("auctionRequests.estimatedValue")}</th><th>${t("auctionRequests.status")}</th><th>${t("auctionRequests.createdAt")}</th><th>${t("auctionRequestsReview.actions")}</th></tr></thead>
       <tbody><template x-for="r in items" :key="r.id"><tr>
-        <td><a href="#" class="fw-semibold text-primary" @click.prevent="showDetail(r)" x-text="r.productTitle"></a></td>
-        <td x-text="r.fishermanName || '-'"></td>
-        <td x-text="r.fishType"></td>
-        <td x-text="r.quantityKg"></td>
-        <td x-text="r.estimatedValue"></td>
-        <td><span :class="statusClass(r.status)" x-text="t('auctionRequests.' + (r.status || '').toLowerCase())"></span></td>
-        <td x-text="formatDate(r.createdAt)"></td>
-        <td>
+        <td data-label="${t("auctionRequests.productTitle")}"><a href="#" class="fw-semibold text-primary" @click.prevent="showDetail(r)" x-text="r.productTitle"></a></td>
+        <td data-label="${t("auctionRequestsReview.fisherman")}" x-text="r.fishermanName || '-'"></td>
+        <td data-label="${t("auctionRequests.fishType")}" x-text="r.fishType"></td>
+        <td data-label="${t("auctionRequests.quantityKg")}" x-text="r.quantityKg"></td>
+        <td data-label="${t("auctionRequests.estimatedValue")}" x-text="r.estimatedValue"></td>
+        <td data-label="${t("auctionRequests.status")}"><span :class="statusClass(r.status)" x-text="t('auctionRequests.' + (r.status || '').toLowerCase())"></span></td>
+        <td data-label="${t("auctionRequests.createdAt")}" x-text="formatDate(r.createdAt)"></td>
+        <td data-label="${t("auctionRequestsReview.actions")}" class="auction-review-actions">
           <button class="btn btn-sm btn-outline btn-icon" @click="showDetail(r)" aria-label="${t('common.view')}"><i class="fas fa-eye" aria-hidden="true"></i></button>
           <button class="btn btn-sm btn-success" @click="approveRequest(r.id)"><i class="fas fa-check" aria-hidden="true"></i> ${t("auctionRequestsReview.approve")}</button>
           <button class="btn btn-sm btn-danger" @click="rejectRequest(r.id)"><i class="fas fa-times" aria-hidden="true"></i> ${t("auctionRequestsReview.reject")}</button>
@@ -41,16 +42,19 @@ export default function renderAuctionRequestsReview(container) {
     </div>
   </div>
 
-  <div class="modal-overlay" x-effect="$el.classList.toggle('show', !!approveItemId)" @click.self="cancelApprove">
-    <div class="modal-content mw-lg">
-      <h3><i class="fas fa-check-circle" aria-hidden="true"></i> ${t("auctionRequestsReview.approve")}</h3>
-      <form @submit.prevent="submitApprove">
-        <div class="form-group"><label class="form-label">${t("scheduling.endTime")} *</label><input type="datetime-local" class="form-input" x-model="appEndTime" required></div>
-        <div class="form-group"><label class="form-label">${t("analytics.startingPrice")} *</label><input type="number" class="form-input" x-model="appStartingPrice" step="0.01" min="0" required placeholder="${t('common.amountPlaceholder')}"></div>
-        <div class="form-group"><label class="form-label">${t("auction.reservePrice")}</label><input type="number" class="form-input" x-model="appReservePrice" step="0.01" min="0" placeholder="${t('common.amountPlaceholder')}"></div>
-        <div class="form-group"><label class="form-label">${t("auction.bidIncrement")}</label><input type="number" class="form-input" x-model="appMinIncrement" step="0.01" min="0" placeholder="${t('common.amountPlaceholder')}"></div>
-        <div class="form-group"><label class="form-label">${t("common.category")} *</label><input type="number" class="form-input" x-model="appCategoryId" min="1" step="1" required placeholder="1"></div>
-        <div class="d-flex gap-2 mt-3">
+  <div class="modal-overlay auction-review-modal" x-cloak x-show="!!approveItemId" :class="{'show': !!approveItemId}" @click.self="cancelApprove" @keydown.escape.window="cancelApprove" role="dialog" aria-modal="true" aria-labelledby="auction-review-approve-title">
+    <div class="modal-content auction-review-dialog auction-review-dialog--approve">
+      <div class="auction-review-dialog__header">
+        <h3 id="auction-review-approve-title"><i class="fas fa-check-circle" aria-hidden="true"></i> ${t("auctionRequestsReview.approve")}</h3>
+        <button type="button" class="btn btn-ghost btn-icon auction-review-dialog__close" @click="cancelApprove" aria-label="${t('common.close')}"><i class="fas fa-times" aria-hidden="true"></i></button>
+      </div>
+      <form class="auction-review-form" @submit.prevent="submitApprove">
+        <div class="form-group"><label class="form-label" for="auctionReviewEndTime">${t("scheduling.endTime")} *</label><input id="auctionReviewEndTime" type="datetime-local" class="form-input" x-model="appEndTime" required></div>
+        <div class="form-group"><label class="form-label" for="auctionReviewStartingPrice">${t("analytics.startingPrice")} *</label><input id="auctionReviewStartingPrice" type="number" class="form-input" x-model="appStartingPrice" step="0.01" min="0" required placeholder="${t('common.amountPlaceholder')}"></div>
+        <div class="form-group"><label class="form-label" for="auctionReviewReservePrice">${t("auction.reservePrice")}</label><input id="auctionReviewReservePrice" type="number" class="form-input" x-model="appReservePrice" step="0.01" min="0" placeholder="${t('common.amountPlaceholder')}"></div>
+        <div class="form-group"><label class="form-label" for="auctionReviewBidIncrement">${t("auction.bidIncrement")}</label><input id="auctionReviewBidIncrement" type="number" class="form-input" x-model="appMinIncrement" step="0.01" min="0" placeholder="${t('common.amountPlaceholder')}"></div>
+        <div class="form-group"><label class="form-label" for="auctionReviewCategory">${t("common.category")} *</label><input id="auctionReviewCategory" type="number" class="form-input" x-model="appCategoryId" min="1" step="1" required placeholder="1"></div>
+        <div class="auction-review-dialog__actions">
           <button type="submit" class="btn btn-primary" :disabled="approving"><template x-if="!approving"><span><i class="fas fa-check" aria-hidden="true"></i> ${t("auctionRequestsReview.approve")}</span></template><template x-if="approving"><span><i class="fas fa-spinner spinner" aria-hidden="true"></i> ${t("auctionRequestsReview.approving")}</span></template></button>
           <button type="button" class="btn btn-ghost" @click="cancelApprove">${t("common.cancel")}</button>
         </div>
@@ -58,25 +62,28 @@ export default function renderAuctionRequestsReview(container) {
     </div>
   </div>
 
-  <div class="modal-overlay" x-effect="$el.classList.toggle('show', !!rejectItemId)" @click.self="cancelReject">
-    <div class="modal-content mw-sm">
-      <h3>${t("auctionRequestsReview.reject")}</h3>
-      <div class="form-group mt-2">
-        <label class="form-label">${t("auctionRequestsReview.rejectionReason")} *</label>
-        <textarea class="form-textarea" x-model="rejectReason" rows="3" placeholder="${t("auctionRequestsReview.rejectionReasonPlaceholder")}"></textarea>
+  <div class="modal-overlay auction-review-modal" x-cloak x-show="!!rejectItemId" :class="{'show': !!rejectItemId}" @click.self="cancelReject" @keydown.escape.window="cancelReject" role="dialog" aria-modal="true" aria-labelledby="auction-review-reject-title">
+    <div class="modal-content auction-review-dialog auction-review-dialog--reject">
+      <div class="auction-review-dialog__header">
+        <h3 id="auction-review-reject-title">${t("auctionRequestsReview.reject")}</h3>
+        <button type="button" class="btn btn-ghost btn-icon auction-review-dialog__close" @click="cancelReject" aria-label="${t('common.close')}"><i class="fas fa-times" aria-hidden="true"></i></button>
       </div>
-      <div class="d-flex gap-2 mt-3">
+      <div class="form-group mt-2">
+        <label class="form-label" for="auctionReviewRejectReason">${t("auctionRequestsReview.rejectionReason")} *</label>
+        <textarea id="auctionReviewRejectReason" class="form-textarea" x-model="rejectReason" rows="3" placeholder="${t("auctionRequestsReview.rejectionReasonPlaceholder")}"></textarea>
+      </div>
+      <div class="auction-review-dialog__actions">
         <button class="btn btn-danger" :disabled="rejecting" @click="submitReject"><template x-if="!rejecting"><span><i class="fas fa-times" aria-hidden="true"></i> ${t("auctionRequestsReview.reject")}</span></template><template x-if="rejecting"><span><i class="fas fa-spinner spinner" aria-hidden="true"></i> ${t("auctionRequestsReview.rejecting")}</span></template></button>
         <button class="btn btn-ghost" @click="cancelReject">${t("common.cancel")}</button>
       </div>
     </div>
   </div>
 
-  <div class="modal-overlay drawer-overlay" x-effect="$el.classList.toggle('show', !!detailItem)" @click.self="closeDrawer">
-    <div class="drawer-content" :class="{'drawer-open': !!detailItem}">
+  <div class="modal-overlay drawer-overlay auction-review-detail-overlay" x-cloak x-show="!!detailItem" :class="{'show': !!detailItem}" @click.self="closeDrawer" @keydown.escape.window="closeDrawer" role="dialog" aria-modal="true" aria-labelledby="auction-review-detail-title">
+    <div class="drawer-content auction-review-detail" :class="{'drawer-open': !!detailItem}">
       <div class="modal-header d-flex justify-content-between align-items-center p-3 border-bottom">
-        <h3 class="mb-0 text-truncate" x-text="detailProp('productTitle')"></h3>
-        <button class="btn btn-ghost btn-icon p-1" @click="closeDrawer"><i class="fas fa-times fa-lg" aria-hidden="true"></i></button>
+        <h3 id="auction-review-detail-title" class="mb-0 text-truncate" x-text="detailProp('productTitle')"></h3>
+        <button class="btn btn-ghost btn-icon p-1" @click="closeDrawer" aria-label="${t('common.close')}"><i class="fas fa-times fa-lg" aria-hidden="true"></i></button>
       </div>
       <div class="modal-body p-4 flex-grow-1">
         <template x-if="detailImage()">

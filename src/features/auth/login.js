@@ -6,6 +6,7 @@ import { t } from '../../shared/utils/i18n.js';
 import { isAuthenticated } from '../../shared/utils/auth-state.js';
 import { routes } from '../../app/route-map.js';
 import { KEYS } from '../../shared/constants/storage-keys.js';
+import { fetchMySubscription } from '../subscriptions/subscriptions.js';
 import Alpine from 'alpinejs';
 export { getUser, isAuthenticated, getRoleFromToken, hasRole, hasAnyRole } from '../../shared/utils/auth-state.js';
 
@@ -28,7 +29,7 @@ export async function logout() {
 
 export async function syncVipAttribute() {
   try {
-    const data = await api.get('/subscriptions/my').catch(() => null);
+    const data = await fetchMySubscription({ optional: true });
     if (data?.isActive) {
       document.documentElement.setAttribute('data-vip', 'true');
     } else {

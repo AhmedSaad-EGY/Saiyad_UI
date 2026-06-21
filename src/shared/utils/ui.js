@@ -230,7 +230,7 @@ export function showConfirm(title, message, options = {}) {
     overlay.setAttribute("aria-modal", "true");
     overlay.setAttribute("aria-labelledby", `${modalId}-title`);
     overlay.innerHTML = `
-      <div class="modal modal-confirm" onclick="event.stopPropagation()">
+      <div class="modal modal-confirm">
         <div class="confirm-icon ${type}">
           <i class="fas ${icon}"></i>
         </div>
@@ -325,7 +325,7 @@ export function showTextPrompt(title, options = {}) {
     overlay.setAttribute("aria-modal", "true");
     overlay.setAttribute("aria-labelledby", `${fieldId}-title`);
     overlay.innerHTML = `
-      <div class="modal modal-confirm" onclick="event.stopPropagation()">
+      <div class="modal modal-confirm">
         <h3 id="${fieldId}-title">${escapeHtml(title)}</h3>
         ${message ? `<p>${escapeHtml(message)}</p>` : ''}
         <div class="form-group text-start mt-3">

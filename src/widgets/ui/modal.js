@@ -27,7 +27,7 @@ export function createModal(htmlContent, { ariaLabel, onClose, closeOnOverlayCli
   overlay.setAttribute("role", "dialog");
   overlay.setAttribute("aria-modal", "true");
   if (ariaLabel) overlay.setAttribute("aria-label", ariaLabel);
-  overlay.innerHTML = `<div class="modal" onclick="event.stopPropagation()">${htmlContent}</div>`;
+  overlay.innerHTML = `<div class="modal">${htmlContent}</div>`;
 
   function close() {
     overlay.classList.remove("show");
