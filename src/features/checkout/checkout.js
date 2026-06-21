@@ -5,6 +5,7 @@ import { formatPrice } from '../../shared/utils/format.js';
 import { triggerConfetti } from '../../shared/utils/ui.js';
 import { emit } from '../../shared/utils/events.js';
 import { setPageMeta } from '../../shared/utils/seo.js';
+import { normalizeMediaUrls } from '../../shared/utils/media-url.js';
 import Alpine from 'alpinejs';
 
 export function createPaymentReference(prefix = 'PAY') {
@@ -42,7 +43,7 @@ Alpine.data('checkoutPage', () => ({
         api.get('/shippingaddresses').catch(() => []),
         api.get('/wallet').catch(() => null),
       ]);
-      this.items = cart.items || [];
+      this.items = normalizeMediaUrls(cart.items || []);
       this.addresses = Array.isArray(savedAddresses) ? savedAddresses : [];
       this.availableBalance = walletData?.availableBalance ?? null;
 

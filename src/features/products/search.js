@@ -2,6 +2,7 @@ import { api } from '../../shared/api/client.js';
 import { t } from '../../shared/utils/i18n.js';
 import { escapeHtml, observeAnimations, initPullToRefresh, initInfiniteScroll } from '../../shared/utils/dom.js';
 import { formatPrice, statusClass, tStatus } from '../../shared/utils/format.js';
+import { normalizeMediaUrls } from '../../shared/utils/media-url.js';
 import Alpine from 'alpinejs';
 
 Alpine.data('productsPage', () => ({
@@ -101,7 +102,7 @@ Alpine.data('productsPage', () => ({
       if (this.sort === 'price-asc') { apiParams.sortBy = 'price'; apiParams.sortDirection = 'asc'; }
       if (this.sort === 'price-desc') { apiParams.sortBy = 'price'; apiParams.sortDirection = 'desc'; }
 
-      const data = await api.get('/products', apiParams);
+      const data = normalizeMediaUrls(await api.get('/products', apiParams));
       this.products = data.items || data.data || [];
       this.totalItems = data.totalCount || data.total || this.products.length;
       this.totalPages = Math.ceil(this.totalItems / this.pageSize);
@@ -129,7 +130,7 @@ Alpine.data('productsPage', () => ({
       if (this.sort === 'price-asc') { apiParams.sortBy = 'price'; apiParams.sortDirection = 'asc'; }
       if (this.sort === 'price-desc') { apiParams.sortBy = 'price'; apiParams.sortDirection = 'desc'; }
 
-      const data = await api.get('/products', apiParams);
+      const data = normalizeMediaUrls(await api.get('/products', apiParams));
       const items = data.items || data.data || [];
       this.products = [...this.products, ...items];
       const total = data.totalCount || data.total || 0;

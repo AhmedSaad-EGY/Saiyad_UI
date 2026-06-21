@@ -8,13 +8,14 @@ import { showToast, showConfirm } from '../../shared/utils/ui.js';
 import { animate } from '../../shared/utils/dom.js';
 import { createSwipeReveal } from '../../shared/utils/swipe.js';
 import { setPageMeta } from '../../shared/utils/seo.js';
+import { normalizeMediaUrls } from '../../shared/utils/media-url.js';
 
 let _cartSwipeCleanup = null;
 export function getCartSwipeCleanup() { return _cartSwipeCleanup; }
 
 export async function fetchCartCount() {
   try {
-    const data = await api.get('/cart');
+    const data = normalizeMediaUrls(await api.get('/cart'));
     const items = data?.items || data?.cartItems || data || [];
     return Array.isArray(items) ? items.reduce((s, i) => s + (i.quantity || 0), 0) : 0;
   } catch { return 0; }
@@ -58,7 +59,7 @@ Alpine.data('cartPage', () => ({
   async init() {
     setPageMeta(t('cart.title'), undefined, true);
     try {
-      const cart = await api.get('/cart');
+      const cart = normalizeMediaUrls(await api.get('/cart'));
       this.items = cart.items || [];
       this.empty = this.items.length === 0;
       this.computeTotal();
@@ -151,7 +152,7 @@ Alpine.data('cartPage', () => ({
 
   async refresh() {
     try {
-      const cart = await api.get('/cart');
+      const cart = normalizeMediaUrls(await api.get('/cart'));
       this.items = cart.items || [];
       this.empty = this.items.length === 0;
       this.computeTotal();

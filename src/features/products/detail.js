@@ -5,13 +5,14 @@ import { isAuthenticated, getUser, hasAnyRole } from '../../shared/utils/auth-st
 import { SELLER_ROLES } from '../../shared/constants/roles.js';
 import { fetchWishlist } from '../wishlist/index.js';
 import { fetchProductRating, fetchProductReviews } from '../reviews/index.js';
+import { normalizeMediaUrls } from '../../shared/utils/media-url.js';
 
 export async function fetchProductById(id) {
-  return api.get(`/products/${id}`);
+  return normalizeMediaUrls(await api.get(`/products/${id}`));
 }
 
 export async function fetchProducts(params) {
-  return api.get('/products', params);
+  return normalizeMediaUrls(await api.get('/products', params));
 }
 
 export async function fetchSimilarProducts(categoryId, excludeId, count = 4) {

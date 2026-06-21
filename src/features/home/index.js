@@ -6,10 +6,11 @@ import { ROLES, SELLER_ROLES } from '../../shared/constants/roles.js';
 import { escapeHtml, observeAnimations, initPullToRefresh } from '../../shared/utils/dom.js';
 import { formatPrice, statusClass, tStatus } from '../../shared/utils/format.js';
 import { getRecentlyViewed } from '../../shared/utils/recently-viewed.js';
+import { normalizeMediaUrls } from '../../shared/utils/media-url.js';
 export { trackRecentlyViewed, getRecentlyViewed } from '../../shared/utils/recently-viewed.js';
 
 function buildRecentlyViewedItems() {
-  const viewed = getRecentlyViewed();
+  const viewed = normalizeMediaUrls(getRecentlyViewed());
   if (!viewed.length) return [];
   return viewed.map((v) => ({
     id: v.id,
@@ -62,7 +63,8 @@ Alpine.data('homePage', () => ({
         api.get('/auctions', { pageSize: 4 }),
       ]);
 
-      this.products = productsRes?.items ?? productsRes?.data ?? [];
+      const normalizedProducts = normalizeMediaUrls(productsRes);
+      this.products = normalizedProducts?.items ?? normalizedProducts?.data ?? [];
       this.auctions = auctionsRes?.items ?? auctionsRes?.data ?? [];
     } catch (err) {
       this.error = err.message || t('common.error');

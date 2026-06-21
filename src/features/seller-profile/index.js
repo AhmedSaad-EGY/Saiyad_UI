@@ -1,15 +1,16 @@
 import { api } from '../../shared/api/client.js';
+import { normalizeMediaUrls } from '../../shared/utils/media-url.js';
 
 export async function fetchSellerProfile(userId) {
-  return api.get(`/seller-profile/${userId}`);
+  return normalizeMediaUrls(await api.get(`/seller-profile/${userId}`));
 }
 
 export async function fetchSellerProducts(userId, pageSize = 8, page = 1) {
-  return api.get('/products', { sellerId: userId, pageSize, page });
+  return normalizeMediaUrls(await api.get('/products', { sellerId: userId, pageSize, page }));
 }
 
 export async function fetchMySellerProfile() {
-  return api.get('/seller-profile/me');
+  return normalizeMediaUrls(await api.get('/seller-profile/me'));
 }
 
 export async function createSellerProfile(body) {

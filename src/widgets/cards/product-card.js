@@ -6,6 +6,7 @@ import { registerRouteCleanup } from '../../shared/utils/events.js';
 import { animate } from '../../shared/utils/dom.js';
 import { getRecentlyViewed } from '../../shared/utils/recently-viewed.js';
 import { getProductLink, getRecentLink } from '../../features/products/routing.js';
+import { resolveMediaUrl } from '../../shared/utils/media-url.js';
 
 export function renderProductCards(container, products) {
   if (!products || !products.length) {
@@ -18,7 +19,7 @@ export function renderProductCards(container, products) {
   }
   container.innerHTML = products.map((p, i) => {
     const title = p.title || p.productTitle || t('common.product');
-    const img = p.primaryImageUrl || p.imageUrl || '';
+    const img = resolveMediaUrl(p.primaryImageUrl || p.imageUrl || '');
     const statusText = tStatus(p.status, "product");
     const productId = p.id ?? p.productId;
     const productHref = `#/product-detail?id=${encodeURIComponent(productId)}`;
@@ -60,7 +61,7 @@ export function openQuickView(product) {
 
   const title = product.title || product.product?.title || t('common.product');
   const price = formatPrice(product.price || product.currentHighestBid || product.startingPrice);
-  const image = product.primaryImageUrl || product.product?.primaryImageUrl || "";
+  const image = resolveMediaUrl(product.primaryImageUrl || product.product?.primaryImageUrl || "");
   const desc = product.description || product.product?.description || "";
   const link = getProductLink(product);
 
@@ -101,7 +102,7 @@ export function renderRecentlyViewed(container) {
     <div class="recently-viewed-strip">
       ${viewed.map((v) => {
         const title = v.title || t("common.product");
-        const image = v.image ? escapeHtml(v.image) : "";
+        const image = v.image ? escapeHtml(resolveMediaUrl(v.image)) : "";
         return `
         <a href="${escapeHtml(getRecentLink(v))}" class="recently-viewed-item" title="${escapeHtml(title)}">
           ${image ? `<img src="${image}" alt="${escapeHtml(title)}" loading="lazy">` : '<div class="d-flex align-items-center justify-content-center text-muted" style="width:60px;height:60px;background:var(--body-bg);border-radius:var(--radius-sm)"><i class="fas fa-image"></i></div>'}

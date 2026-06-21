@@ -1,8 +1,9 @@
 import { api } from '../../shared/api/client.js';
+import { normalizeMediaUrls } from '../../shared/utils/media-url.js';
 
 export async function fetchMyProducts(pageSize = 50) {
   try {
-    return await api.get('/products/my', { pageSize }) || [];
+    return normalizeMediaUrls(await api.get('/products/my', { pageSize })) || [];
   } catch { return { items: [], data: [] }; }
 }
 

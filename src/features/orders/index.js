@@ -1,11 +1,12 @@
 import { api } from '../../shared/api/client.js';
+import { normalizeMediaUrls } from '../../shared/utils/media-url.js';
 
 export async function fetchOrder(orderId) {
-  return api.get(`/orders/${orderId}`);
+  return normalizeMediaUrls(await api.get(`/orders/${orderId}`));
 }
 
 export async function fetchOrders(page = 1, pageSize = 10) {
-  return api.get('/orders', { page, pageSize });
+  return normalizeMediaUrls(await api.get('/orders', { page, pageSize }));
 }
 
 export async function cancelOrder(orderId) {

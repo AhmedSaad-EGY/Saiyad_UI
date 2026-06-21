@@ -1,4 +1,5 @@
 import { api } from '../../shared/api/client.js';
+import { normalizeMediaUrls } from '../../shared/utils/media-url.js';
 
 export async function fetchAdminUsers(page, pageSize) {
   return api.get('/users', { page, pageSize });
@@ -17,11 +18,11 @@ export async function resolveReport(reportId, body) {
 }
 
 export async function fetchAdminOrders(page, pageSize) {
-  return api.get('/orders/admin', { page, pageSize });
+  return normalizeMediaUrls(await api.get('/orders/admin', { page, pageSize }));
 }
 
 export async function fetchAdminProducts(page, pageSize) {
-  return api.get('/products/admin', { page, pageSize });
+  return normalizeMediaUrls(await api.get('/products/admin', { page, pageSize }));
 }
 
 export async function updateProductStatus(productId, status) {
@@ -29,7 +30,7 @@ export async function updateProductStatus(productId, status) {
 }
 
 export async function fetchPendingReviews(page, pageSize) {
-  return api.get('/products/pending-review', { page, pageSize });
+  return normalizeMediaUrls(await api.get('/products/pending-review', { page, pageSize }));
 }
 
 export async function approveProduct(productId) {
