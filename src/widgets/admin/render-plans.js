@@ -1,5 +1,5 @@
 import { t } from '../../shared/utils/i18n.js';
-import { escapeHtml, renderEmptyState } from '../../shared/utils/dom.js';
+import { escapeHtml, renderEmptyState, safeSetHTML } from '../../shared/utils/dom.js';
 import { formatPrice } from '../../shared/utils/format.js';
 import { showToast } from '../ui/toast.js';
 import { showConfirm } from '../ui/modal.js';
@@ -29,7 +29,7 @@ export function showFormModal(title, html, onSave, options = {}) {
   overlay.setAttribute("role", "dialog");
   overlay.setAttribute("aria-modal", "true");
   overlay.setAttribute("aria-labelledby", `${modalId}-title`);
-  overlay.innerHTML = `
+  safeSetHTML(overlay, `
     <div class="modal mw-xl">
       <div class="modal-header"><h3 id="${modalId}-title">${escapeHtml(title)}</h3></div>
       <div class="modal-body p-3">${html}</div>
@@ -37,7 +37,7 @@ export function showFormModal(title, html, onSave, options = {}) {
         <button class="btn btn-ghost" id="${modalId}-cancel">${escapeHtml(t("common.cancel"))}</button>
         <button class="btn ${confirmClass}" id="${modalId}-save">${escapeHtml(confirmText)}</button>
       </div>
-    </div>`;
+    </div>`);
   document.body.appendChild(overlay);
   setBackgroundInert();
   const cancelBtn = overlay.querySelector(`#${modalId}-cancel`);

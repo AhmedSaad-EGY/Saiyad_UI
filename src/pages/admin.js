@@ -3,6 +3,7 @@ import { getUser } from '../features/auth/login.js';
 import { ROLES } from '../shared/constants/roles.js';
 import { setPageMeta } from '../shared/utils/seo.js';
 import { formatPrice } from '../shared/utils/format.js';
+import { showError } from '../shared/utils/dom.js';
 import {
   renderUsers as renderUsersWidget,
   renderReports as renderReportsWidget,
@@ -139,7 +140,7 @@ export default async function renderAdmin(container) {
           const { feeTxns, totalFees } = computeFeeTotals(txns);
           renderRevenueWidget(content, { wallet, feeTxns, totalFees, pendingFreezes: dash.pendingFreezeCount, pendingReports: dash.pendingReportCount });
         } catch (err) {
-          content.innerHTML = `<div class="alert alert-error">${err.message}</div>`;
+          showError(content, err?.message);
         }
       })();
     }
