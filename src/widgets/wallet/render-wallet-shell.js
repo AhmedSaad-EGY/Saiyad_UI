@@ -16,7 +16,16 @@ export function renderWalletShell({ canDeposit = false, canWithdraw = false } = 
           <div class="wallet-balance-amount" id="walletBalanceAmount" aria-live="polite">
             <span aria-busy="true" data-i18n="common.loading">Loading…</span>
           </div>
-          <div class="wallet-balance-currency">EGP</div>
+          <div class="wallet-balance-breakdown" id="walletBalanceBreakdown">
+            <div class="breakdown-row">
+              <span data-i18n="wallet.balance">${t('wallet.balance')}</span>
+              <span id="walletTotalBalance" aria-live="polite">—</span>
+            </div>
+            <div class="breakdown-row">
+              <span data-i18n="wallet.held">${t('wallet.held')}</span>
+              <span id="walletHeldBalance" aria-live="polite">—</span>
+            </div>
+          </div>
           ${hasActions ? `<div class="wallet-actions" aria-label="${t('wallet.actions')}">
             ${canDeposit ? `<button type="button" class="btn btn-primary" data-wallet-action="deposit">
               <i class="fas fa-plus-circle" aria-hidden="true"></i>

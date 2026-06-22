@@ -2,6 +2,7 @@ import { requireAuth } from '../features/auth/login.js';
 import { setPageMeta } from '../shared/utils/seo.js';
 import { showToast } from '../widgets/ui/toast.js';
 import { t } from '../shared/utils/i18n.js';
+import { formatPrice } from '../shared/utils/format.js';
 import { getUser } from '../shared/utils/auth-state.js';
 import { registerRouteCleanup } from '../app/router.js';
 
@@ -53,11 +54,23 @@ export default async function renderWallet(container) {
 async function loadWalletBalance() {
   try {
     const res = await fetchWalletBalance();
-    document.getElementById('walletBalanceAmount').textContent = extractBalance(res);
+    const formatted = extractBalance(res);
+    document.getElementById('walletBalanceAmount').textContent = formatted ?? '—';
+    updateBreakdown(res);
   } catch {
     document.getElementById('walletBalanceAmount').textContent = '—';
     showToast(t('wallet.loadError'), 'error');
   }
+}
+
+function updateBreakdown(res) {
+  const update = (id, val) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = val != null ? formatPrice(val) : '—';
+  };
+  update('walletTotalBalance', res?.balance);
+  update('walletHeldBalance', res?.heldBalance);
 }
 
 async function loadWalletTransactions() {
