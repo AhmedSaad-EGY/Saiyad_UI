@@ -5,8 +5,6 @@ import { setPageMeta } from '../shared/utils/seo.js';
 
 export default async function renderPrivacy(container) {
   setPageMeta(t('privacy.title'));
-  const isAr = document.documentElement.lang === 'ar';
-
   container.innerHTML = `
     <style>
       @media print {
@@ -32,20 +30,18 @@ export default async function renderPrivacy(container) {
           <i class="fas fa-user-shield" aria-hidden="true"></i>
         </div>
         <h1>${t('auth.privacyPolicy')}</h1>
-        <p class="legal-hero-sub">${isAr
-      ? 'آخر تحديث: 23 مايو 2026'
-      : 'Last updated: May 23, 2026'}</p>
+        <p class="legal-hero-sub">${t('privacy.lastUpdated')}</p>
       </div>
 
       <div class="legal-toc card animate-on-scroll stagger-1">
-        <h4>${isAr ? 'المحتويات' : 'Table of Contents'}</h4>
+        <h4>${t('privacy.tableOfContents')}</h4>
         <ol class="toc-list">
-          <li><a href="#priv-1" class="toc-link">${isAr ? 'جمع المعلومات' : 'Information Collection'}</a></li>
-          <li><a href="#priv-2" class="toc-link">${isAr ? 'كيفية استخدام المعلومات' : 'How We Use Information'}</a></li>
-          <li><a href="#priv-3" class="toc-link">${isAr ? 'أمان البيانات' : 'Data Security'}</a></li>
-          <li><a href="#priv-4" class="toc-link">${isAr ? 'مشاركة الطرف الثالث' : 'Third-Party Sharing'}</a></li>
-          <li><a href="#priv-5" class="toc-link">${isAr ? 'حقوقك' : 'Your Rights'}</a></li>
-          <li><a href="#priv-6" class="toc-link">${isAr ? 'اتصل بنا' : 'Contact Us'}</a></li>
+          <li><a href="#priv-1" class="toc-link">${t('privacy.section1Title')}</a></li>
+          <li><a href="#priv-2" class="toc-link">${t('privacy.section2Title')}</a></li>
+          <li><a href="#priv-3" class="toc-link">${t('privacy.section3Title')}</a></li>
+          <li><a href="#priv-4" class="toc-link">${t('privacy.section4Title')}</a></li>
+          <li><a href="#priv-5" class="toc-link">${t('privacy.section5Title')}</a></li>
+          <li><a href="#priv-6" class="toc-link">${t('privacy.section6Title')}</a></li>
         </ol>
       </div>
 
@@ -53,62 +49,49 @@ export default async function renderPrivacy(container) {
         <section class="legal-section card animate-on-scroll stagger-2" id="priv-1">
           <div class="legal-section-header">
             <span class="legal-section-num">01</span>
-            <h2>${isAr ? 'جمع المعلومات' : 'Information Collection'}</h2>
+            <h2>${t('privacy.section1Title')}</h2>
           </div>
-          <p>${isAr
-      ? 'نقوم بجمع المعلومات التي تقدمها مباشرةً، مثل عند إنشاء حساب أو إدراج منتج أو التواصل معنا. يشمل ذلك اسمك وبريدك الإلكتروني ورقم هاتفك وموقعك.'
-      : 'We collect information you provide directly to us, such as when you create an account, list a product, or communicate with us. This includes your name, email, phone number, and location.'}</p>
+          <p>${t('privacy.section1Body')}</p>
         </section>
 
         <section class="legal-section card animate-on-scroll stagger-3" id="priv-2">
           <div class="legal-section-header">
             <span class="legal-section-num">02</span>
-            <h2>${isAr ? 'كيفية استخدام المعلومات' : 'How We Use Information'}</h2>
+            <h2>${t('privacy.section2Title')}</h2>
           </div>
-          <p>${isAr
-      ? 'نستخدم معلوماتك لتسهيل المعاملات وتحسين خدماتنا وإرسال تحديثات مهمة تتعلق بحسابك أو عطاءاتك.'
-      : 'We use your information to facilitate transactions, improve our services, and send you important updates regarding your account or bids.'}</p>
+          <p>${t('privacy.section2Body')}</p>
         </section>
 
         <section class="legal-section card animate-on-scroll stagger-4" id="priv-3">
           <div class="legal-section-header">
             <span class="legal-section-num">03</span>
-            <h2>${isAr ? 'أمان البيانات' : 'Data Security'}</h2>
+            <h2>${t('privacy.section3Title')}</h2>
           </div>
-          <p>${isAr
-      ? 'نطبق تدابير أمنية وفق معايير الصناعة لحماية معلوماتك الشخصية. ومع ذلك، لا توجد طريقة نقل عبر الإنترنت آمنة بنسبة 100%.'
-      : 'We implement industry-standard security measures to protect your personal information. However, no method of transmission over the Internet is 100% secure.'}</p>
+          <p>${t('privacy.section3Body')}</p>
         </section>
 
         <section class="legal-section card animate-on-scroll stagger-5" id="priv-4">
           <div class="legal-section-header">
             <span class="legal-section-num">04</span>
-            <h2>${isAr ? 'مشاركة الطرف الثالث' : 'Third-Party Sharing'}</h2>
+            <h2>${t('privacy.section4Title')}</h2>
           </div>
-          <p>${isAr
-      ? 'لا نبيع بياناتك الشخصية. نشارك المعلومات الضرورية فقط لمعالجة المدفوعات أو الامتثال للالتزامات القانونية.'
-      : 'We do not sell your personal data. We only share information necessary to process payments or comply with legal obligations.'}</p>
+          <p>${t('privacy.section4Body')}</p>
         </section>
 
         <section class="legal-section card animate-on-scroll stagger-6" id="priv-5">
           <div class="legal-section-header">
             <span class="legal-section-num">05</span>
-            <h2>${isAr ? 'حقوقك' : 'Your Rights'}</h2>
+            <h2>${t('privacy.section5Title')}</h2>
           </div>
-          <p>${isAr
-      ? 'يحق لك الوصول إلى بياناتك وتصحيحها وحذفها في أي وقت. تواصل معنا عبر صفحة الدعم.'
-      : 'You have the right to access, correct, or delete your data at any time. Contact us through the support page.'}</p>
+          <p>${t('privacy.section5Body')}</p>
         </section>
 
         <section class="legal-section card animate-on-scroll stagger-7" id="priv-6">
           <div class="legal-section-header">
             <span class="legal-section-num">06</span>
-            <h2>${isAr ? 'اتصل بنا' : 'Contact Us'}</h2>
+            <h2>${t('privacy.section6Title')}</h2>
           </div>
-          <p>${isAr
-      ? 'إذا كانت لديك أسئلة حول سياسة الخصوصية هذه، يُرجى التواصل معنا على'
-      : 'If you have questions about this Privacy Policy, please contact us at'}
-            <a href="mailto:support@sayiad.com" class="text-primary">support@sayiad.com</a>.</p>
+          <p>${t('privacy.section6Body')} <a href="mailto:support@sayiad.com" class="text-primary">support@sayiad.com</a>.</p>
         </section>
       </div>
 
