@@ -42,6 +42,17 @@ export function renderTransactions(txs) {
     </div>`;
 }
 
+export function renderLoadMoreButton({ hasMore, loading }) {
+  if (!hasMore) return '';
+  return `
+    <div class="wallet-load-more text-center mt-3" id="walletLoadMoreWrapper">
+      <button type="button" class="btn btn-ghost btn-sm" id="walletLoadMoreBtn" ${loading ? 'disabled' : ''}>
+        <i class="fas fa-spinner fa-spin ${loading ? '' : 'd-none'}" id="walletLoadMoreSpinner" aria-hidden="true"></i>
+        <span id="walletLoadMoreText">${t('common.loadMore')}</span>
+      </button>
+    </div>`;
+}
+
 export function renderTransactionsError() {
   return `
     <div class="error-state" role="alert">

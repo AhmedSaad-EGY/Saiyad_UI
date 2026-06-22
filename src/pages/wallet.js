@@ -22,11 +22,18 @@ import {
   renderWalletShell,
   renderTransactions,
   renderTransactionsError,
+  renderLoadMoreButton,
   openWalletActionModal,
   closeWalletActionModal,
   setWalletActionPending,
   showWalletActionError,
 } from '../widgets/wallet/index.js';
+
+let _txPage = 1;
+let _txTotalCount = 0;
+let _txLoading = false;
+let _txAllItems = [];
+const TX_PAGE_SIZE = 20;
 
 export default async function renderWallet(container) {
   if (!(await requireAuth())) return;
@@ -73,18 +80,53 @@ function updateBreakdown(res) {
   update('walletHeldBalance', res?.heldBalance);
 }
 
-async function loadWalletTransactions() {
+async function loadWalletTransactions(page = 1) {
   try {
-    const res = await fetchWalletTransactions(1, 20);
+    _txPage = page;
+    const res = await fetchWalletTransactions(page, TX_PAGE_SIZE);
     const container = document.getElementById('walletTransactionsContainer');
     if (!container) return;
+
+    _txTotalCount = res?.totalCount ?? 0;
+    const items = extractTransactions(res);
+
+    if (page === 1) {
+      _txAllItems = items;
+    } else {
+      const existingIds = new Set(_txAllItems.map(i => i.id));
+      for (const item of items) {
+        if (item.id != null && !existingIds.has(item.id)) {
+          _txAllItems.push(item);
+          existingIds.add(item.id);
+        }
+      }
+    }
+
     container.setAttribute('aria-busy', 'false');
-    container.innerHTML = renderTransactions(extractTransactions(res));
+    const hasMore = _txAllItems.length < _txTotalCount;
+    container.innerHTML = renderTransactions(_txAllItems) + renderLoadMoreButton({ hasMore, loading: false });
+    document.getElementById('walletLoadMoreBtn')?.addEventListener('click', loadMoreTransactions);
   } catch {
     const container = document.getElementById('walletTransactionsContainer');
     if (!container) return;
     container.innerHTML = renderTransactionsError();
-    document.getElementById("txnRetryBtn")?.addEventListener("click", loadWalletTransactions);
+    document.getElementById("txnRetryBtn")?.addEventListener("click", () => loadWalletTransactions(_txPage));
+  }
+}
+
+async function loadMoreTransactions() {
+  if (_txLoading || _txAllItems.length >= _txTotalCount) return;
+
+  const container = document.getElementById('walletTransactionsContainer');
+  if (!container) return;
+
+  _txLoading = true;
+  container.innerHTML = renderTransactions(_txAllItems) + renderLoadMoreButton({ hasMore: true, loading: true });
+  try {
+    await loadWalletTransactions(_txPage + 1);
+  } finally {
+    // eslint-disable-next-line require-atomic-updates
+    _txLoading = false;
   }
 }
 
