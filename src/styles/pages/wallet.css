@@ -131,9 +131,20 @@
 }
 
 .wallet-action-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding: var(--space-4);
   overflow-y: auto;
+  background: var(--overlay);
   backdrop-filter: blur(4px);
+}
+
+body:has(.wallet-action-overlay.show) .main-content {
+  backdrop-filter: none;
 }
 
 .wallet-action-modal {
