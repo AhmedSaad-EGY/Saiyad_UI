@@ -145,12 +145,16 @@ export function renderDetailMain() {
                   <div class="bid-input-group">
                     <input type="number" class="form-input form-control" x-model="bidAmount" step="0.01"
                            :placeholder="t('auction.placeBid') + ' (' + formatPrice(minBid) + ')'" />
-                    <button class="btn btn-primary" @click="placeBid()" :disabled="placingBid">
+                    <button class="btn btn-primary" @click="placeBid()" :disabled="placingBid || isCurrentUserHighestBidder">
                       <i class="fas fa-gavel" x-show="!placingBid"></i>
                       <i class="fas fa-spinner spinner" x-show="placingBid"></i>
                       <span x-show="!placingBid" x-text="$t('auction.placeBid')"></span>
                       <span x-show="placingBid">${t('auction.placingBid')}</span>
                     </button>
+                  </div>
+                  <div x-show="isCurrentUserHighestBidder" class="alert alert-warning d-flex align-items-center gap-2 mt-2" role="alert">
+                    <i class="fas fa-info-circle" aria-hidden="true"></i>
+                    <span x-text="$t('auction.highestBidderAlert')"></span>
                   </div>
 
                   <div class="bid-slider-wrap">
@@ -244,10 +248,14 @@ export function renderDetailMain() {
             <small x-text="$t('auction.currentBid')"></small>
             <span x-text="formatPrice(currentBidValue)"></span>
           </div>
-          <button class="btn btn-primary" @click="placeBid()" :disabled="placingBid">
+          <button class="btn btn-primary" @click="placeBid()" :disabled="placingBid || isCurrentUserHighestBidder">
             <i class="fas" :class="placingBid ? 'fa-spinner spinner' : 'fa-gavel'"></i>
             <span x-text="$t('auction.placeBid')"></span>
           </button>
+          <div x-show="isCurrentUserHighestBidder" class="alert alert-warning mt-2 mb-0 text-center" role="alert" style="font-size:.8rem">
+            <i class="fas fa-info-circle" aria-hidden="true"></i>
+            <span x-text="$t('auction.highestBidderAlert')"></span>
+          </div>
         </div>
       </template>
     </div></template>`;

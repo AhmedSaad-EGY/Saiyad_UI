@@ -258,6 +258,8 @@ export const translations = {
     "auction.bidCustomerOnly": "Only customers can place bids.",
     "auction.loginToBid": "Login as a customer to place bids.",
     "auction.autoBid": "Auto bid",
+    "auction.highestBidderAlert":
+      "You are already the highest bidder on this auction.",
     "auction.autoBidMaxRequired":
       "Enter a max auto-bid amount higher than your bid.",
     "auction.reserveConfirmationPending": "Reserve price was not met. The seller must accept or reject the highest bid.",
@@ -1295,6 +1297,7 @@ export const translations = {
     "auction.bidCustomerOnly": "يمكن للعملاء فقط تقديم عروض.",
     "auction.loginToBid": "سجل الدخول كعميل لتقديم عروض.",
     "auction.autoBid": "مزايدة تلقائية",
+    "auction.highestBidderAlert": "أنت صاحب أعلى مزايدة حاليًا في هذا المزاد.",
     "auction.autoBidMaxRequired": "أدخل حد مزايدة تلقائية أعلى من مزايدتك.",
     "auction.reserveConfirmationPending": "لم يصل المزاد إلى سعر الاحتياطي. يجب على البائع قبول أو رفض أعلى مزايدة.",
     "auction.confirmBefore": "قم بالرد قبل",

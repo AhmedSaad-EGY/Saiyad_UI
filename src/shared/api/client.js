@@ -165,12 +165,12 @@ async function doUpload(url, formData, _retry = false) {
 
 export const api = {
   get: (url, params, options = {}) => requestWithDedup(url + buildQuery(params || {}), options),
-  post: (url, body) =>
-    requestWithDedup(url, { method: "POST", body: JSON.stringify(body) }),
+  post: (url, body, options = {}) =>
+    requestWithDedup(url, { ...options, method: "POST", body: JSON.stringify(body) }),
   put: (url, body) =>
     requestWithDedup(url, { method: "PUT", body: JSON.stringify(body) }),
-  patch: (url, body) =>
-    requestWithDedup(url, { method: "PATCH", body: JSON.stringify(body) }),
+  patch: (url, body, options = {}) =>
+    requestWithDedup(url, { ...options, method: "PATCH", body: JSON.stringify(body) }),
   delete: (url, body) =>
     requestWithDedup(url, {
       method: "DELETE",

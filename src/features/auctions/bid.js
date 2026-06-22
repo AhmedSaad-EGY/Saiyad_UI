@@ -191,6 +191,8 @@ Alpine.data('auctionDetailPage', () => ({
       createdAt: bid.createdAt || bid.created_at || new Date().toISOString(),
       amount: newVal || 0,
       isAutoBid: bid.isAutoBid || false,
+      userId: bid.userId ?? bid.bidderId,
+      status: bid.status ?? bid.bidStatus,
     };
     this.bids = [bidEntry, ...this.bids].sort((a, b) => new Date(b.createdAt || b.created_at) - new Date(a.createdAt || a.created_at));
     this.bidCount = this.bids.length;
@@ -208,8 +210,23 @@ Alpine.data('auctionDetailPage', () => ({
     }
   },
 
+  get isCurrentUserHighestBidder() {
+    if (!this._user || !this.bids || !this.bids.length) return false;
+    const currentUserId = this._user.id ?? this._user.userId;
+    if (!currentUserId) return false;
+    const winningBid = this.bids.find(
+      b => (b?.status === 'Winning' || b?.bidStatus === 'Winning')
+    );
+    return winningBid ? Number(winningBid.userId) === Number(currentUserId) : false;
+  },
+
   async placeBid() {
     if (this.placingBid) return;
+    if (this.isCurrentUserHighestBidder) {
+      this.bidAlert = t('auction.highestBidderAlert');
+      this.bidAlertType = 'warning';
+      return;
+    }
     this.placingBid = true;
     this.bidAlert = '';
     this.bidAlertType = '';
@@ -239,7 +256,7 @@ Alpine.data('auctionDetailPage', () => ({
         }
         body.maxAutoBidAmount = maxBid;
       }
-      await api.post(`/auctions/${this._auctionId}/bids`, body);
+      await api.post(`/auctions/${this._auctionId}/bids`, body, { emitGlobalError: false });
       this.bidAlert = t('auction.bidPlaced');
       this.bidAlertType = 'success';
       setTimeout(() => this.refreshAuction(), 1000);
@@ -267,7 +284,7 @@ Alpine.data('auctionDetailPage', () => ({
     this.bidAlert = '';
     this.bidAlertType = '';
     try {
-      await api.patch(`/auctions/${this._auctionId}/confirm-reserve`, { accept });
+      await api.patch(`/auctions/${this._auctionId}/confirm-reserve`, { accept }, { emitGlobalError: false });
       this.bidAlert = accept ? t('auction.reserveAccepted') : t('auction.reserveRejected');
       this.bidAlertType = 'success';
       await this.refreshAuction();
