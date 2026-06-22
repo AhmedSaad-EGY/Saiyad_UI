@@ -1,6 +1,7 @@
 import { api } from '../../shared/api/client.js';
 import { showToast } from '../../shared/utils/ui.js';
 import { t } from '../../shared/utils/i18n.js';
+import { formatPrice } from '../../shared/utils/format.js';
 
 export const MIN_DEPOSIT = 10;
 export const MAX_DEPOSIT = 50000;
@@ -23,8 +24,8 @@ export function validateWithdrawAmount(amount) {
 }
 
 export function extractBalance(res) {
-  const amount = res?.balance ?? res?.amount ?? res?.data?.balance ?? 0;
-  return Number(amount).toLocaleString('en-US', { minimumFractionDigits: 2 });
+  const amount = res?.availableBalance ?? res?.available ?? res?.data?.availableBalance;
+  return amount != null ? formatPrice(amount) : null;
 }
 
 export function extractTransactions(res) {
