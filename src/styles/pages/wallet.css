@@ -130,6 +130,12 @@
   font-weight: var(--weight-semibold);
 }
 
+.wallet-action-overlay {
+  padding: var(--space-4);
+  overflow-y: auto;
+  backdrop-filter: blur(4px);
+}
+
 .wallet-action-modal {
   position: relative;
   inset: auto;
@@ -138,8 +144,8 @@
   inline-size: min(92vw, 460px);
   block-size: auto;
   min-block-size: 0;
-  max-block-size: min(90dvh, 620px);
-  margin: 0;
+  max-block-size: min(calc(90dvh - var(--space-4) * 2), 620px);
+  margin-block: auto;
   padding: 0;
   overflow: hidden;
   text-align: start;
