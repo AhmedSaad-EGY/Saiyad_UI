@@ -94,7 +94,7 @@ export default async function renderProductDetail(container, route, params) {
     trackRecentlyViewed(p.id, p.title, p.primaryImageUrl, p.price, "product");
 
     // Quantity + Add to Cart
-    if (isAvailable && canUseEcommerceActions) {
+    if (isAvailable && canUseEcommerceActions && !p.isAuctioned) {
       const qtyInput = document.getElementById("productQty");
       document.getElementById("qtyMinus")?.addEventListener("click", () => { qtyInput.value = clampQuantity(parseInt(qtyInput.value) - 1, 1, parseInt(qtyInput.max) || 99); });
       document.getElementById("qtyPlus")?.addEventListener("click", () => { qtyInput.value = clampQuantity(parseInt(qtyInput.value) + 1, 1, parseInt(qtyInput.max) || 99); });

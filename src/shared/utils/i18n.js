@@ -198,6 +198,8 @@ export const translations = {
     "product.status": "Status",
     "product.brand": "Brand",
     "product.addedToCart": "Added to cart!",
+    "product.auctionItemNotice":
+      "This item is only available through auction. Bid on it in the auction.",
     "product.contactSeller": "Contact Seller",
     "product.addedToWishlist": "Added to wishlist!",
     "product.removeFromWishlist": "Remove from Wishlist",
@@ -1238,6 +1240,8 @@ export const translations = {
     "product.status": "الحالة",
     "product.brand": "العلامة التجارية",
     "product.addedToCart": "تمت الإضافة إلى العربة!",
+    "product.auctionItemNotice":
+      "هذا المنتج متاح فقط من خلال المزاد. قم بالمزايدة عليه في المزاد.",
     "product.contactSeller": "تواصل مع البائع",
     "product.addedToWishlist": "تمت الإضافة إلى المفضلة!",
     "product.removeFromWishlist": "إزالة من المفضلة",

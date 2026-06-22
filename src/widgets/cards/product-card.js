@@ -51,7 +51,7 @@ export function renderProductCards(container, products) {
             </div>
           </div>
         </a>
-        ${canUseCart(getUser()) ? `<button class="quick-add-btn" data-quick-add="${escapeHtml(String(productId))}" aria-label="${t('product.addToCart')}" title="${t('product.addToCart')}"><i class="fas fa-cart-plus"></i></button>` : ''}
+        ${canUseCart(getUser()) && !p.isAuctioned ? `<button class="quick-add-btn" data-quick-add="${escapeHtml(String(productId))}" aria-label="${t('product.addToCart')}" title="${t('product.addToCart')}"><i class="fas fa-cart-plus"></i></button>` : ''}
       </div>`;
   }).join('');
   observeAnimations();

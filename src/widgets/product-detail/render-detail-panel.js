@@ -25,9 +25,13 @@ export function renderDetailPanel(p, isAvailable, isWishlisted, stockLevel, stoc
           <div class="detail-meta-item"><strong>${t("product.category")}:</strong> ${escapeHtml(p.categoryName || t("common.N/A"))}</div>
           <div class="detail-meta-item"><strong>${t("product.status")}:</strong> <span class="status ${statusClass(p.status)}">${tStatus(p.status, "product")}</span></div>
         </div>
+        ${p.isAuctioned ? `<div class="alert alert-info d-flex align-items-center gap-2 mt-3" role="alert">
+          <i class="fas fa-gavel" aria-hidden="true"></i>
+          <span>${t("product.auctionItemNotice")}</span>
+        </div>` : ""}
         ${p.brand ? `<p class="detail-brand"><strong>${t("product.brand")}:</strong> ${escapeHtml(p.brand)}</p>` : ""}
         <div class="detail-desc mt-3">${escapeHtml(p.description || t("product.noDescription"))}</div>
-        ${canUseEcommerceActions ? `<div class="detail-cta-group">
+        ${!p.isAuctioned && canUseEcommerceActions ? `<div class="detail-cta-group">
           <div class="detail-quantity-row">
             <div class="qty-btn-group">
               <button type="button" class="qty-btn" id="qtyMinus" aria-label="${t('product.decreaseQty')}">−</button>
@@ -99,7 +103,7 @@ export function renderDetailPanel(p, isAvailable, isWishlisted, stockLevel, stoc
       </div>
     </div>
 
-    ${canUseEcommerceActions ? `<div class="mobile-sticky-bar mobile-sticky-cart" id="mobileStickyCart">
+    ${!p.isAuctioned && canUseEcommerceActions ? `<div class="mobile-sticky-bar mobile-sticky-cart" id="mobileStickyCart">
       <div class="current-bid-mini">
         <small>${t("cart.price")}</small>
         <span>${formatPrice(p.price)}</span>
