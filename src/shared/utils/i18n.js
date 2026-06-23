@@ -391,6 +391,8 @@ export const translations = {
     "verify.resendSuccess": "Verification email sent! Check your inbox.",
     "verify.resendError":
       "Failed to resend verification email. Please try again.",
+    "verify.checkSpam":
+      "If you don\u2019t see the email, please check your Spam or Junk folder.",
 
     // Forgot password token entry
     "auth.tokenPlaceholder": "Paste the code or link from your email",
@@ -1454,6 +1456,8 @@ export const translations = {
     "verify.resending": "جارٍ الإرسال...",
     "verify.resendSuccess": "تم إرسال بريد التحقق! تحقق من بريدك الوارد.",
     "verify.resendError": "تعذر إعادة إرسال بريد التحقق. حاول مرة أخرى.",
+    "verify.checkSpam":
+      "\u0644\u0648 \u0627\u0644\u0631\u0633\u0627\u0644\u0629 \u0645\u0627\u0648\u0635\u0644\u062a\u0634\u060c \u0631\u0627\u062c\u0639 \u0645\u062c\u0644\u062f \u0627\u0644\u0631\u0633\u0627\u0626\u0644 \u063a\u064a\u0631 \u0627\u0644\u0645\u0631\u063a\u0648\u0628 \u0641\u064a\u0647\u0627 Spam \u0623\u0648 Junk.",
 
     // Forgot password token entry
     "auth.tokenPlaceholder": "الصق الرمز أو الرابط من بريدك الإلكتروني",

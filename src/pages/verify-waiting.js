@@ -52,6 +52,10 @@ export default function renderVerifyWaiting(container) {
               ${t('auth.registerSuccess')}
             </p>
 
+            <p class="text-secondary-sm mt-2">
+              ${t('verify.checkSpam')}
+            </p>
+
             <button
               type="button"
               id="resendVerificationBtn"
