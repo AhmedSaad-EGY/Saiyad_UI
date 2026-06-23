@@ -66,8 +66,10 @@ Alpine.data('registerForm', () => ({
         this.pendingRole = data.pendingRoleUpgrade;
         return;
       }
-      // Registration may still require verification, so do not cache a user until login creates a valid session.
-      window.location.hash = '#/login?registered=1';
+      // Registration requires email verification before login.
+      const verificationEmail = data?.user?.email || this.email;
+      sessionStorage.setItem('pendingLoginEmail', verificationEmail);
+      window.location.hash = `#/verify-waiting?email=${encodeURIComponent(verificationEmail)}`;
     } catch (err) { showToast(err.message || t('auth.registerError'), 'error'); }
     finally { this.loading = false; }
   },

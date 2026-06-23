@@ -12,6 +12,7 @@ export const routes = {
   checkout: () => import('../pages/checkout.js'),
   dashboard: () => import('../pages/dashboard.js'),
   "verify-email": () => import('../pages/verify-email.js'),
+  "verify-waiting": () => import('../pages/verify-waiting.js'),
   shipping: () => import('../pages/shipping.js'),
   "seller-profile": () => import('../pages/seller-profile.js'),
   "order-detail": () => import('../pages/order-detail.js'),

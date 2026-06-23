@@ -47,6 +47,7 @@ export const routeTitleKeys = {
   checkout: "cart.title",
   dashboard: "nav.dashboard",
   "verify-email": "verify.title",
+  "verify-waiting": "verify.waitingTitle",
   shipping: "shipping.title",
   "seller-profile": "seller.title",
   "order-detail": "order.title",
