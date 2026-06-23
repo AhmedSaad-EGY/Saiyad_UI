@@ -58,7 +58,7 @@ Alpine.data('resetPwForm', () => ({
   strengthCls: '', strengthLabel: '',
   computeStrength() {
     const r = getPasswordStrengthResult(this.password);
-    this.strengthCls = r.cls; this.strengthLabel = r.label;
+    this.strengthCls = r.cls; this.strengthLabel = t(r.label);
   },
   pwToggleLabel() { return this.showPassword ? t('common.hidePassword') : t('common.showPassword'); },
   confirmPwToggleLabel() { return this.showConfirmPw ? t('common.hidePassword') : t('common.showPassword'); },
