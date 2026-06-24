@@ -3,7 +3,7 @@ export const translations = {
     // Navbar
     "nav.home": "Home",
     "home.title": "Home",
-    "home.metaDesc": "Egypt\u2019s premier fishing marketplace.",
+    "home.metaDesc": "Egypt's premier fishing marketplace.",
     "nav.products": "Products",
     "nav.auctions": "Auctions",
     "nav.cart": "Cart",
@@ -264,14 +264,16 @@ export const translations = {
       "You are already the highest bidder on this auction.",
     "auction.autoBidMaxRequired":
       "Enter a max auto-bid amount higher than your bid.",
-    "auction.reserveConfirmationPending": "Reserve price was not met. The seller must accept or reject the highest bid.",
+    "auction.reserveConfirmationPending":
+      "Reserve price was not met. The seller must accept or reject the highest bid.",
     "auction.confirmBefore": "Respond before",
     "auction.acceptBid": "Accept bid",
     "auction.rejectBid": "Reject bid",
     "auction.acceptReserveTitle": "Accept highest bid?",
     "auction.acceptReserveConfirm": "Accept this bid and settle the auction.",
     "auction.rejectReserveTitle": "Reject highest bid?",
-    "auction.rejectReserveConfirm": "Reject this bid, cancel the auction, and release held funds.",
+    "auction.rejectReserveConfirm":
+      "Reject this bid, cancel the auction, and release held funds.",
     "auction.reserveAccepted": "Bid accepted. The auction was settled.",
     "auction.reserveRejected": "Bid rejected. The auction was cancelled.",
     "auction.statusActive": "Active",
@@ -365,7 +367,8 @@ export const translations = {
     "profile.uploadPhoto": "Click to upload photo",
     "profile.imageTooLarge": "Image must be under 5 MB.",
     "profile.invalidImageType": "Choose a JPG, PNG, or WebP image.",
-    "profile.invalidImageContent": "The selected file is not a valid supported image.",
+    "profile.invalidImageContent":
+      "The selected file is not a valid supported image.",
     "profile.uploadNoUrl": "Upload did not return a URL.",
     "profile.photoUpdated": "Profile photo updated!",
     "profile.photoRemoved": "Profile photo removed.",
@@ -392,7 +395,7 @@ export const translations = {
     "verify.resendError":
       "Failed to resend verification email. Please try again.",
     "verify.checkSpam":
-      "If you don\u2019t see the email, please check your Spam or Junk folder.",
+      "If you don't see the email, please check your Spam or Junk folder.",
 
     // Forgot password token entry
     "auth.tokenPlaceholder": "Paste the code or link from your email",
@@ -424,32 +427,44 @@ export const translations = {
     "privacy.lastUpdated": "Last updated: May 23, 2026",
     "privacy.tableOfContents": "Table of Contents",
     "privacy.section1Title": "Information Collection",
-    "privacy.section1Body": "We collect information you provide directly to us, such as when you create an account, list a product, or communicate with us. This includes your name, email, phone number, and location.",
+    "privacy.section1Body":
+      "We collect information you provide directly to us, such as when you create an account, list a product, or communicate with us. This includes your name, email, phone number, and location.",
     "privacy.section2Title": "How We Use Information",
-    "privacy.section2Body": "We use your information to facilitate transactions, improve our services, and send you important updates regarding your account or bids.",
+    "privacy.section2Body":
+      "We use your information to facilitate transactions, improve our services, and send you important updates regarding your account or bids.",
     "privacy.section3Title": "Data Security",
-    "privacy.section3Body": "We implement industry-standard security measures to protect your personal information. However, no method of transmission over the Internet is 100% secure.",
+    "privacy.section3Body":
+      "We implement industry-standard security measures to protect your personal information. However, no method of transmission over the Internet is 100% secure.",
     "privacy.section4Title": "Third-Party Sharing",
-    "privacy.section4Body": "We do not sell your personal data. We only share information necessary to process payments or comply with legal obligations.",
+    "privacy.section4Body":
+      "We do not sell your personal data. We only share information necessary to process payments or comply with legal obligations.",
     "privacy.section5Title": "Your Rights",
-    "privacy.section5Body": "You have the right to access, correct, or delete your data at any time. Contact us through the support page.",
+    "privacy.section5Body":
+      "You have the right to access, correct, or delete your data at any time. Contact us through the support page.",
     "privacy.section6Title": "Contact Us",
-    "privacy.section6Body": "If you have questions about this Privacy Policy, please contact us at",
+    "privacy.section6Body":
+      "If you have questions about this Privacy Policy, please contact us at",
     "terms.title": "Terms & Conditions",
     "terms.lastUpdated": "Last updated: May 2026",
     "terms.tableOfContents": "Table of Contents",
     "terms.section1Title": "Acceptance of Terms",
-    "terms.section1Body": "By accessing and using Sayiad, you agree to be bound by these Terms and Conditions and our Privacy Policy. If you do not agree to these terms, please do not use the service.",
+    "terms.section1Body":
+      "By accessing and using Sayiad, you agree to be bound by these Terms and Conditions and our Privacy Policy. If you do not agree to these terms, please do not use the service.",
     "terms.section2Title": "User Responsibilities",
-    "terms.section2Body": "Users must be at least 18 years old to create an account. You are responsible for all activity that occurs under your account. Sellers must provide accurate item descriptions, and buyers must honor their bids and purchases.",
+    "terms.section2Body":
+      "Users must be at least 18 years old to create an account. You are responsible for all activity that occurs under your account. Sellers must provide accurate item descriptions, and buyers must honor their bids and purchases.",
     "terms.section3Title": "Auction Rules",
-    "terms.section3Body": "Bids placed on Sayiad are binding contracts. The highest bidder at the end of the auction period is contractually obligated to complete the purchase. Manipulation of bids is strictly prohibited.",
+    "terms.section3Body":
+      "Bids placed on Sayiad are binding contracts. The highest bidder at the end of the auction period is contractually obligated to complete the purchase. Manipulation of bids is strictly prohibited.",
     "terms.section4Title": "Prohibited Items",
-    "terms.section4Body": "Illegal substances, hazardous materials, and items infringing on intellectual property or fishing regulations are strictly prohibited from being listed on the platform.",
+    "terms.section4Body":
+      "Illegal substances, hazardous materials, and items infringing on intellectual property or fishing regulations are strictly prohibited from being listed on the platform.",
     "terms.section5Title": "Limitation of Liability",
-    "terms.section5Body": "Sayiad acts as a facilitator for transactions and is not responsible for disputes between buyers and sellers, though we provide reporting mechanisms for resolution. We do not guarantee the quality or safety of listed items.",
+    "terms.section5Body":
+      "Sayiad acts as a facilitator for transactions and is not responsible for disputes between buyers and sellers, though we provide reporting mechanisms for resolution. We do not guarantee the quality or safety of listed items.",
     "terms.section6Title": "Modifications",
-    "terms.section6Body": "We reserve the right to modify these terms at any time. Continued use of the platform after changes constitutes acceptance of the new terms.",
+    "terms.section6Body":
+      "We reserve the right to modify these terms at any time. Continued use of the platform after changes constitutes acceptance of the new terms.",
 
     // Seller Profile
     "seller.title": "Seller Profile",
@@ -577,9 +592,11 @@ export const translations = {
     "admin.planMaxRequests": "Max Requests/Month",
     "admin.planSortOrder": "Sort Order",
     "admin.confirmSuspendUser": "Suspend user?",
-    "admin.confirmSuspendUserDesc": "Suspend {user}? They will lose access until reactivated.",
+    "admin.confirmSuspendUserDesc":
+      "Suspend {user}? They will lose access until reactivated.",
     "admin.confirmActivateUser": "Activate user?",
-    "admin.confirmActivateUserDesc": "Activate {user} and restore account access.",
+    "admin.confirmActivateUserDesc":
+      "Activate {user} and restore account access.",
     "admin.confirmApproveRole": "Approve role request?",
     "admin.confirmApproveRoleDesc": "Approve {role} for {user}?",
     "admin.confirmRejectRole": "Reject role request?",
@@ -616,12 +633,15 @@ export const translations = {
     "order.deliveredAt": "Delivered At",
     "order.returnReason": "Return Reason",
     "order.requestReturn": "Request Return",
-    "order.returnConfirm": "Are you sure you want to request a return? The seller will be notified.",
-    "order.returnPending": "A return request is pending. Waiting for admin approval.",
+    "order.returnConfirm":
+      "Are you sure you want to request a return? The seller will be notified.",
+    "order.returnPending":
+      "A return request is pending. Waiting for admin approval.",
     "order.returnRequested": "Return requested successfully!",
     "order.returnError": "Failed to process return request.",
     "order.approveReturn": "Approve Return",
-    "order.approveReturnConfirm": "Approve this return request? The buyer will be refunded.",
+    "order.approveReturnConfirm":
+      "Approve this return request? The buyer will be refunded.",
     "order.returnApproved": "Return approved and buyer refunded.",
     "order.rejectReturn": "Reject Return",
     "order.rejectReturnReason": "Reason for rejecting the return:",
@@ -828,7 +848,8 @@ export const translations = {
       "This adds test balance instantly. No real money transfer, bank payout, or withdrawal is processed.",
     "wallet.amountLabel": "Amount (EGP)",
     "wallet.withdrawTitle": "Withdraw Balance",
-    "wallet.withdrawHelp": "Enter the amount to withdraw from your available wallet balance.",
+    "wallet.withdrawHelp":
+      "Enter the amount to withdraw from your available wallet balance.",
     "wallet.withdrawPlaceholder": "Enter a positive amount",
     "wallet.withdrawAmountError": "Withdrawal amount must be positive.",
     "wallet.withdrawSuccess": "Balance withdrawn successfully!",
@@ -1018,11 +1039,14 @@ export const translations = {
     "auth.invalidCode": "Invalid verification code.",
     "auth.loginDesc": "Sign in to continue to your Sayiad account.",
     "auth.invalidCredentials": "Incorrect email or password.",
-    "auth.loginError": "Unable to sign in. Please check your details and try again.",
-    "auth.mustAcceptTerms": "You must accept the terms before creating an account.",
+    "auth.loginError":
+      "Unable to sign in. Please check your details and try again.",
+    "auth.mustAcceptTerms":
+      "You must accept the terms before creating an account.",
     "auth.passwordPlaceholder": "Enter your password",
     "auth.redirectingToLogin": "Redirecting to login...",
-    "auth.registerDesc": "Create your Sayiad account and choose your marketplace role.",
+    "auth.registerDesc":
+      "Create your Sayiad account and choose your marketplace role.",
     "auth.registerError": "Unable to create your account. Please try again.",
     "auth.resendIn": "You can request another code in",
     "auth.sendCode": "Send Code",
@@ -1038,8 +1062,9 @@ export const translations = {
     "common.showPassword": "Show password",
     "common.tryAgain": "Try Again",
     "common.yearsOld": "years old",
-    "error_service_unavailable": "Service Unavailable",
-    "error_service_unavailable_desc": "The service is temporarily unavailable. Please try again shortly.",
+    error_service_unavailable: "Service Unavailable",
+    error_service_unavailable_desc:
+      "The service is temporarily unavailable. Please try again shortly.",
     "footer.privacy": "Privacy Policy",
     "footer.quickLinks": "Quick Links",
     "footer.rights": "All rights reserved.",
@@ -1056,10 +1081,12 @@ export const translations = {
     "register.customerDesc": "Shop products and bid on auctions.",
     "register.fisherman": "Fisherman",
     "register.fishermanDesc": "Sell your catch and request auctions.",
-    "retry": "Retry",
-    "subscriptions.baitSellerDesc": "Access seller tools for bait and supplies.",
+    retry: "Retry",
+    "subscriptions.baitSellerDesc":
+      "Access seller tools for bait and supplies.",
     "subscriptions.baitSellerHeading": "Grow Your Bait Shop",
-    "subscriptions.fishermanDesc": "Unlock selling tools for catch listings and auction requests.",
+    "subscriptions.fishermanDesc":
+      "Unlock selling tools for catch listings and auction requests.",
     "subscriptions.fishermanHeading": "Grow Your Fishing Business",
     "validation.invalidEmail": "Please enter a valid email address.",
     "validation.invalidPhone": "Please enter a valid phone number.",
@@ -1094,7 +1121,7 @@ export const translations = {
     "tour.welcome":
       "تصفح أدوات الصيد الفاخرة من أفضل العلامات التجارية. ابحث عن القضبان، البكرات، الطُعم، والمزيد.",
     "tour.products":
-      "استكشف كتالوجنا مع البحث المتadvanced والمرشحات للعثور على ما تحتاجه بالضبط.",
+      "استكشف كتالوجنا مع البحث المتقدم والمرشحات للعثور على ما تحتاجه بالضبط.",
     "tour.auctions":
       "شارك في المزادات الفورية على معدات الصيد الحصرية. احصل على صفقات رائعة!",
     "home.welcome": "مرحباً بك في صياد",
@@ -1139,17 +1166,17 @@ export const translations = {
     "auth.baitSeller": "بائع طعم",
     "auth.licenseNumber": "رقم ترخيص الصيد",
     "auth.licenseRequired": "رقم ترخيص الصيد مطلوب لتسجيل الصياد.",
-    "auth.auctioneer": "مزاد علني",
+    "auth.auctioneer": "منظّم مزادات",
     "auth.createAccount": "إنشاء حساب",
     "auth.creatingAccount": "جارٍ إنشاء الحساب...",
     "auth.hasAccount": "لديك حساب بالفعل؟",
     "register.auctioneerNotice":
-      "حسابات المزاد العلني تتطلب موافقة المشرف قبل التفعيل. ستتمكن من استخدام ميزات العميل الأساسية فوراً وستتلقى إشعاراً عند الموافقة.",
+      "حسابات منظّمي المزادات تتطلب موافقة المشرف قبل التفعيل. ستتمكن من استخدام ميزات العميل الأساسية فوراً وستتلقى إشعاراً عند الموافقة.",
     "register.pendingUpgrade":
-      "تم تقديم طلب دور المزاد العلني. يمكنك تسجيل الدخول الآن واستخدام ميزات العميل أثناء انتظار موافقة المشرف.",
+      "تم تقديم طلب دور منظّم المزادات. يمكنك تسجيل الدخول الآن واستخدام ميزات العميل أثناء انتظار موافقة المشرف.",
     "register.goToLogin": "انتقال إلى تسجيل الدخول",
     "auth.registerSuccess":
-      "تم إنشاء الحساب! تحقق من بريدك الإلكتروني للتحقق قبل تسجيل الدخول.",
+      "تم إنشاء الحساب بنجاح! يرجى مراجعة بريدك الإلكتروني لتفعيل حسابك قبل تسجيل الدخول.",
     "auth.loginSuccess": "تم تسجيل الدخول بنجاح!",
     "auth.loggedOut": "تم تسجيل الخروج بنجاح.",
     "auth.showPassword": "إظهار كلمة المرور",
@@ -1214,12 +1241,12 @@ export const translations = {
     "auth.confirmNewPassword": "تأكيد كلمة المرور الجديدة",
     "auth.updatingPassword": "جارٍ تحديث كلمة المرور...",
     "auth.passwordResetSuccess":
-      "تم تحديث كلمة المرور بنجاح! جاري التحويل لتسجيل الدخول...",
-    "auth.emailNotVerified": "البريد الإلكتروني غير مُتحقق منه.",
-    "auth.checkInbox": "يرجى التحقق من بريدك الوارد والنقر على رابط التحقق.",
+      "تم تحديث كلمة المرور بنجاح! جارٍ التحويل إلى تسجيل الدخول...",
+    "auth.emailNotVerified": "البريد الإلكتروني غير مُفعَّل.",
+    "auth.checkInbox": "يرجى تفقّد بريدك الوارد والنقر على رابط التفعيل.",
     "auth.checkSpam": "لم تستلمه؟ تحقق من مجلد الرسائل غير المرغوب فيها.",
-    "auth.resendVerification": "إعادة إرسال التحقق",
-    "auth.verificationSent": "تم إرسال بريد التحقق!",
+    "auth.resendVerification": "إعادة إرسال التفعيل",
+    "auth.verificationSent": "تم إرسال بريد التفعيل!",
     "auth.sending": "جارٍ الإرسال...",
     "auth.sent": "تم الإرسال!",
     "auth.emailNotFound": "البريد الإلكتروني غير موجود",
@@ -1253,7 +1280,7 @@ export const translations = {
 
     // Product Detail
     "product.idRequired": "معرف المنتج مطلوب.",
-    "product.shareText": "تحقق من {title} على سياد!",
+    "product.shareText": "تحقق من {title} على صياد!",
     "product.startAuction": "بدء المزاد",
     "product.addToCart": "أضف إلى العربة",
     "product.quantity": "الكمية",
@@ -1271,7 +1298,7 @@ export const translations = {
     "product.brand": "العلامة التجارية",
     "product.addedToCart": "تمت الإضافة إلى العربة!",
     "product.auctionItemNotice":
-      "هذا المنتج متاح فقط من خلال المزاد. قم بالمزايدة عليه في المزاد.",
+      "هذا المنتج متاح فقط من خلال المزاد، ويمكنك المزايدة عليه من هناك.",
     "product.contactSeller": "تواصل مع البائع",
     "product.addedToWishlist": "تمت الإضافة إلى المفضلة!",
     "product.removeFromWishlist": "إزالة من المفضلة",
@@ -1328,19 +1355,21 @@ export const translations = {
     "auction.newBid": "تم تقديم مزايدة جديدة!",
     "auction.startAuction": "بدء مزاد",
     "auction.startNew": "بدء مزاد جديد",
-    "auction.bidCustomerOnly": "يمكن للعملاء فقط تقديم عروض.",
-    "auction.loginToBid": "سجل الدخول كعميل لتقديم عروض.",
+    "auction.bidCustomerOnly": "يمكن للعملاء فقط تقديم المزايدات.",
+    "auction.loginToBid": "سجل الدخول كعميل لتقديم المزايدات.",
     "auction.autoBid": "مزايدة تلقائية",
     "auction.highestBidderAlert": "أنت صاحب أعلى مزايدة حاليًا في هذا المزاد.",
     "auction.autoBidMaxRequired": "أدخل حد مزايدة تلقائية أعلى من مزايدتك.",
-    "auction.reserveConfirmationPending": "لم يصل المزاد إلى سعر الاحتياطي. يجب على البائع قبول أو رفض أعلى مزايدة.",
+    "auction.reserveConfirmationPending":
+      "لم يصل المزاد إلى سعر الاحتياطي. يجب على البائع قبول أو رفض أعلى مزايدة.",
     "auction.confirmBefore": "قم بالرد قبل",
     "auction.acceptBid": "قبول المزايدة",
     "auction.rejectBid": "رفض المزايدة",
     "auction.acceptReserveTitle": "قبول أعلى مزايدة؟",
     "auction.acceptReserveConfirm": "اقبل هذه المزايدة وأنهِ تسوية المزاد.",
     "auction.rejectReserveTitle": "رفض أعلى مزايدة؟",
-    "auction.rejectReserveConfirm": "ارفض هذه المزايدة، وألغِ المزاد، وحرر الأموال المحجوزة.",
+    "auction.rejectReserveConfirm":
+      "ارفض هذه المزايدة، وألغِ المزاد، وحرر الأموال المحجوزة.",
     "auction.reserveAccepted": "تم قبول المزايدة وتسوية المزاد.",
     "auction.reserveRejected": "تم رفض المزايدة وإلغاء المزاد.",
     "auction.statusActive": "نشط",
@@ -1358,7 +1387,7 @@ export const translations = {
     "cart.quantity": "الكمية",
     "cart.subtotal": "المجموع الفرعي",
     "cart.total": "الإجمالي",
-    "cart.checkout": "متابعة الشراء",
+    "cart.checkout": "إتمام الطلب",
     "checkout.title": "الدفع",
     "cart.empty": "عربة التسوق فارغة",
     "cart.removeItemConfirm": "هل أنت متأكد أنك تريد إزالة هذا العنصر؟",
@@ -1369,7 +1398,7 @@ export const translations = {
     "cart.placeOrder": "تقديم الطلب",
     "cart.insufficientWallet":
       "رصيد المحفظة التجريبي غير كافٍ. يرجى إضافة رصيد تجريبي أولاً.",
-    "cart.placingOrder": "جاري تقديم الطلب...",
+    "cart.placingOrder": "جارٍ تقديم الطلب...",
     "cart.shippingAddress": "عنوان الشحن",
     "cart.city": "المدينة",
     "cart.addressLine": "العنوان",
@@ -1380,7 +1409,7 @@ export const translations = {
     "cart.cashOnDelivery": "دفع عند الاستلام تجريبي",
     "cart.requiredFields": "الاسم الكامل ورقم الهاتف والعنوان والمدينة مطلوبة.",
     "cart.orderSuccess": "تم تقديم الطلب بنجاح!",
-    "cart.orderSuccessDesc": "تم تقديم طلبك. جاري التحويل إلى لوحة التحكم...",
+    "cart.orderSuccessDesc": "تم تقديم طلبك. جارٍ التحويل إلى لوحة التحكم...",
     "cart.backToCart": "العودة إلى العربة",
     "cart.removeItemTitle": "إزالة العنصر",
     "cart.clearConfirm": "هل أنت متأكد من رغبتك في إفراغ سلة التسوق بالكامل؟",
@@ -1408,7 +1437,7 @@ export const translations = {
     "dash.yourProducts": "منتجاتك المدرجة",
     "dash.pendingReviews": "المراجعات المعلقة",
     "dash.productsAwaitingReview": "منتجات بانتظار المراجعة",
-    "dash.viewAdminPanel": "→ لوحة الإدارة",
+    "dash.viewAdminPanel": "لوحة الإدارة ←",
     "dash.totalUsers": "إجمالي المستخدمين",
     "dash.registeredUsers": "مستخدم مسجل",
     "dash.noOrders": "لا توجد طلبات بعد.",
@@ -1439,25 +1468,25 @@ export const translations = {
     "profile.confirmDeletePhoto": "هل أنت متأكد من إزالة الصورة الشخصية؟",
 
     // Verify Email
-    "verify.title": "تأكيد البريد الإلكتروني",
+    "verify.title": "تفعيل البريد الإلكتروني",
     "verify.success":
-      "تم تأكيد البريد الإلكتروني بنجاح! يمكنك تسجيل الدخول الآن.",
-    "verify.error": "فشل التحقق. الرابط قد يكون منتهياً أو غير صالح.",
+      "تم تفعيل البريد الإلكتروني بنجاح! يمكنك تسجيل الدخول الآن.",
+    "verify.error": "فشل التفعيل. الرابط قد يكون منتهياً أو غير صالح.",
     "verify.loggingIn": "جارٍ تسجيل الدخول تلقائياً...",
-    "verify.redirecting": "جاري التحويل إلى تسجيل الدخول...",
-    "verify.invalidLink": "رابط تحقق غير صالح.",
+    "verify.redirecting": "جارٍ التحويل إلى تسجيل الدخول...",
+    "verify.invalidLink": "رابط تفعيل غير صالح.",
     "verify.waitingTitle": "تحقق من بريدك الإلكتروني",
-    "verify.waitingDesc": "لقد أرسلنا رابط التحقق إلى",
-    "verify.alreadyVerified": "لقد قمت بالتحقق بالفعل",
+    "verify.waitingDesc": "لقد أرسلنا رابط التفعيل إلى",
+    "verify.alreadyVerified": "لقد قمت بالتفعيل بالفعل",
     "verify.useOtherEmail": "استخدام بريد إلكتروني آخر",
-    "verify.successTitle": "تم التحقق!",
+    "verify.successTitle": "تم التفعيل!",
     "verify.successDesc": "جارٍ تسجيل الدخول...",
-    "verify.resend": "إعادة إرسال بريد التحقق",
+    "verify.resend": "إعادة إرسال بريد التفعيل",
     "verify.resending": "جارٍ الإرسال...",
-    "verify.resendSuccess": "تم إرسال بريد التحقق! تحقق من بريدك الوارد.",
-    "verify.resendError": "تعذر إعادة إرسال بريد التحقق. حاول مرة أخرى.",
+    "verify.resendSuccess": "تم إرسال بريد التفعيل! تحقق من بريدك الوارد.",
+    "verify.resendError": "تعذر إعادة إرسال بريد التفعيل. حاول مرة أخرى.",
     "verify.checkSpam":
-      "\u0644\u0648 \u0627\u0644\u0631\u0633\u0627\u0644\u0629 \u0645\u0627\u0648\u0635\u0644\u062a\u0634\u060c \u0631\u0627\u062c\u0639 \u0645\u062c\u0644\u062f \u0627\u0644\u0631\u0633\u0627\u0626\u0644 \u063a\u064a\u0631 \u0627\u0644\u0645\u0631\u063a\u0648\u0628 \u0641\u064a\u0647\u0627 Spam \u0623\u0648 Junk.",
+      "إذا لم تجد رسالة التفعيل في بريدك الوارد، يرجى مراجعة مجلد الرسائل غير المرغوب فيها (Spam أو Junk).",
 
     // Forgot password token entry
     "auth.tokenPlaceholder": "الصق الرمز أو الرابط من بريدك الإلكتروني",
@@ -1490,32 +1519,44 @@ export const translations = {
     "privacy.lastUpdated": "آخر تحديث: 23 مايو 2026",
     "privacy.tableOfContents": "المحتويات",
     "privacy.section1Title": "جمع المعلومات",
-    "privacy.section1Body": "نقوم بجمع المعلومات التي تقدمها مباشرةً، مثل عند إنشاء حساب أو إدراج منتج أو التواصل معنا. يشمل ذلك اسمك وبريدك الإلكتروني ورقم هاتفك وموقعك.",
+    "privacy.section1Body":
+      "نقوم بجمع المعلومات التي تقدمها مباشرةً، مثل عند إنشاء حساب أو إدراج منتج أو التواصل معنا. يشمل ذلك اسمك وبريدك الإلكتروني ورقم هاتفك وموقعك.",
     "privacy.section2Title": "كيفية استخدام المعلومات",
-    "privacy.section2Body": "نستخدم معلوماتك لتسهيل المعاملات وتحسين خدماتنا وإرسال تحديثات مهمة تتعلق بحسابك أو عطاءاتك.",
+    "privacy.section2Body":
+      "نستخدم معلوماتك لتسهيل المعاملات وتحسين خدماتنا وإرسال تحديثات مهمة تتعلق بحسابك أو عطاءاتك.",
     "privacy.section3Title": "أمان البيانات",
-    "privacy.section3Body": "نطبق تدابير أمنية وفق معايير الصناعة لحماية معلوماتك الشخصية. ومع ذلك، لا توجد طريقة نقل عبر الإنترنت آمنة بنسبة 100%.",
+    "privacy.section3Body":
+      "نطبق تدابير أمنية وفق معايير الصناعة لحماية معلوماتك الشخصية. ومع ذلك، لا توجد طريقة نقل عبر الإنترنت آمنة بنسبة 100%.",
     "privacy.section4Title": "مشاركة الطرف الثالث",
-    "privacy.section4Body": "لا نبيع بياناتك الشخصية. نشارك المعلومات الضرورية فقط لمعالجة المدفوعات أو الامتثال للالتزامات القانونية.",
+    "privacy.section4Body":
+      "لا نبيع بياناتك الشخصية. نشارك المعلومات الضرورية فقط لمعالجة المدفوعات أو الامتثال للالتزامات القانونية.",
     "privacy.section5Title": "حقوقك",
-    "privacy.section5Body": "يحق لك الوصول إلى بياناتك وتصحيحها وحذفها في أي وقت. تواصل معنا عبر صفحة الدعم.",
+    "privacy.section5Body":
+      "يحق لك الوصول إلى بياناتك وتصحيحها وحذفها في أي وقت. تواصل معنا عبر صفحة الدعم.",
     "privacy.section6Title": "اتصل بنا",
-    "privacy.section6Body": "إذا كانت لديك أسئلة حول سياسة الخصوصية هذه، يُرجى التواصل معنا على",
+    "privacy.section6Body":
+      "إذا كانت لديك أسئلة حول سياسة الخصوصية هذه، يُرجى التواصل معنا على",
     "terms.title": "الشروط والأحكام",
     "terms.lastUpdated": "آخر تحديث: مايو 2026",
     "terms.tableOfContents": "المحتويات",
     "terms.section1Title": "قبول الشروط",
-    "terms.section1Body": "باستخدامك لصياد، فإنك توافق على الالتزام بهذه الشروط والأحكام وسياسة الخصوصية الخاصة بنا. إذا كنت لا توافق على هذه الشروط، يرجى عدم استخدام الخدمة.",
+    "terms.section1Body":
+      "باستخدامك لصياد، فإنك توافق على الالتزام بهذه الشروط والأحكام وسياسة الخصوصية الخاصة بنا. إذا كنت لا توافق على هذه الشروط، يرجى عدم استخدام الخدمة.",
     "terms.section2Title": "مسؤوليات المستخدم",
-    "terms.section2Body": "يجب أن يكون عمر المستخدم 18 عامًا على الأقل لإنشاء حساب. أنت مسؤول عن جميع الأنشطة التي تحدث تحت حسابك. يجب على البائعين تقديم أوصاف دقيقة للمنتجات، ويجب على المشترين الالتزام بمشترياتهم ومزايداتهم.",
+    "terms.section2Body":
+      "يجب أن يكون عمر المستخدم 18 عامًا على الأقل لإنشاء حساب. أنت مسؤول عن جميع الأنشطة التي تحدث تحت حسابك. يجب على البائعين تقديم أوصاف دقيقة للمنتجات، ويجب على المشترين الالتزام بمشترياتهم ومزايداتهم.",
     "terms.section3Title": "قواعد المزاد",
-    "terms.section3Body": "المزايدات المقدمة على صياد هي عقود ملزمة. أعلى مزايد في نهاية فترة المزاد ملزم تعاقديًا بإتمام الشراء. التلاعب بالمزايدات محظور تمامًا.",
+    "terms.section3Body":
+      "المزايدات المقدمة على صياد هي عقود ملزمة. أعلى مزايد في نهاية فترة المزاد ملزم تعاقديًا بإتمام الشراء. التلاعب بالمزايدات محظور تمامًا.",
     "terms.section4Title": "السلع المحظورة",
-    "terms.section4Body": "يمنع منعاً باتاً إدراج المواد غير القانونية والمواد الخطرة والسلع التي تنتهك حقوق الملكية الفكرية أو لوائح الصيد على المنصة.",
+    "terms.section4Body":
+      "يمنع منعاً باتاً إدراج المواد غير القانونية والمواد الخطرة والسلع التي تنتهك حقوق الملكية الفكرية أو لوائح الصيد على المنصة.",
     "terms.section5Title": "حدود المسؤولية",
-    "terms.section5Body": "صياد هو منصة وسيطة للمعاملات وليس مسؤولاً عن النزاعات بين المشترين والبائعين، على الرغم من أننا نقدم آليات الإبلاغ للحل. نحن لا نضمن جودة أو سلامة السلع المدرجة.",
+    "terms.section5Body":
+      "صياد هو منصة وسيطة للمعاملات وليس مسؤولاً عن النزاعات بين المشترين والبائعين، على الرغم من أننا نقدم آليات الإبلاغ للحل. نحن لا نضمن جودة أو سلامة السلع المدرجة.",
     "terms.section6Title": "التعديلات",
-    "terms.section6Body": "نحن نحتفظ بالحق في تعديل هذه الشروط في أي وقت. الاستمرار في استخدام المنصة بعد التغييرات يعتبر قبولاً للشروط الجديدة.",
+    "terms.section6Body":
+      "نحن نحتفظ بالحق في تعديل هذه الشروط في أي وقت. الاستمرار في استخدام المنصة بعد التغييرات يعتبر قبولاً للشروط الجديدة.",
 
     // Seller
     "seller.title": "الملف الشخصي للبائع",
@@ -1641,7 +1682,8 @@ export const translations = {
     "admin.planMaxRequests": "الحد الأقصى للطلبات/شهر",
     "admin.planSortOrder": "ترتيب العرض",
     "admin.confirmSuspendUser": "إيقاف المستخدم؟",
-    "admin.confirmSuspendUserDesc": "إيقاف {user}؟ سيفقد الوصول حتى يتم تفعيله مرة أخرى.",
+    "admin.confirmSuspendUserDesc":
+      "إيقاف {user}؟ سيفقد الوصول حتى يتم تفعيله مرة أخرى.",
     "admin.confirmActivateUser": "تفعيل المستخدم؟",
     "admin.confirmActivateUserDesc": "تفعيل {user} واستعادة الوصول للحساب.",
     "admin.confirmApproveRole": "الموافقة على طلب الدور؟",
@@ -1670,7 +1712,7 @@ export const translations = {
     "order.backToOrders": "العودة للطلبات",
     "order.notFound": "الطلب غير موجود.",
     "order.cancel": "إلغاء الطلب",
-    "order.cancelling": "جاري الإلغاء...",
+    "order.cancelling": "جارٍ الإلغاء...",
     "order.cancelled": "تم إلغاء الطلب بنجاح!",
     "order.cancelConfirm":
       "هل أنت متأكد من إلغاء هذا الطلب؟ لا يمكن التراجع عن هذا الإجراء.",
@@ -1685,7 +1727,8 @@ export const translations = {
     "order.returnRequested": "تم تقديم طلب الإرجاع بنجاح!",
     "order.returnError": "تعذر معالجة طلب الإرجاع.",
     "order.approveReturn": "الموافقة على الإرجاع",
-    "order.approveReturnConfirm": "الموافقة على طلب الإرجاع؟ سيتم استرداد أموال المشتري.",
+    "order.approveReturnConfirm":
+      "الموافقة على طلب الإرجاع؟ سيتم استرداد أموال المشتري.",
     "order.returnApproved": "تمت الموافقة على الإرجاع واسترداد الأموال.",
     "order.rejectReturn": "رفض الإرجاع",
     "order.rejectReturnReason": "سبب رفض الإرجاع:",
@@ -1787,7 +1830,7 @@ export const translations = {
     "auctionRequests.fishType": "نوع السمك",
     "auctionRequests.catchLocation": "مكان الصيد",
     "auctionRequests.catchDate": "تاريخ الصيد",
-    "auctionRequests.submitting": "جاري التقديم...",
+    "auctionRequests.submitting": "جارٍ التقديم...",
     "auctionRequests.submitted": "تم تقديم الطلب بنجاح!",
     "auctionRequests.status": "الحالة",
     "auctionRequests.createdAt": "تاريخ التقديم",
@@ -1796,8 +1839,7 @@ export const translations = {
     "auctionRequests.approved": "تمت الموافقة",
     "auctionRequests.rejected": "مرفوض",
     "auctionRequests.noRequests": "لا توجد طلبات مزادات بعد",
-    "auctionRequests.noRequestsDesc":
-      "قدم طلباً لكي يقوم المزاد بعرض محصولك في مزاد.",
+    "auctionRequests.noRequestsDesc": "قدّم طلبًا لعرض محصولك في أحد المزادات.",
     "auctionRequests.requestAuction": "طلب مزاد",
     "auctionRequests.imageUrl": "رابط صورة المنتج",
     "auctionRequests.imageUrlHelp": "اختياري — يمكنك إضافة رابط لصورة المنتج",
@@ -1810,8 +1852,8 @@ export const translations = {
     "auctionRequestsReview.all": "الكل",
     "auctionRequestsReview.approve": "موافقة",
     "auctionRequestsReview.reject": "رفض",
-    "auctionRequestsReview.approving": "جاري الموافقة...",
-    "auctionRequestsReview.rejecting": "جاري الرفض...",
+    "auctionRequestsReview.approving": "جارٍ الموافقة...",
+    "auctionRequestsReview.rejecting": "جارٍ الرفض...",
     "auctionRequestsReview.approvedSuccess": "تمت الموافقة على الطلب بنجاح!",
     "auctionRequestsReview.rejectedSuccess": "تم رفض الطلب بنجاح!",
     "auctionRequestsReview.rejectionReason": "سبب الرفض",
@@ -1839,7 +1881,7 @@ export const translations = {
     "analytics.recentAuctions": "أحدث المزادات",
     "analytics.startingPrice": "سعر البداية",
     "analytics.currentPrice": "السعر الحالي",
-    "analytics.bidCount": "العروض",
+    "analytics.bidCount": "المزايدات",
     "analytics.endTime": "وقت الانتهاء",
     "analytics.noData": "لا توجد بيانات مزادات متاحة",
 
@@ -1848,7 +1890,7 @@ export const translations = {
     "scheduling.endTime": "وقت انتهاء المزاد",
     "scheduling.startTimeRequired": "يرجى اختيار وقت بدء المزاد",
     "scheduling.scheduleAuction": "جدولة المزاد",
-    "scheduling.scheduling": "جاري الجدولة...",
+    "scheduling.scheduling": "جارٍ الجدولة...",
     "scheduling.info":
       "حدد موعد بدء المزاد واختيارياً موعد انتهائه. الوقت الافتراضي للانتهاء هو 7 أيام من البداية.",
 
@@ -1886,15 +1928,17 @@ export const translations = {
     "wallet.platformFee": "رسوم المنصة",
     "wallet.subPayment": "دفعة اشتراك تجريبية",
     "wallet.auctionPayment": "دفعة مزاد تجريبية",
-    "wallet.auctionPayout": "دفعة بائع تجريبية",
+    "wallet.auctionPayout": "عائد مزاد تجريبي",
     "wallet.readOnly": "المحفظة في وضع القراءة فقط",
-    "wallet.paymentNote": "أضف رصيداً تجريبياً فوراً للاختبار. هذا لا يمثل أموالاً حقيقية.",
+    "wallet.paymentNote":
+      "أضف رصيداً تجريبياً فوراً للاختبار. هذا لا يمثل أموالاً حقيقية.",
     "wallet.topUpTitle": "إضافة رصيد تجريبي",
     "wallet.topUpHelp":
       "سيتم إضافة رصيد اختبار فوراً. لا يتم تنفيذ تحويل أموال حقيقي أو سحب بنكي.",
     "wallet.amountLabel": "المبلغ (جنيه)",
     "wallet.withdrawTitle": "سحب الرصيد",
-    "wallet.withdrawHelp": "أدخل المبلغ الذي تريد سحبه من الرصيد المتاح في محفظتك.",
+    "wallet.withdrawHelp":
+      "أدخل المبلغ الذي تريد سحبه من الرصيد المتاح في محفظتك.",
     "wallet.withdrawPlaceholder": "أدخل مبلغاً موجباً",
     "wallet.withdrawAmountError": "يجب أن يكون مبلغ السحب أكبر من صفر.",
     "wallet.withdrawSuccess": "تم سحب الرصيد بنجاح!",
@@ -1925,7 +1969,7 @@ export const translations = {
     "subscriptions.expired": "منتهي",
     "subscriptions.popular": "الأكثر طلباً",
     "subscriptions.feature1": "تصفح المنتجات والمزادات",
-    "subscriptions.feature2": "تقديم عروض وشراء",
+    "subscriptions.feature2": "تقديم المزايدات والشراء",
     "subscriptions.feature3": "إنشاء ملف بائع",
     "subscriptions.feature4": "دعم عملاء ذو أولوية",
     "subscriptions.feature5": "لوحة تحليلات متقدمة",
@@ -1938,7 +1982,7 @@ export const translations = {
     "subscriptions.upgradeError": "تعذر ترقية الاشتراك.",
     "subscriptions.invalidTier": "لا يمكن ترقية هذه الخطة حالياً.",
     "subscriptions.loadError": "تعذر تحميل بيانات الاشتراك.",
-    "subscriptions.customerHeading": "افتح المزيد من العروض",
+    "subscriptions.customerHeading": "افتح المزيد من المزايدات",
     "subscriptions.customerDesc":
       "اشترك للمزايدة على المزيد من المزادات والحصول على صفقات أفضل",
     "subscriptions.auctioneerHeading": "طور أعمالك",
@@ -2026,7 +2070,7 @@ export const translations = {
     "order.shipped": "تم الشحن",
     "order.shippingInfo": "معلومات الشحن",
     "order.tax": "الضريبة",
-    "order.track": "تفاصيل الطلب",
+    "order.track": "عرض تفاصيل الطلب",
 
     // Products
     "products.category": "الفئة",
@@ -2046,15 +2090,15 @@ export const translations = {
 
     // Tour
     "tour.navDesc":
-      "تنقل بسلاسة بين النظرة العامة والمنتجات وتتبع الطلبات والملف الشخصي",
+      "تنقل بسلاسة بين النظرة العامة والمنتجات وتتبع الطلبات والملف الشخصي.",
     "tour.navTitle": "التنقل في لوحة التحكم",
     "tour.ordersDesc":
-      "تابع معاملاتك وسجلات الشراء وتحديثات الشحن بشكل ديناميكي",
+      "تابع معاملاتك وسجلات الشراء وتحديثات الشحن بشكل ديناميكي.",
     "tour.ordersTitle": "تتبع الطلبات",
     "tour.productsDesc":
-      "يمكن للصيادين والبائعين نشر أو تحديث العناصر المدرجة بسهولة هنا",
+      "يمكن للصيادين والبائعين نشر أو تحديث العناصر المدرجة بسهولة هنا.",
     "tour.productsTitle": "إدارة القوائم",
-    "tour.welcomeToSayiad": "جاهز لاستخدام صياد! استمتع بتجربتك",
+    "tour.welcomeToSayiad": "جاهز لاستخدام صياد! استمتع بتجربتك.",
 
     // Pre-UI translation coverage
     "admin.remove": "إزالة",
@@ -2066,7 +2110,7 @@ export const translations = {
     "auth.codePlaceholder": "أدخل كود التحقق",
     "auth.codeSent": "أرسلنا كود التحقق إلى بريدك الإلكتروني.",
     "auth.confirmPasswordPlaceholder": "أكد كلمة المرور",
-    "auth.emailVerified": "تم تأكيد البريد الإلكتروني بنجاح.",
+    "auth.emailVerified": "تم تفعيل البريد الإلكتروني بنجاح.",
     "auth.enterCode": "أدخل كود التحقق",
     "auth.enterEmail": "أدخل بريدك الإلكتروني",
     "auth.enterNewPassword": "أدخل كلمة المرور الجديدة",
@@ -2083,8 +2127,8 @@ export const translations = {
     "auth.registerError": "تعذر إنشاء الحساب. يرجى المحاولة مرة أخرى.",
     "auth.resendIn": "يمكنك طلب كود آخر خلال",
     "auth.sendCode": "إرسال الكود",
-    "auth.verificationFailed": "فشل تأكيد البريد الإلكتروني.",
-    "auth.verifyPrompt": "يرجى تأكيد بريدك الإلكتروني قبل تسجيل الدخول.",
+    "auth.verificationFailed": "فشل تفعيل البريد الإلكتروني.",
+    "auth.verifyPrompt": "يرجى تفعيل بريدك الإلكتروني قبل تسجيل الدخول.",
     "auth.welcomeBack": "مرحباً بعودتك",
     "common.action": "الإجراء",
     "common.auction": "مزاد",
@@ -2095,8 +2139,9 @@ export const translations = {
     "common.showPassword": "إظهار كلمة المرور",
     "common.tryAgain": "حاول مرة أخرى",
     "common.yearsOld": "سنة",
-    "error_service_unavailable": "الخدمة غير متاحة",
-    "error_service_unavailable_desc": "الخدمة غير متاحة مؤقتاً. يرجى المحاولة بعد قليل.",
+    error_service_unavailable: "الخدمة غير متاحة",
+    error_service_unavailable_desc:
+      "الخدمة غير متاحة مؤقتاً. يرجى المحاولة بعد قليل.",
     "footer.privacy": "سياسة الخصوصية",
     "footer.quickLinks": "روابط سريعة",
     "footer.rights": "جميع الحقوق محفوظة.",
@@ -2105,7 +2150,7 @@ export const translations = {
     "footer.terms": "الشروط",
     "nav.profile": "الملف الشخصي",
     "profile.removePhoto": "إزالة الصورة",
-    "register.auctioneer": "مزاد",
+    "register.auctioneer": "منظّم مزادات",
     "register.auctioneerDesc": "إدارة المزادات ومراجعة طلبات المزاد.",
     "register.baitSeller": "بائع طعم",
     "register.baitSellerDesc": "بيع الطُعم ومستلزمات الصيد.",
@@ -2113,10 +2158,12 @@ export const translations = {
     "register.customerDesc": "شراء المنتجات والمزايدة في المزادات.",
     "register.fisherman": "صياد",
     "register.fishermanDesc": "بيع الصيد وطلب إنشاء المزادات.",
-    "retry": "إعادة المحاولة",
-    "subscriptions.baitSellerDesc": "استخدم أدوات البيع للطُعم ومستلزمات الصيد.",
+    retry: "إعادة المحاولة",
+    "subscriptions.baitSellerDesc":
+      "استخدم أدوات البيع للطُعم ومستلزمات الصيد.",
     "subscriptions.baitSellerHeading": "طوّر متجر الطُعم",
-    "subscriptions.fishermanDesc": "فعّل أدوات البيع لقوائم الصيد وطلبات المزاد.",
+    "subscriptions.fishermanDesc":
+      "فعّل أدوات البيع لقوائم الصيد وطلبات المزاد.",
     "subscriptions.fishermanHeading": "طوّر نشاطك في الصيد",
     "validation.invalidEmail": "يرجى إدخال بريد إلكتروني صحيح.",
     "validation.invalidPhone": "يرجى إدخال رقم هاتف صحيح.",
@@ -2130,7 +2177,7 @@ export const translations = {
   },
 };
 
-import { KEYS } from '../constants/storage-keys.js';
+import { KEYS } from "../constants/storage-keys.js";
 
 let currentLang = localStorage.getItem(KEYS.LANG) || "en";
 
@@ -2143,12 +2190,12 @@ export function t(key, replacements = {}) {
 }
 
 export function pluralize(key, count, lang = currentLang) {
-  const rule = new Intl.PluralRules(lang === 'ar' ? 'ar-EG' : 'en-US');
+  const rule = new Intl.PluralRules(lang === "ar" ? "ar-EG" : "en-US");
   const category = rule.select(count);
   const pluralKey = `${key}.${category}`;
   const msg = t(pluralKey);
   const finalMsg = msg === pluralKey ? t(key) : msg;
-  return finalMsg.replace('{count}', count);
+  return finalMsg.replace("{count}", count);
 }
 
 export function setLanguage(lang) {
